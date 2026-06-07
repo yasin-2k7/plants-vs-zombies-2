@@ -1,7 +1,11 @@
+package models.plant;
+
+import java.util.ArrayList;
+
 public class Plant {
     private String name;
     private int health;
-    private List<GameComponent> components = new ArrayList<>();
+    private ArrayList<GameComponent> components = new ArrayList<>();
 
     public void addComponent(GameComponent comp) {
         components.add(comp);
