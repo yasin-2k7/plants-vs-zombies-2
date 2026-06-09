@@ -1,9 +1,11 @@
 package models.plant;
 
+import models.enums.PlantType;
+
 import java.util.ArrayList;
 
 public class Plant {
-    private String name;
+    private PlantType type;
     private int health;
     private ArrayList<GameComponent> components = new ArrayList<>();
 
@@ -16,5 +18,9 @@ public class Plant {
         for (GameComponent comp : components) {
             comp.update(this);
         }
+    }
+
+    public Plant(PlantType type) {
+        this.type = type;
     }
 }
