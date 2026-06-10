@@ -10,13 +10,19 @@ public class User {
     private QuestStats questStats;
 
     private String username;
-    private String password;
+    private String HashPassword;
 
+    private int unlockedChapter;
+    private int unlockedLevel;
     private int currentLevel;
     private int coins;
     private int gems;
     private int pot;
     private HashMap<PlantType, Integer> UnlockedPlantsLevels;
+
+    public void unlockPlant(PlantType plantType){
+        this.UnlockedPlantsLevels.put(plantType, 1);
+    }
 
 
     public User(){}

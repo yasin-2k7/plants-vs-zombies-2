@@ -1,12 +1,18 @@
 package models.core;
 
+import controller.MenuController;
+import controller.NewsMenuController;
 import models.projectile.strategy.FirePeaStrategy;
 import models.projectile.strategy.HitStrategy;
 import models.projectile.strategy.IcePeaStrategy;
 import models.projectile.strategy.RegularPeaStrategy;
 
+import java.util.ArrayList;
+
 public class App {
     private static User currentUser;
+    private static MenuController currentMenu;
+    private static ArrayList<News> allNews;
 
 
     public static final HitStrategy FIRE_PEA = new FirePeaStrategy();
@@ -16,5 +22,9 @@ public class App {
 
     public static User getCurrentUser() {
         return currentUser;
+    }
+
+    public static MenuController getCurrentMenu() {
+        return currentMenu;
     }
 }
