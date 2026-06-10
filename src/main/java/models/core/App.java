@@ -23,4 +23,8 @@ public class App {
     public static User getCurrentUser() {
         return currentUser;
     }
+
+    public static MenuController getCurrentMenu() {
+        return currentMenu;
+    }
 }
