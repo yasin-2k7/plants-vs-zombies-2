@@ -1,15 +1,16 @@
 package models.zombie;
 
-package models.zombie;
+import models.enums.Zombies;package models.zombie;
 
 public abstract class Zombie {
-    protected String name;
+    protected Zombies name;
     protected int health;
     protected int speed;
     protected int damage;
     protected boolean isDead = false;
+    private float x, y;
 
-    public Zombie(String name, int health, int speed, int damage) {
+    public Zombie(Zombies name, int health, int speed, int damage) {
         this.name = name;
         this.health = health;
         this.speed = speed;
@@ -36,6 +37,8 @@ public abstract class Zombie {
                 die();
             }
         }
+
+        public abstract void damageToPlant();
 
         // متد مرگ زامبی
         public void die() {
