@@ -1,4 +1,7 @@
 package models.quest.types;
 
-public class EpicChallengeQuest {
+import models.quest.Quest;
+
+public class EpicChallengeQuest extends Quest {
+    public EpicChallengeQuest(){}
 }

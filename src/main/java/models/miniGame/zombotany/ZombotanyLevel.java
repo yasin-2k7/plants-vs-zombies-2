@@ -1,9 +1,12 @@
-package models.miniGame;
+package models.miniGame.zombotany;
 
 import models.world.GameWorld;
 
 public class ZombotanyLevel extends GameWorld {
-    public ZombotanyLevel(){}
+
+    public ZombotanyLevel(){
+        super();
+    }
     @Override
     protected void applyChapterRules() {
 

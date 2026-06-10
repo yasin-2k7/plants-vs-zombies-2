@@ -1,4 +1,7 @@
 package models.quest.types;
 
-public class MainQuest {
+import models.quest.Quest;
+
+public class MainQuest extends Quest {
+    public MainQuest(){}
 }

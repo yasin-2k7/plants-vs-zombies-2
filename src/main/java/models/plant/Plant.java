@@ -14,7 +14,6 @@ public class Plant {
     }
 
     public void update() {
-        // تک‌تک اجزا کار خودشان را انجام می‌دهند
         for (GameComponent comp : components) {
             comp.update(this);
         }

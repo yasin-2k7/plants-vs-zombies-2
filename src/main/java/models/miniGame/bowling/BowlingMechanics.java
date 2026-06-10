@@ -7,4 +7,9 @@ public class BowlingMechanics implements MechanicsStrategy {
     @Override
     public void applyMechanics(GameWorld world) {
     }
+
+    @Override
+    public void handleCustomCommand(String command, GameWorld world) {
+        MechanicsStrategy.super.handleCustomCommand(command, world);
+    }
 }
