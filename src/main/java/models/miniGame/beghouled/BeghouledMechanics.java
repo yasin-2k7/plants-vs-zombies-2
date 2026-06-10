@@ -3,8 +3,10 @@ package models.miniGame.beghouled;
 import models.miniGame.MechanicsStrategy;
 import models.world.GameWorld;
 
-public class BeghouledMechanics implements MechanicsStrategy {
+import java.util.List;
 
+public class BeghouledMechanics implements MechanicsStrategy {
+    private List<PlantUpgrade> availableUpgrades;
     @Override
     public void applyMechanics(GameWorld world) {
 

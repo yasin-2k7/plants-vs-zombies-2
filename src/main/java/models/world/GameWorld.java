@@ -37,6 +37,10 @@ public abstract class GameWorld {
         this.levelSetup.groundSetup(this);
     }
 
+    public GameWorld() {
+
+    }
+
     public void update(){
 
     }
