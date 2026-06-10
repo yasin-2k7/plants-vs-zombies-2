@@ -5,59 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="7633e24f-71b5-45cd-8c1d-efc6fb3a4fb8" name="Changes" comment="edit User">
-      <change afterPath="$PROJECT_DIR$/src/main/java/models/greenhouse/Pot.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/models/miniGame/IZombie/Brain.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/models/miniGame/IZombie/IZombieLevel.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/models/miniGame/IZombie/IZombieLose.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/models/miniGame/IZombie/SunProducer.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/models/miniGame/MiniGameLevel.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/models/miniGame/beghouled/BeghouledLevel.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/models/miniGame/beghouled/BeghouledLose.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/models/miniGame/beghouled/BeghouledWinCondition.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/models/miniGame/beghouled/PlantUpgrade.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/models/miniGame/bowling/BowlingBall.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/models/miniGame/bowling/BowlingBallType.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/models/miniGame/bowling/BowlingLevel.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/models/miniGame/bowling/BowlingLose.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/models/miniGame/bowling/BowlingWinCondition.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/models/miniGame/bowling/ExplodeONut.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/models/miniGame/bowling/GiantWallnut.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/models/miniGame/bowling/WallnutBowling.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/models/miniGame/vaseBreaker/SeedPacket.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/models/miniGame/vaseBreaker/Vase.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/models/miniGame/vaseBreaker/VaseBreakerLevel.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/models/miniGame/vaseBreaker/VaseBreakerLose.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/models/miniGame/vaseBreaker/VaseBreakerWinCondition.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/models/miniGame/vaseBreaker/VaseType.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/models/miniGame/zombotany/JalapenoZombie.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/models/miniGame/zombotany/PeashooterZombie.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/models/miniGame/zombotany/SquashZombie.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/models/miniGame/zombotany/WallnutZombie.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/models/quest/QuestStats.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/models/quest/reward/UnlockableType.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/models/core/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/models/core/User.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/models/greenhouse/Greeenhouse.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/models/greenhouse/Greeenhouse.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/models/greenhouse/pot.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/models/miniGame/IZombieLevel.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/models/miniGame/WinCondition.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/models/miniGame/ZombotanyLevel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/models/miniGame/zombotany/ZombotanyLevel.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/models/miniGame/beghouled/BeghouledMechanics.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/models/miniGame/beghouled/BeghouledMechanics.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/models/miniGame/bowling/BowlingMechanics.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/models/miniGame/bowling/BowlingMechanics.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/models/miniGame/bowling/BowlingSetup.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/models/miniGame/bowling/BowlingSetup.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/models/plant/Plant.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/models/plant/Plant.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/models/quest/Quest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/models/quest/Quest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/models/quest/QuestPriority.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/models/quest/QuestPriority.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/models/quest/reward/CurrencyReward.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/models/quest/reward/CurrencyReward.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/models/quest/reward/InventoryReward.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/models/quest/reward/InventoryReward.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/models/quest/reward/Reward.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/models/quest/reward/Reward.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/models/quest/reward/UnlockableReward.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/models/quest/reward/UnlockableReward.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/models/quest/types/DailyQuest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/models/quest/types/DailyQuest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/models/quest/types/EpicChallengeQuest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/models/quest/types/EpicChallengeQuest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/models/quest/types/MainQuest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/models/quest/types/MainQuest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/models/shop/DailyOffer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/models/shop/DailyOffer.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/models/shop/ShopItem.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/models/shop/ShopItem.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/models/shop/ShopList.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/models/shop/ShopList.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/models/world/GameWorld.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/models/world/GameWorld.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -96,7 +44,7 @@
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.git.unshallow": "true",
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "git-widget-placeholder": "Merging main",
+    "git-widget-placeholder": "main",
     "ignore.virus.scanning.warn.message": "true",
     "kotlin-language-version-configured": "true",
     "last_opened_file_path": "C:/AP/Project",
