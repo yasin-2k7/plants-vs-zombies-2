@@ -6,7 +6,6 @@ import java.time.LocalDate;
 import java.util.Map;
 
 public class QuestStats {
-    //روزانه
     private int sunsCollectedToday;
     private int zombiesKilledToday;
     private int explosivesUsedToday;
