@@ -25,7 +25,7 @@ public class PlantFactory {
             Plant p = new Plant(PlantType.SUNFLOWER);
 
 
-            p.addComponent(new ShooterComponent(10, ""));
+           // p.addComponent(new ShooterComponent(10, ));
             return p;
         }
 

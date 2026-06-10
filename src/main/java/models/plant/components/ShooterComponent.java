@@ -1,15 +1,16 @@
 package models.plant.components;
 
+import models.enums.ProjectileType;
 import models.plant.GameComponent;
 import models.plant.Plant;
 
 public class ShooterComponent implements GameComponent {
     private int damage;
     private float fireRate;
-    private String bulletType; // "Normal", "Fire", "Ice", "Poison"
+    private ProjectileType bulletType; // "Normal", "Fire", "Ice", "Poison"
 
 
-    public ShooterComponent(int damage, String bulletType) {
+    public ShooterComponent(int damage, ProjectileType bulletType) {
         this.damage = damage;
         this.bulletType = bulletType;
     }

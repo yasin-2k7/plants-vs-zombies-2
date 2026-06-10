@@ -1,6 +1,6 @@
 package models.plant;
 
-import models.User;
+import models.core.User;
 
 public class PlantUpgradeManager {
 
