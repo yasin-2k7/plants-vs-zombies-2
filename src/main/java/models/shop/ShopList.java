@@ -16,9 +16,7 @@ public class ShopList {
         return null;
     }
 
-    public ShopItem findById(int id) {
-        return null;
-    }
+
 
     public void buy(int itemId, int count,
                     Class<? extends Plant> plantType) {

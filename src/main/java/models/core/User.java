@@ -10,7 +10,12 @@ public class User {
     private QuestStats questStats;
 
     private String username;
-    private String HashPassword;
+    private String hashPassword;
+    private String nickname;
+    private String email;
+    private String gender;
+    private String securityQ;
+    private String securityA;
 
     private int unlockedChapter;
     private int unlockedLevel;
@@ -26,6 +31,22 @@ public class User {
 
 
     public User(){}
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setHashPassword(String hashPassword) { this.hashPassword = hashPassword;}
+    public void setUsername(String username) {
+        this.username = username;
+    }
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
+    }
+    public void setEmail(String email) { this.email = email;}
+    public void setGender(String gender) { this.gender = gender;}
+    public void setSecurityQ(String securityQ) { this.securityQ = securityQ;}
+    public void setSecurityA(String securityA) {this.securityA = securityA;}
 
     public boolean checkPassword(String password) {
         return false;
