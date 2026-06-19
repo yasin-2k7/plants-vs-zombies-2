@@ -1,0 +1,20 @@
+{
+  "SUNFLOWER": {
+    "2": {
+      "sunCostModifier": 0,
+      "cooldownReductionTicks": 15,
+    }
+  },
+  "PEASHOOTER": {
+    "2": {
+      "sunCostModifier": -20,
+      "cooldownReductionTicks": 0,
+    },
+    "3": {
+      "sunCostModifier": -20,
+      "cooldownReductionTicks": 5,
+    }
+  },
+
+
+}

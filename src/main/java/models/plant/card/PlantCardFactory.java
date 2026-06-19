@@ -1,0 +1,28 @@
+package models.plant.card;
+
+import models.enums.PlantType;
+
+import java.util.Map;
+
+public class PlantCardFactory {
+    private static Map<String, Map<Integer, UpgradeConfig>> upgradeRules;
+
+    public static void init(String jsonContent) {
+        // upgradeRules = gson.fromJson(...);
+    }
+
+    public static PlantCard createCard(PlantType type, int userLevel) {
+        PlantCard card = new PlantCard(type, type.baseSunCost, type.baseCoolDown);
+
+        if (upgradeRules != null && upgradeRules.containsKey(type.name())) {
+            UpgradeConfig config = upgradeRules.get(type.name()).get(userLevel);
+
+            if (config != null) {
+                card.setSunCost(card.getSunCost() + config.getSunCostModifier());
+                card.setMaxCooldownTicks(card.getMaxCooldownTicks() - config.getCooldownReductionTicks());
+            }
+        }
+
+        return card;
+    }
+}

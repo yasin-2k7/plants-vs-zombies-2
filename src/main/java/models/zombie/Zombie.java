@@ -1,6 +1,6 @@
 package models.zombie;
 
-import models.enums.Zombies;package models.zombie;
+import models.enums.Zombies;
 
 public abstract class Zombie {
     protected Zombies name;

@@ -2,6 +2,7 @@ package models.world;
 
 import models.enums.PlantType;
 import models.miniGame.MechanicsStrategy;
+import models.plant.Plant;
 import models.pool.GenericObjectPool;
 import models.world.levelSetup.LevelSetup;
 import models.world.loseCondition.LoseCondition;
@@ -25,13 +26,14 @@ public abstract class GameWorld {
     private WinCondition winCondition;
     private ArrayList<Mechanic> mechanics;
 
-    private Queue<PlantType> conveyorBelt;
+    private ArrayList<PlantType> conveyorBelt;
     private ArrayList<PlantType> plantLists;
 
     protected List<Zombie> activeZombies;
+    protected List<Plant> activePlants;
     protected List<Sun> activeSuns;
 
-    public GenericObjectPool<Sun> SunsPool;
+    private GenericObjectPool<Sun> SunsPool = new GenericObjectPool<>(Sun::new);
 
 
     public GameWorld(LevelSetup levelSetup, ArrayList<LoseCondition> loseConditions, WinCondition winCondition, ArrayList<Mechanic> mechanics) {
@@ -58,4 +60,24 @@ public abstract class GameWorld {
     protected abstract void applyChapterRules();
 
     public void tick(){}
+
+    public List<Sun> getActiveSuns() {
+        return activeSuns;
+    }
+
+    public GenericObjectPool<Sun> getSunsPool() {
+        return SunsPool;
+    }
+
+    public void setSun(int sun) {
+        Sun = sun;
+    }
+
+    public int getSun() {
+        return Sun;
+    }
+
+    public List<Plant> getActivePlants() {
+        return activePlants;
+    }
 }

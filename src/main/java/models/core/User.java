@@ -25,6 +25,8 @@ public class User {
     private int pot;
     private HashMap<PlantType, Integer> UnlockedPlantsLevels;
 
+    private static ArrayList<News> allNews;
+
     public void unlockPlant(PlantType plantType){
         this.UnlockedPlantsLevels.put(plantType, 1);
     }
@@ -68,6 +70,7 @@ public class User {
 
     public void advanceLevel(){}
 
-
-
+    public HashMap<PlantType, Integer> getUnlockedPlantsLevels() {
+        return UnlockedPlantsLevels;
+    }
 }
