@@ -6,15 +6,14 @@ import java.util.Random;
 
 public class Wave {
     private int waveNumber;
-    private int totalCost;                // سختی موج
-    private List<WaveSpawnEntry> spawnEntries;  // لیست نهایی زامبی‌های این موج (تکرار مجاز)
-    private int spawnDelayTicks;          // تأخیر بین اسپاون هر زامبی (بر حسب تیک)
-    private int currentIndex;             // شاخص بعدی برای اسپاون
-    private int ticksSinceLastSpawn;      // شمارشگر تیک برای تأخیر
+    private int totalCost;
+    private List<WaveSpawnEntry> spawnEntries;
+    private int spawnDelayTicks;
+    private int currentIndex;
+    private int ticksSinceLastSpawn;
     private boolean isFinalWave;
 
-    public Wave(int waveNumber, int totalCost, List<WaveSpawnEntry> spawnEntries,
-                int spawnDelayTicks, boolean isFinalWave) {
+    public Wave(int waveNumber, int totalCost, List<WaveSpawnEntry> spawnEntries, int spawnDelayTicks, boolean isFinalWave) {
         this.waveNumber = waveNumber;
         this.totalCost = totalCost;
         this.spawnEntries = new ArrayList<>(spawnEntries);
@@ -25,20 +24,55 @@ public class Wave {
     }
 
     // متد کمکی برای تولید خودکار موج بر اساس هزینه کل و لیست ورودی‌های مجاز
-    public static Wave generateRandomWave(int waveNumber, int totalCost,
-                                          List<WaveSpawnEntry> availableEntries,
-                                          int spawnDelayTicks, boolean isFinalWave) {
-        // TODO: 
-        return null;
+    public static Wave generateRandomWave(int waveNumber, int totalCost, List<WaveSpawnEntry> availableEntries, int spawnDelayTicks, boolean isFinalWave) {
+        List<WaveSpawnEntry> generatedEntries = new ArrayList<>();
+        Random random = new Random();
+        int currentCost = 0;
+
+        // تا زمانی که بودجه داریم و زامبی‌های مجاز تعریف شده‌اند
+        while (currentCost < totalCost && !availableEntries.isEmpty()) {
+            WaveSpawnEntry randomEntry = availableEntries.get(random.nextInt(availableEntries.size()));
+
+            // بررسی اینکه آیا اضافه کردن این زامبی از سقف سختی مجاز فراتر می‌رود یا خیر
+            if (currentCost + randomEntry.getWavePointCost() <= totalCost) {
+                generatedEntries.add(new WaveSpawnEntry(randomEntry.getZombieAlias(), randomEntry.getWavePointCost()));
+                currentCost += randomEntry.getWavePointCost();
+            } else {
+                // اگر هزینه این نمونه زیاد بود، لیست را چک می‌کنیم؛ اگر هیچ زامبی کم امتیاز تری پیدا نشد خارج می‌شویم
+                boolean canAddAny = false;
+                for (WaveSpawnEntry entry : availableEntries) {
+                    if (currentCost + entry.getWavePointCost() <= totalCost) {
+                        canAddAny = true;
+                        break;
+                    }
+                }
+                if (!canAddAny) break;
+            }
+        }
+        return new Wave(waveNumber, totalCost, generatedEntries, spawnDelayTicks, isFinalWave);
     }
 
-    // آیا تمام زامبی‌های این موج اسپاون شده‌اند؟
+    public static List<Wave> generateWaves(int totalWaves, int baseDifficulty, List<WaveSpawnEntry> availableEntries, int spawnDelayTicks) {
+        List<Wave> waves = new ArrayList<>();
+        for (int i = 1; i <= totalWaves; i++) {
+            boolean isFinal = (i == totalWaves);
+            // محاسبه سختی: هر موج 25% سخت‌تر از موج قبل
+            double difficulty = baseDifficulty * Math.pow(1.25, i - 1);
+            // موج آخر دو برابر می‌شود
+            if (isFinal) {
+                difficulty *= 2;
+            }
+            int cost = (int) Math.round(difficulty);
+            Wave wave = generateRandomWave(i, cost, availableEntries, spawnDelayTicks, isFinal);
+            waves.add(wave);
+        }
+        return waves;
+    }
+
     public boolean isFinishedSpawning() {
         return currentIndex >= spawnEntries.size();
     }
 
-    // هر بار در حلقه تیک صدا زده می‌شود. اگر زمان اسپاون بعدی رسیده باشد،
-    // زامبی بعدی را برمی‌گرداند، در غیر این صورت null.
     public WaveSpawnEntry getNextSpawn() {
         if (isFinishedSpawning()) return null;
         if (ticksSinceLastSpawn < spawnDelayTicks) {
@@ -49,13 +83,11 @@ public class Wave {
         return spawnEntries.get(currentIndex++);
     }
 
-    // تعداد کل زامبی‌های این موج
     public int getTotalZombieCount() {
         return spawnEntries.size();
     }
 
-    // Getters
     public int getWaveNumber() { return waveNumber; }
     public int getTotalCost() { return totalCost; }
-    public boolean isFinalWave() { return isFinalWave; }
+    public boolean isFlagWave() { return isFinalWave; }
 }
