@@ -1,12 +1,15 @@
 package controller;
 
 import models.core.User;
+import models.core.UserDataManager;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 public class SignupMenuController implements MenuController{
+    private UserDataManager userDataManager;
+
     @Override
     public void changeMenu() {
 
@@ -21,8 +24,7 @@ public class SignupMenuController implements MenuController{
         if (!username.matches("^[0-9A-Za-z-]+$")) {
             errors.add("Invalid username (only letters, digits, and '-' allowed).");
         }
-        File userFile = new File("users/" + username + ".json");
-        if (userFile.exists()) {
+        if (UserDataManager.userExists(username)) {
             errors.add("Username already exists.");
         }
         return errors;
