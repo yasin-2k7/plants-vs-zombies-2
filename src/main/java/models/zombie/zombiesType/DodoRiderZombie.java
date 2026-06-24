@@ -1,49 +1,57 @@
 package models.zombie.zombiesType;
 
+import models.core.App;
+import models.enums.Zombies;
+import models.plant.Plant;
+import models.world.GameWorld;
 import models.zombie.Zombie;
 
 public class DodoRiderZombie extends Zombie {
-    private boolean isRiding; // آیا هنوز روی دودو سوار است؟
+    private boolean isRiding;
 
-    public DodoRiderZombie(String name, int health, int speed, int damage) {
-        super(name, health, speed, damage);
-        this.isRiding = true; // در ابتدا سوار بر دودو است
+    public DodoRiderZombie(int health, int speed, int damage) {
+        super(Zombies.DODO_RIDER, health, speed, damage);
+        this.isRiding = true;
     }
 
-    // بررسی پرش از روی گیاه بر اساس نام/نوع گیاه
-    public void encounterPlant(String plantName) {
-        if (!isRiding) {
+    @Override
+    public void update() {
+        if (isDead) return;
+        if (isRiding) {
+            // بررسی گیاه جلویی
+            GameWorld game = App.getCurrentGame();
+            if (game != null) {
+                Plant obstacle = game.getPlantAtPosition(this.x - 20, this.y);
+                if (obstacle != null && !obstacle.isDead()) {
+                    handleObstacle(obstacle);
+                }
+            }
+        }
+        super.update(); // حرکت یا خوردن
+    }
+
+    private void handleObstacle(Plant plant) {
+        if (plant.getType().name().equalsIgnoreCase("TALL_NUT")) {
             return;
         }
-
-        // بررسی گردوی بلند (Tall-nut) که نمی‌تواند از آن بپرد
-        if (plantName.equalsIgnoreCase("Tall-nut")) {
-            return;
-        }
-
-        // بررسی گیاهانی که دودو از روی آن‌ها می‌پرد (گردو، مین، و غیره)
-        if (plantName.equalsIgnoreCase("Wall-nut") || plantName.equalsIgnoreCase("Potato Mine") /* + سایر موانع مجاز */) {
-            // در اینجا منطق جابجایی (رد شدن) باید فراخوانی شود
-        } else {
+        // گیاهانی که از روی آنها می‌پرد (گردو، مین سیب‌زمینی، ...)
+        if (plant.getType().name().equalsIgnoreCase("WALL_NUT") ||
+                plant.getType().name().equalsIgnoreCase("POTATO_MINE") ||
+                plant.getType().name().equalsIgnoreCase("SPIKEWEED")) {
+            // پرش به جلو
+            this.x -= 120; // یک خانه جلوتر مثلا
         }
     }
 
     @Override
     public void takeDamage(int damageAmount, String damageType) {
-        // در فصل Frostbite Caves زامبی‌ها با پرتابه یخی یخ نمی‌زنند (فقط دمیج می‌خورند)
-       // this.setHealth(this.getHealth() - damageAmount);
-
-        // اگر جان پرنده تمام شود (مثلا زیر 50 درصد کل جان)، پیاده می‌شود
-        if (this.getHealth() <= 50 && isRiding) {
+        if (isDead) return;
+        // در فصل یخ، کند نمی‌شود (اما آسیب می‌بیند)
+        super.takeDamage(damageAmount, damageType);
+        // اگر جان کمتر از نصف شود، پرنده از بین می‌رود و پیاده می‌شود
+        if (this.health < this.maxHealth / 2 && isRiding) {
             isRiding = false;
+            this.speed = (int)(this.speed * 0.6); // کمی کندتر
         }
-
-        if (this.getHealth() <= 0) {
-            die();
-        }
-    }
-
-    @Override
-    public void die() {
     }
 }

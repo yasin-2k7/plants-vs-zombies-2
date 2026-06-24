@@ -33,4 +33,8 @@ public class App {
     public static GameWorld getCurrentGame() {
         return currentGame;
     }
+
+    public static void setCurrentGame(GameWorld currentGame) {
+        App.currentGame = currentGame;
+    }
 }

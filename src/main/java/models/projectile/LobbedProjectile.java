@@ -9,7 +9,7 @@ public class LobbedProjectile implements Resettable, Projectile {
     private double x, y;
 
     @Override
-    public void makeDamage() {
+    public void update() {
 
     }
 }
