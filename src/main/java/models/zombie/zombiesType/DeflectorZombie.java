@@ -1,32 +1,44 @@
 package models.zombie.zombiesType;
 
+import models.enums.Zombies;
 import models.zombie.Zombie;
 
 public class DeflectorZombie extends Zombie {
-    public DeflectorZombie(int health, int speed, int damage) {
-        super("Deflector Zombie", health, speed, damage);
+    private boolean isJuggler;
+
+    public DeflectorZombie(int health, int speed, int damage, boolean isJuggler) {
+        super(Zombies.DEFLECTOR, health, speed, damage);
+        this.isJuggler = isJuggler;
+
     }
 
-    // بازنویسی متد دریافت آسیب برای هندل کردن دفع پرتابه‌ها
-    public void takeDamage(int amount, boolean isLobberAttack, String projectileType) {
-        // اگر حمله قوسی نباشد و پرتابه فیزیکی باشد، آن را دفع می‌کند
-        if (!isLobberAttack && isDeflectable(projectileType)) {
-            deflectProjectile(projectileType);
-        } else {
-            // دریافت آسیب در صورت قوسی بودن حمله (مثل هندوانه یا کلم)
-            super.health -= amount;
-            if (super.health <= 0) {
-                die();
+    @Override
+    public void takeDamage(int amount, String damageType) {
+        if (isDead) return;
+        boolean isLobber = "LOBBER".equals(damageType);
+        if (isJuggler) {
+            if (!isLobber && isDeflectable(damageType)) {
+                deflectProjectile(damageType);
+                return; // آسیب نمی‌بیند
+            }
+        } else { // چتردار
+            if (isLobber) {
+                // دفع می‌کند (آسیب نمی‌بیند)
+                return;
             }
         }
+        super.takeDamage(amount, damageType);
     }
 
     private boolean isDeflectable(String projectileType) {
-        // بررسی نوع پرتابه (مثلا لیزر یا پلاسما دفع نمی‌شود)
-        return projectileType.equals("Pea") || projectileType.equals("Cabbage");
+        // لیست پرتابه‌های قابل بازتاب
+        return projectileType.equals("PEA") || projectileType.equals("CABBAGE") ||
+                projectileType.equals("MELON") || projectileType.equals("BUTTER");
     }
 
     private void deflectProjectile(String projectileType) {
-        // لاجیک برگرداندن پرتابه به سمت گیاهان
+        // در این نقطه، شی پرتابه جدیدی به سمت چپ (گیاهان) شلیک می‌شود
+        // Projectile reversed = new DirectlyProjectile();
+        // reversed.setSpeed(-currentSpeed);
     }
 }

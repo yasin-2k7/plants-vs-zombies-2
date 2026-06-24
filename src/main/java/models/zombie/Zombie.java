@@ -1,55 +1,67 @@
 package models.zombie;
 
-import models.enums.Zombies;package models.zombie;
+import models.enums.Zombies;
+import models.zombie.state.WalkingState;
+import models.zombie.state.ZombieState;
 
 public abstract class Zombie {
     protected Zombies name;
     protected int health;
+    protected int maxHealth;
     protected int speed;
     protected int damage;
     protected boolean isDead = false;
-    private float x, y;
+    protected float x, y;
+    protected ZombieState currentState;
 
     public Zombie(Zombies name, int health, int speed, int damage) {
         this.name = name;
         this.health = health;
+        this.maxHealth = health;
         this.speed = speed;
         this.damage = damage;
+        this.currentState = new WalkingState();
     }
 
-        // متد آپدیت که در هر فریم بازی صدا زده می‌شود
-        public void update() {
-            if (isDead) return;
-            move(); // فراخوانی حرکت
+    public void update() {
+        if (isDead) return;
+        if (currentState != null) {
+            currentState.handleAction(this);
+        } else {
+            move();
+        }
     }
 
-        // متد انتزاعی حرکت که هر زامبی می‌تواند آن را تغییر دهد
         public void move() {
-        // منطق پیش‌فرض حرکت به سمت چپ
-    }
+        this.x -= this.speed; //حرکت به چپ
+        }
 
-        // متد مشترک دریافت آسیب
         public void takeDamage(int amount, String damageType) {
             if (isDead) return;
-
             this.health -= amount;
             if (this.health <= 0) {
                 die();
             }
         }
 
-        public abstract void damageToPlant();
-
-        // متد مرگ زامبی
         public void die() {
+            if (isDead) return;
             this.isDead = true;
-            // TODO:  حذف از لیست زامبی‌های بازی
+            // چاپ پیام مرگ
+            System.out.println("Zombie of type " + name.name() + " is dead at (" + (int)x + ", " + (int)y + ")");
         }
 
-        // Getters & Setters
+        public boolean isDead() { return isDead; }
+        public ZombieState getCurrentState() { return currentState; }
+        public void setState(ZombieState state) { this.currentState = state; }
+        public float getX() { return x; }
+        public void setX(float x) { this.x = x; }
+        public float getY() { return y; }
+        public void setY(float y) { this.y = y; }
         public int getSpeed() { return speed; }
         public void setSpeed(int speed) { this.speed = speed; }
         public int getHealth() { return health; }
         public void setHealth(int health) { this.health = health; }
-        public String getName() { return name; }
+        public Zombies getName() { return name; }
+        public int getDamage() {return damage;}
 }

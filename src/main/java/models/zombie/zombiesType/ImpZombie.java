@@ -1,27 +1,41 @@
 package models.zombie.zombiesType;
 
+import models.enums.Zombies;
+import models.plant.Plant;
 import models.zombie.Zombie;
 
 public class ImpZombie extends Zombie {
-    private boolean isThrown; // آیا پرتاب شده است؟
+    private boolean isDragon;
+    private boolean isThrown;
 
     public ImpZombie(int health, int speed, int damage, boolean isThrown) {
-        super("Imp", health, speed, damage);
-        this.isThrown = isThrown;
+        super(Zombies.IMP, health, speed, damage);
+        this.isDragon = isDragon;
+        this.isThrown = false;
     }
 
-    // متد فرود آمدن در یک خانه خاص پس از پرتاب شدن
-    public void land(int gridX, int gridY) {
-        if (isThrown) {
-            //System.out.println("Imp landed safely at grid (" + gridX + ", " + gridY + ") bypassing frontline defenses!");
-            this.isThrown = false; // پس از فرود، مثل یک زامبی عادی رفتار می‌کند
-            // آپدیت کردن موقعیت زامبی در زمین بازی
+    public void land(float targetX, float targetY) {
+        this.x = targetX;
+        this.y = targetY;
+        this.isThrown = false;
+    }
+
+    public void bite(Plant plant) {
+        if (plant != null) {
+            plant.takeDamage(this.damage);
         }
     }
 
-    // ایمپ‌ها معمولا قابلیت خاص دیگری ندارند و فقط سریع گاز می‌گیرند
-    public void bite(Object plant) {
-        // plant.takeDamage(damageAmount);
+    @Override
+    public void takeDamage(int amount, String damageType) {
+        if (isDead) return;
+        // ایمپ اژدها در برابر آتش آسیب نمی‌بیند
+        if (isDragon && "FIRE".equals(damageType)) {
+            return;
+        }
+        super.takeDamage(amount, damageType);
     }
 
+    public boolean isDragon() { return isDragon; }
+    public boolean isThrown() { return isThrown; }
 }
