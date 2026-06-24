@@ -1,19 +1,26 @@
 package models.zombie.wave;
 
+import models.enums.Zombies;
+
 public class WaveSpawnEntry {
-    private String zombieAlias;   // نام مستعار
-    private int wavePointCost;    // هزینه این زامبی
+    private String zombieAlias;
+    private int wavePointCost;
 
-    public WaveSpawnEntry(String zombieAlias, int wavePointCost) {
-        this.zombieAlias = zombieAlias;
+    public WaveSpawnEntry(String zombieAlias,int wavePointCost) {
         this.wavePointCost = wavePointCost;
-    }
+        this.zombieAlias = zombieAlias;
 
-    public String getZombieAlias() {
-        return zombieAlias;
     }
 
     public int getWavePointCost() {
         return wavePointCost;
+    }
+
+    public String getZombie() {
+        return zombieAlias;
+    }
+
+    public String getZombieAlias() {
+        return zombieAlias;
     }
 }

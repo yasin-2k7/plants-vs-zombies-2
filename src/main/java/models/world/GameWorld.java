@@ -51,6 +51,61 @@ public abstract class GameWorld {
 
     }
 
+    // متد پیدا کردن گیاه بر اساس مختصات حرکتی زامبی
+        public Plant getPlantAtPosition(float x, float y) {
+            int col = (int)(x / 100); //100 مثلا عرض هر سلول
+            int row = (int)(y / 100);
+            if (row >= 0 && row < rows && col >= 0 && col < cols) {
+                return grid[row][col].getPlant();
+            }
+            return null;
+        }
+
+
+    public Plant getNearestPlantInRow(int row, float x) {
+        if (row < 0 || row >= rows) return null;
+        Plant nearest = null;
+        float minDist = Float.MAX_VALUE;
+        for (int c = 0; c < cols; c++) {
+            Plant p = grid[row][c].getPlant();
+            if (p != null && !p.isDead()) {
+                float dist = p.getX() - x;
+                if (dist > 0 && dist < minDist) {
+                    minDist = dist;
+                    nearest = p;
+                }
+            }
+        }
+        return nearest;
+    }
+
+    public boolean isTileEmpty(float x, float y) {
+        int col = (int)(x / 100);
+        int row = (int)(y / 100);
+        if (row >= 0 && row < rows && col >= 0 && col < cols) {
+            return grid[row][col].isEmpty();
+        }
+        return false;
+    }
+
+    public int collectSunInRadius(float x, float y, int radius) {
+        // منطق جمع‌آوری خورشیدهای روی زمین
+        return 0;
+    }
+
+    public int stealSunFromPlayer(int amount) {
+        // کسر از ذخیره بازیکن
+        return 0;
+    }
+
+    public void addSunToPlayer(int amount) {
+        // اضافه به ذخیره
+    }
+
+    public void createGrave(int x, int y) {
+        // ایجاد قبر در مختصات داده‌شده
+    }
+
     public void update(){
 
     }
@@ -87,7 +142,6 @@ public abstract class GameWorld {
         return activeZombies;
     }
 
-    public List<Projectile> getActiveProjectiles() {
-        return activeProjectiles;
-    }
+    public int getCols() { return cols; }
+    public void addZombie(Zombie zombie) { activeZombies.add(zombie); }
 }
