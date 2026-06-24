@@ -4,6 +4,7 @@ import models.enums.PlantType;
 import models.miniGame.MechanicsStrategy;
 import models.plant.Plant;
 import models.pool.GenericObjectPool;
+import models.projectile.Projectile;
 import models.world.levelSetup.LevelSetup;
 import models.world.loseCondition.LoseCondition;
 import models.world.mechanics.Mechanic;
@@ -26,13 +27,15 @@ public abstract class GameWorld {
     private WinCondition winCondition;
     private ArrayList<Mechanic> mechanics;
 
-    private Queue<PlantType> conveyorBelt;
+    private ArrayList<PlantType> conveyorBelt;
     private ArrayList<PlantType> plantLists;
 
     protected List<Zombie> activeZombies;
+    protected List<Plant> activePlants;
     protected List<Sun> activeSuns;
+    protected List<Projectile> activeProjectiles;
 
-    public GenericObjectPool<Sun> SunsPool;
+    private GenericObjectPool<Sun> SunsPool = new GenericObjectPool<>(Sun::new);
 
 
     public GameWorld(LevelSetup levelSetup, ArrayList<LoseCondition> loseConditions, WinCondition winCondition, ArrayList<Mechanic> mechanics) {
@@ -113,15 +116,26 @@ public abstract class GameWorld {
 
     protected abstract void applyChapterRules();
 
-    public void tick(){
-       // if (activeZombies == null) return;
-        //for (int i = activeZombies.size() - 1; i >= 0; i--) {
-            //models.zombie.Zombie zombie = activeZombies.get(i);
-           // zombie.update();
-           // if (zombie.isDead()) {
-             //   activeZombies.remove(i);
-           // }
-        //}
+    public void tick(){}
+
+    public List<Sun> getActiveSuns() {
+        return activeSuns;
+    }
+
+    public GenericObjectPool<Sun> getSunsPool() {
+        return SunsPool;
+    }
+
+    public void setSun(int sun) {
+        Sun = sun;
+    }
+
+    public int getSun() {
+        return Sun;
+    }
+
+    public List<Plant> getActivePlants() {
+        return activePlants;
     }
 
     public List<Zombie> getActiveZombies() {

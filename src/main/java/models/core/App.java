@@ -13,8 +13,9 @@ import java.util.ArrayList;
 public class App {
     private static User currentUser;
     private static MenuController currentMenu;
-    private static ArrayList<News> allNews;
     private static GameWorld currentGame;
+
+
 
     public static final HitStrategy FIRE_PEA = new FirePeaStrategy();
     public static final HitStrategy ICE_PEA = new IcePeaStrategy();
