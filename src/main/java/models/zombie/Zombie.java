@@ -52,4 +52,12 @@ public abstract class Zombie {
         public int getHealth() { return health; }
         public void setHealth(int health) { this.health = health; }
         public String getName() { return name; }
+
+    public float getX() {
+        return x;
+    }
+
+    public float getY() {
+        return y;
+    }
 }

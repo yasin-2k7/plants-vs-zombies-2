@@ -4,6 +4,7 @@ import models.enums.PlantType;
 import models.miniGame.MechanicsStrategy;
 import models.plant.Plant;
 import models.pool.GenericObjectPool;
+import models.projectile.Projectile;
 import models.world.levelSetup.LevelSetup;
 import models.world.loseCondition.LoseCondition;
 import models.world.mechanics.Mechanic;
@@ -32,6 +33,7 @@ public abstract class GameWorld {
     protected List<Zombie> activeZombies;
     protected List<Plant> activePlants;
     protected List<Sun> activeSuns;
+    protected List<Projectile> activeProjectiles;
 
     private GenericObjectPool<Sun> SunsPool = new GenericObjectPool<>(Sun::new);
 
@@ -79,5 +81,13 @@ public abstract class GameWorld {
 
     public List<Plant> getActivePlants() {
         return activePlants;
+    }
+
+    public List<Zombie> getActiveZombies() {
+        return activeZombies;
+    }
+
+    public List<Projectile> getActiveProjectiles() {
+        return activeProjectiles;
     }
 }
