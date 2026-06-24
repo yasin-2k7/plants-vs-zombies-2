@@ -24,4 +24,7 @@ public class Cell {
         this.plant = null;
     }
 
+    public Plant getPlant() {
+        return plant;
+    }
 }

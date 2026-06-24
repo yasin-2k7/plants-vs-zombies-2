@@ -215,4 +215,6 @@ public abstract class GameWorld {
     public long getElapsedTime() {
         return System.currentTimeMillis() - startTime;
     }
+
+    public void addZombie(Zombie zombie) { activeZombies.add(zombie); }
 }

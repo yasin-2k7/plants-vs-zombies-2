@@ -36,6 +36,7 @@ public class Plant {
             components.getLast().update(this);
         }
         if (health <= 0){
+            die();
             App.getCurrentGame().getActivePlants().remove(this);
         }
     }
@@ -48,29 +49,8 @@ public class Plant {
         this.damage = damage;
     }
 
-    public int getY() {
-        return y;
-    }
-
-    public int getX() {
-        return x;
-    }
-
-    public void setX(int x) {
-        this.x = x;
-    }
-
     public void setY(int y) {
         this.y = y;
-    }
-
-    public PlantType getType() {
-        return type;
-    }
-
-    public void takeDamage(int amount) {
-        this.health -= amount;
-        if (this.health <= 0) die();
     }
 
     public void die() { this.dead = true; }
