@@ -2,7 +2,9 @@ package models.plant;
 
 import models.core.App;
 import models.enums.PlantType;
+import models.plant.components.PlacementBehaviorComponent;
 import models.plant.components.SunProducerComponent;
+import models.world.Cell;
 
 import java.util.ArrayList;
 
@@ -16,6 +18,7 @@ public class Plant {
     private boolean sheep = false;
     private boolean disabled = false;
     private int slowTicks = 0;
+    private Cell cell = null;
 
     public void addComponent(GameComponent comp) {
         components.add(comp);
@@ -41,11 +44,9 @@ public class Plant {
         }
     }
 
-    public Plant(PlantType type, int health, int x, int y, int damage) {
+    public Plant(PlantType type, int health, int damage) {
         this.type = type;
         this.health = health;
-        this.x = x;
-        this.y = y;
         this.damage = damage;
     }
 
@@ -62,4 +63,29 @@ public class Plant {
     public int getY() { return y; }
     public PlantType getType() { return type; }
     public void setX(int x) { this.x = x; }
+
+    public Cell getCell() {
+        return cell;
+    }
+
+    public int getDamage() {
+        return damage;
+    }
+
+    public <T extends GameComponent> T getComponent(Class<T> componentClass) {
+        for (GameComponent component : components) {
+            if (componentClass.isInstance(component)) {
+                return componentClass.cast(component);
+            }
+        }
+        return null;
+    }
+
+    public void activatePlantFood(){
+
+    }
+
+    public void destroy(){
+
+    }
 }

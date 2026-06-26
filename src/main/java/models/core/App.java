@@ -1,26 +1,17 @@
 package models.core;
 
 import controller.MenuController;
-import controller.NewsMenuController;
-import models.projectile.strategy.FirePeaStrategy;
-import models.projectile.strategy.HitStrategy;
-import models.projectile.strategy.IcePeaStrategy;
-import models.projectile.strategy.RegularPeaStrategy;
+import models.plant.PlantFactory;
 import models.world.GameWorld;
-
-import java.util.ArrayList;
 
 public class App {
     private static User currentUser;
     private static MenuController currentMenu;
     private static GameWorld currentGame;
+    private static final PlantFactory factory = new PlantFactory();
 
-
-
-    public static final HitStrategy FIRE_PEA = new FirePeaStrategy();
-    public static final HitStrategy ICE_PEA = new IcePeaStrategy();
-    public static final HitStrategy REGULAR_PEA = new RegularPeaStrategy();
-    public static final HitStrategy ICE_MELON = new FirePeaStrategy();
+    private static final int CELL_HEIGHT = 80;
+    private static final int CELL_WIDTH = 50;
 
     public static User getCurrentUser() {
         return currentUser;
@@ -37,4 +28,17 @@ public class App {
     public static void setCurrentGame(GameWorld currentGame) {
         App.currentGame = currentGame;
     }
+
+    public static int getCellHeight() {
+        return CELL_HEIGHT;
+    }
+
+    public static int getCellWidth() {
+        return CELL_WIDTH;
+    }
+
+    public static PlantFactory getFactory() {
+        return factory;
+    }
+
 }

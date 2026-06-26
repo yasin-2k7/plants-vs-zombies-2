@@ -1,10 +1,10 @@
 package models.world;
 
-import models.core.User;
 import models.enums.PlantType;
 import models.lawnMower.LawnMower;
 import models.miniGame.MechanicsStrategy;
 import models.plant.Plant;
+import models.plant.components.LifespanComponent;
 import models.pool.GenericObjectPool;
 import models.projectile.Projectile;
 import models.world.levelSetup.LevelSetup;
@@ -15,7 +15,6 @@ import models.zombie.Zombie;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Queue;
 
 public abstract class GameWorld {
     private long startTime;
@@ -45,7 +44,22 @@ public abstract class GameWorld {
     protected List<LawnMower> lawnMowers;
 
     private GenericObjectPool<Sun> sunsPool = new GenericObjectPool<>(Sun::new);
+    private GenericObjectPool<Projectile> projectilesPool = new GenericObjectPool<>(Projectile::new);
 
+    private final List<LifespanComponent> smallShrooms = new ArrayList<>();
+
+    public void registerShroom(LifespanComponent observer) {
+        smallShrooms.add(observer);
+    }
+    public void unregisterPuffShroom(LifespanComponent observer) {
+        smallShrooms.remove(observer);
+    }
+
+    public void triggerPlantFood(PlantType type) {
+        for (LifespanComponent observer : smallShrooms) {
+            observer.onGlobalPlantFoodActivated(type);
+        }
+    }
 
     public GameWorld(LevelSetup levelSetup,
                      ArrayList<LoseCondition> loseConditions,
@@ -217,4 +231,8 @@ public abstract class GameWorld {
     }
 
     public void addZombie(Zombie zombie) { activeZombies.add(zombie); }
+
+    public GenericObjectPool<Projectile> getProjectilesPool() {
+        return projectilesPool;
+    }
 }

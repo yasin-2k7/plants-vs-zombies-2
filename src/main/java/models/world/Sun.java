@@ -1,9 +1,14 @@
 package models.world;
 
 import models.core.App;
+import models.enums.ProjectileType;
 import models.plant.GameComponent;
 import models.plant.components.SunProducerComponent;
+import models.plant.visions.VisionStrategy;
 import models.pool.Resettable;
+import models.projectile.hitStrategies.HitStrategy;
+import models.projectile.movementStrategies.MovementStrategy;
+import models.projectile.strikeStrategies.CheckStrike;
 
 public class Sun implements Resettable {
     private float x, y;
@@ -48,6 +53,17 @@ public class Sun implements Resettable {
         this.producer = component;
         this.game = App.getCurrentGame();
     }
+
+    @Override
+    public void reset(float x, float y) {
+
+    }
+
+    @Override
+    public void reset(float x, float y, HitStrategy hitStrategy, MovementStrategy movementStrategy, CheckStrike checkStrike, VisionStrategy visionStrategy, ProjectileType type) {
+
+    }
+
 
     public void Click(){
         game.getActiveSuns().remove(this);

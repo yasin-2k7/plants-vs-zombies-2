@@ -1,7 +1,26 @@
 package models.enums;
 
 public enum ProjectileType {
-    PEA,
-    MELON,
-    CABBAGE;
+    PEA("STRAIGHT"),
+    ICE_PEA("STRAIGHT"),
+    FIRE_PEA("STRAIGHT"),
+    GIANT_PEA("STRAIGHT"),
+    PLASMA("STRAIGHT"),
+    CITRON("STRAIGHT"),
+    ROTOBAGA_PROJECTILE("STRAIGHT"),
+    CACTUS("STRAIGHT"),
+    CACTUS_SPECIAL("STRAIGHT"),
+    STAR("STAR"),
+    GOO("STRAIGHT"),
+    GOO_SPECIAL("STRAIGHT"),
+    SMALL_SHROOM("STRAIGHT"),
+    FUME("STRAIGHT"),
+    FUME_SPECIAL("STRAIGHT"),
+    KERNEL("LOBBED"),
+    MELON("LOBBED"),
+    ICE_MELON("LOBBED"),
+    CABBAGE("LOBBED");
+
+    public final String movement;
+    ProjectileType(String movement) {this.movement = movement;}
 }
