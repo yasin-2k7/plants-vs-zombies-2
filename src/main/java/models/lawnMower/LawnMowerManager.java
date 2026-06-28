@@ -1,28 +1,77 @@
 package models.lawnMower;
 
+import models.core.App;
+import models.world.GameState;
 import models.zombie.Zombie;
 import java.util.List;
+import java.util.ArrayList;
 
 public class LawnMowerManager {
+    private List<LawnMower> mowers;
+    private final int TOTAL_ROWS = 5;
+
     public LawnMowerManager() {
-        // TODO: ساخت و جایگذاری اولیه چمن‌زن‌ها برای هر ردیف
+        this.mowers = new ArrayList<>();
+        for (int i = 0; i < TOTAL_ROWS; i++) {
+            mowers.add(new LawnMower(i));
+        }
     }
 
     public void updateMowers(List<Zombie> allZombies) {
-        // TODO: فراخوانی متدهای بررسی فعال‌سازی، حرکت و حذف چمن‌زن‌ها
+        checkActivations(allZombies);
+
+        for (LawnMower mower : mowers) {
+            if (mower.isActive()) {
+                mower.mowZombies(getZombiesInRow(allZombies, mower.getRow()));
+                mower.move();
+            }
+        }
     }
 
     private void checkActivations(List<Zombie> allZombies) {
-        // TODO: بررسی رسیدن زامبی به مرز و روشن کردن چمن‌زن
+        for (Zombie z : allZombies) {
+            if (!z.isDead() && z.getX() <= 0) { // انتهای خط رسیده
+                int row = getRowFromY(z.getY());
+                LawnMower mower = getMowerByRow(row);
+
+                if (mower != null) {
+                    if (!mower.isSpent() && !mower.isActive()) {
+                        mower.activate();
+                    } else if (mower.isSpent()) {
+                        System.out.println("The zombie ate your brain; LOSER!!!");
+
+                        // TODO: در اینجا باید به GameWorld سیگنال باخت ارسال کنید
+                        App.getCurrentGame().setState(GameState.LOST);
+
+                        // برای جلوگیری از اسپم شدن پیام، زامبی را متوقف یا بازی را فریز می‌کنیم
+                        z.setSpeed(0);
+                    }
+                }
+            }
+        }
     }
 
     private List<Zombie> getZombiesInRow(List<Zombie> allZombies, int row) {
-        // TODO: برگرداندن لیست زامبی‌های موجود در یک ردیف خاص
-        return null;
+        List<Zombie> zombiesInRow = new ArrayList<>();
+        for (Zombie z : allZombies) {
+            if (getRowFromY(z.getY()) == row) {
+                zombiesInRow.add(z);
+            }
+        }
+        return zombiesInRow;
     }
 
     private LawnMower getMowerByRow(int row) {
-        // TODO: پیدا کردن چمن‌زن مربوط به یک ردیف
+        for (LawnMower mower : mowers) {
+            if (mower.getRow() == row) {
+                return mower;
+            }
+        }
         return null;
+    }
+
+    private int getRowFromY(float y) {
+        int row = (int) (y / 100);
+        return Math.max(0, Math.min(row, TOTAL_ROWS - 1));
     }
 }
