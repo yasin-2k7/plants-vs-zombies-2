@@ -62,7 +62,7 @@ public abstract class Zombie {
         if (isDead) return;
         this.isDead = true;
         // چاپ پیام مرگ
-        System.out.println("Zombie of type " + name.name() + " is dead at (" + (int)x + ", " + (int)y + ")");
+        System.out.println("Zombie of type " + name.name() + " is isDead at (" + (int)x + ", " + (int)y + ")");
     }
 
     public void applySlow(int ticks, double factor) {

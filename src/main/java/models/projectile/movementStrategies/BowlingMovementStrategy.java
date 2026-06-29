@@ -51,4 +51,9 @@ public class BowlingMovementStrategy implements MovementStrategy{
         projectile.setX(projectile.getX() + (speedX * 0.1f));
         projectile.setY(projectile.getY() + (speedY * 0.1f));
     }
+
+    @Override
+    public boolean isDead(Projectile projectile) {
+        return projectile.getX() > 1000 || projectile.getX() < 0 || projectile.getY() > 1000 || projectile.getY() < 0;
+    }
 }

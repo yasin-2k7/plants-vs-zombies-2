@@ -5,12 +5,15 @@ import models.enums.PlantLayer;
 import models.enums.PlantType;
 import models.enums.ProjectileType;
 import models.plant.components.*;
+import models.plant.components.plantFoodBehaviors.RandomTargetPlantFood;
 import models.plant.visions.RotatedVisionStrategy;
 import models.plant.visions.StraightVisionStrategy;
 import models.projectile.hitStrategies.CombinedDamageStrategy;
 import models.projectile.movementStrategies.BowlingMovementStrategy;
+import models.projectile.movementStrategies.LobbedMovementStrategy;
 import models.projectile.movementStrategies.MovementStrategy;
 import models.projectile.movementStrategies.StraightMovementStrategy;
+import models.projectile.strikeStrategies.CheckLobbedStrike;
 import models.projectile.strikeStrategies.CheckStraightStrike;
 
 import java.util.HashMap;
@@ -43,6 +46,11 @@ public class PlantFactory {
         registry.put(PlantType.SEA_SHROOM, this::buildSeaShroom);
         registry.put(PlantType.PUFF_SHROOM, this::buildPuffShroom);
         registry.put(PlantType.FUME_SHROOM, this::buildFumeShroom);
+        registry.put(PlantType.CABBAGE_PULT, this::buildCabbagePult);
+        registry.put(PlantType.KERNEL_PULT, this::buildKernelPult);
+        registry.put(PlantType.MELON_PULT, this::buildMelonPult);
+        registry.put(PlantType.WINTER_MELON, this::buildWinterMelonPult);
+        registry.put(PlantType.PEPPER_PULT, this::buildPepperPult);
     }
 
     public Plant createPlant(PlantType type, int x, int y) {
@@ -104,13 +112,14 @@ public class PlantFactory {
         int health = level >= 3 ? 450 : 300;
         int damage = level >= 2 ? 30 : 20;
         Plant p = new Plant(PlantType.PEASHOOTER, health, damage);
+        CombinedDamageStrategy combinedDamageStrategy = new CombinedDamageStrategy(damage, ProjectileType.PEA);
         ShooterComponent newComponent = new ShooterComponent(ProjectileType.PEA,
                                             null,
                                             15,
                                             1,
                                             20,
                                             false,
-                                            new CombinedDamageStrategy(damage, ProjectileType.PEA),
+                                            () -> combinedDamageStrategy,
                                             new CheckStraightStrike(),
                                             0,
                                             1,
@@ -128,13 +137,14 @@ public class PlantFactory {
         int health = level >= 3 ? 500 : 300;
         int damage = level >= 2 ? 30 : 20;
         Plant p = new Plant(PlantType.REPEATER, health, damage);
+        CombinedDamageStrategy combinedDamageStrategy = new CombinedDamageStrategy(damage, ProjectileType.PEA);
         ShooterComponent newComponent = new ShooterComponent(ProjectileType.PEA,
                 ProjectileType.GIANT_PEA,
                 15,
                 2,
                 30,
                 true,
-                new CombinedDamageStrategy(damage, ProjectileType.PEA),
+                () -> combinedDamageStrategy,
                 new CheckStraightStrike(),
                 1,
                 1,
@@ -152,13 +162,14 @@ public class PlantFactory {
         int health = level >= 4 ? 500 : 300;
         int damage = level >= 3 ? 30 : 20;
         Plant p = new Plant(PlantType.THREEPEATER, health, 0);
+        CombinedDamageStrategy combinedDamageStrategy = new CombinedDamageStrategy(damage, ProjectileType.PEA);
         ShooterComponent newComponent = new ShooterComponent(ProjectileType.PEA,
                 null,
                 15,
                 1,
                 30,
                 false,
-                new CombinedDamageStrategy(damage, ProjectileType.PEA),
+                () -> combinedDamageStrategy,
                 new CheckStraightStrike(),
                 0,
                 1,
@@ -189,7 +200,7 @@ public class PlantFactory {
                 1,
                 20,
                 false,
-                combinedDamageStrategy,
+                () -> combinedDamageStrategy,
                 new CheckStraightStrike(),
                 0,
                 1,
@@ -207,6 +218,7 @@ public class PlantFactory {
         int damage = level >= 2 ? 20 : 10;
         int health = level >= 3 ? 450 : 300;
         Plant p = new Plant(PlantType.ROTOBAGA, health, damage);
+        CombinedDamageStrategy combinedDamageStrategy = new CombinedDamageStrategy(damage, ProjectileType.ROTOBAGA_PROJECTILE);
         for (int i = 0; i < 4; i++){
             ShooterComponent shooterComponent = new ShooterComponent(ProjectileType.ROTOBAGA_PROJECTILE,
                     null,
@@ -214,7 +226,7 @@ public class PlantFactory {
                     1,
                     20,
                     false,
-                    new CombinedDamageStrategy(damage, ProjectileType.ROTOBAGA_PROJECTILE),
+                    () -> combinedDamageStrategy,
                     new CheckStraightStrike(),
                     0,
                     1,
@@ -234,13 +246,14 @@ public class PlantFactory {
         int damage = level >= 2 ? 30 : 20;
         int health = level >= 3 ? 500 : 300;
         Plant p = new Plant(PlantType.PEA_POD, health, damage);
+        CombinedDamageStrategy combinedDamageStrategy = new CombinedDamageStrategy(damage, ProjectileType.PEA);
         ShooterComponent newComponent = new ShooterComponent(ProjectileType.PEA,
                 ProjectileType.GIANT_PEA,
                 15,
                 1,
                 1,
                 true,
-                new CombinedDamageStrategy(damage, ProjectileType.PEA),
+                () -> combinedDamageStrategy,
                 new CheckStraightStrike(),
                 1,
                 1,
@@ -258,6 +271,7 @@ public class PlantFactory {
         int damage = level >= 2 ? 30 : 20;
         int health = level >= 3 ? 500 : 300;
         Plant p = new Plant(PlantType.SPLIT_PEA, health, damage);
+        CombinedDamageStrategy combinedDamageStrategy = new CombinedDamageStrategy(damage, ProjectileType.PEA);
         for (int i = 0; i <= 1; i++){
             ShooterComponent newComponent = new ShooterComponent(ProjectileType.PEA,
                     null,
@@ -265,7 +279,7 @@ public class PlantFactory {
                     i+1,
                     20,
                     false,
-                    new CombinedDamageStrategy(damage, ProjectileType.PEA),
+                    () -> combinedDamageStrategy,
                     new CheckStraightStrike(),
                     0,
                     1,
@@ -285,13 +299,14 @@ public class PlantFactory {
         int damage = level >= 3 ? 950 : 800;
         int chargeTime = level >= 2 ? 80 : 90;
         Plant p = new Plant(PlantType.CITRON, 300, damage);
+        CombinedDamageStrategy combinedDamageStrategy = new CombinedDamageStrategy(damage, ProjectileType.CITRON);
         ShooterComponent newComponent = new ShooterComponent(ProjectileType.CITRON,
                 ProjectileType.PLASMA,
                 chargeTime,
                 1,
                 1,
                 true,
-                new CombinedDamageStrategy(damage, ProjectileType.CITRON),
+                () -> combinedDamageStrategy,
                 new CheckStraightStrike(),
                 1,
                 1,
@@ -322,13 +337,14 @@ public class PlantFactory {
         int damage = level >= 3 ? 40 : 30;
         int pierce = level >= 2 ? 4 : 3;
         Plant p = new Plant(PlantType.CACTUS, 300, damage);
+        CombinedDamageStrategy combinedDamageStrategy = new CombinedDamageStrategy(damage, ProjectileType.CACTUS);
         ShooterComponent newComponent = new ShooterComponent(ProjectileType.CACTUS,
                 ProjectileType.CACTUS_SPECIAL,
                 15,
                 1,
                 20,
                 true,
-                new CombinedDamageStrategy(damage, ProjectileType.CACTUS),
+                () -> combinedDamageStrategy,
                 new CheckStraightStrike(),
                 20,
                 pierce,
@@ -354,7 +370,7 @@ public class PlantFactory {
                 1,
                 20,
                 false,
-                combinedDamageStrategy,
+                () -> combinedDamageStrategy,
                 new CheckStraightStrike(),
                 0,
                 1,
@@ -372,13 +388,14 @@ public class PlantFactory {
         int shootingTime = level >= 2 ? 13 : 15;
         int damage = level >= 3 ? 30 : 20;
         Plant p = new Plant(PlantType.STARFRUIT, 300, damage);
+        CombinedDamageStrategy combinedDamageStrategy = new CombinedDamageStrategy(damage, ProjectileType.STAR);
         ShooterComponent newComponent = new ShooterComponent(ProjectileType.STAR,
                 null,
                 shootingTime,
                 1,
                 20,
                 false,
-                new CombinedDamageStrategy(damage, ProjectileType.STAR),
+                () -> combinedDamageStrategy,
                 new CheckStraightStrike(),
                 0,
                 1,
@@ -415,7 +432,7 @@ public class PlantFactory {
                 1,
                 20,
                 true,
-                combinedDamageStrategy,
+                () -> combinedDamageStrategy,
                 new CheckStraightStrike(),
                 20,
                 1,
@@ -435,13 +452,14 @@ public class PlantFactory {
         int damage = level >= 2 ? 30 : 20;
         int plantFoodChance = level >= 3 ? 10 : 5;
         Plant p = new Plant(PlantType.MEGA_GATLING_PEA, 300, damage);
+        CombinedDamageStrategy combinedDamageStrategy = new CombinedDamageStrategy(damage, ProjectileType.PEA);
         ShooterComponent newComponent = new ShooterComponent(ProjectileType.PEA,
                 ProjectileType.GIANT_PEA,
                 15,
                 4,
                 30,
                 true,
-                new CombinedDamageStrategy(damage, ProjectileType.PEA),
+                () -> combinedDamageStrategy,
                 new CheckStraightStrike(),
                 4,
                 1,
@@ -465,13 +483,14 @@ public class PlantFactory {
         int damage = level >= 3 ? 25 : 20;
         int lifespan = level >= 4 ? 700 : 600;
         Plant p = new Plant(PlantType.SEA_SHROOM, 300, damage);
+        CombinedDamageStrategy combinedDamageStrategy = new CombinedDamageStrategy(damage, ProjectileType.SMALL_SHROOM);
         ShooterComponent newComponent = new ShooterComponent(ProjectileType.SMALL_SHROOM,
                 ProjectileType.SMALL_SHROOM,
                 15,
                 1,
                 20,
                 false,
-                new CombinedDamageStrategy(damage, ProjectileType.SMALL_SHROOM),
+                () -> combinedDamageStrategy,
                 new CheckStraightStrike(),
                 0,
                 1,
@@ -491,13 +510,14 @@ public class PlantFactory {
         int damage = level >= 3 ? 30 : 20;
         int lifespan = level >= 2 ? 700 : 600;
         Plant p = new Plant(PlantType.PUFF_SHROOM, 300, damage);
+        CombinedDamageStrategy combinedDamageStrategy = new CombinedDamageStrategy(damage, ProjectileType.SMALL_SHROOM);
         ShooterComponent newComponent = new ShooterComponent(ProjectileType.SMALL_SHROOM,
                 ProjectileType.SMALL_SHROOM,
                 15,
                 1,
                 20,
                 false,
-                new CombinedDamageStrategy(damage, ProjectileType.SMALL_SHROOM),
+                () -> combinedDamageStrategy,
                 new CheckStraightStrike(),
                 0,
                 1,
@@ -516,13 +536,14 @@ public class PlantFactory {
         int range = (level >= 2 ? 6 : 5) * App.getCellWidth();
         int damage = level >= 3 ? 30 : 20;
         Plant p = new Plant(PlantType.FUME_SHROOM, 300, damage);
+        CombinedDamageStrategy combinedDamageStrategy = new CombinedDamageStrategy(damage, ProjectileType.FUME);
         ShooterComponent newComponent = new ShooterComponent(ProjectileType.FUME,
                 ProjectileType.FUME_SPECIAL,
                 15,
                 1,
                 1,
                 true,
-                new CombinedDamageStrategy(damage, ProjectileType.FUME),
+                () -> combinedDamageStrategy,
                 new CheckStraightStrike(),
                 1,
                 100,
@@ -534,6 +555,150 @@ public class PlantFactory {
         newComponent.getVisions().add(new StraightVisionStrategy(range, App.getCellHeight(), false));
         MovementStrategy movementStrategy = new StraightMovementStrategy(10, 0, 0);
         newComponent.getMovementStrategies().add(() -> movementStrategy);
+        p.addComponent(newComponent);
+        return p;
+    }
+
+    private Plant buildCabbagePult(){
+        int level = App.getCurrentUser().getUnlockedPlantsLevels().get(PlantType.CABBAGE_PULT);
+        int damage = level >= 2 ? 50 : 40;
+        int shootingTime = level >= 3 ? 25 : 29;
+        int health = level >= 4 ? 450 : 300;
+        Plant p = new Plant(PlantType.CABBAGE_PULT, health, damage);
+        CombinedDamageStrategy combinedDamageStrategy = new CombinedDamageStrategy(damage, ProjectileType.CABBAGE);
+        ShooterComponent newComponent = new ShooterComponent(ProjectileType.CABBAGE,
+                ProjectileType.SPECIAL_CABBAGE,
+                shootingTime,
+                1,
+                0,
+                false,
+                () -> combinedDamageStrategy,
+                new CheckLobbedStrike(),
+                0,
+                1,
+                0,
+                2);
+        newComponent.getVisions().add(new StraightVisionStrategy(1000, App.getCellHeight(), true));
+        newComponent.getMovementStrategies().add(LobbedMovementStrategy::new);
+        newComponent.setPlantFoodBehavior(new RandomTargetPlantFood(6));
+        p.addComponent(newComponent);
+        return p;
+    }
+
+    private Plant buildKernelPult(){
+        int level = App.getCurrentUser().getUnlockedPlantsLevels().get(PlantType.KERNEL_PULT);
+        float butterChance = level >= 2 ? 0.25f : 0.2f;
+        int damageAddition = level >= 3 ? 10 : 0;
+        int health = level >= 4 ? 450 : 300;
+        Plant p = new Plant(PlantType.KERNEL_PULT, health, 0);
+        ShooterComponent newComponent = new ShooterComponent(ProjectileType.KERNEL,
+                ProjectileType.BUTTER,
+                29,
+                1,
+                0,
+                false,
+                null,
+                new CheckLobbedStrike(),
+                0,
+                1,
+                0,
+                0);
+        newComponent.getVisions().add(new StraightVisionStrategy(1000, App.getCellHeight(), true));
+        newComponent.getMovementStrategies().add(LobbedMovementStrategy::new);
+        newComponent.setAttackCallback(owner -> {
+            if (Math.random() < butterChance) {
+                newComponent.setBulletType(ProjectileType.BUTTER);
+            } else {
+                newComponent.setBulletType(ProjectileType.KERNEL);
+            }
+        });
+        CombinedDamageStrategy kernelStrategy = new CombinedDamageStrategy(20 + damageAddition, ProjectileType.KERNEL);
+        CombinedDamageStrategy butterStrategy = new CombinedDamageStrategy(40 + damageAddition, ProjectileType.BUTTER);
+        butterStrategy.setElement("STUN");
+        newComponent.setDamageStrategy(() -> {
+            if (newComponent.getBulletType() == ProjectileType.KERNEL){
+                return kernelStrategy;
+            }
+            return butterStrategy;
+        });
+        newComponent.setPlantFoodStrategy(butterStrategy);
+        newComponent.setPlantFoodBehavior(new RandomTargetPlantFood());
+        p.addComponent(newComponent);
+        return p;
+    }
+
+    private Plant buildMelonPult(){
+        int level = App.getCurrentUser().getUnlockedPlantsLevels().get(PlantType.MELON_PULT);
+        int damage = level >= 3 ? 110 : 80;
+        int aoeDamage = level >= 4 ? 55 : 40;
+        Plant p = new Plant(PlantType.MELON_PULT, 300, damage);
+        CombinedDamageStrategy combinedDamageStrategy = new CombinedDamageStrategy(damage, aoeDamage, 200, ProjectileType.MELON);
+        ShooterComponent newComponent = new ShooterComponent(ProjectileType.MELON,
+                ProjectileType.SPECIAL_MELON,
+                29,
+                1,
+                0,
+                false,
+                () -> combinedDamageStrategy,
+                new CheckLobbedStrike(),
+                0,
+                1,
+                0,
+                2);
+        newComponent.getVisions().add(new StraightVisionStrategy(1000, App.getCellHeight(), true));
+        newComponent.getMovementStrategies().add(LobbedMovementStrategy::new);
+        newComponent.setPlantFoodBehavior(new RandomTargetPlantFood(6));
+        p.addComponent(newComponent);
+        return p;
+    }
+
+    private Plant buildWinterMelonPult(){
+        int level = App.getCurrentUser().getUnlockedPlantsLevels().get(PlantType.WINTER_MELON);
+        int aoeDamage = level >= 3 ? 55 : 40;
+        Plant p = new Plant(PlantType.WINTER_MELON, 300, 80);
+        CombinedDamageStrategy combinedDamageStrategy = new CombinedDamageStrategy(80, aoeDamage, 200, ProjectileType.ICE_MELON);
+        combinedDamageStrategy.setElement("ICE");
+        ShooterComponent newComponent = new ShooterComponent(ProjectileType.ICE_MELON,
+                ProjectileType.SPECIAL_ICE_MELON,
+                29,
+                1,
+                0,
+                false,
+                () -> combinedDamageStrategy,
+                new CheckLobbedStrike(),
+                0,
+                1,
+                0,
+                2);
+        newComponent.getVisions().add(new StraightVisionStrategy(1000, App.getCellHeight(), true));
+        newComponent.getMovementStrategies().add(LobbedMovementStrategy::new);
+        newComponent.setPlantFoodBehavior(new RandomTargetPlantFood(6));
+        p.addComponent(newComponent);
+        return p;
+    }
+
+    private Plant buildPepperPult(){
+        int level = App.getCurrentUser().getUnlockedPlantsLevels().get(PlantType.PEPPER_PULT);
+        int damage = level >= 2 ? 65 : 50;
+        int radius = level >= 3 ? 250 : 200;
+        Plant p = new Plant(PlantType.PEPPER_PULT, 300, damage);
+        CombinedDamageStrategy combinedDamageStrategy = new CombinedDamageStrategy(80, damage/2, radius, ProjectileType.PEPPER);
+        combinedDamageStrategy.setElement("FIRE");
+        ShooterComponent newComponent = new ShooterComponent(ProjectileType.PEPPER,
+                ProjectileType.SPECIAL_PEPPER,
+                29,
+                1,
+                0,
+                false,
+                () -> combinedDamageStrategy,
+                new CheckLobbedStrike(),
+                0,
+                1,
+                0,
+                2);
+        newComponent.getVisions().add(new StraightVisionStrategy(1000, App.getCellHeight(), true));
+        newComponent.getMovementStrategies().add(LobbedMovementStrategy::new);
+        newComponent.setPlantFoodBehavior(new RandomTargetPlantFood(6));
         p.addComponent(newComponent);
         return p;
     }

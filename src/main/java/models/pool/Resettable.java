@@ -11,5 +11,4 @@ public interface Resettable {
     void reset(float x, float y, int size, SunProducerComponent component);
     void reset(float x, float y);
     void reset(float x, float y, HitStrategy hitStrategy, MovementStrategy movementStrategy, CheckStrike checkStrike, ProjectileType type);
-    void reset(float x, float y, float targetX, float targetY, HitStrategy hitStrategy, MovementStrategy movementStrategy, CheckStrike checkStrike, ProjectileType type);
 }

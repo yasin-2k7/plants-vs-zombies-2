@@ -24,4 +24,11 @@ public class StraightMovementStrategy implements MovementStrategy{
         projectile.setY(projectile.getY() + (speedY * 0.1f));
         // delta in the future...
     }
+
+    @Override
+    public boolean isDead(Projectile projectile) {
+        return projectile.getX() > 1000 || projectile.getX() < 0 || projectile.getY() > 1000 || projectile.getY() < 0;
+    }
+
+
 }

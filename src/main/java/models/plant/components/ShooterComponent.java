@@ -4,6 +4,8 @@ import models.core.App;
 import models.enums.ProjectileType;
 import models.plant.GameComponent;
 import models.plant.Plant;
+import models.plant.components.plantFoodBehaviors.BurstPlantFood;
+import models.plant.components.plantFoodBehaviors.PlantFoodBehavior;
 import models.plant.visions.VisionStrategy;
 import models.projectile.Projectile;
 import models.projectile.hitStrategies.CombinedDamageStrategy;
@@ -36,18 +38,23 @@ public class ShooterComponent implements GameComponent {
 
     private int normalPierce;
     private int giantPierce;
+    private Plant owner;
 
     Zombie target = null;
 
-    private CombinedDamageStrategy damageStrategy;
+    private Supplier<CombinedDamageStrategy> damageStrategy;
     private CheckStrike strikeStrategy;
     private List<VisionStrategy> visions = new ArrayList<>();
     private List<Supplier<MovementStrategy>> movementStrategies = new ArrayList<>();
 
-    private CombinedDamageStrategy plantFoodStrategy = damageStrategy.changeDamage(damageStrategy.getDamage()*giantDamageFactor);
+    private CombinedDamageStrategy plantFoodStrategy = damageStrategy.get().changeDamage(damageStrategy.get().getDamage()*giantDamageFactor);
 
     public void setPlantFoodStrategy(CombinedDamageStrategy plantFoodStrategy) {
         this.plantFoodStrategy = plantFoodStrategy;
+    }
+
+    public void setPlantFoodBehavior(PlantFoodBehavior plantFoodBehavior) {
+        this.plantFoodBehavior = plantFoodBehavior;
     }
 
     public interface AttackCallback {
@@ -56,7 +63,7 @@ public class ShooterComponent implements GameComponent {
 
     private AttackCallback attackCallback;
 
-    public ShooterComponent(ProjectileType bulletType, ProjectileType giantType, int shootingTime, int burstProjectileNumber, int burstProjectileNumberOnPlantFood, boolean hasGiant, CombinedDamageStrategy damageStrategy, CheckStrike strikeStrategy, int giantCount, int normalPierce, int giantPierce, int giantDamageFactor) {
+    public ShooterComponent(ProjectileType bulletType, ProjectileType giantType, int shootingTime, int burstProjectileNumber, int burstProjectileNumberOnPlantFood, boolean hasGiant, Supplier<CombinedDamageStrategy> damageStrategy, CheckStrike strikeStrategy, int giantCount, int normalPierce, int giantPierce, int giantDamageFactor) {
         this.bulletType = bulletType;
         this.giantType = giantType;
         this.shootingTime = shootingTime;
@@ -69,18 +76,23 @@ public class ShooterComponent implements GameComponent {
         this.normalPierce = normalPierce;
         this.giantPierce = giantPierce;
         this.giantDamageFactor = giantDamageFactor;
+        this.plantFoodBehavior = BurstPlantFood.INSTANCE;
     }
 
+    public PlantFoodBehavior plantFoodBehavior;
+
+
+
     public void activatePlantFood(){
-        activePlantFood = true;
-        projectilesLeftForShoot = burstProjectileNumberOnPlantFood;
-        shootingTimer = 0;
-        burstDelayTimer = 0;
+        if (plantFoodBehavior != null){
+            plantFoodBehavior.activate(owner, this);
+        }
     }
 
 
     @Override
     public void update(Plant owner) {
+        this.owner = owner;
         if (projectilesLeftForShoot > 0){
             burstHandler(owner);
             return;
@@ -113,7 +125,6 @@ public class ShooterComponent implements GameComponent {
             burstDelayTimer--;
         }
         else{
-            int i = 0;
             for (Supplier<MovementStrategy> movementStrategy : movementStrategies){
                 Projectile p = App.getCurrentGame().getProjectilesPool().acquire();
 
@@ -122,18 +133,20 @@ public class ShooterComponent implements GameComponent {
                     if (giantPierce != 1) {p.setPierce(giantPierce);}
                 }
                 else{
-                    p.reset(owner.getX(), owner.getY() + movementStrategy.get().changeOriginY(), damageStrategy, movementStrategy.get(),strikeStrategy, bulletType);
+                    p.reset(owner.getX(), owner.getY() + movementStrategy.get().changeOriginY(), damageStrategy.get(), movementStrategy.get(),strikeStrategy, bulletType);
                     if (normalPierce != 1) {p.setPierce(normalPierce);}
-
                 }
 
+                p.setTarget(target);
                 App.getCurrentGame().getActiveProjectiles().add(p);
-                projectilesLeftForShoot--;
-                burstDelayTimer = burstDelayMax;
+            }
 
-                if (projectilesLeftForShoot == 0){
-                    activePlantFood = false;
-                }
+            projectilesLeftForShoot--;
+            burstDelayTimer = burstDelayMax;
+
+            if (projectilesLeftForShoot <= 0){
+                projectilesLeftForShoot = 0;
+                activePlantFood = false;
             }
         }
     }
@@ -160,5 +173,49 @@ public class ShooterComponent implements GameComponent {
 
     public void setAttackCallback(AttackCallback callback) {
         this.attackCallback = callback;
+    }
+
+    public void setProjectilesLeftForShoot(int projectilesLeftForShoot) {
+        this.projectilesLeftForShoot = projectilesLeftForShoot;
+    }
+
+    public void setShootingTimer(int shootingTimer) {
+        this.shootingTimer = shootingTimer;
+    }
+
+    public void setBurstDelayTimer(int burstDelayTimer) {
+        this.burstDelayTimer = burstDelayTimer;
+    }
+
+    public void setActivePlantFood(boolean activePlantFood) {
+        this.activePlantFood = activePlantFood;
+    }
+
+    public int getBurstProjectileNumberOnPlantFood() {
+        return burstProjectileNumberOnPlantFood;
+    }
+
+    public ProjectileType getGiantType() {
+        return giantType;
+    }
+
+    public CombinedDamageStrategy getPlantFoodStrategy() {
+        return plantFoodStrategy;
+    }
+
+    public CheckStrike getStrikeStrategy() {
+        return strikeStrategy;
+    }
+
+    public void setDamageStrategy(Supplier<CombinedDamageStrategy> damageStrategy) {
+        this.damageStrategy = damageStrategy;
+    }
+
+    public void setBulletType(ProjectileType bulletType) {
+        this.bulletType = bulletType;
+    }
+
+    public ProjectileType getBulletType() {
+        return bulletType;
     }
 }

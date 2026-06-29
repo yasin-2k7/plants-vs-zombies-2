@@ -23,31 +23,27 @@ public class Projectile implements Resettable{
     private int pierce;
 
     public void update() {
-        if (type.movement.equals("STRAIGHT")){
-            Zombie zombie = strikeStrategy.strike(x, y);
-            if (zombie != null){
-                hitStrategy.applyDamage(zombie, App.getCurrentGame().getActiveZombies(), this);
-                pierce--;
-                if (pierce == 0){
-                    App.getCurrentGame().getActiveProjectiles().remove(this);
-                    App.getCurrentGame().getProjectilesPool().release(this);
-                }
-            }
+        Zombie zombie = null;
+        if (type.movement.equals("STRAIGHT")) {
+            zombie = strikeStrategy.strike(x, y);
+        } else if (type.movement.equals("LOBBED")) {
+            zombie = strikeStrategy.strike(x, y, target);
         }
-        else if (type.movement.equals("LOBBED")){
-            Zombie zombie = strikeStrategy.strike(x, y, target);
-            if (zombie != null){
-                hitStrategy.applyDamage(zombie, App.getCurrentGame().getActiveZombies(), this);
-                pierce--;
-                if (pierce == 0){
-                    App.getCurrentGame().getActiveProjectiles().remove(this);
-                    App.getCurrentGame().getProjectilesPool().release(this);
-                }
+        if (zombie != null) {
+            hitStrategy.applyDamage(zombie, App.getCurrentGame().getActiveZombies(), this);
+            pierce--;
+            if (pierce == 0) {
+                App.getCurrentGame().getActiveProjectiles().remove(this);
+                App.getCurrentGame().getProjectilesPool().release(this);
             }
         }
 
+        if (movementStrategy.isDead(this)){
+            App.getCurrentGame().getActiveProjectiles().remove(this);
+            App.getCurrentGame().getProjectilesPool().release(this);
+        }
+
         movementStrategy.move(this);
-        // deleting out of screen projectiles...
     }
 
     @Override
@@ -68,19 +64,6 @@ public class Projectile implements Resettable{
         pierce = 1;
         targetX = 0;
         targetY = 0;
-    }
-
-    @Override
-    public void reset(float x, float y, float targetX, float targetY, HitStrategy hitStrategy, MovementStrategy movementStrategy, CheckStrike checkStrike, ProjectileType type) {
-        this.x = x;
-        this.y = y;
-        originX = x;
-        originY = y;
-        this.hitStrategy = hitStrategy;
-        this.movementStrategy = movementStrategy;
-        this.strikeStrategy = checkStrike;
-        this.type = type;
-        pierce = 1;
     }
 
     public void setPierce(int pierce) {
@@ -129,5 +112,19 @@ public class Projectile implements Resettable{
 
     public CheckStrike getStrikeStrategy() {
         return strikeStrategy;
+    }
+
+    public void setTarget(Zombie target) {
+        this.target = target;
+        targetX = target.getX();
+        targetY = target.getY();
+    }
+
+    public float getTargetX() {
+        return targetX;
+    }
+
+    public float getTargetY() {
+        return targetY;
     }
 }

@@ -20,10 +20,17 @@ public enum ProjectileType {
     MEDIUM_BULB("STRAIGHT"),
     LARGE_BULB("STRAIGHT"),
     SPECIAL_BULB("STRAIGHT"),
+    CABBAGE("LOBBED"),
+    SPECIAL_CABBAGE("LOBBED"),
     KERNEL("LOBBED"),
+    BUTTER("LOBBED"),
     MELON("LOBBED"),
-    ICE_MELON("LOBBED"),
-    CABBAGE("LOBBED");
+    SPECIAL_MELON("LOBBED"),
+    PEPPER("LOBBED"),
+    SPECIAL_PEPPER("LOBBED"),
+    SPECIAL_ICE_MELON("LOBBED"),
+    ICE_MELON("LOBBED");
+
 
     public final String movement;
     ProjectileType(String movement) {this.movement = movement;}

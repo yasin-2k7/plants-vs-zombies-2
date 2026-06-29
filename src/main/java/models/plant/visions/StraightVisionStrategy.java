@@ -29,11 +29,11 @@ public class StraightVisionStrategy implements VisionStrategy {
             return null;
         }
         else{
-            float x = -1f;
+            float x = 1000f;
             Zombie firstZombie = null;
             for (Zombie zombie : gameWorld.getActiveZombies()){
                 if (VisionStrategy.isBetween(zombie.getX(), owner.getX(), owner.getX() + range) && VisionStrategy.isBetween(zombie.getY(), owner.getY() - width/2, owner.getY() + width/2)){
-                    if (zombie.getX() > x){
+                    if (zombie.getX() < x){
                         x = zombie.getX();
                         firstZombie = zombie;
                     }
