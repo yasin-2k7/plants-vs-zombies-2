@@ -13,6 +13,7 @@ import models.zombie.Zombie;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Supplier;
 
 public class ShooterComponent implements GameComponent {
     private ProjectileType bulletType;
@@ -25,7 +26,7 @@ public class ShooterComponent implements GameComponent {
 
     private int burstDelayMax = BURST_DELAY_MAX;
     private int projectilesLeftForShoot;
-    private int shootingTimer;
+    private int shootingTimer = 0;
     private int burstDelayTimer;
 
     private int giantDamageFactor;
@@ -41,7 +42,7 @@ public class ShooterComponent implements GameComponent {
     private CombinedDamageStrategy damageStrategy;
     private CheckStrike strikeStrategy;
     private List<VisionStrategy> visions = new ArrayList<>();
-    private List<MovementStrategy> movementStrategies = new ArrayList<>();
+    private List<Supplier<MovementStrategy>> movementStrategies = new ArrayList<>();
 
     private CombinedDamageStrategy plantFoodStrategy = damageStrategy.changeDamage(damageStrategy.getDamage()*giantDamageFactor);
 
@@ -113,15 +114,15 @@ public class ShooterComponent implements GameComponent {
         }
         else{
             int i = 0;
-            for (MovementStrategy movementStrategy : movementStrategies){
+            for (Supplier<MovementStrategy> movementStrategy : movementStrategies){
                 Projectile p = App.getCurrentGame().getProjectilesPool().acquire();
 
                 if (activePlantFood && projectilesLeftForShoot <= giantCount && hasGiant){
-                    p.reset(owner.getX(), owner.getY() + movementStrategy.changeOriginY(), plantFoodStrategy, movementStrategy, strikeStrategy, visions.get(i++), giantType);
+                    p.reset(owner.getX(), owner.getY() + movementStrategy.get().changeOriginY(), plantFoodStrategy, movementStrategy.get(), strikeStrategy, giantType);
                     if (giantPierce != 1) {p.setPierce(giantPierce);}
                 }
                 else{
-                    p.reset(owner.getX(), owner.getY() + movementStrategy.changeOriginY(), damageStrategy, movementStrategy,strikeStrategy, visions.get(i++), bulletType);
+                    p.reset(owner.getX(), owner.getY() + movementStrategy.get().changeOriginY(), damageStrategy, movementStrategy.get(),strikeStrategy, bulletType);
                     if (normalPierce != 1) {p.setPierce(normalPierce);}
 
                 }
@@ -141,7 +142,7 @@ public class ShooterComponent implements GameComponent {
         return visions;
     }
 
-    public List<MovementStrategy> getMovementStrategies() {
+    public List<Supplier<MovementStrategy>> getMovementStrategies() {
         return movementStrategies;
     }
 

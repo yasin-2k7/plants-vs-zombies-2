@@ -7,7 +7,7 @@ public class CheckStraightStrike implements CheckStrike{
     @Override
     public Zombie strike(double x, double y) {
         for (Zombie zombie : App.getCurrentGame().getActiveZombies()){
-            if (Math.abs(zombie.getX() - x) < 0.05 && zombie.getY() == y){
+            if (Math.abs(zombie.getX() - x) < 0.05 && Math.abs(zombie.getY() - y) < 0.05){
                 return zombie;
             }
         }

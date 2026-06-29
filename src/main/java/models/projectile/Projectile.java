@@ -13,6 +13,7 @@ import models.zombie.Zombie;
 public class Projectile implements Resettable{
     private float x, y;
     private float originX, originY;
+    private float targetX, targetY;
     private HitStrategy hitStrategy;
     private MovementStrategy movementStrategy;
     private CheckStrike strikeStrategy;
@@ -55,7 +56,7 @@ public class Projectile implements Resettable{
     public void reset(float x, float y) {}
 
     @Override
-    public void reset(float x, float y, HitStrategy hitStrategy, MovementStrategy movementStrategy, CheckStrike checkStrike, VisionStrategy visionStrategy, ProjectileType type) {
+    public void reset(float x, float y, HitStrategy hitStrategy, MovementStrategy movementStrategy, CheckStrike checkStrike, ProjectileType type) {
         this.x = x;
         this.y = y;
         originX = x;
@@ -63,7 +64,21 @@ public class Projectile implements Resettable{
         this.hitStrategy = hitStrategy;
         this.movementStrategy = movementStrategy;
         this.strikeStrategy = checkStrike;
-        this.visionStrategy = visionStrategy;
+        this.type = type;
+        pierce = 1;
+        targetX = 0;
+        targetY = 0;
+    }
+
+    @Override
+    public void reset(float x, float y, float targetX, float targetY, HitStrategy hitStrategy, MovementStrategy movementStrategy, CheckStrike checkStrike, ProjectileType type) {
+        this.x = x;
+        this.y = y;
+        originX = x;
+        originY = y;
+        this.hitStrategy = hitStrategy;
+        this.movementStrategy = movementStrategy;
+        this.strikeStrategy = checkStrike;
         this.type = type;
         pierce = 1;
     }
@@ -110,5 +125,9 @@ public class Projectile implements Resettable{
 
     public float getOriginY() {
         return originY;
+    }
+
+    public CheckStrike getStrikeStrategy() {
+        return strikeStrategy;
     }
 }

@@ -12,6 +12,8 @@ public class App {
 
     private static final int CELL_HEIGHT = 80;
     private static final int CELL_WIDTH = 50;
+    private static final int FIRST_CELL_X = 100;
+    private static final int FIRST_CELL_Y = 400;
 
     public static User getCurrentUser() {
         return currentUser;
@@ -35,6 +37,14 @@ public class App {
 
     public static int getCellWidth() {
         return CELL_WIDTH;
+    }
+
+    public static int getFirstCellX() {
+        return FIRST_CELL_X;
+    }
+
+    public static int getFirstCellY() {
+        return FIRST_CELL_Y;
     }
 
     public static PlantFactory getFactory() {

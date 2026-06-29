@@ -9,7 +9,7 @@ import models.zombie.Zombie;
 public class StraightVisionStrategy implements VisionStrategy {
     private final float range;
     private final float width;
-    private boolean needZombie;
+    private final boolean needZombie;
 
     public StraightVisionStrategy(float range, float width, boolean needZombie) {
         this.range = range;

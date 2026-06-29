@@ -31,6 +31,18 @@ public class CombinedDamageStrategy implements HitStrategy{
         return chillTime;
     }
 
+    private CombinedDamageStrategy(int damage, int neighborDamage, float radius,
+                                   String element, int chillTime, float poisonDamageOnTick,
+                                   ProjectileType projectileType) {
+        this.damage = damage;
+        this.neighborDamage = neighborDamage;
+        this.radius = radius;
+        this.element = element;
+        this.chillTime = chillTime;
+        this.poisonDamageOnTick = poisonDamageOnTick;
+        this.projectileType = projectileType;
+    }
+
     public CombinedDamageStrategy(int damage, ProjectileType projectileType) {
         this.damage = damage;
         this.projectileType = projectileType;
@@ -52,13 +64,7 @@ public class CombinedDamageStrategy implements HitStrategy{
     }
 
     public CombinedDamageStrategy changeDamage(int damage){
-        return new CombinedDamageStrategy(damage, neighborDamage, radius, projectileType);
-    }
-
-    public CombinedDamageStrategy changeProjectileType(ProjectileType type){
-        CombinedDamageStrategy combinedDamageStrategy = new CombinedDamageStrategy(damage, neighborDamage, radius, projectileType);
-        combinedDamageStrategy.projectileType = type;
-        return combinedDamageStrategy;
+        return new CombinedDamageStrategy(damage, neighborDamage, radius,this.element, this.chillTime, this.poisonDamageOnTick, projectileType);
     }
 
     @Override
@@ -82,10 +88,12 @@ public class CombinedDamageStrategy implements HitStrategy{
             case "NORMAL":
                 break;
             case "ICE":
+                target.applySlow(chillTime, 0.5);
                 break;
             case "FIRE":
                 break;
             case "STUN":
+                target.disableFor(20);
                 break;
             case "POISON":
                 break;

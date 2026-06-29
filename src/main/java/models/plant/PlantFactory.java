@@ -4,13 +4,12 @@ import models.core.App;
 import models.enums.PlantLayer;
 import models.enums.PlantType;
 import models.enums.ProjectileType;
-import models.plant.components.LifespanComponent;
-import models.plant.components.PlacementBehaviorComponent;
-import models.plant.components.ShooterComponent;
-import models.plant.components.SunProducerComponent;
+import models.plant.components.*;
 import models.plant.visions.RotatedVisionStrategy;
 import models.plant.visions.StraightVisionStrategy;
 import models.projectile.hitStrategies.CombinedDamageStrategy;
+import models.projectile.movementStrategies.BowlingMovementStrategy;
+import models.projectile.movementStrategies.MovementStrategy;
 import models.projectile.movementStrategies.StraightMovementStrategy;
 import models.projectile.strikeStrategies.CheckStraightStrike;
 
@@ -38,6 +37,12 @@ public class PlantFactory {
         registry.put(PlantType.BOWLING_BULB, this::buildBowlingBulb);
         registry.put(PlantType.CACTUS, this::buildCactus);
         registry.put(PlantType.FIRE_PEASHOOTER, this::buildFirePeashooter);
+        registry.put(PlantType.STARFRUIT, this::buildStarfruit);
+        registry.put(PlantType.GOO_PEASHOOTER, this::buildGooPeashooter);
+        registry.put(PlantType.MEGA_GATLING_PEA, this::buildMegaGatlingPea);
+        registry.put(PlantType.SEA_SHROOM, this::buildSeaShroom);
+        registry.put(PlantType.PUFF_SHROOM, this::buildPuffShroom);
+        registry.put(PlantType.FUME_SHROOM, this::buildFumeShroom);
     }
 
     public Plant createPlant(PlantType type, int x, int y) {
@@ -112,7 +117,8 @@ public class PlantFactory {
                                             0,
                                             0);
         newComponent.getVisions().add(new StraightVisionStrategy(1000, App.getCellHeight(), false));
-        newComponent.getMovementStrategies().add(new StraightMovementStrategy(5, 0, 0));
+        MovementStrategy movementStrategy = new StraightMovementStrategy(5, 0, 0);
+        newComponent.getMovementStrategies().add(() -> movementStrategy);
         p.addComponent(newComponent);
         return p;
     }
@@ -135,7 +141,8 @@ public class PlantFactory {
                 1,
                 20);
         newComponent.getVisions().add(new StraightVisionStrategy(1000, App.getCellHeight(), false));
-        newComponent.getMovementStrategies().add(new StraightMovementStrategy(5, 0, 0));
+        MovementStrategy movementStrategy = new StraightMovementStrategy(5, 0, 0);
+        newComponent.getMovementStrategies().add(() -> movementStrategy);
         p.addComponent(newComponent);
         return p;
     }
@@ -159,7 +166,9 @@ public class PlantFactory {
                 0);
         newComponent.getVisions().add(new StraightVisionStrategy(1000, 3*App.getCellHeight(), false));
         for (int i = -1; i <= 1; i++){
-            newComponent.getMovementStrategies().add(new StraightMovementStrategy(5, 0, i*App.getCellHeight()));
+            final int finalI = i;
+            MovementStrategy movementStrategy = new StraightMovementStrategy(5, 0, finalI*App.getCellHeight());
+            newComponent.getMovementStrategies().add(() -> movementStrategy);
         }
         p.addComponent(newComponent);
         return p;
@@ -187,7 +196,8 @@ public class PlantFactory {
                 0,
                 0);
         newComponent.getVisions().add(new StraightVisionStrategy(1000, App.getCellHeight(), false));
-        newComponent.getMovementStrategies().add(new StraightMovementStrategy(5, 0, 0));
+        MovementStrategy movementStrategy = new StraightMovementStrategy(5, 0, 0);
+        newComponent.getMovementStrategies().add(() -> movementStrategy);
         p.addComponent(newComponent);
         return p;
     }
@@ -210,8 +220,10 @@ public class PlantFactory {
                     1,
                     0,
                     0);
+            final int finalI = i;
             shooterComponent.getVisions().add(new RotatedVisionStrategy((float) (i * Math.PI/2 + Math.PI/4), App.getCellHeight(), 1000));
-            shooterComponent.getMovementStrategies().add(new StraightMovementStrategy((float) (5*Math.cos(i * Math.PI/2 + Math.PI/4)), (float) (5*Math.sin(i * Math.PI/2 + Math.PI/4)),0));
+            MovementStrategy movementStrategy = new StraightMovementStrategy((float) (5*Math.cos(finalI * Math.PI/2 + Math.PI/4)), (float) (5*Math.sin(finalI * Math.PI/2 + Math.PI/4)),0);
+            shooterComponent.getMovementStrategies().add(() -> movementStrategy);
             p.addComponent(shooterComponent);
         }
         return p;
@@ -235,8 +247,8 @@ public class PlantFactory {
                 1,
                 20);
         newComponent.getVisions().add(new StraightVisionStrategy(1000, App.getCellHeight(), false));
-        newComponent.getMovementStrategies().add(new StraightMovementStrategy(5, 0, 0));
-        p.addComponent(newComponent);
+        MovementStrategy movementStrategy = new StraightMovementStrategy(5, 0, 0);
+        newComponent.getMovementStrategies().add(() -> movementStrategy);        p.addComponent(newComponent);
         p.addComponent(new PlacementBehaviorComponent(PlantLayer.MAIN, true, 5, false));
         return p;
     }
@@ -259,8 +271,10 @@ public class PlantFactory {
                     1,
                     0,
                     0);
+            final int finalI = i;
             newComponent.getVisions().add(new StraightVisionStrategy(1000 * (float)Math.cos(i*Math.PI), App.getCellHeight(), false));
-            newComponent.getMovementStrategies().add(new StraightMovementStrategy(5 * (float)Math.cos(i*Math.PI), 0, 0));
+            MovementStrategy movementStrategy = new StraightMovementStrategy(5 * (float)Math.cos(finalI*Math.PI), 0, 0);
+            newComponent.getMovementStrategies().add(() -> movementStrategy);
             p.addComponent(newComponent);
         }
         return p;
@@ -284,13 +298,23 @@ public class PlantFactory {
                 100,
                 20);
         newComponent.getVisions().add(new StraightVisionStrategy(1000, App.getCellHeight(), false));
-        newComponent.getMovementStrategies().add(new StraightMovementStrategy(5, 0, 0));
+        MovementStrategy movementStrategy = new StraightMovementStrategy(5, 0, 0);
+        newComponent.getMovementStrategies().add(() -> movementStrategy);
         p.addComponent(newComponent);
         return p;
     }
 
     private Plant buildBowlingBulb(){
-
+        int level = App.getCurrentUser().getUnlockedPlantsLevels().get(PlantType.BOWLING_BULB);
+        int regenReduce = level >= 2 ? 1 : 0;
+        int damageAddition = level >= 3 ? 15 : 0;
+        CombinedDamageStrategy first = new CombinedDamageStrategy(180 + damageAddition, ProjectileType.LARGE_BULB);
+        CombinedDamageStrategy second = new CombinedDamageStrategy(120 + damageAddition, ProjectileType.MEDIUM_BULB);
+        CombinedDamageStrategy third = new CombinedDamageStrategy(40 + damageAddition, ProjectileType.SMALL_BULB);
+        CombinedDamageStrategy special = new CombinedDamageStrategy(180 + damageAddition, 90 + damageAddition/2, 100, ProjectileType.MEDIUM_BULB);
+        Plant p = new Plant(PlantType.BOWLING_BULB, 300, 0);
+        p.addComponent(new BowlingChargeComponent(20, first, second, third, () -> new BowlingMovementStrategy(5, 0), special, 2-regenReduce, 5-regenReduce, 10-regenReduce));
+        return p;
     }
 
     private Plant buildCactus(){
@@ -311,7 +335,8 @@ public class PlantFactory {
                 100,
                 4);
         newComponent.getVisions().add(new StraightVisionStrategy(1000, App.getCellHeight(), false));
-        newComponent.getMovementStrategies().add(new StraightMovementStrategy(5, 0, 0));
+        MovementStrategy movementStrategy = new StraightMovementStrategy(5, 0, 0);
+        newComponent.getMovementStrategies().add(() -> movementStrategy);
         p.addComponent(newComponent);
         return p;
     }
@@ -336,7 +361,8 @@ public class PlantFactory {
                 0,
                 0);
         newComponent.getVisions().add(new StraightVisionStrategy(1000, App.getCellHeight(), false));
-        newComponent.getMovementStrategies().add(new StraightMovementStrategy(5, 0, 0));
+        MovementStrategy movementStrategy = new StraightMovementStrategy(5, 0, 0);
+        newComponent.getMovementStrategies().add(() -> movementStrategy);
         p.addComponent(newComponent);
         return p;
     }
@@ -361,8 +387,10 @@ public class PlantFactory {
         float angel = (float) -Math.PI/3;
         for (int i = 0; i < 5; i++){
             int changeFactor = i == 1 ? 2 : 3;
+            final float finalAngel = angel;
             newComponent.getVisions().add(new RotatedVisionStrategy(angel, App.getCellHeight(), 1000));
-            newComponent.getMovementStrategies().add(new StraightMovementStrategy((float) (5*Math.cos(angel)), (float) (5*Math.sin(angel)),0));
+            MovementStrategy movementStrategy = new StraightMovementStrategy((float) (5*Math.cos(finalAngel)), (float) (5*Math.sin(finalAngel)),0);
+            newComponent.getMovementStrategies().add(() -> movementStrategy);
             angel += (float) (changeFactor*Math.PI/6);
         }
         p.addComponent(newComponent);
@@ -396,7 +424,8 @@ public class PlantFactory {
         newComponent.setPlantFoodStrategy(plantFoodStrategy);
 
         newComponent.getVisions().add(new StraightVisionStrategy(1000, App.getCellHeight(), false));
-        newComponent.getMovementStrategies().add(new StraightMovementStrategy(5, 0, 0));
+        MovementStrategy movementStrategy = new StraightMovementStrategy(5, 0, 0);
+        newComponent.getMovementStrategies().add(() -> movementStrategy);
         p.addComponent(newComponent);
         return p;
     }
@@ -419,7 +448,8 @@ public class PlantFactory {
                 1,
                 20);
         newComponent.getVisions().add(new StraightVisionStrategy(1000, App.getCellHeight(), false));
-        newComponent.getMovementStrategies().add(new StraightMovementStrategy(5, 0, 0));
+        MovementStrategy movementStrategy = new StraightMovementStrategy(5, 0, 0);
+        newComponent.getMovementStrategies().add(() -> movementStrategy);
         newComponent.setAttackCallback(owner -> {
             if (Math.random() < plantFoodChance/100f) {
                 owner.activatePlantFood();
@@ -448,7 +478,8 @@ public class PlantFactory {
                 0,
                 0);
         newComponent.getVisions().add(new StraightVisionStrategy(range, App.getCellHeight(), false));
-        newComponent.getMovementStrategies().add(new StraightMovementStrategy(5, 0, 0));
+        MovementStrategy movementStrategy = new StraightMovementStrategy(5, 0, 0);
+        newComponent.getMovementStrategies().add(() -> movementStrategy);
         p.addComponent(newComponent);
         p.addComponent(new LifespanComponent(PlantType.SEA_SHROOM, lifespan));
         return p;
@@ -473,7 +504,8 @@ public class PlantFactory {
                 0,
                 0);
         newComponent.getVisions().add(new StraightVisionStrategy(range, App.getCellHeight(), false));
-        newComponent.getMovementStrategies().add(new StraightMovementStrategy(5, 0, 0));
+        MovementStrategy movementStrategy = new StraightMovementStrategy(5, 0, 0);
+        newComponent.getMovementStrategies().add(() -> movementStrategy);
         p.addComponent(newComponent);
         p.addComponent(new LifespanComponent(PlantType.PUFF_SHROOM, lifespan));
         return p;
@@ -500,7 +532,8 @@ public class PlantFactory {
         plantFoodStrategy.setElement("MOVE");
         newComponent.setPlantFoodStrategy(plantFoodStrategy);
         newComponent.getVisions().add(new StraightVisionStrategy(range, App.getCellHeight(), false));
-        newComponent.getMovementStrategies().add(new StraightMovementStrategy(10, 0, 0));
+        MovementStrategy movementStrategy = new StraightMovementStrategy(10, 0, 0);
+        newComponent.getMovementStrategies().add(() -> movementStrategy);
         p.addComponent(newComponent);
         return p;
     }
