@@ -1,10 +1,12 @@
 package models.core;
 
 import models.enums.PlantType;
+import models.greenhouse.GreenHouse;
 import models.quest.QuestStats;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class User {
     private QuestStats questStats;
@@ -24,19 +26,111 @@ public class User {
     private int gems;
     private int pot;
     private HashMap<PlantType, Integer> UnlockedPlantsLevels;
-
+    private HashMap<PlantType, Boolean> plantBoosts;
     private static ArrayList<News> allNews;
+    private GreenHouse greenhouse;
+    private transient boolean isLoaded = false;
 
-    public void unlockPlant(PlantType plantType){
+    public User(){
+        this.plantBoosts = new HashMap<>();
+        this.UnlockedPlantsLevels = new HashMap<>();
+        this.greenhouse = new GreenHouse();
+        this.coins = 100; // مقدار اولیه سکه
+        this.gems = 10;
+    }
+
+    public void afterLoad() {
+        if (this.plantBoosts == null) this.plantBoosts = new HashMap<>();
+        if (this.UnlockedPlantsLevels == null) this.UnlockedPlantsLevels = new HashMap<>();
+        if (this.greenhouse == null) this.greenhouse = new GreenHouse();
+        this.isLoaded = true;
+    }
+
+    private void save() {
+        // فقط اگر کاربر از فایل لود شده باشد یا جدیداً ثبت‌نام کرده باشد، ذخیره کن
+        if (isLoaded || !username.isEmpty()) {
+            UserDataManager.saveUser(this);
+        }
+    }
+
+    public boolean checkPassword(String password) {
+        String hashedInput = PasswordHasher.hashSHA256(password);
+        return hashedInput.equals(this.hashPassword);
+    }
+
+    public void unlockPlant(PlantType plantType) {
         this.UnlockedPlantsLevels.put(plantType, 1);
+        save();
+    }
+
+    public void addCoins(int amount){
+        this.coins += amount;
+        save();
+    }
+    public boolean spendCoins(int amount){
+        if (coins < amount) return false;
+        coins -= amount;
+        save();
+        return true;
+    }
+    public void addGems(int amount){
+        this.gems += amount;
+        save();
+    }
+    public boolean spendGems(int amount){
+        if (gems < amount) return false;
+        gems -= amount;
+        save();
+        return true;
+    }
+
+    public void unlockNewPlant(){}
+
+    public void advanceLevel(){}
+
+    public HashMap<PlantType, Integer> getUnlockedPlantsLevels() {
+        return UnlockedPlantsLevels;
+    }
+
+    public boolean hasBoost(PlantType type) {return plantBoosts.getOrDefault(type, false);}
+    public void addBoost(PlantType type) {plantBoosts.put(type, true); save();}
+    public void useBoost(PlantType type) {plantBoosts.put(type, false); save();}
+
+    public List<PlantType> getUnlockedPlantTypesWithPlantFood() {
+        List<PlantType> result = new ArrayList<>();
+        for (PlantType type : UnlockedPlantsLevels.keySet()) {
+            if (type != PlantType.MARIGOLD && hasPlantFoodAbility(type)) {
+                result.add(type);
+            }
+        }
+        return result;
     }
 
 
-    public User(){}
+    private boolean hasPlantFoodAbility(PlantType type) {
+        if (type == PlantType.MARIGOLD) return false;
+        switch (type) {
+            case GOLD_BLOOM:
+            case CHERRY_BOMB:
+            case GRAPESHOT:
+            case JALAPENO:
+            case DOOM_SHROOM:
+            case ICE_SHROOM:
+            case HOT_POTATO:
+            case GRAVE_BUSTER:
+                return false;
+            default:
+                return true;
+        }
+    }
 
+    public GreenHouse getGreenhouse() {return greenhouse;}
     public String getUsername() {
         return username;
     }
+    public int getCoins() {return coins;}
+    public int getGems() {return gems;}
+    public String getNickname() {return nickname;}
 
     public void setHashPassword(String hashPassword) { this.hashPassword = hashPassword;}
     public void setUsername(String username) {
@@ -50,27 +144,4 @@ public class User {
     public void setSecurityQ(String securityQ) { this.securityQ = securityQ;}
     public void setSecurityA(String securityA) {this.securityA = securityA;}
 
-    public boolean checkPassword(String password) {
-        return false;
-    }
-
-    public void addCoins(int amount){}
-
-    public boolean spendCoins(int amount){
-        return false;
-    }
-
-    public void addGems(int amount){}
-
-    public boolean spendGems(int amount){
-        return false;
-    }
-
-    public void unlockNewPlant(){}
-
-    public void advanceLevel(){}
-
-    public HashMap<PlantType, Integer> getUnlockedPlantsLevels() {
-        return UnlockedPlantsLevels;
-    }
 }

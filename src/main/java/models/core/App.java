@@ -1,6 +1,7 @@
 package models.core;
 
 import controller.MenuController;
+import models.greenhouse.GreenHouse;
 import models.plant.PlantFactory;
 import models.world.GameWorld;
 
@@ -18,6 +19,8 @@ public class App {
     public static User getCurrentUser() {
         return currentUser;
     }
+
+    public static void setCurrentUser(User currentUser) {App.currentUser = currentUser;}
 
     public static MenuController getCurrentMenu() {
         return currentMenu;
@@ -49,6 +52,11 @@ public class App {
 
     public static PlantFactory getFactory() {
         return factory;
+    }
+
+    public static GreenHouse getGreenhouse() {
+        if (currentUser == null) return null;
+        return currentUser.getGreenhouse();
     }
 
 }

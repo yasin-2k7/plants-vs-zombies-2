@@ -4,14 +4,14 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public enum GreenhouseMenuCommands {
-    MENU_ENTER(""),
-    MENU_SHOW_CURRENT(""),
-    MENU_EXIT(""),
-    SHOW_GREENHOUSE(""),
-    PLANT_POT(""),
-    COLLECT(""),
-    GROW(""),
-    ENTER_SHOP("");
+    MENU_ENTER("menu enter greenhouse"),
+    MENU_SHOW_CURRENT("menu show current"),
+    MENU_EXIT("menu exit"),
+    SHOW_GREENHOUSE("show greenhouse"),
+    PLANT_POT("plant pot at \\(\\s*(\\d+)\\s*,\\s*(\\d+)\\s*\\)"),
+    COLLECT("collect \\(\\s*(\\d+)\\s*,\\s*(\\d+)\\s*\\)"),
+    GROW("grow \\(\\s*(\\d+)\\s*,\\s*(\\d+)\\s*\\)"),
+    ENTER_SHOP("enter shop");
 
     private final String pattern;
     private final Pattern compiledPattern;
@@ -23,5 +23,9 @@ public enum GreenhouseMenuCommands {
 
     public Matcher matcher(String input) {
         return compiledPattern.matcher(input);
+    }
+
+    public String getPattern() {
+        return pattern;
     }
 }

@@ -11,6 +11,13 @@ public class UserDataManager {
 
     private static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
+    static {
+        File dir = new File(USERS_DIR);
+        if (!dir.exists()) {
+            dir.mkdirs();
+        }
+    }
+
     public static boolean saveUser(User user){
         if(user == null || user.getUsername() == null) return false;
 
@@ -32,12 +39,16 @@ public class UserDataManager {
             return null;
         }
 
-        try (FileReader reader = new FileReader(userFile)) {
-            return gson.fromJson(reader, User.class);
-        } catch (IOException e) {
-            System.err.println("read error: " + e.getMessage());
-            return null;
-        }
+            try (FileReader reader = new FileReader(userFile)) {
+                User user = gson.fromJson(reader, User.class);
+                if (user != null) {
+                    user.afterLoad(); // برای اطمینان از اینکه آبجکت‌های داخلی null نیستند
+                }
+                return user;
+            } catch (IOException e) {
+                System.err.println("read error: " + e.getMessage());
+                return null;
+            }
     }
 
     public static boolean userExists(String username){

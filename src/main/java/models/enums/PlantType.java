@@ -69,7 +69,8 @@ public enum PlantType {
     REINFORCE_MINT(PlantFamily.WALL_NUT, 0, 85),
     ENCHANT_MINT(PlantFamily.MODIFIER, 0, 85),
     PIERCE_MINT(PlantFamily.STRIKE_THROUGH, 0, 85),
-    CAT_TAIL_MINT(PlantFamily.HOMING, 0, 85);
+    CAT_TAIL_MINT(PlantFamily.HOMING, 0, 85),
+    MARIGOLD(PlantFamily.WALL_NUT, 0, 0); // گل معمولی گلخانه;
 
     public final PlantFamily family;
     public final int baseSunCost;
