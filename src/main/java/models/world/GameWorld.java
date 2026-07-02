@@ -1,9 +1,11 @@
 package models.world;
 
 import models.enums.PlantType;
+import models.enums.Zombies;
 import models.lawnMower.LawnMower;
 import models.miniGame.MechanicsStrategy;
 import models.plant.Plant;
+import models.plant.card.PlantCard;
 import models.plant.components.LifespanComponent;
 import models.pool.GenericObjectPool;
 import models.projectile.Projectile;
@@ -33,8 +35,8 @@ public abstract class GameWorld {
     private WinCondition winCondition;
     private ArrayList<Mechanic> mechanics;
 
-    private List<PlantType> conveyorBelt;
-    private List<PlantType> plantLists;
+    private List<PlantCard> conveyorBelt;
+    private List<PlantCard> plantLists;
     private boolean isConveyorMode;
 
     protected List<Zombie> activeZombies;
@@ -155,6 +157,21 @@ public abstract class GameWorld {
     public void tick(){
         if(state != GameState.PLAYING) return;
 
+        activePlants.forEach(Plant::update);
+        activeZombies.forEach(Zombie::update);
+        activeProjectiles.forEach(Projectile::update);
+
+        activeSuns.removeIf(sun -> {
+            if(sun.isExpired()){
+                sunsPool.release(sun);
+                return true;
+            }
+            return false;
+        });
+
+        activeZombies.removeIf(Zombie::isDead);
+        activePlants.removeIf(Plant::isDead);
+
         for(Mechanic mechanic : mechanics){
             mechanic.applyMechanic(this);
         }
@@ -234,5 +251,21 @@ public abstract class GameWorld {
 
     public GenericObjectPool<Projectile> getProjectilesPool() {
         return projectilesPool;
+    }
+
+    public void addMechanic(Mechanic mechanic){
+
+    }
+
+    public List<PlantCard> getConveyorBelt() {
+        return conveyorBelt;
+    }
+
+    public <T extends Mechanic> T getMechanic(Class<T> type) {
+        return mechanics.stream()
+                .filter(m -> type.isInstance(m))
+                .map(m -> type.cast(m))
+                .findFirst()
+                .orElse(null);
     }
 }

@@ -53,7 +53,7 @@ public class PlantFactory {
         registry.put(PlantType.PEPPER_PULT, this::buildPepperPult);
     }
 
-    public Plant createPlant(PlantType type, int x, int y) {
+    public static Plant createPlant(PlantType type, int x, int y) {
         Plant newPlant = registry.get(type).get();
 
         newPlant.setX(x);
