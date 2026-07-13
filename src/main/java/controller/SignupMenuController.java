@@ -140,4 +140,17 @@ public class SignupMenuController implements MenuController{
         }
         return errors;
     }
+
+    public List<String> getPickQErrors(int num, String answer, String answerCon){
+        List<String> errors = new ArrayList<>();
+        if(num <= 0 || num >= 4){
+            errors.add("Please choose a num between 1 and 3.");
+        }
+
+        if (answerCon == null || !answer.equals(answerCon)) {
+            errors.add("Answer and answer confirm don't match.");
+        }
+
+        return errors;
+    }
 }

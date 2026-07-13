@@ -115,7 +115,7 @@ public class Cell {
 
 
     public void removePlant(){
-        this.plant = null;
+        this.mainPlant = null;
     }
 
 
