@@ -5,7 +5,7 @@ import models.enums.PlantLayer;
 import models.enums.PlantType;
 import models.enums.ProjectileType;
 import models.plant.components.*;
-import models.plant.components.plantFoodBehaviors.RandomTargetPlantFood;
+import models.plant.components.shooterPlantFoodBehaviors.RandomTargetPlantFood;
 import models.plant.visions.RotatedVisionStrategy;
 import models.plant.visions.StraightVisionStrategy;
 import models.projectile.hitStrategies.CombinedDamageStrategy;

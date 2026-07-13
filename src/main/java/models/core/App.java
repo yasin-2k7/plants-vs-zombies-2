@@ -4,10 +4,12 @@ import controller.MenuController;
 import models.greenhouse.GreenHouse;
 import models.plant.PlantFactory;
 import models.world.GameWorld;
+import view.View;
 
 public class App {
     private static User currentUser;
     private static MenuController currentMenu;
+    private static View currentScreen;
     private static GameWorld currentGame;
     private static final PlantFactory factory = new PlantFactory();
 
@@ -59,4 +61,7 @@ public class App {
         return currentUser.getGreenhouse();
     }
 
+    public static View getCurrentScreen() {
+        return currentScreen;
+    }
 }

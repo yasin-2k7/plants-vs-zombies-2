@@ -1,14 +1,26 @@
 package controller;
 
-import models.core.User;
 import models.core.UserDataManager;
+import models.core.UserManager;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 public class SignupMenuController implements MenuController{
     private UserDataManager userDataManager;
+    private List<String> questions = new ArrayList<>();
+
+    public SignupMenuController() {
+        questions.add("1. What is your best friend's name?");
+        questions.add("2. Where was you born?");
+        questions.add("3. What is your major?");
+    }
+
+    public String getQuestion(int index){
+        return questions.get(index-1);
+    }
+
+
 
     @Override
     public void changeMenu() {
@@ -91,6 +103,17 @@ public class SignupMenuController implements MenuController{
         return errors;
     }
 
+    public void createUser( String username,
+                            String password,
+                            String nickname,
+                            String email,
+                            String gender,
+                            String securityQ,
+                            String securityA){
+        UserManager.register(username, password, nickname, email, gender, securityQ, securityA);
+
+    }
+
     public List<String> getEmailErrors(String email){
         List<String> errors = new ArrayList<>();
 
@@ -152,5 +175,9 @@ public class SignupMenuController implements MenuController{
         }
 
         return errors;
+    }
+
+    public List<String> getQuestions() {
+        return questions;
     }
 }

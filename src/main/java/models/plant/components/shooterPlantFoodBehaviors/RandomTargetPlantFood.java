@@ -1,4 +1,4 @@
-package models.plant.components.plantFoodBehaviors;
+package models.plant.components.shooterPlantFoodBehaviors;
 
 import models.core.App;
 import models.plant.Plant;

@@ -16,6 +16,8 @@ public class Cell {
     private Plant basePlant;
     private Plant mainPlant;
     private Plant shieldPlant;
+    private int iceAmount;
+
 
     private boolean isWater;
 

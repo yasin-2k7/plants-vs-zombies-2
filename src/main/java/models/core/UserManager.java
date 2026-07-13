@@ -3,8 +3,8 @@ package models.core;
 import java.util.HashMap;
 
 public class UserManager {
-    private HashMap<String, User> users;
-    private User currentUser;
+    private static HashMap<String, User> users;
+    private static User currentUser;
 
     public UserManager(){
         loadInitialUser();// **جدید**: در ابتدای برنامه، آخرین کاربر لاگین‌کرده را بارگذاری می‌کند
@@ -21,7 +21,7 @@ public class UserManager {
         }
     }
 
-    public String register(String username,
+    public static String register(String username,
                            String password,
                            String nickname,
                            String email,
@@ -52,6 +52,9 @@ public class UserManager {
         if (user == null) {
             return "Error: Username not found.";
         }
+    public static String login(String username, String password){
+        return "login";
+    }
 
         if (user.checkPassword(password)) {
             this.currentUser = user;
@@ -71,8 +74,9 @@ public class UserManager {
             System.out.println("You have been logged out.");
         }
     }
+    public static void logout(){}
 
-    public User getCurrentUser(){
+    public static User getCurrentUser(){
         return currentUser;
     }
 }
