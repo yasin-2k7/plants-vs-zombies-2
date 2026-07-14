@@ -25,6 +25,7 @@ public class User {
     private int coins;
     private int gems;
     private int pot;
+    private HashMap<PlantType, Integer> seedPackets;
     private HashMap<PlantType, Integer> UnlockedPlantsLevels;
     private HashMap<PlantType, Boolean> plantBoosts;
     private static ArrayList<News> allNews;
@@ -32,18 +33,21 @@ public class User {
     private GreenHouse greenhouse;
     private transient boolean isLoaded = false;
     private int gameDifficulty = 3;
+    private int plantFoods = 0;
 
     public User(){
         this.plantBoosts = new HashMap<>();
         this.UnlockedPlantsLevels = new HashMap<>();
+        this.seedPackets = new HashMap<>();
         this.greenhouse = new GreenHouse();
-        this.coins = 100; // مقدار اولیه سکه
+        this.coins = 100;
         this.gems = 10;
     }
 
     public void afterLoad() {
         if (this.plantBoosts == null) this.plantBoosts = new HashMap<>();
         if (this.UnlockedPlantsLevels == null) this.UnlockedPlantsLevels = new HashMap<>();
+        if (this.seedPackets == null) this.seedPackets = new HashMap<>();
         if (this.greenhouse == null) this.greenhouse = new GreenHouse();
         this.isLoaded = true;
     }
@@ -53,6 +57,16 @@ public class User {
         if (isLoaded || !username.isEmpty()) {
             UserDataManager.saveUser(this);
         }
+    }
+
+    public void addSeedPackets(PlantType type, int amount) {
+        int currentSeeds = this.seedPackets.getOrDefault(type, 0);
+        this.seedPackets.put(type, currentSeeds + amount);
+        save();
+    }
+
+    public int getSeedPacketsCount(PlantType type) {
+        return this.seedPackets.getOrDefault(type, 0);
     }
 
     public boolean checkPassword(String password) {
@@ -126,6 +140,24 @@ public class User {
         }
     }
 
+    public boolean addPlantFood(int count) {
+        if (this.plantFoods + count > 3) {
+            return false;
+        }
+        this.plantFoods += count;
+        save();
+        return true;
+    }
+
+    public boolean usePlantFood() {
+        if (this.plantFoods > 0) {
+            this.plantFoods--;
+            save();
+            return true;
+        }
+        return false;
+    }
+
     public GreenHouse getGreenhouse() {return greenhouse;}
     public String getUsername() {
         return username;
@@ -133,6 +165,8 @@ public class User {
     public int getCoins() {return coins;}
     public int getGems() {return gems;}
     public String getNickname() {return nickname;}
+    public int getPlantFoods() {return plantFoods;}
+    public String getEmail() {return email;}
 
     public String getEmail() {
         return email;

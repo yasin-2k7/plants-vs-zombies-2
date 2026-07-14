@@ -1,10 +1,16 @@
 package models.plant;
 
+import controller.LevelMenuController;
 import models.core.App;
 import models.enums.PlantLayer;
 import models.enums.PlantType;
 import models.enums.ProjectileType;
 import models.plant.components.*;
+import models.plant.components.explosionRanges.CircularRange;
+import models.plant.components.explosionRanges.LineRange;
+import models.plant.components.explosiveBehaviors.*;
+import models.plant.components.explosiveTriggers.InstantTrigger;
+import models.plant.components.explosiveTriggers.ProximityTrigger;
 import models.plant.components.shooterPlantFoodBehaviors.RandomTargetPlantFood;
 import models.plant.visions.RotatedVisionStrategy;
 import models.plant.visions.StraightVisionStrategy;
@@ -15,13 +21,15 @@ import models.projectile.movementStrategies.MovementStrategy;
 import models.projectile.movementStrategies.StraightMovementStrategy;
 import models.projectile.strikeStrategies.CheckLobbedStrike;
 import models.projectile.strikeStrategies.CheckStraightStrike;
+import models.world.Cell;
+import models.zombie.Zombie;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 public class PlantFactory {
-    private final Map<PlantType, Supplier<Plant>> registry = new HashMap<>();
+    private static final Map<PlantType, Supplier<Plant>> registry = new HashMap<>();
 
     public PlantFactory(){
         registry.put(PlantType.SUNFLOWER, this::buildSunflower);
@@ -51,6 +59,18 @@ public class PlantFactory {
         registry.put(PlantType.MELON_PULT, this::buildMelonPult);
         registry.put(PlantType.WINTER_MELON, this::buildWinterMelonPult);
         registry.put(PlantType.PEPPER_PULT, this::buildPepperPult);
+        registry.put(PlantType.POTATO_MINE, this::buildPotatoMine);
+        registry.put(PlantType.PRIMAL_POTATO_MINE, this::buildPrimalPotatoMine);
+        registry.put(PlantType.CHERRY_BOMB, this::buildCherryBomb);
+        registry.put(PlantType.SQUASH, this::buildSquash);
+        registry.put(PlantType.GRAPESHOT, this::buildGrapeshot);
+        registry.put(PlantType.JALAPENO, this::buildJalapeno);
+        registry.put(PlantType.DOOM_SHROOM, this::buildDoomShroom);
+        registry.put(PlantType.TANGLE_KELP, this::buildTangleKelp);
+        registry.put(PlantType.ICEBERG_LETTUCE, this::buildIcebergLettuce);
+        registry.put(PlantType.ICE_SHROOM, this::buildIceShroom);
+        registry.put(PlantType.HOT_POTATO, this::buildHotPotato);
+        registry.put(PlantType.GRAVE_BUSTER, this::buildGraveBuster);
     }
 
     public static Plant createPlant(PlantType type, int x, int y) {
@@ -479,7 +499,7 @@ public class PlantFactory {
 
     private Plant buildSeaShroom(){
         int level = App.getCurrentUser().getUnlockedPlantsLevels().get(PlantType.SEA_SHROOM);
-        int range = (level >= 2 ? 5 : 4) * App.getCellWidth();
+        float range = (level >= 2 ? 5 : 4) * App.getCellWidth();
         int damage = level >= 3 ? 25 : 20;
         int lifespan = level >= 4 ? 700 : 600;
         Plant p = new Plant(PlantType.SEA_SHROOM, 300, damage);
@@ -506,7 +526,7 @@ public class PlantFactory {
 
     private Plant buildPuffShroom(){
         int level = App.getCurrentUser().getUnlockedPlantsLevels().get(PlantType.PUFF_SHROOM);
-        int range = (level >= 4 ? 5 : 4) * App.getCellWidth();
+        float range = (level >= 4 ? 5 : 4) * App.getCellWidth();
         int damage = level >= 3 ? 30 : 20;
         int lifespan = level >= 2 ? 700 : 600;
         Plant p = new Plant(PlantType.PUFF_SHROOM, 300, damage);
@@ -533,7 +553,7 @@ public class PlantFactory {
 
     private Plant buildFumeShroom(){
         int level = App.getCurrentUser().getUnlockedPlantsLevels().get(PlantType.FUME_SHROOM);
-        int range = (level >= 2 ? 6 : 5) * App.getCellWidth();
+        float range = (level >= 2 ? 6 : 5) * App.getCellWidth();
         int damage = level >= 3 ? 30 : 20;
         Plant p = new Plant(PlantType.FUME_SHROOM, 300, damage);
         CombinedDamageStrategy combinedDamageStrategy = new CombinedDamageStrategy(damage, ProjectileType.FUME);
@@ -702,6 +722,143 @@ public class PlantFactory {
         p.addComponent(newComponent);
         return p;
     }
+
+    private Plant buildPotatoMine(){
+        int level = App.getCurrentUser().getUnlockedPlantsLevels().get(PlantType.POTATO_MINE);
+        int armTime = level >= 2 ? 120 : 150;
+        int damage = level >= 4 ? 2400 : 1800;
+        Plant p = new Plant(PlantType.POTATO_MINE, 1000, damage);
+        p.addComponent(new ExplosivesComponent(new ProximityTrigger(App.getCellWidth()), new AreaDamageBehavior(damage, new CircularRange(0)), armTime));
+        return p;
+    }
+
+    private Plant buildPrimalPotatoMine(){
+        int level = App.getCurrentUser().getUnlockedPlantsLevels().get(PlantType.PRIMAL_POTATO_MINE);
+        int armTime = level >= 2 ? 40 : 50;
+        int damage = level >= 4 ? 2800 : 2400;
+        Plant p = new Plant(PlantType.PRIMAL_POTATO_MINE, 1000, damage);
+        p.addComponent(new ExplosivesComponent(new ProximityTrigger(App.getCellWidth()), new AreaDamageBehavior(damage, new CircularRange(1)), armTime));
+        return p;
+    }
+
+    private Plant buildCherryBomb(){
+        int level = App.getCurrentUser().getUnlockedPlantsLevels().get(PlantType.CHERRY_BOMB);
+        int damage = level >= 3 ? 2400 : 1800;
+        Plant p = new Plant(PlantType.CHERRY_BOMB, 1000, damage);
+        p.addComponent(new ExplosivesComponent(InstantTrigger.INSTANCE, new AreaDamageBehavior(damage, new CircularRange(1)), 0));
+        return p;
+    }
+
+    private Plant buildSquash(){
+        int level = App.getCurrentUser().getUnlockedPlantsLevels().get(PlantType.SQUASH);
+        int damage = level >= 3 ? 2400 : 1800;
+        Plant p = new Plant(PlantType.SQUASH, 1000, damage);
+        ExplosivesComponent component = new ExplosivesComponent(new ProximityTrigger(App.getCellWidth()*3), new AreaDamageBehavior(damage, new CircularRange(0)), 0);
+        if (level >= 4 ) component.setLives(2);
+        p.addComponent(component);
+        component.setPlantFoodBehavior((owner, comp) -> {
+            List<Zombie> allZombies = new ArrayList<>(App.getCurrentGame().getActiveZombies());
+            Collections.shuffle(allZombies);
+            allZombies.stream()
+                    .limit(2)
+                    .forEach(Zombie::die);
+        });
+        return p;
+    }
+
+    private Plant buildGrapeshot(){
+        int level = App.getCurrentUser().getUnlockedPlantsLevels().get(PlantType.GRAPESHOT);
+        int damage = level >= 2 ? 2400 : 1800;
+        int bounceMax = level >= 3 ? 4 : 3;
+        Plant p = new Plant(PlantType.GRAPESHOT, 1000, damage);
+        p.addComponent(new ExplosivesComponent(InstantTrigger.INSTANCE, new CompositeBehavior(new AreaDamageBehavior(damage, new CircularRange(1)), new GrapeshotBehavior(bounceMax)), 0));
+        return p;
+    }
+
+    private Plant buildJalapeno(){
+        int level = App.getCurrentUser().getUnlockedPlantsLevels().get(PlantType.JALAPENO);
+        int damage = level >= 3 ? 2400 : 1800;
+        Plant p = new Plant(PlantType.JALAPENO, 1000, damage);
+        p.addComponent(new ExplosivesComponent(InstantTrigger.INSTANCE, new CompositeBehavior(new AreaDamageBehavior(damage, LineRange.INSTANCE), new MeltIceBehavior(LineRange.INSTANCE)), 0));
+        return p;
+    }
+
+    private Plant buildDoomShroom(){
+        int level = App.getCurrentUser().getUnlockedPlantsLevels().get(PlantType.DOOM_SHROOM);
+        int damage = level >= 3 ? 2600 : 1800;
+        Plant p = new Plant(PlantType.DOOM_SHROOM, 1000, damage);
+        p.addComponent(new ExplosivesComponent(InstantTrigger.INSTANCE, new CompositeBehavior(new AreaDamageBehavior(damage, new CircularRange(2)), new MakeUnplantableBehavior(new CircularRange(0))), 0));
+        return p;
+    }
+
+    private Plant buildTangleKelp(){
+        int level = App.getCurrentUser().getUnlockedPlantsLevels().get(PlantType.TANGLE_KELP);
+        Plant p = new Plant(PlantType.TANGLE_KELP, 1000, 20000);
+        ExplosivesComponent component = new ExplosivesComponent(new ProximityTrigger(App.getCellWidth()), new SingleTargetDamageBehavior(new CircularRange(0)), 0);
+        if (level >= 3 ) component.setLives(2);
+        component.setPlantFoodBehavior((owner, comp) -> {
+            List<Zombie> waterZombies = App.getCurrentGame().getActiveZombies().stream()
+                    .filter(zombie -> {
+                        Cell zombieCell = Cell.findZombieCell(LevelMenuController.getGameCells(), zombie);
+                        return zombieCell != null && zombieCell.isWater();
+                    })
+                    .collect(Collectors.toList());
+            Collections.shuffle(waterZombies);
+            waterZombies.stream()
+                    .limit(3)
+                    .forEach(Zombie::die);
+        });
+        p.addComponent(component);
+        return p;
+    }
+
+    private Plant buildIcebergLettuce(){
+        int level = App.getCurrentUser().getUnlockedPlantsLevels().get(PlantType.ICEBERG_LETTUCE);
+        int freezeTime = level >= 3 ? 60 : 40;
+        Plant p = new Plant(PlantType.ICEBERG_LETTUCE, 1000, 0);
+        ExplosivesComponent component = new ExplosivesComponent(new ProximityTrigger(App.getCellWidth()), new FreezeZombieBehavior(new CircularRange(0), freezeTime), 0);
+        component.setPlantFoodBehavior((owner, comp) -> {
+            App.getCurrentGame().getActiveZombies()
+                    .forEach(zombie -> zombie.freeze(40));
+        });
+        p.addComponent(component);
+        return p;
+    }
+
+    private Plant buildIceShroom(){
+        int level = App.getCurrentUser().getUnlockedPlantsLevels().get(PlantType.ICE_SHROOM);
+        int freezeTime = level >= 2 ? 60 : 40;
+        int damage = level >= 4 ? 50 : 0;
+        Plant p = new Plant(PlantType.ICE_SHROOM, 1000, damage);
+        p.addComponent(new ExplosivesComponent(InstantTrigger.INSTANCE, new CompositeBehavior(new FreezeZombieBehavior(new CircularRange(10), freezeTime), new AreaDamageBehavior(damage, new CircularRange(10))), 0));
+        return p;
+    }
+
+    private Plant buildHotPotato(){
+        int level = App.getCurrentUser().getUnlockedPlantsLevels().get(PlantType.HOT_POTATO);
+        int radius = level >= 3 ? 1 : 0;
+        Plant p = new Plant(PlantType.HOT_POTATO, 1000, 0);
+        ExplosivesComponent component = new ExplosivesComponent(InstantTrigger.INSTANCE, new MeltIceBehavior(new CircularRange(radius)), 0);
+        if (level >= 4){
+            component.scheduleDelayedBehavior(new AreaDamageBehavior(100, new CircularRange(1)), 20);
+        }
+        return p;
+    }
+
+    private Plant buildGraveBuster(){
+        int level = App.getCurrentUser().getUnlockedPlantsLevels().get(PlantType.HOT_POTATO);
+        int delay = level >= 2 ? 30 : 20;
+        Plant p = new Plant(PlantType.HOT_POTATO, 300, 0);
+        ExplosivesComponent component = new ExplosivesComponent(InstantTrigger.INSTANCE, new RemoveGraveBehavior(), 0, delay);
+        if (level >= 4){
+            component.scheduleDelayedBehavior(new AreaDamageBehavior(100, new CircularRange(1)), delay);
+        }
+        return p;
+    }
+
+
+
+
 
 // not completed...
 

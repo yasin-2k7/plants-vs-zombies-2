@@ -70,7 +70,7 @@ public class SignupMenuView implements View{
                         int questionNum = Integer.parseInt(matcher.group(1));
                         String question = controller.getQuestion(questionNum);
                         String answer = matcher.group(2);
-                        String answerConfirm = matcher.group(3)
+                        String answerConfirm = matcher.group(3);
                         errors.addAll(controller.getPickQErrors();
 
 
