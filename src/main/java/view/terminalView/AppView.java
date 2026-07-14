@@ -8,6 +8,10 @@ import java.util.Scanner;
 public class AppView {
     static View currentScreen = SignupMenuView.getInstance();
 
+    public static void setCurrentScreen(View screen) {
+        currentScreen = screen;
+    }
+
     public static void run(){
         Scanner scanner = new Scanner(System.in);
         while (true){

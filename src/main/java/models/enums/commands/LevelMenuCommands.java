@@ -3,7 +3,7 @@ package models.enums.commands;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public enum LevelMenuCommands {
+public enum PlantMenuCommands {
     MENU_ENTER(""),
     MENU_SHOW_CURRENT(""),
     MENU_EXIT(""),
