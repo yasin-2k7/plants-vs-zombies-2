@@ -1,6 +1,5 @@
 package view.terminalView;
 
-import controller.LevelMenuController;
 import controller.PlantMenuController;
 import models.enums.commands.LevelMenuCommands;
 import models.enums.commands.PlantMenuCommands;
