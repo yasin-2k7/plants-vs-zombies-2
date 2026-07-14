@@ -1,5 +1,6 @@
 package models.projectile;
 
+import models.Damageable;
 import models.core.App;
 import models.enums.ProjectileType;
 import models.plant.components.SunProducerComponent;
@@ -30,7 +31,7 @@ public class Projectile implements Resettable{
             zombie = strikeStrategy.strike(x, y, target);
         }
         if (zombie != null) {
-            hitStrategy.applyDamage(zombie, App.getCurrentGame().getActiveZombies(), this);
+            hitStrategy.applyDamage(zombie, App.getCurrentGame().getActiveTargets(), this);
             pierce--;
             if (pierce == 0) {
                 App.getCurrentGame().getActiveProjectiles().remove(this);
@@ -98,8 +99,8 @@ public class Projectile implements Resettable{
         this.type = type;
     }
 
-    public double distanceToZombie(Zombie zombie){
-        return (Math.sqrt((zombie.getX() - x)*(zombie.getX() - x) + (zombie.getY() - y)*(zombie.getY() - y)));
+    public double distanceTo(Damageable target){
+        return (Math.sqrt((target.getX() - x)*(target.getX() - x) + (target.getY() - y)*(target.getY() - y)));
     }
 
     public float getOriginX() {

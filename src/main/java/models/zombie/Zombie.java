@@ -1,10 +1,11 @@
 package models.zombie;
 
+import models.Damageable;
 import models.enums.Zombies;
 import models.zombie.state.WalkingState;
 import models.zombie.state.ZombieState;
 
-public abstract class Zombie {
+public abstract class Zombie implements Damageable {
     protected Zombies name;
     protected int health;
     protected int maxHealth;
@@ -50,6 +51,7 @@ public abstract class Zombie {
         this.x -= this.speed; //حرکت به چپ
         }
 
+        @Override
         public void takeDamage(int amount, String damageType) {
             if (isDead) return;
             this.health -= amount;
@@ -102,21 +104,23 @@ public abstract class Zombie {
         this.slowFactor = 1.0;
     }
 
-        public boolean isBoss() {return false;}
-        public boolean isDead() { return isDead; }
-        public ZombieState getCurrentState() { return currentState; }
-        public void setState(ZombieState state) { this.currentState = state; }
-        public float getX() { return x; }
-        public void setX(float x) { this.x = x; }
-        public float getY() { return y; }
-        public void setY(float y) { this.y = y; }
-        public int getSpeed() { return speed; }
-        public void setSpeed(int speed) { this.speed = speed;
-            if (slowTicksRemaining == 0) {
-                this.originalSpeed = speed;
-            }}
-        public int getHealth() { return health; }
-        public void setHealth(int health) { this.health = health; }
-        public Zombies getName() { return name; }
-        public int getDamage() {return damage;}
+    public boolean isBoss() {return false;}
+    public boolean isDead() { return isDead; }
+    public ZombieState getCurrentState() { return currentState; }
+    public void setState(ZombieState state) { this.currentState = state; }
+    @Override
+    public float getX() { return x; }
+    public void setX(float x) { this.x = x; }
+    @Override
+    public float getY() { return y; }
+    public void setY(float y) { this.y = y; }
+    public int getSpeed() { return speed; }
+    public void setSpeed(int speed) { this.speed = speed;
+        if (slowTicksRemaining == 0) {
+            this.originalSpeed = speed;
+        }}
+    public int getHealth() { return health; }
+    public void setHealth(int health) { this.health = health; }
+    public Zombies getName() { return name; }
+    public int getDamage() {return damage;}
 }

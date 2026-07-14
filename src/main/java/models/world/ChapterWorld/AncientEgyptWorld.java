@@ -18,4 +18,6 @@ public class AncientEgyptWorld extends GameWorld {
     protected void applyChapterRules() {
 
     }
+
+
 }

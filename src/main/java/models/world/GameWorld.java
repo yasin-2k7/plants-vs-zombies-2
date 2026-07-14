@@ -1,7 +1,7 @@
 package models.world;
 
+import models.Damageable;
 import models.enums.PlantType;
-import models.enums.Zombies;
 import models.lawnMower.LawnMower;
 import models.miniGame.MechanicsStrategy;
 import models.plant.Plant;
@@ -43,6 +43,8 @@ public abstract class GameWorld {
     protected List<Plant> activePlants;
     protected List<Sun> activeSuns;
     protected List<Projectile> activeProjectiles;
+    protected List<Grave> activeGrave;
+    protected List<Damageable> activeTargets;
     protected List<LawnMower> lawnMowers;
 
     private GenericObjectPool<Sun> sunsPool = new GenericObjectPool<>(Sun::new);
@@ -76,6 +78,8 @@ public abstract class GameWorld {
         this.activePlants = new ArrayList<>();
         this.activeSuns = new ArrayList<>();
         this.activeProjectiles = new ArrayList<>();
+        this.activeGrave = new ArrayList<>();
+        this.activeTargets = new ArrayList<>();
         this.lawnMowers = new ArrayList<>();
         this.sunsPool = new GenericObjectPool<>(Sun::new);
 
@@ -240,6 +244,11 @@ public abstract class GameWorld {
     public void setState(GameState state) { this.state = state; }
 
     public List<Zombie> getActiveZombies() { return activeZombies; }
+
+    public List<Damageable> getActiveTargets() {
+        return activeTargets;
+    }
+
     public List<Projectile> getActiveProjectiles() { return activeProjectiles; }
     public List<LawnMower> getLawnMowers() { return lawnMowers; }
 
@@ -248,6 +257,11 @@ public abstract class GameWorld {
     }
 
     public void addZombie(Zombie zombie) { activeZombies.add(zombie); }
+    public void addGrave(Grave grave) { activeGrave.add(grave); }
+    public void addTarget() {
+        activeTargets.addAll(activeZombies);
+        activeTargets.addAll(activeGrave);
+    }
 
     public GenericObjectPool<Projectile> getProjectilesPool() {
         return projectilesPool;

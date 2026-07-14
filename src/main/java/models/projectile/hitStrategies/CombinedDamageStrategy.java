@@ -1,5 +1,6 @@
 package models.projectile.hitStrategies;
 
+import models.Damageable;
 import models.enums.ProjectileType;
 import models.projectile.Projectile;
 import models.zombie.Zombie;
@@ -68,32 +69,35 @@ public class CombinedDamageStrategy implements HitStrategy{
     }
 
     @Override
-    public void applyDamage(Zombie target, List<Zombie> allZombies, Projectile projectile) {
+    public void applyDamage(Damageable target, List<Damageable> allTargets, Projectile projectile) {
         target.takeDamage(damage);
         applySpecialDamage(target, projectile);
         if (radius > 0) {
-            for (Zombie zombie : allZombies){
-                if (zombie != target){
-                    if (projectile.distanceToZombie(zombie) <= radius){
-                        zombie.takeDamage(neighborDamage);
-                        applySpecialDamage(zombie, projectile);
+            for (Damageable extraTarget : allTargets){
+                if (extraTarget != target){
+                    if (projectile.distanceTo(extraTarget) <= radius){
+                        extraTarget.takeDamage(neighborDamage);
+                        applySpecialDamage(extraTarget, projectile);
                     }
                 }
             }
         }
     }
 
-    private void applySpecialDamage(Zombie target, Projectile projectile){
+    private void applySpecialDamage(Damageable target, Projectile projectile){
+        if (!(target instanceof Zombie)) {
+            return;
+        }
         switch (element){
             case "NORMAL":
                 break;
             case "ICE":
-                target.applySlow(chillTime, 0.5);
+                ((Zombie) target).applySlow(chillTime, 0.5);
                 break;
             case "FIRE":
                 break;
             case "STUN":
-                target.disableFor(20);
+                ((Zombie) target).disableFor(20);
                 break;
             case "POISON":
                 break;
