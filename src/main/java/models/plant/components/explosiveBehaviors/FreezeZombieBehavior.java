@@ -9,13 +9,13 @@ import models.zombie.Zombie;
 import java.util.DoubleSummaryStatistics;
 import java.util.List;
 
-public class AreaDamageBehavior implements ExplosiveBehavior{
-    private int damage;
+public class FreezeZombieBehavior implements ExplosiveBehavior{
     private ExplosionRange area;
+    private int freezeTime;
 
-    public AreaDamageBehavior(int damage, ExplosionRange area) {
-        this.damage = damage;
+    public FreezeZombieBehavior(ExplosionRange area, int freezeTime) {
         this.area = area;
+        this.freezeTime = freezeTime;
     }
 
     @Override
@@ -34,9 +34,8 @@ public class AreaDamageBehavior implements ExplosiveBehavior{
 
         for (Zombie zombie : App.getCurrentGame().getActiveZombies()){
             if (zombie.getY() <= maxY && zombie.getY() >= minY && zombie.getX() <= maxX && zombie.getX() >= minX){
-                zombie.takeDamage(damage, "NORMAL");
+                zombie.freeze(freezeTime);
             }
         }
     }
-
 }

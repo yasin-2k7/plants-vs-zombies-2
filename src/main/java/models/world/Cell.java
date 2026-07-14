@@ -6,6 +6,7 @@ import models.enums.PlantType;
 import models.plant.Plant;
 import models.plant.components.PlacementBehaviorComponent;
 import models.plant.components.ShooterComponent;
+import models.world.cellTerrains.CellTerrain;
 import models.world.obstacles.Obstacle;
 import models.zombie.Zombie;
 
@@ -23,16 +24,15 @@ public class Cell {
     private Plant mainPlant;
     private Plant shieldPlant;
     private Obstacle obstacle;
+    private CellTerrain terrain;
 
     private boolean plantable = true;
 
 
-
-    private boolean isWater;
-
-    public Cell(int row, int col) {
+    public Cell(int row, int col, CellTerrain initialTerrain) {
         this.row = row;
         this.col = col;
+        this.terrain = initialTerrain;
     }
 
     public boolean isLayerEmpty(PlantLayer layer) {
@@ -83,38 +83,33 @@ public class Cell {
     }
 
     public void handlePlanting(PlantType type) {
-        Plant newPlant = App.getFactory().createPlant(type, x, y);
-        PlacementBehaviorComponent behavior = newPlant.getComponent(PlacementBehaviorComponent.class);
+        if (!this.isPlantable()) {
+            return;
+        }
 
+        Plant newPlant = App.getFactory().createPlant(type, x, y);
+
+        if (!this.terrain.canPlant(newPlant, this)) {
+            return;
+        }
+
+        PlacementBehaviorComponent behavior = newPlant.getComponent(PlacementBehaviorComponent.class);
         PlantLayer layer = (behavior != null) ? behavior.getTargetLayer() : PlantLayer.MAIN;
 
-        if (behavior != null) {
-            if (behavior.isWaterOnly() && !isWater){
-                return;
-            }
-            if (!behavior.isWaterOnly() && isWater){
-                if (isLayerEmpty(PlantLayer.BASE)){
+
+
+        if (behavior.isStackable() && !isLayerEmpty(layer)) {
+            Plant existingPlant = getPlant(layer);
+            if (existingPlant.getType() == type) {
+                PlacementBehaviorComponent existingBehavior = existingPlant.getComponent(PlacementBehaviorComponent.class);
+                if (existingBehavior.tryIncrementStack()) {
+                    ShooterComponent shooterComp = existingPlant.getComponent(ShooterComponent.class);
+                    shooterComp.setBurstProjectileNumber(existingBehavior.getCurrentStack());
+                    shooterComp.setBurstProjectileNumberOnPlantFood(existingBehavior.getCurrentStack());
+                    shooterComp.setGiantCount(existingBehavior.getCurrentStack());
+                    // update visuals...
                     return;
                 }
-            }
-
-            if (behavior.isStackable() && !isLayerEmpty(layer)) {
-                Plant existingPlant = getPlant(layer);
-                if (existingPlant.getType() == type) {
-                    PlacementBehaviorComponent existingBehavior = existingPlant.getComponent(PlacementBehaviorComponent.class);
-                    if (existingBehavior.tryIncrementStack()) {
-                        ShooterComponent shooterComp = existingPlant.getComponent(ShooterComponent.class);
-                        shooterComp.setBurstProjectileNumber(existingBehavior.getCurrentStack());
-                        shooterComp.setBurstProjectileNumberOnPlantFood(existingBehavior.getCurrentStack());
-                        shooterComp.setGiantCount(existingBehavior.getCurrentStack());
-                        // update visuals...
-                        return;
-                    }
-                }
-            }
-        } else {
-            if (isWater && isLayerEmpty(PlantLayer.BASE)){
-                return;
             }
         }
 
@@ -161,6 +156,33 @@ public class Cell {
                 .toList();
     }
 
+    public static Cell findZombieCell(Cell[][] grid, Zombie zombie){
+        for (Cell[] cellRows : grid){
+            for (Cell cell : cellRows){
+                if (cell.containsX(zombie.getX()) && cell.getY() == zombie.getY()){
+                    return cell;
+                }
+            }
+        }
+        return null;
+    }
+
+    public static Cell nextCell(Cell origin, Cell[][] grid){
+        int row = origin.getRow();
+        if (origin.getCol() > 8){
+            return null;
+        }
+        return grid[row][origin.getCol()+1];
+    }
+
+    public static Cell previousCell(Cell origin, Cell[][] grid){
+        int row = origin.getRow();
+        if (origin.getCol() < 2){
+            return null;
+        }
+        return grid[row][origin.getCol()-1];
+    }
+
 
 
     public void removePlant(){
@@ -191,6 +213,18 @@ public class Cell {
     public Obstacle getObstacle() { return obstacle; }
     public void setObstacle(Obstacle obstacle) { this.obstacle = obstacle; }
     public void removeObstacle() { this.obstacle = null; }
+
+    public void setTerrain(CellTerrain terrain) {
+        this.terrain = terrain;
+    }
+
+    public boolean canPlant(Plant plant) {
+        return this.plantable && terrain.canPlant(plant, this);
+    }
+
+    public boolean isWater() {
+        return terrain.isWater();
+    }
 
     public boolean isPlantable() {
         return plantable;

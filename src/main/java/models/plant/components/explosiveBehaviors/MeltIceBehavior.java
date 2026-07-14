@@ -9,9 +9,9 @@ import java.util.List;
 
 public class MeltIceBehavior implements ExplosiveBehavior{
     private ExplosionRange area;
-    private boolean finished = false;
 
-    public MeltIceBehavior(float time, ExplosionRange area) {
+
+    public MeltIceBehavior(ExplosionRange area) {
         this.area = area;
     }
 
@@ -29,8 +29,4 @@ public class MeltIceBehavior implements ExplosiveBehavior{
         }
     }
 
-    @Override
-    public boolean isFinished() {
-        return finished;
-    }
 }

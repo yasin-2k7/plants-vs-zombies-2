@@ -8,7 +8,6 @@ import java.util.List;
 
 public class SingleTargetDamageBehavior implements ExplosiveBehavior{
     private ExplosionRange area;
-    private boolean finished;
 
     public SingleTargetDamageBehavior(ExplosionRange area) {
         this.area = area;
@@ -25,11 +24,6 @@ public class SingleTargetDamageBehavior implements ExplosiveBehavior{
                     owner.die();
                 });
 
-        finished = true;
     }
 
-    @Override
-    public boolean isFinished() {
-        return finished;
-    }
 }
