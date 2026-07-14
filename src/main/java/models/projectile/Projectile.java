@@ -18,7 +18,6 @@ public class Projectile implements Resettable{
     private HitStrategy hitStrategy;
     private MovementStrategy movementStrategy;
     private CheckStrike strikeStrategy;
-    private VisionStrategy visionStrategy;
     private ProjectileType type;
     private Zombie target;
     private int pierce;
@@ -36,12 +35,14 @@ public class Projectile implements Resettable{
             if (pierce == 0) {
                 App.getCurrentGame().getActiveProjectiles().remove(this);
                 App.getCurrentGame().getProjectilesPool().release(this);
+                return;
             }
         }
 
         if (movementStrategy.isDead(this)){
             App.getCurrentGame().getActiveProjectiles().remove(this);
             App.getCurrentGame().getProjectilesPool().release(this);
+            return;
         }
 
         movementStrategy.move(this);

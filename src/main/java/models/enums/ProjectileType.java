@@ -20,6 +20,7 @@ public enum ProjectileType {
     MEDIUM_BULB("STRAIGHT"),
     LARGE_BULB("STRAIGHT"),
     SPECIAL_BULB("STRAIGHT"),
+    GRAPE("STRAIGHT"),
     CABBAGE("LOBBED"),
     SPECIAL_CABBAGE("LOBBED"),
     KERNEL("LOBBED"),
