@@ -3,8 +3,10 @@ package models.shop;
 import models.core.App;
 import models.core.User;
 import models.enums.PlantType;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class ShopList {
     private List<ShopItem> permanentItems;
@@ -13,42 +15,119 @@ public class ShopList {
     public ShopList() {
         permanentItems = new ArrayList<>();
         permanentItems.add(new ShopItem("Unlock Pot", 2000, 0, 20, true));
+        permanentItems.add(new ShopItem("Plant Food", 0, 3, 3, true));
+        permanentItems.add(new ShopItem("Random Seed Packet", 1000, 0, -1, true));
+        permanentItems.add(new ShopItem("Specific Seed Packet", 0, 5, -1, true));
+        permanentItems.add(new ShopItem("Currency Exchange", 0, 5, -1, true));
 
-        // نمونه پیشنهاد روزانه (در سیستم واقعی باید رندوم باشد)
-        dailyOffer = new DailyOffer(PlantType.PEASHOOTER, 1000);
+        PlantType[] types = PlantType.values();
+        PlantType randomType = types[new Random().nextInt(types.length)];
+        dailyOffer = new DailyOffer(randomType, 1600);
     }
 
-    public void buy(String itemName, PlantType plantType) {
+    public String buy(String itemName, PlantType plantType, int count) {
         User user = App.getCurrentUser();
         if (user == null) {
-            System.out.println("Error: No user logged in.");
-            return;
+            return "Error: No user logged in.";
+        }
+
+        if (count <= 0) {
+            return "Error: Count must be greater than zero.";
+        }
+
+        if (dailyOffer != null && dailyOffer.getName().equalsIgnoreCase(itemName)) {
+            if (!dailyOffer.isAvailableToday()) {
+                return "Error: Daily offer already purchased or not available.";
+            }
+            if (count > 1) {
+                return "Error: Can only buy 1 daily offer.";
+            }
+            if (!dailyOffer.isAffordable(user.getCoins(), user.getGems())) {
+                return "Error: Not enough money for daily offer!";
+            }
+
+            user.spendCoins(dailyOffer.getCoinCost());
+            dailyOffer.setPurchased(true);
+            user.addSeedPackets(dailyOffer.getPlantType(), 10);
+            return dailyOffer.getPlantType() + " seeds unlocked permanently!";
+        }
+
+        ShopItem selectedItem = null;
+        for (ShopItem item : permanentItems) {
+            if (item.getName().equalsIgnoreCase(itemName)) {
+                selectedItem = item;
+                break;
+            }
+        }
+
+        if (selectedItem == null) {
+            return "Error: Item not found.";
+        }
+
+        int totalCoinCost = selectedItem.getCoinCost() * count;
+        int totalGemCost = selectedItem.getDiamondCost() * count;
+
+        if (user.getCoins() < totalCoinCost || user.getGems() < totalGemCost) {
+            return "Error: Not enough currency. Need " + totalCoinCost + " coins and " + totalGemCost + " gems.";
         }
 
         if (itemName.equalsIgnoreCase("Unlock Pot")) {
-            ShopItem potItem = permanentItems.get(0);
-            if (!potItem.isAffordable(user.getCoins(), user.getGems())) {
-                System.out.println("Not enough coins! Need " + potItem.getCoinCost() + " coins.");
-                return;
+            String result = "";
+            for (int i = 0; i < count; i++) {
+                result = user.getGreenhouse().unlockFirstLockedPot();
+                if (!result.contains("successfully")) {
+                    break;
+                }
+                user.spendCoins(selectedItem.getCoinCost());
             }
-            boolean success = user.getGreenhouse().unlockFirstLockedPot();
-            if (success) {
-                user.spendCoins(potItem.getCoinCost());
-                System.out.println("Pot unlocked successfully!");
+            return count + " pots processed. Status: " + result;
+
+        } else if (itemName.equalsIgnoreCase("Plant Food")) {
+            if (user.getPlantFoods() + count > 3) {
+                return "Error: Maximum capacity for Plant Food is 3. You currently have " + user.getPlantFoods() + ".";
             }
-            return;
+
+            user.spendGems(totalGemCost);
+            user.addPlantFood(count);
+            return count + " Plant Food bought successfully! You now have " + user.getPlantFoods() + " Plant Foods.";
+
+        } else if (itemName.equalsIgnoreCase("Random Seed Packet")) {
+            List<PlantType> unlockedPlants = new ArrayList<>(user.getUnlockedPlantsLevels().keySet());
+            if (unlockedPlants.isEmpty()) {
+                return "Error: You have no unlocked plants to buy seeds for.";
+            }
+
+            user.spendCoins(totalCoinCost);
+
+            PlantType randomPlant = unlockedPlants.get(new Random().nextInt(unlockedPlants.size()));
+            int seedsToGive = 5 * count;
+
+            user.addSeedPackets(randomPlant, seedsToGive);
+
+            return count + " Random Seed Packets bought successfully! Received " + seedsToGive + " seeds for " + randomPlant.name() + ".";
+
+        } else if (itemName.equalsIgnoreCase("Specific Seed Packet")) {
+            if (plantType == null) {
+                return "Error: You must specify a plant type using -t.";
+            }
+            if (!user.getUnlockedPlantsLevels().containsKey(plantType)) {
+                return "Error: Plant " + plantType.name() + " is not unlocked yet.";
+            }
+
+            user.spendGems(totalGemCost);
+            int seedsToGive = 10 * count;
+
+            user.addSeedPackets(plantType, seedsToGive);
+
+            return count + " Specific Seed Packets for " + plantType.name() + " bought successfully! Received " + seedsToGive + " seeds.";
+
+        } else if (itemName.equalsIgnoreCase("Currency Exchange")) {
+            user.spendGems(totalGemCost);
+            user.addCoins(500 * count);
+            return "Exchanged " + totalGemCost + " gems for " + (500 * count) + " coins.";
         }
 
-        if (dailyOffer != null && dailyOffer.getName().equals(itemName) && dailyOffer.isAvailableToday()) {
-            if (!dailyOffer.isAffordable(user.getCoins(), user.getGems())) {
-                System.out.println("Not enough money for daily offer!");
-                return;
-            }
-            user.spendCoins(dailyOffer.getCoinCost());
-            user.unlockPlant(dailyOffer.getPlantType());
-            dailyOffer.setPurchased(true);
-            System.out.println(dailyOffer.getPlantType() + " unlocked permanently!");
-        }
+        return "Error: Custom logic needed for this item.";
     }
 
     public DailyOffer getDailyOffer() { return dailyOffer; }

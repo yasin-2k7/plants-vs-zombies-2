@@ -27,6 +27,6 @@ public class ShopItem {
     public int getCoinCost() { return coinCost; }
     public int getDiamondCost() { return diamondCost; }
     public boolean isPermanent() {
-        return false;
+        return this.isPermanent;
     }
 }
