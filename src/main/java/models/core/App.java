@@ -13,10 +13,10 @@ public class App {
     private static GameWorld currentGame;
     private static final PlantFactory factory = new PlantFactory();
 
-    private static final int CELL_HEIGHT = 80;
-    private static final int CELL_WIDTH = 50;
-    private static final int FIRST_CELL_X = 100;
-    private static final int FIRST_CELL_Y = 400;
+    private static final float CELL_HEIGHT = 80;
+    private static final float CELL_WIDTH = 50;
+    private static final float FIRST_CELL_X = 100;
+    private static final float FIRST_CELL_Y = 400;
 
     public static User getCurrentUser() {
         return currentUser;
@@ -36,19 +36,19 @@ public class App {
         App.currentGame = currentGame;
     }
 
-    public static int getCellHeight() {
+    public static float getCellHeight() {
         return CELL_HEIGHT;
     }
 
-    public static int getCellWidth() {
+    public static float getCellWidth() {
         return CELL_WIDTH;
     }
 
-    public static int getFirstCellX() {
+    public static float getFirstCellX() {
         return FIRST_CELL_X;
     }
 
-    public static int getFirstCellY() {
+    public static float getFirstCellY() {
         return FIRST_CELL_Y;
     }
 

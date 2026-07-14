@@ -21,7 +21,7 @@ import java.util.Map;
 import java.util.function.Supplier;
 
 public class PlantFactory {
-    private final Map<PlantType, Supplier<Plant>> registry = new HashMap<>();
+    private static final Map<PlantType, Supplier<Plant>> registry = new HashMap<>();
 
     public PlantFactory(){
         registry.put(PlantType.SUNFLOWER, this::buildSunflower);
@@ -479,7 +479,7 @@ public class PlantFactory {
 
     private Plant buildSeaShroom(){
         int level = App.getCurrentUser().getUnlockedPlantsLevels().get(PlantType.SEA_SHROOM);
-        int range = (level >= 2 ? 5 : 4) * App.getCellWidth();
+        float range = (level >= 2 ? 5 : 4) * App.getCellWidth();
         int damage = level >= 3 ? 25 : 20;
         int lifespan = level >= 4 ? 700 : 600;
         Plant p = new Plant(PlantType.SEA_SHROOM, 300, damage);
@@ -506,7 +506,7 @@ public class PlantFactory {
 
     private Plant buildPuffShroom(){
         int level = App.getCurrentUser().getUnlockedPlantsLevels().get(PlantType.PUFF_SHROOM);
-        int range = (level >= 4 ? 5 : 4) * App.getCellWidth();
+        float range = (level >= 4 ? 5 : 4) * App.getCellWidth();
         int damage = level >= 3 ? 30 : 20;
         int lifespan = level >= 2 ? 700 : 600;
         Plant p = new Plant(PlantType.PUFF_SHROOM, 300, damage);
@@ -533,7 +533,7 @@ public class PlantFactory {
 
     private Plant buildFumeShroom(){
         int level = App.getCurrentUser().getUnlockedPlantsLevels().get(PlantType.FUME_SHROOM);
-        int range = (level >= 2 ? 6 : 5) * App.getCellWidth();
+        float range = (level >= 2 ? 6 : 5) * App.getCellWidth();
         int damage = level >= 3 ? 30 : 20;
         Plant p = new Plant(PlantType.FUME_SHROOM, 300, damage);
         CombinedDamageStrategy combinedDamageStrategy = new CombinedDamageStrategy(damage, ProjectileType.FUME);

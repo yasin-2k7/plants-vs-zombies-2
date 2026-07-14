@@ -19,6 +19,8 @@ public class Plant {
     private boolean disabled = false;
     private int slowTicks = 0;
     private Cell cell = null;
+    private int frozenAmount = 0;
+    private boolean freeze = false;
 
     public void addComponent(GameComponent comp) {
         components.add(comp);
@@ -79,6 +81,22 @@ public class Plant {
             }
         }
         return null;
+    }
+
+    public void increaseFrozenAmount(int amount){
+        frozenAmount += amount;
+        if (frozenAmount >= 100){
+            frozenAmount = 100;
+            freeze = true;
+        }
+    }
+
+    public boolean isFreeze() {
+        return freeze;
+    }
+
+    public void unfreeze(){
+        freeze = false;
     }
 
     public void activatePlantFood(){

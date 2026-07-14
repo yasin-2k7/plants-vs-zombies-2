@@ -6,6 +6,12 @@ import models.enums.PlantType;
 import models.plant.Plant;
 import models.plant.components.PlacementBehaviorComponent;
 import models.plant.components.ShooterComponent;
+import models.world.obstacles.Obstacle;
+import models.zombie.Zombie;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 
 public class Cell {
@@ -16,7 +22,10 @@ public class Cell {
     private Plant basePlant;
     private Plant mainPlant;
     private Plant shieldPlant;
-    private int iceAmount;
+    private Obstacle obstacle;
+
+    private boolean plantable = true;
+
 
 
     private boolean isWater;
@@ -115,10 +124,79 @@ public class Cell {
         }
     }
 
+    public static List<Cell> getNeighborCells(Cell inputCell, Cell[][] grid, int radius) {
+        List<Cell> neighbors = new ArrayList<>();
+
+        int centerCol = inputCell.getCol();
+        int centerLane = inputCell.getRow();
+
+        int totalLanes = grid.length;
+        int totalCols = grid[0].length;
+
+        int minLane = Math.max(0, centerLane - radius);
+        int maxLane = Math.min(totalLanes - 1, centerLane + radius);
+
+        int minCol = Math.max(0, centerCol - radius);
+        int maxCol = Math.min(totalCols - 1, centerCol + radius);
+
+        for (int l = minLane; l <= maxLane; l++) {
+            neighbors.addAll(Arrays.asList(grid[l]).subList(minCol, maxCol + 1));
+        }
+
+        return neighbors;
+    }
+
+    public static List<Cell> getCellsInRow(Cell inputCell, Cell[][] grid){
+        return new ArrayList<>(Arrays.asList(grid[inputCell.getRow()]).subList(0, grid[0].length));
+    }
+
+    public static List<Zombie> getZombiesInCells(List<Cell> affectedCells) {
+        List<Zombie> activeZombies = App.getCurrentGame().getActiveZombies();
+
+        return activeZombies.stream()
+                .filter(zombie -> affectedCells.stream().anyMatch(cell ->
+                        zombie.getY() == cell.getY() &&
+                                cell.containsX(zombie.getX())
+                ))
+                .toList();
+    }
+
+
 
     public void removePlant(){
         this.mainPlant = null;
     }
 
+    public boolean containsX(float x){
+        return (x >= this.x - App.getCellWidth()/2 && x <= this.x + App.getCellWidth()/2);
+    }
 
+    public int getRow() {
+        return row;
+    }
+
+    public int getCol() {
+        return col;
+    }
+
+    public int getX() {
+        return x;
+    }
+
+    public int getY() {
+        return y;
+    }
+
+    public boolean hasObstacle() { return obstacle != null; }
+    public Obstacle getObstacle() { return obstacle; }
+    public void setObstacle(Obstacle obstacle) { this.obstacle = obstacle; }
+    public void removeObstacle() { this.obstacle = null; }
+
+    public boolean isPlantable() {
+        return plantable;
+    }
+
+    public void setPlantable(boolean plantable) {
+        this.plantable = plantable;
+    }
 }
