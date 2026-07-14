@@ -28,8 +28,10 @@ public class User {
     private HashMap<PlantType, Integer> UnlockedPlantsLevels;
     private HashMap<PlantType, Boolean> plantBoosts;
     private static ArrayList<News> allNews;
+    private ArrayList<News> unreadNews;
     private GreenHouse greenhouse;
     private transient boolean isLoaded = false;
+    private int gameDifficulty = 3;
 
     public User(){
         this.plantBoosts = new HashMap<>();
@@ -132,6 +134,30 @@ public class User {
     public int getGems() {return gems;}
     public String getNickname() {return nickname;}
 
+    public String getEmail() {
+        return email;
+    }
+
+    public String getSecurityA() {
+        return securityA;
+    }
+
+    public String getSecurityQ() {
+        return securityQ;
+    }
+
+    public ArrayList<News> getAllNews() {
+        return allNews;
+    }
+
+    public ArrayList<News> getUnreadNews() {
+        return unreadNews;
+    }
+
+    public String getHashPassword() {
+        return hashPassword;
+    }
+
     public void setHashPassword(String hashPassword) { this.hashPassword = hashPassword;}
     public void setUsername(String username) {
         this.username = username;
@@ -144,4 +170,7 @@ public class User {
     public void setSecurityQ(String securityQ) { this.securityQ = securityQ;}
     public void setSecurityA(String securityA) {this.securityA = securityA;}
 
+    public void setGameDifficulty(int gameDifficulty) {
+        this.gameDifficulty = gameDifficulty;
+    }
 }

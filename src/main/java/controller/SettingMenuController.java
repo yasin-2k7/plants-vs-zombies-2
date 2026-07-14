@@ -5,4 +5,8 @@ public class SettingMenuController implements MenuController{
     public void changeMenu() {
 
     }
+
+    public String changeDifficulty(){
+
+    }
 }

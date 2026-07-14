@@ -103,14 +103,16 @@ public class SignupMenuController implements MenuController{
         return errors;
     }
 
-    public void createUser( String username,
+    public String createUser( String username,
                             String password,
                             String nickname,
                             String email,
                             String gender,
                             String securityQ,
                             String securityA){
-        UserManager.register(username, password, nickname, email, gender, securityQ, securityA);
+        String result = UserManager.register(username, password, nickname, email, gender, securityQ, securityA);
+
+        return result;
 
     }
 
