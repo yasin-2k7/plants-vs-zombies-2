@@ -5,4 +5,9 @@ public class GameMenuController implements MenuController {
     public void changeMenu() {
 
     }
+
+    @Override
+    public void exitMenu() {
+
+    }
 }

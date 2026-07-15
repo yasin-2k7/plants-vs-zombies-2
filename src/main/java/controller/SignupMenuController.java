@@ -2,6 +2,8 @@ package controller;
 
 import models.core.UserDataManager;
 import models.core.UserManager;
+import view.terminalView.AppView;
+import view.terminalView.LoginMenuView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,7 +26,12 @@ public class SignupMenuController implements MenuController{
 
     @Override
     public void changeMenu() {
+        AppView.currentScreen = LoginMenuView.getInstance(new LoginMenuController());
+    }
 
+    @Override
+    public void exitMenu() {
+        System.exit(0);
     }
 
     public List<String> getUsernameErrors(String username) {

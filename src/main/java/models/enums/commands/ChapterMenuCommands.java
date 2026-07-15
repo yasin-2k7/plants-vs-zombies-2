@@ -5,7 +5,7 @@ import java.util.regex.Pattern;
 
 public enum ChapterMenuCommands {
     MENU_ENTER(""),
-    MENU_SHOW_CURRENT(""),
+    MENU_SHOW_CURRENT("^menu\\s+show\\s+current$"),
     MENU_EXIT(""),
     MENU_ENTER_CHAPTER(""),
     MENU_GREENHOUSE(""),
@@ -13,7 +13,8 @@ public enum ChapterMenuCommands {
     MENU_LEADERBOARD(""),
     MENU_COIN_WALLET(""),
     MENU_GEM_WALLET(""),
-    MENU_CHEAT_ADD("");
+    MENU_CHEAT_ADD(""),
+    CHOOSE_CHAPTER("^choose\\s+adventure\\s+(\\S+)$");
 
 
     private final String pattern;

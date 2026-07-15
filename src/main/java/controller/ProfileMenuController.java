@@ -15,6 +15,11 @@ public class ProfileMenuController implements MenuController{
 
     }
 
+    @Override
+    public void exitMenu() {
+
+    }
+
     public String changeUsername(String newUsername){
         User user = App.getCurrentUser();
 
@@ -87,7 +92,18 @@ public class ProfileMenuController implements MenuController{
             return "new pass and your pass are similar.";
         }
 
-        
+        List<String> errors;
+        errors = signupMenuController.getPasswordErrors(newPassword, newPassword);
+        if(!errors.isEmpty()){
+            for(String error : errors){
+                return error;
+            }
+        }
+
+        user.setHashPassword(hashPassword);
+        return "your pass changed.";
+
+
     }
 
 }

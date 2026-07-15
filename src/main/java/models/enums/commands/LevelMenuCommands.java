@@ -5,14 +5,16 @@ import java.util.regex.Pattern;
 
 public enum LevelMenuCommands {
     MENU_ENTER(""),
-    MENU_SHOW_CURRENT(""),
+    MENU_SHOW_CURRENT("^menu\\s+show\\s+current$"),
     MENU_EXIT(""),
     SHOW_ALL_PLANTS(""),
     SHOW_AVAILABLE_PLANTS(""),
     ADD_PLANT(""),
     REMOVE_PLANT(""),
     BOOST_PLANT(""),
-    START_GAME("");
+    START_GAME(""),
+    CHOOSE_LEVEL("^choose\\s+level\\s+([1-4])$"),
+    SHOW_LEVELS("^show\\s+levels$");
 
     private final String pattern;
     private final Pattern compiledPattern;

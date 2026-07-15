@@ -12,6 +12,7 @@ import models.projectile.Projectile;
 import models.world.levelSetup.LevelSetup;
 import models.world.loseCondition.LoseCondition;
 import models.world.mechanics.Mechanic;
+import models.world.obstacles.Grave;
 import models.world.winCondition.WinCondition;
 import models.zombie.Zombie;
 

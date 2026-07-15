@@ -5,6 +5,7 @@ import models.plant.Plant;
 import models.plant.PlantFactory;
 import models.world.Cell;
 import models.world.GameWorld;
+import models.world.cellTerrains.LandTerrain;
 import models.world.mechanics.NormalMechanic;
 import models.world.mechanics.SunSpawnMechanic;
 import models.zombie.wave.Wave;
@@ -29,7 +30,7 @@ public class SaveOurSeedsLevelSetup implements LevelSetup{
         Cell[][] grid = new Cell[rows][cols];
         for (int r = 0; r < rows; r++)
             for (int c = 0; c < cols; c++)
-                grid[r][c] = new Cell(r, c);
+                grid[r][c] = new Cell(r, c, new LandTerrain());
         world.setGrid(grid);
 
         for(Map.Entry<Point, PlantType> entry : protectedPlants.entrySet()){

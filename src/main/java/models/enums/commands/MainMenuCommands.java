@@ -4,8 +4,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public enum MainMenuCommands {
-    MENU_ENTER(""),
-    MENU_SHOW_CURRENT(""),
+    MENU_ENTER("^menu\\s+enter\\s+chapter\\s+menu$"),
+    MENU_SHOW_CURRENT("^menu\\s+show\\s+current$"),
     MENU_LOGOUT("");
 
     private final String pattern;

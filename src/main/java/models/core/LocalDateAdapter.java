@@ -1,0 +1,25 @@
+package models.core;
+
+import com.google.gson.*;
+import java.lang.reflect.Type;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+
+public class LocalDateAdapter implements JsonSerializer<LocalDate>, JsonDeserializer<LocalDate> {
+
+    // فرمت استاندارد تاریخ: YYYY-MM-DD
+    private static final DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE;
+
+    // تبدیل LocalDate به متن برای ذخیره در JSON
+    @Override
+    public JsonElement serialize(LocalDate src, Type typeOfSrc, JsonSerializationContext context) {
+        return new JsonPrimitive(src.format(formatter));
+    }
+
+    // تبدیل متنِ داخل JSON به LocalDate هنگام خواندن فایل
+    @Override
+    public LocalDate deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
+            throws JsonParseException {
+        return LocalDate.parse(json.getAsString(), formatter);
+    }
+}

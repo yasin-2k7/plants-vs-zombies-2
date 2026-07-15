@@ -5,4 +5,9 @@ public class LeaderboardMenuController implements MenuController{
     public void changeMenu() {
 
     }
+
+    @Override
+    public void exitMenu() {
+
+    }
 }

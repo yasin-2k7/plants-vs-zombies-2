@@ -70,13 +70,13 @@ public class CombinedDamageStrategy implements HitStrategy{
 
     @Override
     public void applyDamage(Damageable target, List<Damageable> allTargets, Projectile projectile) {
-        target.takeDamage(damage);
+        target.takeDamage(damage, "NORMAL");
         applySpecialDamage(target, projectile);
         if (radius > 0) {
             for (Damageable extraTarget : allTargets){
                 if (extraTarget != target){
                     if (projectile.distanceTo(extraTarget) <= radius){
-                        extraTarget.takeDamage(neighborDamage);
+                        extraTarget.takeDamage(neighborDamage, "NORMAL");
                         applySpecialDamage(extraTarget, projectile);
                     }
                 }

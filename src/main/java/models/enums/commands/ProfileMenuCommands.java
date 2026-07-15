@@ -5,7 +5,7 @@ import java.util.regex.Pattern;
 
 public enum ProfileMenuCommands {
     MENU_ENTER(""),
-    MENU_SHOW_CURRENT(""),
+    MENU_SHOW_CURRENT("^menu\\s+show\\s+current$"),
     MENU_EXIT(""),
     MENU_PROFILE_CHANGE_USERNAME(""),
     MENU_PROFILE_CHANGE_NICKNAME(""),

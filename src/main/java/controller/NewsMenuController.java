@@ -13,6 +13,11 @@ public class NewsMenuController implements MenuController{
 
     }
 
+    @Override
+    public void exitMenu() {
+
+    }
+
     public List<News> showNewsUnread(){
         User user = App.getCurrentUser();
         return user.getUnreadNews();

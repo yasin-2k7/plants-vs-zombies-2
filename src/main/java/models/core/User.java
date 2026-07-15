@@ -1,5 +1,6 @@
 package models.core;
 
+import models.enums.Chapter;
 import models.enums.PlantType;
 import models.greenhouse.GreenHouse;
 import models.quest.QuestStats;
@@ -20,6 +21,7 @@ public class User {
     private String securityA;
 
     private int unlockedChapter;
+    private transient Chapter currentChapter;
     private int unlockedLevel;
     private int currentLevel;
     private int coins;
@@ -168,9 +170,6 @@ public class User {
     public int getPlantFoods() {return plantFoods;}
     public String getEmail() {return email;}
 
-    public String getEmail() {
-        return email;
-    }
 
     public String getSecurityA() {
         return securityA;
@@ -192,6 +191,10 @@ public class User {
         return hashPassword;
     }
 
+    public Chapter getCurrentChapter() {
+        return currentChapter;
+    }
+
     public void setHashPassword(String hashPassword) { this.hashPassword = hashPassword;}
     public void setUsername(String username) {
         this.username = username;
@@ -206,5 +209,9 @@ public class User {
 
     public void setGameDifficulty(int gameDifficulty) {
         this.gameDifficulty = gameDifficulty;
+    }
+
+    public void setCurrentChapter(Chapter currentChapter) {
+        this.currentChapter = currentChapter;
     }
 }

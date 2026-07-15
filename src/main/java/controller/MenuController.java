@@ -4,4 +4,5 @@ import view.View;
 
 public interface MenuController {
     void changeMenu();
+    void exitMenu();
 }

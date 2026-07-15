@@ -6,7 +6,12 @@ public class SettingMenuController implements MenuController{
 
     }
 
-    public String changeDifficulty(){
+    @Override
+    public void exitMenu() {
 
     }
+
+    //public String changeDifficulty(){
+
+    //}
 }

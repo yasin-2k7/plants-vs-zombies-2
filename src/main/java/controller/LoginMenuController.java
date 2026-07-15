@@ -4,6 +4,9 @@ import models.core.PasswordHasher;
 import models.core.User;
 import models.core.UserDataManager;
 import models.core.UserManager;
+import view.terminalView.AppView;
+import view.terminalView.MainMenuView;
+import view.terminalView.SignupMenuView;
 
 public class LoginMenuController implements MenuController{
 
@@ -12,11 +15,16 @@ public class LoginMenuController implements MenuController{
 
     @Override
     public void changeMenu() {
-
+        AppView.currentScreen = MainMenuView.getInstance(new MainMenuController());
     }
 
-    public String loginUser(String username, String password){
-        String result = UserManager.login(username, password);
+    @Override
+    public void exitMenu() {
+        AppView.currentScreen = SignupMenuView.getInstance(new SignupMenuController());
+    }
+
+    public String loginUser(String username, String password, boolean stayLoggedIn){
+        String result = UserManager.login(username, password, stayLoggedIn);
         return result;
     }
 

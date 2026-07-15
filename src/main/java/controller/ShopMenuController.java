@@ -15,6 +15,11 @@ public class ShopMenuController implements MenuController {
     public void changeMenu() {
     }
 
+    @Override
+    public void exitMenu() {
+
+    }
+
     public List<String> showShopList() {
         List<String> output = new ArrayList<>();
         output.add("--- Permanent Items ---");

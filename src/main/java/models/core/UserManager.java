@@ -47,8 +47,7 @@ public class UserManager {
 
     }
 
-    public static String login(String username, String password) {
-    public static String login(String username, String password){
+    public static String login(String username, String password, boolean stayLoggedIn) {
         User user = UserDataManager.loadUser(username);
         if (user == null) {
             return "Error: Username not found.";
@@ -56,11 +55,10 @@ public class UserManager {
 
         if (user.checkPassword(password)) {
             currentUser = user;
-            App.setCurrentUser(user); // به‌روزرسانی کاربر سراسری در App
-            UserDataManager.saveLoggedInUser(username); // ذخیره نام کاربری برای لاگین خودکار بعدی
-            currentUser = user;
             App.setCurrentUser(user);
-            UserDataManager.saveLoggedInUser(username);
+            if(stayLoggedIn == true){
+                UserDataManager.saveLoggedInUser(username);
+            }
             return "Login successful! Welcome " + user.getNickname();
         } else {
             return "Error: Incorrect password.";
@@ -68,10 +66,6 @@ public class UserManager {
     }
 
     public void logout(){
-        if (currentUser != null) {
-            UserDataManager.saveUser(currentUser); // ذخیره نهایی قبل از خروج
-            currentUser = null;
-    public static void logout() {
         if (currentUser != null) {
             UserDataManager.saveUser(currentUser); // ذخیره نهایی قبل از خروج
             currentUser = null;

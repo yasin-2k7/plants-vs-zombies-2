@@ -34,7 +34,7 @@ public class FreezeZombieBehavior implements ExplosiveBehavior{
 
         for (Zombie zombie : App.getCurrentGame().getActiveZombies()){
             if (zombie.getY() <= maxY && zombie.getY() >= minY && zombie.getX() <= maxX && zombie.getX() >= minX){
-                zombie.freeze(freezeTime);
+                //zombie.freeze(freezeTime);
             }
         }
     }
