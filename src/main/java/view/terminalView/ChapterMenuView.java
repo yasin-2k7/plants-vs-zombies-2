@@ -13,13 +13,14 @@ public class ChapterMenuView implements View {
     public ChapterMenuView(ChapterMenuController controller) {
         this.controller = controller;
     }
+
     public static ChapterMenuView getInstance(ChapterMenuController controller){
         if (instance == null){
             instance = new ChapterMenuView(controller);
-            return instance;
         }
         return instance;
     }
+
     String result;
 
     @Override

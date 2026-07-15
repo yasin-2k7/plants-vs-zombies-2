@@ -5,14 +5,8 @@ import models.core.User;
 import view.terminalView.*;
 
 public class MainMenuController implements MenuController {
-
-
-
-public class MainMenuController implements MenuController {
     @Override
     public void changeMenu() {
-
-
     }
 
     public String enterMenu(String menuName) {

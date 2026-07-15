@@ -1,8 +1,25 @@
 package view.terminalView;
 
+import controller.MainMenuController;
+import models.enums.commands.MainMenuCommands;
 import view.View;
+import java.util.regex.Matcher;
 
-public class MainMenuView implements View{
+public class MainMenuView implements View {
+
+        private static MainMenuView instance;
+        private MainMenuController controller;
+
+        private MainMenuView(MainMenuController controller) {
+            this.controller = controller;
+        }
+    public static MainMenuView getInstance() {
+        if (instance == null) {
+            instance = new MainMenuView(new MainMenuController());
+        }
+        return instance;
+    }
+
     @Override
     public void processCommand(String command) {
         command = command.trim();

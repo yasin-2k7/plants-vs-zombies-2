@@ -128,4 +128,8 @@ public class PlantMenuController implements MenuController {
     public boolean isBoosted(PlantType type) {
         return boosts.getOrDefault(type, false);
     }
+
+    @Override
+    public void exitMenu() {
+    }
 }

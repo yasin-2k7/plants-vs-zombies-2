@@ -8,9 +8,10 @@ import view.View;
 public class NewsMenuView implements View{
     private static NewsMenuView instance;
     private NewsMenuController controller;
+
     public static NewsMenuView getInstance(){
         if (instance == null){
-            instance = new NewsMenuView(controller);
+            instance = new NewsMenuView(new NewsMenuController());
             return instance;
         }
         return instance;

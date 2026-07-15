@@ -14,7 +14,6 @@ public class LevelMenuView implements View{
     public static LevelMenuView getInstance(LevelMenuController controller){
         if (instance == null){
             instance = new LevelMenuView(controller);
-            return instance;
         }
         return instance;
     }
