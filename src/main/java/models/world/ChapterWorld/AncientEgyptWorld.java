@@ -1,6 +1,8 @@
 package models.world.ChapterWorld;
 
+import models.world.Cell;
 import models.world.GameWorld;
+import models.world.cellTerrains.LandTerrain;
 import models.world.levelSetup.LevelSetup;
 import models.world.loseCondition.LoseCondition;
 import models.world.mechanics.Mechanic;
@@ -16,7 +18,12 @@ public class AncientEgyptWorld extends GameWorld {
 
     @Override
     protected void applyChapterRules() {
-
+        Cell[][] grid = getGrid();
+        for (Cell[] row : grid) {
+            for (Cell cell : row) {
+                cell.setTerrain(new LandTerrain());
+            }
+        }
     }
 
 

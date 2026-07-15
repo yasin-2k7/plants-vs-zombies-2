@@ -20,7 +20,7 @@ public class LoginMenuController implements MenuController{
 
     @Override
     public void exitMenu() {
-        AppView.currentScreen = SignupMenuView.getInstance();
+        AppView.currentScreen = SignupMenuView.getInstance(new SignupMenuController());
     }
 
     public String loginUser(String username, String password, boolean stayLoggedIn){

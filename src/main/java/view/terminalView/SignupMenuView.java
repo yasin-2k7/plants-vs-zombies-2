@@ -11,9 +11,9 @@ import java.util.regex.Matcher;
 
 public class SignupMenuView implements View{
     private static SignupMenuView instance;
-    public static SignupMenuView getInstance(){
+    public static SignupMenuView getInstance(SignupMenuController controller){
         if (instance == null){
-            instance = new SignupMenuView(new SignupMenuController());
+            instance = new SignupMenuView(controller);
         }
         return instance;
     }

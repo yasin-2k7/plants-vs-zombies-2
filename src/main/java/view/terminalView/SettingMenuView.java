@@ -12,7 +12,7 @@ public class SettingMenuView implements View{
         this.controller = controller;
     }
 
-    public static SettingMenuView getInstance(){
+    public static SettingMenuView getInstance(SettingMenuController controller){
         if (instance == null){
             instance = new SettingMenuView(new SettingMenuController());
             return instance;

@@ -91,6 +91,7 @@ public abstract class GameWorld {
 
         this.levelSetup.groundSetup(this);
         this.plantFoods = App.getCurrentUser().getPlantFoods();
+        applyChapterRules();
         App.getCurrentUser().setPlantFoods(0);
     }
 
