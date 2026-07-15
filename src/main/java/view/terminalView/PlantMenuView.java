@@ -11,6 +11,10 @@ public class PlantMenuView implements View {
     private static PlantMenuView instance;
     private PlantMenuController controller;
 
+    public PlantMenuController getController() {
+        return controller;
+    }
+
     private PlantMenuView(PlantMenuController controller) {
         this.controller = controller;
     }

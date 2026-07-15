@@ -53,6 +53,7 @@ public class LevelMenuController implements MenuController{
             AppView.setCurrentScreen(GameMenuView.getInstance());
         else{
             AppView.setCurrentScreen(PlantMenuView.getInstance());
+            PlantMenuView.getInstance().getController().reset();
         }
         return "level started!";
 

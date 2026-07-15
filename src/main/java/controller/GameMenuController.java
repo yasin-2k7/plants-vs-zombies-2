@@ -23,6 +23,10 @@ public class GameMenuController implements MenuController {
 
     }
 
+    public static void updateState(String state){
+        GameMenuView.getInstance().showResult(state);
+    }
+
     public String enterMenu(String menuName) {
         if (menuName.equalsIgnoreCase("collection")) {
             AppView.setCurrentScreen(CollectionMenuView.getInstance());
@@ -50,6 +54,7 @@ public class GameMenuController implements MenuController {
 
     public void collectSun(float x, float y){
         for (Sun sun : App.getCurrentGame().getActiveSuns()){
+            System.out.println(sun.getX() + "" + sun.getY());
             if (sun.getX() == x && sun.getY() == y){
                 GameWorld game = App.getCurrentGame();
                 sun.collect();

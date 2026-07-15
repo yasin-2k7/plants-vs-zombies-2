@@ -13,10 +13,16 @@ import java.util.*;
 public class PlantMenuController implements MenuController {
     private Set<PlantType> selectedPlants = new HashSet<>();
     private int maxSlots = 8;
+    private int numberOfLockedPlantsInList = 0;
     private Map<PlantType, Boolean> boosts = new HashMap<>();
 
     @Override
     public void changeMenu() {
+    }
+
+    public void reset(){
+        maxSlots = 8-App.getCurrentGame().getPlantLists().size();
+        numberOfLockedPlantsInList = App.getCurrentGame().getPlantLists().size();
     }
 
     public String showAllPlants() {
@@ -55,7 +61,16 @@ public class PlantMenuController implements MenuController {
         if (selectedPlants.size() >= maxSlots) {
             return "Error: Selection is full (max " + maxSlots + " plants).";
         }
-        if (selectedPlants.contains(type)) {
+
+        boolean gameHasThisCard = false;
+        for (PlantCard card : App.getCurrentGame().getPlantLists()){
+            if (card.getType() == type) {
+                gameHasThisCard = true;
+                break;
+            }
+        }
+
+        if (selectedPlants.contains(type) || gameHasThisCard) {
             return "Error: Plant already selected.";
         }
 
@@ -71,9 +86,21 @@ public class PlantMenuController implements MenuController {
             return "Error: Invalid plant type.";
         }
 
+        boolean gameHasThisCard = false;
+        for (PlantCard card : App.getCurrentGame().getPlantLists()){
+            if (card.getType() == type) {
+                gameHasThisCard = true;
+                break;
+            }
+        }
+
         if (!selectedPlants.contains(type)) {
+            if (gameHasThisCard){
+                return "Error: This plant can't be removed!";
+            }
             return "Error: Plant is not selected.";
         }
+
 
         selectedPlants.remove(type);
         boosts.remove(type);
@@ -94,7 +121,15 @@ public class PlantMenuController implements MenuController {
         if (!user.getUnlockedPlantsLevels().containsKey(type)) {
             return "Error: Plant is locked.";
         }
-        if (!selectedPlants.contains(type)) {
+
+        boolean gameHasThisCard = false;
+        for (PlantCard card : App.getCurrentGame().getPlantLists()){
+            if (card.getType() == type) {
+                gameHasThisCard = true;
+                break;
+            }
+        }
+        if (!selectedPlants.contains(type) && !gameHasThisCard) {
             return "Error: Plant is not selected, cannot boost.";
         }
         if (boosts.getOrDefault(type, false)) {
@@ -114,17 +149,15 @@ public class PlantMenuController implements MenuController {
         if (user == null) return "Error: No user logged in.";
 
         if (selectedPlants.size() < maxSlots) {
-            return "Error: Please select " + maxSlots + " plants";
+            return "Error: Please select " + (maxSlots-selectedPlants.size()) + " more plants";
         }
 
-        List<PlantCard> gameCards = new ArrayList<>();
         for (PlantType type : selectedPlants){
-            gameCards.add(PlantCardFactory.createCard(type, user.getUserLevel()));
+            App.getCurrentGame().getPlantLists().add(PlantCardFactory.createCard(type, user.getUserLevel()));
         }
-        App.getCurrentGame().setPlantLists(gameCards);
 
         AppView.setCurrentScreen(GameMenuView.getInstance());
-        return "Starting game with " + selectedPlants.size() + " plants...";
+        return "Starting game with selected plants...";
     }
 
     public Set<PlantType> getSelectedPlants() {

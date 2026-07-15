@@ -35,20 +35,21 @@ public class Sun implements Resettable {
     }
 
     public void setup(int row, int col, int amount, SunType type){
-        this.x = row;
-        this.y = col;
-        this.amount = amount;
+        this.x = col * App.getCellHeight() + App.getCellHeight()/2;
+        this.y = row * App.getCellWidth() + App.getCellWidth()/2;
+        this.size = amount;
         this.type = type;
         this.spawnTime = System.currentTimeMillis();
         this.isCollected = false;
+        this.producer = null;
     }
 
 
 
     @Override
     public void reset(float x, float y, int size, SunProducerComponent component) {
-        this.finalX = x;
-        this.finalY = y;
+        this.x = x;
+        this.y = y;
         this.size = size;
         this.producer = component;
         this.game = App.getCurrentGame();

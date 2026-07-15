@@ -36,6 +36,7 @@ public class SunSpawnMechanic implements Mechanic{
         int col = random.nextInt(world.getCols());
 
         Sun sun = world.getSunsPool().acquire();
+        System.out.println("DEBUG: Sun Object ID: " + System.identityHashCode(sun));
         sun.setup(row, col, amount, type);
         world.getActiveSuns().add(sun);
     }

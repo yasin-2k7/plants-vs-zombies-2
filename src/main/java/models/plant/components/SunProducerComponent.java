@@ -33,6 +33,7 @@ public class SunProducerComponent implements GameComponent {
         this.shroom = shroom;
         this.sunNumberWithPlantFood = sunNumberWithPlantFood;
         this.growTimeToReduce = growTimeToReduce;
+        this.lastProductionTicks = productionTime - 10;
     }
 
     @Override
@@ -76,10 +77,9 @@ public class SunProducerComponent implements GameComponent {
         Sun newSun = App.getCurrentGame().getSunsPool().acquire();
         newSun.reset(owner.getX(), owner.getY(), sunSize, this);
         App.getCurrentGame().getActiveSuns().add(newSun);
-
+        System.out.println("DEBUG: Sun Object ID: " + System.identityHashCode(newSun));
+        GameMenuController.updateState("plant " + owner.getType().name() + " produced a sun at (" + owner.getX() + ", " + owner.getY() + ")");
         return newSun;
-
-        // System.out.println("Produced " + sunAmount + " sun!");
     }
 
     public void plantFoodEffect(Plant owner){

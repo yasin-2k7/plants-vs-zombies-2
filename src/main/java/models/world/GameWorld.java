@@ -181,7 +181,7 @@ public abstract class GameWorld {
         }
 
         activeSuns.removeIf(sun -> {
-            if(sun.isExpired()){
+            if(sun.isExpired() && sun.getProducer() == null){
                 sunsPool.release(sun);
                 return true;
             }
