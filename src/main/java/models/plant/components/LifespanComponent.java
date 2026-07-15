@@ -16,7 +16,7 @@ public class LifespanComponent implements GameComponent {
     }
 
     public void activatePlantFood(){
-        App.getCurrentGame().triggerPlantFood(type);
+        App.getCurrentGame().triggerSmallShroomsPlantFood(type);
     }
 
     public void onGlobalPlantFoodActivated(PlantType type){

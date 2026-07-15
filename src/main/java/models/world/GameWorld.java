@@ -1,6 +1,7 @@
 package models.world;
 
 import models.Damageable;
+import models.core.App;
 import models.enums.PlantType;
 import models.lawnMower.LawnMower;
 import models.miniGame.MechanicsStrategy;
@@ -12,6 +13,7 @@ import models.projectile.Projectile;
 import models.world.levelSetup.LevelSetup;
 import models.world.loseCondition.LoseCondition;
 import models.world.mechanics.Mechanic;
+import models.world.obstacles.Grave;
 import models.world.winCondition.WinCondition;
 import models.zombie.Zombie;
 
@@ -24,6 +26,7 @@ public abstract class GameWorld {
 
     private GameState state;
 
+    protected int plantFoods;
     protected int rows;
     protected int cols;
     protected Cell[][] grid;
@@ -59,7 +62,7 @@ public abstract class GameWorld {
         smallShrooms.remove(observer);
     }
 
-    public void triggerPlantFood(PlantType type) {
+    public void triggerSmallShroomsPlantFood(PlantType type) {
         for (LifespanComponent observer : smallShrooms) {
             observer.onGlobalPlantFoodActivated(type);
         }
@@ -87,6 +90,8 @@ public abstract class GameWorld {
         this.state = GameState.PLAYING;
 
         this.levelSetup.groundSetup(this);
+        this.plantFoods = App.getCurrentUser().getPlantFoods();
+        App.getCurrentUser().setPlantFoods(0);
     }
 
     public GameWorld() {
@@ -275,11 +280,27 @@ public abstract class GameWorld {
         return conveyorBelt;
     }
 
+    public List<PlantCard> getPlantLists() {
+        return plantLists;
+    }
+
     public <T extends Mechanic> T getMechanic(Class<T> type) {
         return mechanics.stream()
                 .filter(m -> type.isInstance(m))
                 .map(m -> type.cast(m))
                 .findFirst()
                 .orElse(null);
+    }
+
+    public void setPlantFoods(int plantFoods) {
+        this.plantFoods = plantFoods;
+    }
+
+    public int getPlantFoods() {
+        return plantFoods;
+    }
+
+    public boolean isConveyorMode() {
+        return isConveyorMode;
     }
 }

@@ -82,15 +82,15 @@ public class Cell {
         return basePlant == null && mainPlant == null && shieldPlant == null;
     }
 
-    public void handlePlanting(PlantType type) {
+    public String handlePlanting(PlantType type) {
         if (!this.isPlantable()) {
-            return;
+            return "you cannot plant in that place!";
         }
 
         Plant newPlant = App.getFactory().createPlant(type, x, y);
 
         if (!this.terrain.canPlant(newPlant, this)) {
-            return;
+            return "you cannot plant in that place!";
         }
 
         PlacementBehaviorComponent behavior = newPlant.getComponent(PlacementBehaviorComponent.class);
@@ -108,7 +108,7 @@ public class Cell {
                     shooterComp.setBurstProjectileNumberOnPlantFood(existingBehavior.getCurrentStack());
                     shooterComp.setGiantCount(existingBehavior.getCurrentStack());
                     // update visuals...
-                    return;
+                    return null;
                 }
             }
         }
@@ -116,7 +116,9 @@ public class Cell {
         if (isLayerEmpty(layer)) {
             setPlant(newPlant, layer);
             App.getCurrentGame().getActivePlants().add(newPlant);
+            return null;
         }
+        return "that place isn't empty!";
     }
 
     public static List<Cell> getNeighborCells(Cell inputCell, Cell[][] grid, int radius) {
@@ -189,6 +191,38 @@ public class Cell {
         this.mainPlant = null;
     }
 
+    public Plant findPlant(){
+        if (this.shieldPlant != null) {
+            return this.shieldPlant;
+        }
+        if (this.mainPlant != null) {
+            return this.mainPlant;
+        }
+        if (this.basePlant != null) {
+            return this.basePlant;
+        }
+        return null;
+    }
+
+    public boolean findAndRemovePlant(){
+        if (this.shieldPlant != null) {
+            App.getCurrentGame().getActivePlants().remove(this.shieldPlant);
+            this.shieldPlant = null;
+            return true;
+        }
+        if (this.mainPlant != null) {
+            App.getCurrentGame().getActivePlants().remove(this.mainPlant);
+            this.mainPlant = null;
+            return true;
+        }
+        if (this.basePlant != null) {
+            App.getCurrentGame().getActivePlants().remove(this.basePlant);
+            this.basePlant = null;
+            return true;
+        }
+        return false;
+    }
+
     public boolean containsX(float x){
         return (x >= this.x - App.getCellWidth()/2 && x <= this.x + App.getCellWidth()/2);
     }
@@ -232,5 +266,9 @@ public class Cell {
 
     public void setPlantable(boolean plantable) {
         this.plantable = plantable;
+    }
+
+    public CellTerrain getTerrain() {
+        return terrain;
     }
 }

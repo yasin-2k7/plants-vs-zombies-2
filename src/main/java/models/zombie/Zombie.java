@@ -15,9 +15,10 @@ public abstract class Zombie implements Damageable {
     protected boolean isDead = false;
     protected float x, y;
     protected ZombieState currentState;
-    private boolean isDisabled = false;
     private int slowTicksRemaining = 0;          // تعداد تیک‌های باقی‌مانده از کندی
-    private double slowFactor = 0.5;             // ضریب کندی
+    private double slowFactor = 0.5;            // ضریب کندی
+    private int disabledTicksRemaining;
+    private int freezedTicksRemaining;
 
     public Zombie(Zombies name, int health, int speed, int damage) {
         this.name = name;
@@ -37,7 +38,13 @@ public abstract class Zombie implements Damageable {
             }
         }
 
-        if (isDisabled) {
+        if (disabledTicksRemaining > 0) {
+            disabledTicksRemaining--;
+            return;
+        }
+        if (freezedTicksRemaining > 0) {
+            freezedTicksRemaining--;
+            if (freezedTicksRemaining == 0) applySlow(20, 0.5);
             return;
         }
         if (currentState != null) {
@@ -82,19 +89,13 @@ public abstract class Zombie implements Damageable {
     }
 
     public void disableFor(int ticks) {
-        if (ticks <= 0) {
-            isDisabled = false;
-            return;
-        }
-        isDisabled = true;
+        disabledTicksRemaining = ticks;
     }
 
-    public void enable() {
-        this.isDisabled = false;
+    public void freeze(int ticks){
+        freezedTicksRemaining = ticks;
     }
-    public boolean isDisabled() {
-        return isDisabled;
-    }
+
     public boolean isSlowed() {
         return slowTicksRemaining > 0;
     }
@@ -119,6 +120,19 @@ public abstract class Zombie implements Damageable {
         if (slowTicksRemaining == 0) {
             this.originalSpeed = speed;
         }}
+
+    public int getSlowTicksRemaining() {
+        return slowTicksRemaining;
+    }
+
+    public int getDisabledTicksRemaining() {
+        return disabledTicksRemaining;
+    }
+
+    public int getFreezedTicksRemaining() {
+        return freezedTicksRemaining;
+    }
+
     public int getHealth() { return health; }
     public void setHealth(int health) { this.health = health; }
     public Zombies getName() { return name; }

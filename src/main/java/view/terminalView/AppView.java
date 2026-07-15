@@ -6,7 +6,7 @@ import view.View;
 import java.util.Scanner;
 
 public class AppView {
-    static View currentScreen = SignupMenuView.getInstance();
+    static View currentScreen = ShopMenuView.getInstance();
 
     public static void run(){
         Scanner scanner = new Scanner(System.in);

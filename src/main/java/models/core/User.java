@@ -147,6 +147,10 @@ public class User {
         return true;
     }
 
+    public void setPlantFoods(int count){
+        this.plantFoods = count;
+    }
+
     public boolean usePlantFood() {
         if (this.plantFoods > 0) {
             this.plantFoods--;

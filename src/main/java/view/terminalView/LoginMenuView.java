@@ -3,10 +3,10 @@ package view.terminalView;
 import view.View;
 
 public class LoginMenuView implements View{
-    private static ChapterMenuView instance;
-    public ChapterMenuView getInstance(){
+    private static LoginMenuView instance;
+    public LoginMenuView getInstance(){
         if (instance == null){
-            instance = new ChapterMenuView();
+            instance = new LoginMenuView();
             return instance;
         }
         return instance;

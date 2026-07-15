@@ -1,5 +1,7 @@
 package models.enums;
 
+import static models.enums.PlantFamily.*;
+
 public enum PlantType {
     SUNFLOWER(PlantFamily.SUN_PRODUCER, 50, 5),
     TWIN_SUNFLOWER(PlantFamily.SUN_PRODUCER, 125, 15),
@@ -25,25 +27,25 @@ public enum PlantType {
     SEA_SHROOM(PlantFamily.SHOOTER, 0, 15),
     PUFF_SHROOM(PlantFamily.SHOOTER, 0, 5),
     FUME_SHROOM(PlantFamily.STRIKE_THROUGH, 125, 5),
-    CABBAGE_PULT(PlantFamily.LOBBER, 100, 5),
-    KERNEL_PULT(PlantFamily.LOBBER, 100, 5),
-    MELON_PULT(PlantFamily.LOBBER, 325, 5),
-    WINTER_MELON(PlantFamily.LOBBER, 500, 5),
-    PEPPER_PULT(PlantFamily.LOBBER, 200, 5),
-    POTATO_MINE(PlantFamily.EXPLOSIVE, 25, 25),
-    PRIMAL_POTATO_MINE(PlantFamily.EXPLOSIVE, 50, 5),
-    CHERRY_BOMB(PlantFamily.EXPLOSIVE, 150, 35),
-    SQUASH(PlantFamily.EXPLOSIVE, 50, 20),
-    GRAPESHOT(PlantFamily.EXPLOSIVE, 150, 35),
-    JALAPENO(PlantFamily.EXPLOSIVE, 125, 35),
-    DOOM_SHROOM(PlantFamily.EXPLOSIVE, 125, 15),
-    TANGLE_KELP(PlantFamily.EXPLOSIVE, 25, 15),
-    ICEBERG_LETTUCE(PlantFamily.EXPLOSIVE, 0, 20),
-    BONK_CHOY(PlantFamily.MELEE, 150, 5),
-    PHAT_BEET(PlantFamily.MELEE, 150, 5),
-    CHOMPER(PlantFamily.MELEE, 150, 5),
-    WASABI_WHIP(PlantFamily.MELEE, 150, 5),
-    KIWIBEAST(PlantFamily.MELEE, 175, 5),
+    CABBAGE_PULT(LOBBER, 100, 5),
+    KERNEL_PULT(LOBBER, 100, 5),
+    MELON_PULT(LOBBER, 325, 5),
+    WINTER_MELON(LOBBER, 500, 5),
+    PEPPER_PULT(LOBBER, 200, 5),
+    POTATO_MINE(EXPLOSIVE, 25, 25),
+    PRIMAL_POTATO_MINE(EXPLOSIVE, 50, 5),
+    CHERRY_BOMB(EXPLOSIVE, 150, 35),
+    SQUASH(EXPLOSIVE, 50, 20),
+    GRAPESHOT(EXPLOSIVE, 150, 35),
+    JALAPENO(EXPLOSIVE, 125, 35),
+    DOOM_SHROOM(EXPLOSIVE, 125, 15),
+    TANGLE_KELP(EXPLOSIVE, 25, 15),
+    ICEBERG_LETTUCE(EXPLOSIVE, 0, 20),
+    BONK_CHOY(MELEE, 150, 5),
+    PHAT_BEET(MELEE, 150, 5),
+    CHOMPER(MELEE, 150, 5),
+    WASABI_WHIP(MELEE, 150, 5),
+    KIWIBEAST(MELEE, 175, 5),
     WALL_NUT(PlantFamily.WALL_NUT, 50, 20),
     TALL_NUT(PlantFamily.WALL_NUT, 125, 20),
     ENDURIAN(PlantFamily.WALL_NUT, 100, 15),
@@ -57,20 +59,31 @@ public enum PlantType {
     HYPNO_SHROOM(PlantFamily.MODIFIER, 125, 20),
     CAT_TAIL(PlantFamily.HOMING, 175, 20),
     IMITATER(PlantFamily.MODIFIER, 0, 0),
-    ICE_SHROOM(PlantFamily.EXPLOSIVE, 75, 50),
+    ICE_SHROOM(EXPLOSIVE, 75, 50),
     LILY_PAD(PlantFamily.MODIFIER, 25, 5),
-    HOT_POTATO(PlantFamily.EXPLOSIVE, 0, 5),
-    GRAVE_BUSTER(PlantFamily.EXPLOSIVE, 0, 10),
+    HOT_POTATO(EXPLOSIVE, 0, 5),
+    GRAVE_BUSTER(EXPLOSIVE, 0, 10),
     ENLIGHTEN_MINT(PlantFamily.SUN_PRODUCER, 0, 85),
     APPEASE_MINT(PlantFamily.SHOOTER, 0, 85),
-    ARMA_MINT(PlantFamily.LOBBER, 0, 85),
-    BOMBARD_MINT(PlantFamily.EXPLOSIVE, 0, 85),
-    ENFORCE_MINT(PlantFamily.MELEE, 0, 85),
+    ARMA_MINT(LOBBER, 0, 85),
+    BOMBARD_MINT(EXPLOSIVE, 0, 85),
+    ENFORCE_MINT(MELEE, 0, 85),
     REINFORCE_MINT(PlantFamily.WALL_NUT, 0, 85),
     ENCHANT_MINT(PlantFamily.MODIFIER, 0, 85),
     PIERCE_MINT(PlantFamily.STRIKE_THROUGH, 0, 85),
     CAT_TAIL_MINT(PlantFamily.HOMING, 0, 85),
     MARIGOLD(PlantFamily.WALL_NUT, 0, 0); // گل معمولی گلخانه;
+
+    public String getSymbol() {
+        return switch (this.family) {
+            case SUN_PRODUCER -> "🌻";
+            case SHOOTER, HOMING, LOBBER, STRIKE_THROUGH, MODIFIER-> "🟢";
+            case MELEE -> "🥊";
+            case WALL_NUT -> "🧱";
+            case EXPLOSIVE -> "💥";
+            default -> "🌱";
+        };
+    }
 
     public final PlantFamily family;
     public final int baseSunCost;

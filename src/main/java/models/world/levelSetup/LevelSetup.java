@@ -2,6 +2,7 @@ package models.world.levelSetup;
 
 import models.world.Cell;
 import models.world.GameWorld;
+import models.world.cellTerrains.LandTerrain;
 
 public interface LevelSetup {
     void groundSetup(GameWorld game);
@@ -13,7 +14,7 @@ public interface LevelSetup {
         Cell[][] grid = new Cell[rows][cols];
         for (int r = 0; r < rows; r++)
             for (int c = 0; c < cols; c++)
-                grid[r][c] = new Cell(r, c);
+                grid[r][c] = new Cell(r, c, new LandTerrain());
         world.setGrid(grid);
     }
 }

@@ -11,5 +11,5 @@ public class QuestManager {
 
     public void checkAllQuests(User user){}
 
-    public List<Quest> getQuestsByPage(String page){}
+//    public List<Quest> getQuestsByPage(String page){}
 }

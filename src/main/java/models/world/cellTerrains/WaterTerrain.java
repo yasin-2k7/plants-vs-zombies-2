@@ -24,4 +24,9 @@ public class WaterTerrain implements CellTerrain{
     public boolean isWater() {
         return true;
     }
+
+    @Override
+    public String getTerminalSymbol() {
+        return "~";
+    }
 }

@@ -16,8 +16,15 @@ public class LandTerrain implements CellTerrain{
         return true;
     }
 
+
+
     @Override
     public boolean isWater() {
         return false;
+    }
+
+    @Override
+    public String getTerminalSymbol() {
+        return ".";
     }
 }

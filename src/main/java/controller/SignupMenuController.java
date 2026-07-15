@@ -111,7 +111,6 @@ public class SignupMenuController implements MenuController{
                             String securityQ,
                             String securityA){
         UserManager.register(username, password, nickname, email, gender, securityQ, securityA);
-
     }
 
     public List<String> getEmailErrors(String email){

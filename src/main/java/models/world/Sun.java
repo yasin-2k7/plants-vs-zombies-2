@@ -64,7 +64,21 @@ public class Sun implements Resettable {
 
     }
 
+    public float getX() {
+        return x;
+    }
 
+    public float getY() {
+        return y;
+    }
+
+    public int getSize() {
+        return size;
+    }
+
+    public SunProducerComponent getProducer() {
+        return producer;
+    }
 
     public void Click(){
         game.getActiveSuns().remove(this);

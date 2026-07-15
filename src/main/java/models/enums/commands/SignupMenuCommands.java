@@ -4,11 +4,11 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public enum SignupMenuCommands {
-    MENU_ENTER(""),
+    MENU_ENTER("menu enter"),
     MENU_SHOW_CURRENT(""),
     MENU_EXIT(""),
-    REGISTER(""),
-    PICK_QUESTION("");
+    REGISTER("register"),
+    PICK_QUESTION("pick question");
 
     private final String pattern;
     private final Pattern compiledPattern;

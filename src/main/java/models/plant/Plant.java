@@ -103,6 +103,10 @@ public class Plant {
 
     }
 
+    public int getHealth() {
+        return health;
+    }
+
     public void destroy(){
 
     }

@@ -66,16 +66,25 @@ public class SignupMenuView implements View{
                         }
                         break;
                     case PICK_QUESTION:
-                        List<String> errors = new ArrayList<>();
+                        errors = new ArrayList<>();
                         int questionNum = Integer.parseInt(matcher.group(1));
                         String question = controller.getQuestion(questionNum);
                         String answer = matcher.group(2);
                         String answerConfirm = matcher.group(3);
-                        errors.addAll(controller.getPickQErrors();
+                        errors.addAll(controller.getPickQErrors(questionNum, answer, answerConfirm));
+                        if (errors.isEmpty()){
+                            controller.createUser(username, password, nickname, email, gender, question, answer);
+                        }
+                        else {
+                            for (String error : errors) {
+                                System.out.println(error);
+                            }
+                        }
+                        break;
 
 
 
-                        controller.createUser(username, password, nickname, email, gender, question, answer);
+
 
 
                 }
