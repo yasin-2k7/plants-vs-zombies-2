@@ -6,12 +6,13 @@ import view.terminalView.*;
 
 public class MainMenuController implements MenuController {
 
-import view.terminalView.AppView;
-import view.terminalView.ChapterMenuView;
 
-public class MainMenuController implements MenuController{
+
+public class MainMenuController implements MenuController {
     @Override
     public void changeMenu() {
+
+
     }
 
     public String enterMenu(String menuName) {
@@ -32,11 +33,12 @@ public class MainMenuController implements MenuController{
                 return "Invalid menu name.";
         }
     }
-        AppView.currentScreen = ChapterMenuView.getInstance(new ChapterMenuController());
-    }
+
 
     @Override
     public void exitMenu() {
+
+    }
 
     public String logout() {
         User user = App.getCurrentUser();

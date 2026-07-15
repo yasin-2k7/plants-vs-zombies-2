@@ -8,7 +8,7 @@ import view.View;
 public class ProfileMenuView implements View {
     private static ProfileMenuView instance;
     private ProfileMenuController controller;
-    public ProfileMenuView getInstance(){
+    public static ProfileMenuView getInstance(){
         if (instance == null){
             instance = new ProfileMenuView(controller);
             return instance;
