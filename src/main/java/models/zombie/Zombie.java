@@ -9,8 +9,8 @@ public abstract class Zombie implements Damageable {
     protected Zombies name;
     protected int health;
     protected int maxHealth;
-    protected int speed;
-    protected int originalSpeed; // سرعت اصلی برای بازگردانی پس از کندی
+    protected double speed;
+    protected double originalSpeed = speed; // سرعت اصلی برای بازگردانی پس از کندی
     protected int damage;
     protected boolean isDead = false;
     protected float x, y;
@@ -20,11 +20,11 @@ public abstract class Zombie implements Damageable {
     private int disabledTicksRemaining;
     private int freezedTicksRemaining;
 
-    public Zombie(Zombies name, int health, int speed, int damage) {
+    public Zombie(Zombies name, int health, double speed, int damage) {
         this.name = name;
         this.health = health;
         this.maxHealth = health;
-        this.speed = speed;
+        this.speed = speed*15;
         this.damage = damage;
         this.currentState = new WalkingState();
     }
@@ -50,13 +50,13 @@ public abstract class Zombie implements Damageable {
         if (currentState != null) {
             currentState.handleAction(this);
         } else {
-            move();
+            currentState = new WalkingState();
         }
     }
 
-        public void move() {
-        this.x -= this.speed; //حرکت به چپ
-        }
+    public void move() {
+        this.x -= this.speed; // حرکت به چپ
+    }
 
         @Override
         public void takeDamage(int amount, String damageType) {
@@ -81,7 +81,7 @@ public abstract class Zombie implements Damageable {
         }
         if (factor < slowFactor) {
             slowFactor = factor;
-            this.speed = (int) (originalSpeed * slowFactor);
+            this.speed = (originalSpeed * slowFactor);
         }
         if (ticks > slowTicksRemaining) {
             slowTicksRemaining = ticks;
@@ -115,8 +115,8 @@ public abstract class Zombie implements Damageable {
     @Override
     public float getY() { return y; }
     public void setY(float y) { this.y = y; }
-    public int getSpeed() { return speed; }
-    public void setSpeed(int speed) { this.speed = speed;
+    public double getSpeed() { return speed; }
+    public void setSpeed(double speed) { this.speed = speed;
         if (slowTicksRemaining == 0) {
             this.originalSpeed = speed;
         }}

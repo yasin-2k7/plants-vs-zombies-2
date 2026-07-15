@@ -7,7 +7,7 @@ public class ArmoredZombie extends Zombie {
     private int armorHealth;
     private boolean isMagnetic; // سطل و کلاه شوالیه بله، بلوک و مخروطی خیر
 
-    public ArmoredZombie(int health, int speed, int damage, int armorHealth, boolean isMagnetic) {
+    public ArmoredZombie(int health, double speed, int damage, int armorHealth, boolean isMagnetic) {
         super(Zombies.ARMORED, health, speed, damage);
         this.armorHealth = armorHealth;
         this.isMagnetic = isMagnetic;

@@ -283,7 +283,7 @@ public abstract class GameWorld {
     }
 
     public void addMechanic(Mechanic mechanic){
-
+        mechanics.add(mechanic);
     }
 
     public List<PlantCard> getConveyorBelt() {

@@ -8,7 +8,7 @@ public class PhasingZombie extends Zombie {
     private boolean isNewspaper; // true: newspaper, false: all-star
     private int shieldHealth; // جان روزنامه
 
-    public PhasingZombie(int health, int speed, int damage, int shieldHealth, boolean isNewspaper) {
+    public PhasingZombie(int health, double speed, int damage, int shieldHealth, boolean isNewspaper) {
         super(Zombies.PHASING, health, speed, damage);
         this.shieldHealth = shieldHealth;
         this.isNewspaper = isNewspaper;

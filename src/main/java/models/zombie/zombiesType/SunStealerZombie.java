@@ -10,7 +10,7 @@ public class SunStealerZombie extends Zombie {
     private boolean isRa;
 
 
-    public SunStealerZombie(int health, int speed, int damage, boolean isRa) {
+    public SunStealerZombie(int health, double speed, int damage, boolean isRa) {
         super(Zombies.SUN_STEALER, health, speed, damage);
         this.stolenSun = 0;
         this.isRa = isRa;

@@ -9,7 +9,7 @@ import models.zombie.Zombie;
 public class DodoRiderZombie extends Zombie {
     private boolean isRiding;
 
-    public DodoRiderZombie(int health, int speed, int damage) {
+    public DodoRiderZombie(int health, double speed, int damage) {
         super(Zombies.DODO_RIDER, health, speed, damage);
         this.isRiding = true;
     }

@@ -1,5 +1,6 @@
 package models.zombie.wave;
 
+import models.core.App;
 import models.world.GameWorld;
 import models.zombie.Zombie;
 import models.zombie.ZombieFactory;
@@ -71,8 +72,8 @@ public class WaveManager {
         Zombie zombie = new ZombieFactory().createZombie(entry.getZombie());
         if (zombie == null) return;
 
-        float x = (game.getCols() - 1) * 100; // فرض: عرض سلول ۱۰۰ و سمت راست
-        float y = lane * 100 + 50;
+        float x = (game.getCols()) * App.getCellWidth(); // فرض: عرض سلول ۱۰۰ و سمت راست
+        float y = lane * App.getCellHeight() + App.getCellHeight()/2;
         zombie.setX(x);
         zombie.setY(y);
 
@@ -82,7 +83,7 @@ public class WaveManager {
         int waveNum = currentWave.getWaveNumber();
         int cost = entry.getWavePointCost();
         System.out.println("Zombie " + typeName + " spawned at wave " + waveNum +
-                " in lane " + lane + " which costed " + cost + ".");
+                " in lane " + (lane+1) + " which costed " + cost + ".");
     }
 
     // تقلب: تمام زامبی‌های فعال را نابود می‌کند

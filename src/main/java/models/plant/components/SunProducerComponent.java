@@ -1,5 +1,6 @@
 package models.plant.components;
 
+import controller.GameMenuController;
 import models.core.App;
 import models.enums.PlantType;
 import models.plant.GameComponent;
@@ -75,6 +76,7 @@ public class SunProducerComponent implements GameComponent {
         Sun newSun = App.getCurrentGame().getSunsPool().acquire();
         newSun.reset(owner.getX(), owner.getY(), sunSize, this);
         App.getCurrentGame().getActiveSuns().add(newSun);
+
         return newSun;
 
         // System.out.println("Produced " + sunAmount + " sun!");

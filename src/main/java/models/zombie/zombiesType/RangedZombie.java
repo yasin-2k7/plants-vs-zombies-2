@@ -11,7 +11,7 @@ public class RangedZombie extends Zombie {
     private int cooldown;
     private final int COOLDOWN_MAX = 30; // 2 ثانیه
 
-    public RangedZombie(int health, int speed, int damage, String projectileType) {
+    public RangedZombie(int health, double speed, int damage, String projectileType) {
         super(Zombies.RANGED, health, speed, damage);
         this.projectileType = projectileType;
         this.cooldown = 0;

@@ -42,50 +42,51 @@ public class ZombieFactory {
         int health = data.getHitpoints();
         int eatDPS = data.getEatDPS();
         double speed = data.getSpeed();
+        System.out.println("Loaded speed: " + speed);
 
         switch (objclass) {
             case "ZombiePropertySheet":
                 return buildBasicZombie(health, eatDPS, speed, data);
             case "ZombieGargantuarProps":
-                return new SpawnerZombie(health, (int)speed, eatDPS, true);
+                return new SpawnerZombie(health, speed, eatDPS, true);
             case "ZombieRaProps":
-                return new SunStealerZombie(health, (int)speed, eatDPS, true);
+                return new SunStealerZombie(health, speed, eatDPS, true);
             case "ZombieExplorerProps":
-                return new ElementalZombie(health, (int)speed, eatDPS, true);
+                return new ElementalZombie(health, speed, eatDPS, true);
             case "ZombieIceAgeHunterProps":
-                return new RangedZombie(health, (int)speed, eatDPS, "SNOWBALL");
+                return new RangedZombie(health, speed, eatDPS, "SNOWBALL");
             case "ZombieBeachOctopusProps":
-                return new RangedZombie(health, (int)speed, eatDPS, "OCTOPUS");
+                return new RangedZombie(health, speed, eatDPS, "OCTOPUS");
             case "ZombieTombRaiserProps":
-                return new RangedZombie(health, (int)speed, eatDPS, "BONE");
+                return new RangedZombie(health, speed, eatDPS, "BONE");
             case "ZombieDarkJugglerProps":
-                return new DeflectorZombie(health, (int)speed, eatDPS, true);
+                return new DeflectorZombie(health, speed, eatDPS, true);
             case "ZombieLostCityJaneProps": // چتردار
-                return new DeflectorZombie(health, (int)speed, eatDPS, false);
+                return new DeflectorZombie(health, speed, eatDPS, false);
             case "ZombieDarkWizardProps":
-                return new WizardZombie(health, (int)speed, eatDPS);
+                return new WizardZombie(health, speed, eatDPS);
             case "ZombieDarkKingProps":
-                return new SpawnerZombie(health, (int)speed, eatDPS, false);
+                return new SpawnerZombie(health, speed, eatDPS, false);
             case "ZombieBeachFishermanProps":
                 return new FishermanZombie(health, eatDPS);
             case "ZombieIceAgeDodoProps":
-                return new DodoRiderZombie(health, (int)speed, eatDPS);
+                return new DodoRiderZombie(health, speed, eatDPS);
             case "ZombieModernAllStarProps":
-                return new PhasingZombie(health, (int)speed, eatDPS, 0, false);
+                return new PhasingZombie(health, speed, eatDPS, 0, false);
             case "ZombieNewspaperProps":
-                return new PhasingZombie(health, (int)speed, eatDPS, 800, true);
+                return new PhasingZombie(health, speed, eatDPS, 800, true);
             case "ZombiePianoProps":
-                return new PusherZombie(health, (int)speed, eatDPS, "PIANO", 0);
+                return new PusherZombie(health, speed, eatDPS, "PIANO", 0);
             case "ZombieArcadeProps":
-                return new PusherZombie(health, (int)speed, eatDPS, "ARCADE", 600);
+                return new PusherZombie(health, speed, eatDPS, "ARCADE", 600);
             case "ZombieIceAgeTroglobiteProps":
-                return new PusherZombie(health, (int)speed, eatDPS, "ICEBLOCK", 600);
+                return new PusherZombie(health, speed, eatDPS, "ICEBLOCK", 600);
             case "ZombieBeachSnorkelProps":
-                return new SnorkelZombie(health, (int)speed, eatDPS);
+                return new SnorkelZombie(health, speed, eatDPS);
             case "ZombieImpProps":
-                return new ImpZombie(health, (int)speed, eatDPS, false);
+                return new ImpZombie(health, speed, eatDPS, false);
             case "ZombieDarkImpDragonProps":
-                return new ImpZombie(health, (int)speed, eatDPS, true);
+                return new ImpZombie(health, speed, eatDPS, true);
             default:
                 return buildBasicZombie(health, eatDPS, speed, data);
         }
@@ -107,10 +108,10 @@ public class ZombieFactory {
                     }
                 }
             }
-            return new ArmoredZombie(health, (int)speed, eatDPS, totalArmorHealth, magnetic);
+            return new ArmoredZombie(health, speed, eatDPS, totalArmorHealth, magnetic);
         }
         // زامبی معمولی (بدون زره)
-        return new Zombie(Zombies.ZOMBIE, health, (int)speed, eatDPS) {};
+        return new Zombie(Zombies.ZOMBIE, health, speed, eatDPS) {};
     }
 
     private String extractAlias(String ref) {

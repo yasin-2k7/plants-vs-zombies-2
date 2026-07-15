@@ -13,7 +13,7 @@ public class WizardZombie extends Zombie {
     private int cooldown;
     private final int COOLDOWN_MAX = 20; // 1.3 ثانیه
 
-    public WizardZombie(int health, int speed, int damage) {
+    public WizardZombie(int health, double speed, int damage) {
         super(Zombies.WIZARD, health, speed, damage);
         this.transformedPlants = new ArrayList<>();
         this.cooldown = 0;

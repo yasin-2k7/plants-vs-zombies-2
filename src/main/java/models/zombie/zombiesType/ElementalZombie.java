@@ -12,7 +12,7 @@ public class ElementalZombie extends Zombie {
     private boolean isIgnited;  // مشعل روشن / دینامیت فعال
     private int fuseTimer; // برای پروسپکتور (تعداد تیک تا انفجار)
 
-    public ElementalZombie(int health, int speed, int damage, boolean isProspector) {
+    public ElementalZombie(int health, double speed, int damage, boolean isProspector) {
         super(Zombies.ELEMENTAL, health, speed, damage);
         this.isExplorer = isExplorer;
         this.isIgnited = true;

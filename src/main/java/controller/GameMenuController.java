@@ -197,7 +197,7 @@ public class GameMenuController implements MenuController {
         System.out.println("==================================================================================================");
         for (int y = 0; y < App.getCurrentGame().getGrid().length; y++) {
             String mowerSymbol = App.getCurrentGame().getLawnMowerManager().getMowers().get(y).isAlive() ? "[🚜]" : "[❌]";
-            System.out.printf("Row %d %s | ", y, mowerSymbol);
+            System.out.printf("Row %d %s | ", y+1, mowerSymbol);
 
             for (int x = 0; x < App.getCurrentGame().getGrid()[0].length; x++) {
                 Cell cell = App.getCurrentGame().getGrid()[y][x];
@@ -259,7 +259,7 @@ public class GameMenuController implements MenuController {
             }
         }
         GameMenuView.getInstance().showResult("zombies in this tile:");
-        for (Zombie zombie : Cell.getZombiesInCells((List<Cell>) selectedCell)){
+        for (Zombie zombie : Cell.getZombiesInCells(List.of(selectedCell))){
             GameMenuView.getInstance().showResult(zombie.getName().name() + " | health: " + zombie.getHealth() + " | damage: "+ zombie.getDamage());
         }
     }

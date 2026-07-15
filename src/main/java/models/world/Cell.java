@@ -20,8 +20,8 @@ import static java.util.stream.Collectors.toList;
 public class Cell {
     private int row;
     private int col;
-    private int x;
-    private int y;
+    private float x;
+    private float y;
     private Plant basePlant;
     private Plant mainPlant;
     private Plant shieldPlant;
@@ -34,6 +34,8 @@ public class Cell {
     public Cell(int row, int col, CellTerrain initialTerrain) {
         this.row = row;
         this.col = col;
+        x = (col) * App.getCellWidth() + App.getCellWidth()/2;
+        y = (row) * App.getCellHeight() + App.getCellHeight()/2;
         this.terrain = initialTerrain;
     }
 
@@ -89,7 +91,7 @@ public class Cell {
             return "you cannot plant in that place!";
         }
 
-        Plant newPlant = App.getFactory().createPlant(type, x, y);
+        Plant newPlant = App.getFactory().createPlant(type, (int)x, (int)y);
 
         if (!this.terrain.canPlant(newPlant, this)) {
             return "you cannot plant in that place!";
@@ -100,7 +102,7 @@ public class Cell {
 
 
 
-        if (behavior.isStackable() && !isLayerEmpty(layer)) {
+        if (behavior != null && behavior.isStackable() && !isLayerEmpty(layer)) {
             Plant existingPlant = getPlant(layer);
             if (existingPlant.getType() == type) {
                 PlacementBehaviorComponent existingBehavior = existingPlant.getComponent(PlacementBehaviorComponent.class);
@@ -248,11 +250,11 @@ public class Cell {
         return col;
     }
 
-    public int getX() {
+    public float getX() {
         return x;
     }
 
-    public int getY() {
+    public float getY() {
         return y;
     }
 

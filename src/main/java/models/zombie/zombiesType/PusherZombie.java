@@ -12,7 +12,7 @@ public class PusherZombie extends Zombie {
     private float objectX; // موقعیت شیء (جلوی زامبی)
 
 
-    public PusherZombie(int health, int speed, int damage, String pushedObjectName, int objHealth) {
+    public PusherZombie(int health, double speed, int damage, String pushedObjectName, int objHealth) {
         super(Zombies.PUSHER, health, speed, damage);
         this.objectName = objectName;
         this.objectHealth = objectHealth;

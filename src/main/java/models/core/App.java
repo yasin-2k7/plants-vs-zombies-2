@@ -13,10 +13,10 @@ public class App {
     private static GameWorld currentGame;
     private static final PlantFactory factory = new PlantFactory();
 
-    private static final float CELL_HEIGHT = 80;
-    private static final float CELL_WIDTH = 50;
-    private static final float FIRST_CELL_X = 100;
-    private static final float FIRST_CELL_Y = 400;
+    private static final float CELL_HEIGHT = 100;
+    private static final float CELL_WIDTH = 100;
+    private static final float FIRST_CELL_X = 0;
+    private static final float FIRST_CELL_Y = 0;
 
     public static User getCurrentUser() {
         return currentUser;

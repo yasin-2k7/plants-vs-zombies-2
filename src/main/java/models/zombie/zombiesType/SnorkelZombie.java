@@ -6,7 +6,7 @@ import models.zombie.Zombie;
 public class SnorkelZombie extends Zombie {
     private boolean isSubmerged;
 
-    public SnorkelZombie(int health, int speed, int damage) {
+    public SnorkelZombie(int health, double speed, int damage) {
         super(Zombies.SNORKEL, health, speed, damage);
         this.isSubmerged = true;
     }

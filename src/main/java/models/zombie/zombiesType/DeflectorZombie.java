@@ -6,7 +6,7 @@ import models.zombie.Zombie;
 public class DeflectorZombie extends Zombie {
     private boolean isJuggler;
 
-    public DeflectorZombie(int health, int speed, int damage, boolean isJuggler) {
+    public DeflectorZombie(int health, double speed, int damage, boolean isJuggler) {
         super(Zombies.DEFLECTOR, health, speed, damage);
         this.isJuggler = isJuggler;
 

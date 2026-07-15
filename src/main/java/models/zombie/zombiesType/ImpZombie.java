@@ -8,7 +8,7 @@ public class ImpZombie extends Zombie {
     private boolean isDragon;
     private boolean isThrown;
 
-    public ImpZombie(int health, int speed, int damage, boolean isThrown) {
+    public ImpZombie(int health, double speed, int damage, boolean isThrown) {
         super(Zombies.IMP, health, speed, damage);
         this.isDragon = isDragon;
         this.isThrown = false;

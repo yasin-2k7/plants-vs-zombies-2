@@ -12,7 +12,7 @@ public class SpawnerZombie extends Zombie {
     private int currentCooldown = 0;
     private boolean hasThrownImp;
 
-    public SpawnerZombie(int health, int speed, int damage, boolean isGargantuar) {
+    public SpawnerZombie(int health, double speed, int damage, boolean isGargantuar) {
         super(Zombies.SPAWNER, health, speed, damage);
         this.isGargantuar = isGargantuar;
         this.spawnCooldown = 30; // 2 ثانیه مثلا
@@ -47,7 +47,7 @@ public class SpawnerZombie extends Zombie {
         if (game == null) return;
         // ایجاد ایمپ در ستون سوم (سمت چپ)
         Zombie imp = new ZombieFactory().createZombie(Zombies.IMP);
-        imp.setX(300); // ستون سوم
+        imp.setX(3*App.getCellWidth()); // ستون سوم
         imp.setY(this.y);
         game.getActiveZombies().add(imp);
     }
