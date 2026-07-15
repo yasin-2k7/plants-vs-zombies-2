@@ -4,6 +4,7 @@ import models.Damageable;
 import models.core.App;
 import models.enums.PlantType;
 import models.lawnMower.LawnMower;
+import models.lawnMower.LawnMowerManager;
 import models.miniGame.MechanicsStrategy;
 import models.plant.Plant;
 import models.plant.card.PlantCard;
@@ -48,7 +49,7 @@ public abstract class GameWorld {
     protected List<Projectile> activeProjectiles;
     protected List<Grave> activeGrave;
     protected List<Damageable> activeTargets;
-    protected List<LawnMower> lawnMowers;
+    protected LawnMowerManager lawnMowerManager;
 
     private GenericObjectPool<Sun> sunsPool = new GenericObjectPool<>(Sun::new);
     private GenericObjectPool<Projectile> projectilesPool = new GenericObjectPool<>(Projectile::new);
@@ -83,8 +84,9 @@ public abstract class GameWorld {
         this.activeProjectiles = new ArrayList<>();
         this.activeGrave = new ArrayList<>();
         this.activeTargets = new ArrayList<>();
-        this.lawnMowers = new ArrayList<>();
+        this.lawnMowerManager = new LawnMowerManager();
         this.sunsPool = new GenericObjectPool<>(Sun::new);
+        currentSun = 50;
 
         this.startTime = System.currentTimeMillis();
         this.state = GameState.PLAYING;
@@ -165,11 +167,18 @@ public abstract class GameWorld {
     protected abstract void applyChapterRules();
 
     public void tick(){
+
         if(state != GameState.PLAYING) return;
+
 
         activePlants.forEach(Plant::update);
         activeZombies.forEach(Zombie::update);
         activeProjectiles.forEach(Projectile::update);
+        if (!isConveyorMode) {
+            for (PlantCard card : plantLists){
+                card.update();
+            }
+        }
 
         activeSuns.removeIf(sun -> {
             if(sun.isExpired()){
@@ -256,7 +265,7 @@ public abstract class GameWorld {
     }
 
     public List<Projectile> getActiveProjectiles() { return activeProjectiles; }
-    public List<LawnMower> getLawnMowers() { return lawnMowers; }
+    public LawnMowerManager getLawnMowerManager() { return lawnMowerManager; }
 
     public long getElapsedTime() {
         return System.currentTimeMillis() - startTime;
@@ -307,6 +316,10 @@ public abstract class GameWorld {
 
     public ArrayList<LoseCondition> getLoseConditions() {
         return loseConditions;
+    }
+
+    public ArrayList<Mechanic> getMechanics() {
+        return mechanics;
     }
 
     public boolean isConveyorMode() {

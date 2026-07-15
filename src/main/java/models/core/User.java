@@ -29,7 +29,7 @@ public class User {
     private int gems;
     private int pot;
     private HashMap<PlantType, Integer> seedPackets;
-    private HashMap<PlantType, Integer> UnlockedPlantsLevels;
+    private HashMap<PlantType, Integer> unlockedPlantsLevels;
     private HashMap<PlantType, Boolean> plantBoosts;
     private static ArrayList<News> allNews;
     private ArrayList<News> unreadNews;
@@ -40,16 +40,33 @@ public class User {
 
     public User(){
         this.plantBoosts = new HashMap<>();
-        this.UnlockedPlantsLevels = new HashMap<>();
+        this.unlockedPlantsLevels = new HashMap<>();
         this.seedPackets = new HashMap<>();
         this.greenhouse = new GreenHouse();
         this.coins = 100;
         this.gems = 10;
+        this.unlockedChapter = 1;
+        this.unlockedLevel = 1;
+        putInitialPlants();
+    }
+
+    private void putInitialPlants(){
+        unlockedPlantsLevels.put(PlantType.SUNFLOWER, 1);
+        unlockedPlantsLevels.put(PlantType.PEASHOOTER, 1);
+        unlockedPlantsLevels.put(PlantType.CABBAGE_PULT, 1);
+        unlockedPlantsLevels.put(PlantType.POTATO_MINE, 1);
+        unlockedPlantsLevels.put(PlantType.CHERRY_BOMB, 1);
+        unlockedPlantsLevels.put(PlantType.ICEBERG_LETTUCE, 1);
+        unlockedPlantsLevels.put(PlantType.WALL_NUT, 1);
+        unlockedPlantsLevels.put(PlantType.GRAVE_BUSTER, 1);
+        unlockedPlantsLevels.put(PlantType.REPEATER, 1);
+        unlockedPlantsLevels.put(PlantType.SNOW_PEA, 1);
+        unlockedPlantsLevels.put(PlantType.LILY_PAD, 1);
     }
 
     public void afterLoad() {
         if (this.plantBoosts == null) this.plantBoosts = new HashMap<>();
-        if (this.UnlockedPlantsLevels == null) this.UnlockedPlantsLevels = new HashMap<>();
+        if (this.unlockedPlantsLevels == null) this.unlockedPlantsLevels = new HashMap<>();
         if (this.seedPackets == null) this.seedPackets = new HashMap<>();
         if (this.greenhouse == null) this.greenhouse = new GreenHouse();
         this.isLoaded = true;
@@ -78,7 +95,7 @@ public class User {
     }
 
     public void unlockPlant(PlantType plantType) {
-        this.UnlockedPlantsLevels.put(plantType, 1);
+        this.unlockedPlantsLevels.put(plantType, 1);
         save();
     }
 
@@ -108,7 +125,7 @@ public class User {
     public void advanceLevel(){}
 
     public HashMap<PlantType, Integer> getUnlockedPlantsLevels() {
-        return UnlockedPlantsLevels;
+        return unlockedPlantsLevels;
     }
 
     public boolean hasBoost(PlantType type) {return plantBoosts.getOrDefault(type, false);}
@@ -117,7 +134,7 @@ public class User {
 
     public List<PlantType> getUnlockedPlantTypesWithPlantFood() {
         List<PlantType> result = new ArrayList<>();
-        for (PlantType type : UnlockedPlantsLevels.keySet()) {
+        for (PlantType type : unlockedPlantsLevels.keySet()) {
             if (type != PlantType.MARIGOLD && hasPlantFoodAbility(type)) {
                 result.add(type);
             }

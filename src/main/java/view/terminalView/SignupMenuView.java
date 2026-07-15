@@ -11,15 +11,12 @@ import java.util.regex.Matcher;
 
 public class SignupMenuView implements View{
     private static SignupMenuView instance;
-    public static SignupMenuView getInstance(SignupMenuController controller){
+    public static SignupMenuView getInstance(){
         if (instance == null){
-            instance = new SignupMenuView(controller);
+            instance = new SignupMenuView();
+            instance.controller = new SignupMenuController();
         }
         return instance;
-    }
-
-    public SignupMenuView(SignupMenuController controller) {
-        this.controller = controller;
     }
 
     private SignupMenuController controller;

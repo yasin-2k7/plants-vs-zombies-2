@@ -3,7 +3,7 @@ package models.enums;
 import static models.enums.PlantFamily.*;
 
 public enum PlantType {
-    SUNFLOWER(PlantFamily.SUN_PRODUCER, 50, 5),
+    SUNFLOWER(PlantFamily.SUN_PRODUCER, 50, 50),
     TWIN_SUNFLOWER(PlantFamily.SUN_PRODUCER, 125, 15),
     SUN_SHROOM(PlantFamily.SUN_PRODUCER, 25, 5),
     PRIMAL_SUNFLOWER(PlantFamily.SUN_PRODUCER, 75, 5),

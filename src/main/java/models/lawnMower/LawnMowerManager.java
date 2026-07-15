@@ -74,4 +74,8 @@ public class LawnMowerManager {
         int row = (int) (y / 100);
         return Math.max(0, Math.min(row, TOTAL_ROWS - 1));
     }
+
+    public List<LawnMower> getMowers() {
+        return mowers;
+    }
 }

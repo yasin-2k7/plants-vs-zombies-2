@@ -51,6 +51,7 @@ public class LevelFactory {
         LoseCondition loseCondition = new NormalLose();
         WinCondition winCondition = new NormalWin();
 
+
         return new AncientEgyptWorld(
                 levelSetup,
                 new ArrayList<>(List.of(loseCondition)),
