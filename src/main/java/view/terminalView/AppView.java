@@ -1,12 +1,17 @@
 package view.terminalView;
 
+import controller.SignupMenuController;
 import models.core.App;
 import view.View;
 
 import java.util.Scanner;
 
 public class AppView {
-    static View currentScreen = ShopMenuView.getInstance();
+    public static View currentScreen = SignupMenuView.getInstance(new SignupMenuController());
+
+    public static void setCurrentScreen(View screen) {
+        currentScreen = screen;
+    }
 
     public static void run(){
         Scanner scanner = new Scanner(System.in);

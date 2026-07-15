@@ -3,15 +3,21 @@ package models.enums.commands;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public enum MainMenuCommands {
-    MENU_ENTER("menu enter (\\w+)"),
+public enum PlantMenuCommands {
+    MENU_ENTER("menu enter level"),
     MENU_SHOW_CURRENT("menu show current"),
-    MENU_LOGOUT("menu logout");
+    MENU_EXIT("menu exit"),
+    SHOW_ALL_PLANTS("show all plants"),
+    SHOW_AVAILABLE_PLANTS("show available plants"),
+    ADD_PLANT("add plant -t (\\w+)"),
+    REMOVE_PLANT("remove plant -t (\\w+)"),
+    BOOST_PLANT("boost plant -t (\\w+)"),
+    START_GAME("start game");
 
     private final String pattern;
     private final Pattern compiledPattern;
 
-    MainMenuCommands(String pattern) {
+    PlantMenuCommands(String pattern) {
         this.pattern = pattern;
         this.compiledPattern = Pattern.compile(pattern);
     }

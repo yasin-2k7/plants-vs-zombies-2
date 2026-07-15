@@ -1,18 +1,55 @@
 package view.terminalView;
 
+import controller.LevelMenuController;
+import models.enums.commands.LevelMenuCommands;
+import models.enums.commands.LoginMenuCommands;
 import view.View;
 
+import java.util.List;
+import java.util.regex.Matcher;
+
 public class LevelMenuView implements View{
-    private static ChapterMenuView instance;
-    public ChapterMenuView getInstance(){
+    private static LevelMenuView instance;
+    private LevelMenuController controller;
+    public static LevelMenuView getInstance(LevelMenuController controller){
         if (instance == null){
-            instance = new ChapterMenuView();
-            return instance;
+            instance = new LevelMenuView(controller);
         }
         return instance;
     }
+    public LevelMenuView(LevelMenuController controller){
+        this.controller = controller;
+    }
+
     @Override
     public void processCommand(String command) {
+        boolean commandFound = false;
+        for(LevelMenuCommands levelMenuCommands : LevelMenuCommands.values()) {
+            Matcher matcher = levelMenuCommands.matcher(command);
+            if (matcher.matches()) {
+                commandFound = true;
+                switch (levelMenuCommands){
+                    case SHOW_LEVELS:
+                        List<String> levels = controller.getLevelsToShow();
+                        for(String level : levels){
+                            System.out.println(level);
+                        }
+                        break;
+                    case MENU_SHOW_CURRENT:
+                        System.out.println(AppView.currentScreen);
+                        break;
+                    case CHOOSE_LEVEL:
 
+
+                        break;
+
+
+                }
+                break;
+            }
+        }
+        if(!commandFound){
+            System.out.println("invalid command in level menu.");
+        }
     }
 }

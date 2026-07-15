@@ -5,7 +5,7 @@ import java.util.regex.Pattern;
 
 public enum NavigationCommands {
     MENU_ENTER(""),
-    MENU_SHOW_CURRENT(""),
+    MENU_SHOW_CURRENT("^menu\\s+show\\s+current$"),
     MENU_EXIT("");
 
     private final String pattern;

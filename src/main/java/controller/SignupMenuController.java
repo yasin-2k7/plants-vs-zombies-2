@@ -2,6 +2,8 @@ package controller;
 
 import models.core.UserDataManager;
 import models.core.UserManager;
+import view.terminalView.AppView;
+import view.terminalView.LoginMenuView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,7 +26,12 @@ public class SignupMenuController implements MenuController{
 
     @Override
     public void changeMenu() {
+        AppView.currentScreen = LoginMenuView.getInstance(new LoginMenuController());
+    }
 
+    @Override
+    public void exitMenu() {
+        System.exit(0);
     }
 
     public List<String> getUsernameErrors(String username) {
@@ -103,14 +110,17 @@ public class SignupMenuController implements MenuController{
         return errors;
     }
 
-    public void createUser( String username,
+    public String createUser( String username,
                             String password,
                             String nickname,
                             String email,
                             String gender,
                             String securityQ,
                             String securityA){
-        UserManager.register(username, password, nickname, email, gender, securityQ, securityA);
+        String result = UserManager.register(username, password, nickname, email, gender, securityQ, securityA);
+
+        return result;
+
     }
 
     public List<String> getEmailErrors(String email){

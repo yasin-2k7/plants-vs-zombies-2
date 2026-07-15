@@ -22,6 +22,11 @@ public class GameMenuController implements MenuController {
 
     }
 
+    @Override
+    public void exitMenu() {
+
+    }
+
     public void advanceTime(int count){
         GameWorld game = App.getCurrentGame();
         for (int i = 0; i < count; i++){

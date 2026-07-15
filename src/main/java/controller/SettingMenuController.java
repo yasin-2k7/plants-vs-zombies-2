@@ -5,4 +5,13 @@ public class SettingMenuController implements MenuController{
     public void changeMenu() {
 
     }
+
+    @Override
+    public void exitMenu() {
+
+    }
+
+    //public String changeDifficulty(){
+
+    //}
 }

@@ -14,6 +14,11 @@ public class GreenhouseMenuController implements MenuController {
     public void changeMenu() {
     }
 
+    @Override
+    public void exitMenu() {
+
+    }
+
     private GreenHouse getGreenHouse() {
         User user = App.getCurrentUser();
         return (user != null) ? user.getGreenhouse() : null;

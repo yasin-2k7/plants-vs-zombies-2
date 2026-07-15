@@ -6,4 +6,9 @@ public class CollectionMenuController implements MenuController{
     public void changeMenu() {
 
     }
+
+    @Override
+    public void exitMenu() {
+
+    }
 }

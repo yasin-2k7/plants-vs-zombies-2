@@ -1,15 +1,33 @@
 package models.core;
 
+import com.google.gson.ExclusionStrategy;
+import com.google.gson.FieldAttributes;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import java.io.*;
+import java.time.LocalDate;
 
 public class UserDataManager {
-    private static final String USERS_DIR = "users/";
-    private static final String CURRENT_USER_FILE = "users/current_user.txt";
+    private static final String USERS_DIR = "pvz2/src/main/java/models/users/";
+    private static final String CURRENT_USER_FILE = "pvz2/src/main/java/models/users/current_user.txt";
 
-    private static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
+    private static final Gson gson = new GsonBuilder()
+            .registerTypeAdapter(LocalDate.class, new LocalDateAdapter())
+            .addSerializationExclusionStrategy(new ExclusionStrategy() {
+                @Override
+                public boolean shouldSkipField(FieldAttributes f) {
+                    return false;
+                }
+
+                @Override
+                public boolean shouldSkipClass(Class<?> clazz) {
+                    // اگر کلاس از نوع Random بود، نادیده‌اش بگیر
+                    return clazz == java.util.Random.class;
+                }
+            })
+            .setPrettyPrinting()
+            .create();
 
     static {
         File dir = new File(USERS_DIR);

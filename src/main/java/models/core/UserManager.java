@@ -15,7 +15,7 @@ public class UserManager {
         if (loggedInUsername != null) {
             User user = UserDataManager.loadUser(loggedInUsername);
             if (user != null) {
-                this.currentUser = user;
+                currentUser = user;
                 App.setCurrentUser(user);
             }
         }
@@ -44,9 +44,10 @@ public class UserManager {
             return "Error: Could not save user data to disk.";
 
         }
+
     }
 
-    public static String login(String username, String password) {
+    public static String login(String username, String password, boolean stayLoggedIn) {
         User user = UserDataManager.loadUser(username);
         if (user == null) {
             return "Error: Username not found.";
@@ -55,14 +56,16 @@ public class UserManager {
         if (user.checkPassword(password)) {
             currentUser = user;
             App.setCurrentUser(user);
-            UserDataManager.saveLoggedInUser(username);
+            if(stayLoggedIn == true){
+                UserDataManager.saveLoggedInUser(username);
+            }
             return "Login successful! Welcome " + user.getNickname();
         } else {
             return "Error: Incorrect password.";
         }
     }
 
-    public static void logout() {
+    public void logout(){
         if (currentUser != null) {
             UserDataManager.saveUser(currentUser); // ذخیره نهایی قبل از خروج
             currentUser = null;
@@ -71,6 +74,8 @@ public class UserManager {
             System.out.println("You have been logged out.");
         }
     }
+
+
     public static User getCurrentUser(){
         return currentUser;
     }

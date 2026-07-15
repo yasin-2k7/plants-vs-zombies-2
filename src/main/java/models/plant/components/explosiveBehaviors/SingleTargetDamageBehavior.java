@@ -20,7 +20,7 @@ public class SingleTargetDamageBehavior implements ExplosiveBehavior{
         Cell.getZombiesInCells(cells).stream()
                 .findFirst()
                 .ifPresent(targetZombie -> {
-//                    targetZombie.pullUnderWater();
+                    //targetZombie.pullUnderWater();
                     owner.die();
                 });
 

@@ -818,8 +818,8 @@ public class PlantFactory {
         Plant p = new Plant(PlantType.ICEBERG_LETTUCE, 1000, 0);
         ExplosivesComponent component = new ExplosivesComponent(new ProximityTrigger(App.getCellWidth()), new FreezeZombieBehavior(new CircularRange(0), freezeTime), 0);
         component.setPlantFoodBehavior((owner, comp) -> {
-            App.getCurrentGame().getActiveZombies()
-                    .forEach(zombie -> zombie.freeze(40));
+         //   App.getCurrentGame().getActiveZombies()
+               //     .forEach(zombie -> zombie.freeze(40));
         });
         p.addComponent(component);
         return p;

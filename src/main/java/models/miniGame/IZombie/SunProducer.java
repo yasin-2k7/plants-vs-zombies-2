@@ -5,10 +5,10 @@ import models.zombie.Zombie;
 //public class SunProducer extends Zombie {
 //    private int baseSunRate;
 //    private long spawnTime;
-//
+
 //    public int calculateSunRate(){
-//
-//
-//        return 1;
-//    }
+
+
+ //       return 1;
+ //   }
 //}

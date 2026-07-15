@@ -1,17 +1,31 @@
 package controller;
 
+import models.core.App;
+import models.core.User;
+import models.enums.Chapter;
 import view.View;
+import view.terminalView.AppView;
 import view.terminalView.ChapterMenuView;
+import view.terminalView.LevelMenuView;
 
 public class ChapterMenuController implements MenuController{
-    ChapterMenuView view = new ChapterMenuView();
 
     @Override
     public void changeMenu() {
+        AppView.currentScreen = LevelMenuView.getInstance(new LevelMenuController());
+    }
+
+    @Override
+    public void exitMenu() {
 
     }
 
-
+    public String chooseChapter(Chapter chapter){
+        User user = App.getCurrentUser();
+        user.setCurrentChapter(chapter);
+        AppView.currentScreen = LevelMenuView.getInstance(new LevelMenuController());
+        return "you choose " + chapter;
+    }
 
 
 }

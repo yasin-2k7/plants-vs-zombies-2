@@ -4,5 +4,5 @@ import models.zombie.Zombie;
 
 //public class JalapenoZombie extends Zombie {
 //    private long entryTime;
-//    private int burnDelay = 10;
+ //   private int burnDelay = 10;
 //}

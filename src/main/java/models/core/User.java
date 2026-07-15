@@ -1,5 +1,6 @@
 package models.core;
 
+import models.enums.Chapter;
 import models.enums.PlantType;
 import models.greenhouse.GreenHouse;
 import models.quest.QuestStats;
@@ -20,6 +21,7 @@ public class User {
     private String securityA;
 
     private int unlockedChapter;
+    private transient Chapter currentChapter;
     private int unlockedLevel;
     private int currentLevel;
     private int coins;
@@ -29,8 +31,10 @@ public class User {
     private HashMap<PlantType, Integer> UnlockedPlantsLevels;
     private HashMap<PlantType, Boolean> plantBoosts;
     private static ArrayList<News> allNews;
+    private ArrayList<News> unreadNews;
     private GreenHouse greenhouse;
     private transient boolean isLoaded = false;
+    private int gameDifficulty = 3;
     private int plantFoods = 0;
 
     public User(){
@@ -170,6 +174,31 @@ public class User {
     public int getPlantFoods() {return plantFoods;}
     public String getEmail() {return email;}
 
+
+    public String getSecurityA() {
+        return securityA;
+    }
+
+    public String getSecurityQ() {
+        return securityQ;
+    }
+
+    public ArrayList<News> getAllNews() {
+        return allNews;
+    }
+
+    public ArrayList<News> getUnreadNews() {
+        return unreadNews;
+    }
+
+    public String getHashPassword() {
+        return hashPassword;
+    }
+
+    public Chapter getCurrentChapter() {
+        return currentChapter;
+    }
+
     public void setHashPassword(String hashPassword) { this.hashPassword = hashPassword;}
     public void setUsername(String username) {
         this.username = username;
@@ -182,4 +211,11 @@ public class User {
     public void setSecurityQ(String securityQ) { this.securityQ = securityQ;}
     public void setSecurityA(String securityA) {this.securityA = securityA;}
 
+    public void setGameDifficulty(int gameDifficulty) {
+        this.gameDifficulty = gameDifficulty;
+    }
+
+    public void setCurrentChapter(Chapter currentChapter) {
+        this.currentChapter = currentChapter;
+    }
 }
