@@ -56,6 +56,25 @@ public abstract class GameWorld {
 
     private final List<LifespanComponent> smallShrooms = new ArrayList<>();
 
+    private final List<Runnable> zombieKillListeners = new ArrayList<>();
+    private final List<Runnable> plantEatenListeners = new ArrayList<>();
+
+    public void registerZombieKillListener(Runnable listener) {
+        zombieKillListeners.add(listener);
+    }
+
+    public void notifyZombieKilled() {
+        zombieKillListeners.forEach(Runnable::run);
+    }
+
+    public void registerPlantEatenListener(Runnable listener) {
+        plantEatenListeners.add(listener);
+    }
+
+    public void notifyPlantEaten() {
+        plantEatenListeners.forEach(Runnable::run);
+    }
+
     public void registerShroom(LifespanComponent observer) {
         smallShrooms.add(observer);
     }

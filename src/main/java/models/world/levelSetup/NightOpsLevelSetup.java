@@ -1,42 +1,36 @@
 package models.world.levelSetup;
 
-import models.plant.card.PlantCard;
-import models.world.Cell;
 import models.world.GameWorld;
-import models.world.mechanics.ConveyorMechanic;
 import models.world.mechanics.NormalMechanic;
+import models.world.mechanics.SunSpawnMechanic;
 import models.zombie.wave.Wave;
 import models.zombie.wave.WaveManager;
 
 import java.util.List;
 
-public class PlantWhatYouGetLevelSetup implements LevelSetup{
+public class NightOpsLevelSetup implements LevelSetup{
     private int rows;
     private int cols;
     private List<Wave> waves;
-    private int initialSun;
-    private List<PlantCard> availablePlants;
 
-    public PlantWhatYouGetLevelSetup(int rows, int cols, List<Wave> waves, int initialSun, List<PlantCard> availablePlants) {
+    public NightOpsLevelSetup(int rows, int cols, List<Wave> waves){
         this.rows = rows;
         this.cols = cols;
         this.waves = waves;
-        this.initialSun = initialSun;
-        this.availablePlants = availablePlants;
     }
 
     @Override
     public void groundSetup(GameWorld world) {
-        world.setConveyorMode(true);
+        world.setConveyorMode(false);
         buildGrid(world, rows, cols);
 
         WaveManager waveManager = new WaveManager(waves);
         world.addMechanic(new NormalMechanic(waveManager));
-        world.addMechanic(new ConveyorMechanic(availablePlants));
+
     }
 
     @Override
     public boolean requirePlantSelection() {
-        return false;
+        return true;
     }
 }

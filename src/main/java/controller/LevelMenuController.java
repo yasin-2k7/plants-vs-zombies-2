@@ -42,12 +42,7 @@ public class LevelMenuController implements MenuController{
             return "this level is locked!";
         }
 
-        LevelType levelType;
-        if (level == 1) levelType = LevelType.NORMAL;
-        else{
-            levelType = LevelType.LOCKED_PLANTS;
-        }
-        GameWorld game = LevelFactory.createLevel(user.getCurrentChapter(), levelType);
+        GameWorld game = LevelFactory.createLevel(user.getCurrentChapter(), level);
         App.setCurrentGame(game);
         if (game.isConveyorMode())
             AppView.setCurrentScreen(GameMenuView.getInstance());

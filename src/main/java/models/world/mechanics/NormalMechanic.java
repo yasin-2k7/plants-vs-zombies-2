@@ -32,7 +32,10 @@ public class NormalMechanic implements Mechanic{
 
         world.getActiveZombies().stream()
                 .filter(Zombie::isDead)
-                .forEach(waveManager::onZombieKilled);
+                .forEach(zombie -> {
+                    waveManager.onZombieKilled(zombie);
+                    world.notifyZombieKilled();
+                });
 
     }
 

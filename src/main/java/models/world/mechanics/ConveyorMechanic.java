@@ -30,5 +30,7 @@ public class ConveyorMechanic implements Mechanic{
             conveyor.add(random);
             lastSpawnTime = now;
         }
+
+
     }
 }

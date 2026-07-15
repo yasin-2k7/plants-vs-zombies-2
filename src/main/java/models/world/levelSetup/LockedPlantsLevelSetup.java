@@ -18,6 +18,19 @@ public class LockedPlantsLevelSetup implements LevelSetup{
     private List<PlantType> lockedPlants;
     private List<PlantType> forcedPlants;
 
+    public LockedPlantsLevelSetup(int rows,
+                                  int cols,
+                                  List<Wave> waves,
+                                  List<PlantType> lockedPlants,
+                                  List<PlantType> forcedPlants) {
+        this.rows = rows;
+        this.cols = cols;
+        this.waves = waves;
+        this.lockedPlants = lockedPlants;
+        this.forcedPlants = forcedPlants;
+    }
+
+
     @Override
     public void groundSetup(GameWorld world) {
         world.setConveyorMode(false);
