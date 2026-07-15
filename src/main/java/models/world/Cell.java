@@ -14,6 +14,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static java.util.stream.Collectors.toList;
+
 
 public class Cell {
     private int row;
@@ -155,6 +157,17 @@ public class Cell {
                         zombie.getY() == cell.getY() &&
                                 cell.containsX(zombie.getX())
                 ))
+                .toList();
+    }
+
+    public static List<Zombie> getZombiesInCell(Cell affectedCell) {
+        List<Zombie> activeZombies = App.getCurrentGame().getActiveZombies();
+
+        return activeZombies.stream()
+                .filter(zombie ->
+                        zombie.getY() == affectedCell.getY() &&
+                                affectedCell.containsX(zombie.getX())
+                )
                 .toList();
     }
 

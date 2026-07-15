@@ -8,6 +8,7 @@ public class LawnMower {
     private boolean isSpent;
     private double positionX;
     private double speed = 5.0;
+    private boolean isAlive = true;
 
     public LawnMower(int row) {
         this.row = row;
@@ -19,6 +20,7 @@ public class LawnMower {
     public void activate() {
         if (!isActive && !isSpent) {
             this.isActive = true;
+            this.isAlive = false;
             System.out.println("The lawn mower in the row " + row + "is triggered and killed these zombies:");
         }
     }
@@ -58,6 +60,10 @@ public class LawnMower {
     public boolean isOutOfBounds() {
         // فرض می‌کنیم عرض صفحه بازی ۱۰۰۰ پیکسل است
         return positionX > 1000.0;
+    }
+
+    public boolean isAlive() {
+        return isAlive;
     }
 
     public boolean isActive() { return isActive; }

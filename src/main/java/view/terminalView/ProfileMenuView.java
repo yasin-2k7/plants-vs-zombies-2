@@ -8,15 +8,13 @@ import view.View;
 public class ProfileMenuView implements View {
     private static ProfileMenuView instance;
     private ProfileMenuController controller;
-    public static ProfileMenuView getInstance(ProfileMenuController controller){
+    public static ProfileMenuView getInstance(){
         if (instance == null){
-            instance = new ProfileMenuView(new ProfileMenuController());
+            instance = new ProfileMenuView();
+            instance.controller = new ProfileMenuController();
             return instance;
         }
         return instance;
-    }
-    public ProfileMenuView(ProfileMenuController controller) {
-        this.controller = controller;
     }
 
     @Override

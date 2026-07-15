@@ -55,6 +55,7 @@ public class LevelMenuController implements MenuController{
             AppView.setCurrentScreen(PlantMenuView.getInstance());
         }
         return "level started!";
+
     }
 
     public List<String> getLevelsToShow() {

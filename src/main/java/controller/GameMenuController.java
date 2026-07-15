@@ -41,6 +41,7 @@ public class GameMenuController implements MenuController {
     }
 
     public void advanceTime(int count){
+        System.out.println("okay");
         GameWorld game = App.getCurrentGame();
         for (int i = 0; i < count; i++){
             game.tick();
@@ -194,14 +195,12 @@ public class GameMenuController implements MenuController {
         System.out.printf(" WAVE: %d/%d  |  SUN: %d ☀️  |  PLANT FOOD: %d ⚡  |  STATUS: %s 🎮%n",
                 5, 7, App.getCurrentGame().getSun(), App.getCurrentGame().getPlantFoods(), App.getCurrentGame().getState());
         System.out.println("==================================================================================================");
-        System.out.println();
-
         for (int y = 0; y < App.getCurrentGame().getGrid().length; y++) {
-            String mowerSymbol = App.getCurrentGame().getLawnMowers().get(y).isActive() ? "[🚜]" : "[❌]";
+            String mowerSymbol = App.getCurrentGame().getLawnMowerManager().getMowers().get(y).isAlive() ? "[🚜]" : "[❌]";
             System.out.printf("Row %d %s | ", y, mowerSymbol);
 
             for (int x = 0; x < App.getCurrentGame().getGrid()[0].length; x++) {
-                Cell cell = App.getCurrentGame().getGrid()[x][y];
+                Cell cell = App.getCurrentGame().getGrid()[y][x];
 
                 String terrainSymbol = cell.getTerrain().getTerminalSymbol(); // '.' , '~' , 'I' , 'O'
                 if (cell.hasObstacle()) {
@@ -215,9 +214,9 @@ public class GameMenuController implements MenuController {
 
 
                 String zombieString = "       ";
-                List<Zombie> zombiesInCell = Cell.getZombiesInCells((List<Cell>) cell);
+                List<Zombie> zombiesInCell = Cell.getZombiesInCell(cell);
                 if (!zombiesInCell.isEmpty()) {
-                    Zombie firstZombie = zombiesInCell.get(0);
+                    Zombie firstZombie = zombiesInCell.getFirst();
                     zombieString = String.format("Z(%.1f)", firstZombie.getX());
                 }
 
