@@ -11,8 +11,9 @@ import models.world.GameWorld;
 import models.world.Sun;
 import models.world.mechanics.NormalMechanic;
 import models.zombie.Zombie;
+import models.zombie.ZombieFactory;
 import models.zombie.zombiesType.ArmoredZombie;
-import view.terminalView.GameMenuView;
+import view.terminalView.*;
 
 import java.util.List;
 
@@ -22,9 +23,21 @@ public class GameMenuController implements MenuController {
 
     }
 
+    public String enterMenu(String menuName) {
+        if (menuName.equalsIgnoreCase("collection")) {
+            AppView.setCurrentScreen(CollectionMenuView.getInstance());
+            return "Entering collection menu...";
+        }
+        return "Invalid menu name!";
+    }
+
     @Override
     public void exitMenu() {
+        AppView.setCurrentScreen(MainMenuView.getInstance());
+    }
 
+    public void showCurrentMenu(){
+        GameMenuView.getInstance().showResult("Current menu: game menu");
     }
 
     public void advanceTime(int count){
@@ -266,8 +279,28 @@ public class GameMenuController implements MenuController {
         }
     }
 
-    public void cheatSpawnZombie(){
+    public void cheatSpawnZombie(String type, float x, float y){
+        Zombie zombie;
+        try{
+            zombie = new ZombieFactory().createZombie(type);
+        }
+        catch (Exception e){
+            GameMenuView.getInstance().showResult("invalid zombie type!");
+            return;
+        }
 
+        float newY = -1;
+        for (Cell[] cells : App.getCurrentGame().getGrid()){
+            if (cells[0].getY() + App.getCellHeight()/2 >= y && cells[0].getY() - App.getCellHeight()/2 <= y){
+                newY = cells[0].getY();
+            }
+        }
+        if (x < 0 || x > App.getCellWidth()*9 || newY == -1){
+            GameMenuView.getInstance().showResult("you cannot spawn zombie in that place!");
+            return;
+        }
+
+        App.getCurrentGame().getActiveZombies().add(zombie);
     }
 
     public void startZombieWaves(){

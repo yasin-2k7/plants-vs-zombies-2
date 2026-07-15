@@ -4,9 +4,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public enum GameMenuCommands {
-    MENU_ENTER(""),
-    MENU_SHOW_CURRENT(""),
-    MENU_EXIT(""),
+    MENU_ENTER("\\s*menu\\s+enter\\s+(?<name>.+)"),
+    MENU_SHOW_CURRENT("\\s*menu\\s+show\\s+current\\s*"),
+    MENU_EXIT("\\s*menu\\s+exit\\s*"),
     ADVANCE_TIME("\\s*advance\\s+time\\s+-t\\s+(?<count>\\d+)\\s+tick\\s*"),
     COLLECT_SUN("\\s*collect\\s+sun\\s+-l\\s+\\(\\s*(?<x>\\d+)\\s*,\\s*(?<y>\\d+)\\s*\\)\\s*"),
     SHOW_SUN_AMOUNT("\\s*show\\s+sun\\s+amount\\s*"),

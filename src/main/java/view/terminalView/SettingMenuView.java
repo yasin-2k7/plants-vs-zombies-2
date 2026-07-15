@@ -14,7 +14,7 @@ public class SettingMenuView implements View{
 
     public static SettingMenuView getInstance(){
         if (instance == null){
-            instance = new SettingMenuView(controller);
+            instance = new SettingMenuView(new SettingMenuController());
             return instance;
         }
         return instance;

@@ -7,7 +7,7 @@ import view.View;
 import java.util.Scanner;
 
 public class AppView {
-    public static View currentScreen = SignupMenuView.getInstance(new SignupMenuController());
+    public static View currentScreen = SignupMenuView.getInstance();
 
     public static void setCurrentScreen(View screen) {
         currentScreen = screen;

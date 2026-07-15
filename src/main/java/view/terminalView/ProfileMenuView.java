@@ -10,7 +10,7 @@ public class ProfileMenuView implements View {
     private ProfileMenuController controller;
     public static ProfileMenuView getInstance(){
         if (instance == null){
-            instance = new ProfileMenuView(controller);
+            instance = new ProfileMenuView(new ProfileMenuController());
             return instance;
         }
         return instance;
