@@ -16,6 +16,13 @@ public class DeadLineLevelSetup implements LevelSetup{
     private int deadLineCol;
     private List<Wave> waves;
 
+    public DeadLineLevelSetup(int rows, int cols, int deadLineCol, List<Wave> waves){
+        this.rows = rows;
+        this.cols = cols;
+        this.deadLineCol = deadLineCol;
+        this.waves = waves;
+    }
+
     @Override
     public void groundSetup(GameWorld world) {
         world.setConveyorMode(false);

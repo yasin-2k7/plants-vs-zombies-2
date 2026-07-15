@@ -25,4 +25,13 @@ public class TimedWarLose implements LoseCondition{
 
         return elapsed >= timeLimit && currentKills < targetKills;
     }
+
+    public int getCurrentKills() {
+        return currentKills;
+    }
+
+    public int getTargetKills() {
+        return targetKills;
+    }
+
 }

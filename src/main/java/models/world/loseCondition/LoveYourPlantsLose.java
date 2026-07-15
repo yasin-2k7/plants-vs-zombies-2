@@ -6,7 +6,7 @@ public class LoveYourPlantsLose implements LoseCondition{
     private int maxLosses;
     private int currentLosses = 0;
 
-    private LoveYourPlantsLose(int maxLosses){
+    public LoveYourPlantsLose(int maxLosses){
         this.maxLosses = maxLosses;
     }
 

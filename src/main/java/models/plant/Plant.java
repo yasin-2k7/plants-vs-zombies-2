@@ -42,6 +42,7 @@ public class Plant {
         }
         if (health <= 0){
             die();
+            App.getCurrentGame().notifyPlantEaten();
             App.getCurrentGame().getActivePlants().remove(this);
         }
     }

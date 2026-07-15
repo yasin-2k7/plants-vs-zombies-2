@@ -21,6 +21,13 @@ public class SaveOurSeedsLevelSetup implements LevelSetup{
     private List<Wave> waves;
     private Map<Point, PlantType> protectedPlants;
 
+    public SaveOurSeedsLevelSetup(int rows, int cols, List<Wave> waves, Map<Point, PlantType> protectedPlants) {
+        this.rows = rows;
+        this.cols = cols;
+        this.waves = waves;
+        this.protectedPlants = protectedPlants;
+    }
+
     @Override
     public void groundSetup(GameWorld world) {
         world.setConveyorMode(false);
@@ -37,10 +44,8 @@ public class SaveOurSeedsLevelSetup implements LevelSetup{
             int row = (int) entry.getKey().getY();
             int col = (int) entry.getKey().getX();
 
-            Plant plant = PlantFactory.createPlant(entry.getValue(), row, 0);
             grid[row][col].handlePlanting(entry.getValue());
 
-            world.getActivePlants().add(plant);
         }
 
         WaveManager waveManager = new WaveManager(waves);
