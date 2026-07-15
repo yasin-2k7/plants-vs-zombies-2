@@ -39,8 +39,8 @@ public class LevelMenuView implements View{
                         System.out.println(AppView.currentScreen);
                         break;
                     case CHOOSE_LEVEL:
-
-
+                        int level = Integer.parseInt(matcher.group(1));
+                        System.out.println(controller.chooseLevel(level));
                         break;
 
 

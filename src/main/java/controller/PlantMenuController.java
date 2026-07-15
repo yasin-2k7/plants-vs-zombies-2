@@ -113,9 +113,15 @@ public class PlantMenuController implements MenuController {
         User user = App.getCurrentUser();
         if (user == null) return "Error: No user logged in.";
 
-        if (selectedPlants.isEmpty()) {
-            return "Error: No plants selected. Please select at least one plant.";
+        if (selectedPlants.size() < maxSlots) {
+            return "Error: Please select " + maxSlots + " plants";
         }
+
+        List<PlantCard> gameCards = new ArrayList<>();
+        for (PlantType type : selectedPlants){
+            gameCards.add(PlantCardFactory.createCard(type, user.getUserLevel()));
+        }
+        App.getCurrentGame().setPlantLists(gameCards);
 
         AppView.setCurrentScreen(GameMenuView.getInstance());
         return "Starting game with " + selectedPlants.size() + " plants...";

@@ -12,16 +12,16 @@ public class MainMenuController implements MenuController {
     public String enterMenu(String menuName) {
         switch (menuName.toLowerCase()) {
             case "play":
-                AppView.setCurrentScreen(ChapterMenuView.getInstance(new ChapterMenuController()));
-                return "Entering Game menu...";
+                AppView.setCurrentScreen(ChapterMenuView.getInstance());
+                return "Entering Chapter menu...";
             case "settings":
-                AppView.setCurrentScreen(SettingMenuView.getInstance(new SettingMenuController()));
+                AppView.setCurrentScreen(SettingMenuView.getInstance());
                 return "Entering Settings menu...";
             case "news":
                 AppView.setCurrentScreen(NewsMenuView.getInstance());
                 return "Entering News menu...";
             case "profile":
-                AppView.setCurrentScreen(ProfileMenuView.getInstance(new ProfileMenuController()));
+                AppView.setCurrentScreen(ProfileMenuView.getInstance());
                 return "Entering Profile menu...";
             default:
                 return "Invalid menu name.";
@@ -40,7 +40,7 @@ public class MainMenuController implements MenuController {
             return "No user is logged in.";
         }
         App.setCurrentUser(null);
-        AppView.setCurrentScreen(SignupMenuView.getInstance(new SignupMenuController()));
+        AppView.setCurrentScreen(SignupMenuView.getInstance());
         return "Logged out successfully.";
     }
 

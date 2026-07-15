@@ -285,6 +285,10 @@ public abstract class GameWorld {
         return plantLists;
     }
 
+    public void setPlantLists(List<PlantCard> plantLists) {
+        this.plantLists = plantLists;
+    }
+
     public <T extends Mechanic> T getMechanic(Class<T> type) {
         return mechanics.stream()
                 .filter(m -> type.isInstance(m))
@@ -299,6 +303,10 @@ public abstract class GameWorld {
 
     public int getPlantFoods() {
         return plantFoods;
+    }
+
+    public ArrayList<LoseCondition> getLoseConditions() {
+        return loseConditions;
     }
 
     public boolean isConveyorMode() {

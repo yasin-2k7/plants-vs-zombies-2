@@ -2,9 +2,9 @@ package models.enums;
 
 public enum Chapter {
     EGYPT,
+    FROSTBITE_CAVES,
     BIG_WAVE_BEACH,
-    DARK_AGES,
-    FROSTBITE_CAVES;
+    DARK_AGES;
 
     public static Chapter fromString(String text) {
         if (text == null) {

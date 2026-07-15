@@ -14,9 +14,9 @@ public class ChapterMenuView implements View {
         this.controller = controller;
     }
 
-    public static ChapterMenuView getInstance(ChapterMenuController controller){
+    public static ChapterMenuView getInstance(){
         if (instance == null){
-            instance = new ChapterMenuView(controller);
+            instance = new ChapterMenuView(new ChapterMenuController());
         }
         return instance;
     }

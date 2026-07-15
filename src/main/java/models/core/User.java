@@ -24,6 +24,7 @@ public class User {
     private transient Chapter currentChapter;
     private int unlockedLevel;
     private int currentLevel;
+    private int userLevel;
     private int coins;
     private int gems;
     private int pot;
@@ -217,5 +218,21 @@ public class User {
 
     public void setCurrentChapter(Chapter currentChapter) {
         this.currentChapter = currentChapter;
+    }
+
+    public int getUnlockedChapter() {
+        return unlockedChapter;
+    }
+
+    public int getUserLevel() {
+        return userLevel;
+    }
+
+    public void setUserLevel(int userLevel) {
+        this.userLevel = userLevel;
+    }
+
+    public int getUnlockedLevel() {
+        return unlockedLevel;
     }
 }

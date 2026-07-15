@@ -22,6 +22,9 @@ public class ChapterMenuController implements MenuController{
 
     public String chooseChapter(Chapter chapter){
         User user = App.getCurrentUser();
+        if (user.getUnlockedChapter() <= chapter.ordinal()){
+            return "this chapter is locked!";
+        }
         user.setCurrentChapter(chapter);
         AppView.currentScreen = LevelMenuView.getInstance(new LevelMenuController());
         return "you choose " + chapter;

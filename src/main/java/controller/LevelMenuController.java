@@ -1,9 +1,23 @@
 package controller;
 
 import models.core.App;
+import models.core.User;
 import models.enums.Chapter;
+import models.enums.LevelType;
 import models.world.Cell;
+import models.world.ChapterWorld.AncientEgyptWorld;
+import models.world.GameWorld;
+import models.world.LevelFactory;
+import models.world.levelSetup.NormalLevelSetup;
+import models.world.loseCondition.NormalLose;
+import models.world.winCondition.NormalWin;
+import models.zombie.wave.Wave;
+import view.terminalView.AppView;
+import view.terminalView.GameMenuView;
+import view.terminalView.PlantMenuView;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 public class LevelMenuController implements MenuController{
@@ -20,6 +34,27 @@ public class LevelMenuController implements MenuController{
     @Override
     public void exitMenu() {
 
+    }
+
+    public String chooseLevel(int level){
+        User user = App.getCurrentUser();
+        if (user.getUnlockedChapter() == user.getCurrentChapter().ordinal()+1 && user.getUnlockedLevel() < level){
+            return "this level is locked!";
+        }
+
+        LevelType levelType;
+        if (level == 1) levelType = LevelType.NORMAL;
+        else{
+            levelType = LevelType.LOCKED_PLANTS;
+        }
+        GameWorld game = LevelFactory.createLevel(user.getCurrentChapter(), levelType);
+        App.setCurrentGame(game);
+        if (game.isConveyorMode())
+            AppView.setCurrentScreen(GameMenuView.getInstance());
+        else{
+            AppView.setCurrentScreen(PlantMenuView.getInstance());
+        }
+        return "level started!";
     }
 
     public List<String> getLevelsToShow() {
