@@ -30,6 +30,9 @@ public class GreenhouseMenuView implements View {
             Matcher matcher = ghMenuCommand.matcher(command);
             if (matcher.matches()) {
                 switch (ghMenuCommand) {
+                    case MENU_SHOW_CURRENT:
+                        System.out.println(controller.showCurrentMenu());
+                        return;
                     case SHOW_GREENHOUSE:
                         List<String> status = controller.showGreenhouse();
                         for (String s : status) {
@@ -52,10 +55,7 @@ public class GreenhouseMenuView implements View {
                         System.out.println(controller.grow(gx, gy));
                         return;
                     case ENTER_SHOP:
-                        System.out.println("Entering shop...");
-                        return;
-                    case MENU_EXIT:
-                        System.out.println("Exiting greenhouse. Returning to main menu.");
+                        System.out.println(controller.enterShop());
                         return;
                     default:
                         break;

@@ -5,6 +5,7 @@ import models.core.User;
 import models.enums.PlantType;
 import models.plant.card.PlantCard;
 import models.plant.card.PlantCardFactory;
+import models.world.GameWorld;
 import view.terminalView.AppView;
 import view.terminalView.GameMenuView;
 
@@ -48,6 +49,11 @@ public class PlantMenuController implements MenuController {
         User user = App.getCurrentUser();
         if (user == null) return "Error: No user logged in.";
 
+        GameWorld game = App.getCurrentGame();
+        if (game == null) {
+            return "Error: No game is currently active. Please start a level first.";
+        }
+
         PlantType type;
         try {
             type = PlantType.valueOf(typeName.toUpperCase());
@@ -79,6 +85,12 @@ public class PlantMenuController implements MenuController {
     }
 
     public String removePlant(String typeName) {
+
+        GameWorld game = App.getCurrentGame();
+        if (game == null) {
+            return "Error: No game is currently active. Please start a level first.";
+        }
+
         PlantType type;
         try {
             type = PlantType.valueOf(typeName.toUpperCase());
@@ -110,6 +122,11 @@ public class PlantMenuController implements MenuController {
     public String boostPlant(String typeName) {
         User user = App.getCurrentUser();
         if (user == null) return "Error: No user logged in.";
+
+        GameWorld game = App.getCurrentGame();
+        if (game == null) {
+            return "Error: No game is currently active. Please start a level first.";
+        }
 
         PlantType type;
         try {
@@ -147,6 +164,11 @@ public class PlantMenuController implements MenuController {
     public String startGame() {
         User user = App.getCurrentUser();
         if (user == null) return "Error: No user logged in.";
+
+        GameWorld game = App.getCurrentGame();
+        if (game == null) {
+            return "Error: No game is currently active. Please start a level first.";
+        }
 
         if (selectedPlants.size() < maxSlots) {
             return "Error: Please select " + (maxSlots-selectedPlants.size()) + " more plants";

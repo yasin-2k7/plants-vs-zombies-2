@@ -24,17 +24,19 @@ public class ShopMenuController implements MenuController {
         List<String> output = new ArrayList<>();
         output.add("--- Permanent Items ---");
         shopList.getPermanentItems().forEach(i ->
-                output.add(i.getName() + ": " + i.getCoinCost() + " coins / " + i.getDiamondCost() + " gems")
+                output.add("[" + i.getId() + "] " + i.getName() + ": " + i.getCoinCost() + " coins / " + i.getDiamondCost() + " gems")
         );
         output.add("--- Daily Offer ---");
         if (shopList.getDailyOffer().isAvailableToday()) {
-            output.add(shopList.getDailyOffer().getName() + " costs " +
+            // آیدی 6 برای آفر روزانه
+            output.add("[6] " + shopList.getDailyOffer().getName() + " costs " +
                     shopList.getDailyOffer().getCoinCost() + " coins");
         } else {
             output.add("No daily offer available today.");
         }
         return output;
     }
+
 
     public String showDailyOffer() {
         if (shopList.getDailyOffer().isAvailableToday()) {
@@ -61,5 +63,8 @@ public class ShopMenuController implements MenuController {
         }
 
         return shopList.buy(itemId, type, count);
+    }
+    public String showCurrentMenu() {
+        return "shop Menu";
     }
 }

@@ -4,9 +4,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public enum MainMenuCommands {
-    MENU_ENTER("menu enter (\\w+)"),
-    MENU_SHOW_CURRENT("menu show current"),
-    MENU_LOGOUT("menu logout");
+    MENU_ENTER("^menu\\s+enter\\s+(.+)$"),
+    MENU_SHOW_CURRENT("^menu\\s+show\\s+current$"),
+    MENU_LOGOUT("^menu\\s+logout$");
 
     private final String pattern;
     private final Pattern compiledPattern;

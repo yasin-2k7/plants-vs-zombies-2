@@ -872,6 +872,10 @@ public class PlantFactory {
         return p;
     }
 
+    public static boolean isPlantSupported(PlantType type) {
+        return registry.containsKey(type);
+    }
+
 
 
 }

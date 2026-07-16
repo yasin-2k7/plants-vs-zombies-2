@@ -119,3 +119,7 @@ public class WaveManager {
     public int getKilledZombiesInCurrentWave() { return killedZombiesInCurrentWave; }
     public int getTotalZombiesInCurrentWave() { return totalZombiesInCurrentWave; }
 }
+
+
+
+

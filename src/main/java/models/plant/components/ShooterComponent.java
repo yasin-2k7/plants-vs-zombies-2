@@ -77,7 +77,6 @@ public class ShooterComponent implements GameComponent {
         this.giantPierce = giantPierce;
         this.giantDamageFactor = giantDamageFactor;
         this.plantFoodBehavior = BurstPlantFood.INSTANCE;
-        plantFoodStrategy = damageStrategy.get().changeDamage(damageStrategy.get().getDamage()*giantDamageFactor);
     }
 
     public PlantFoodBehavior plantFoodBehavior;
@@ -85,11 +84,12 @@ public class ShooterComponent implements GameComponent {
 
 
     @Override
-    public void activatePlantFood(Plant owner){
-        if (plantFoodBehavior != null){
+    public void activatePlantFood(Plant owner) {
+        if (plantFoodBehavior != null) {
             plantFoodBehavior.activate(owner, this);
         }
     }
+
 
 
     @Override

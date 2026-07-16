@@ -45,9 +45,8 @@ public class ShopMenuView implements View {
                         String plantTypeName = (matcher.groupCount() >= 3 && matcher.group(3) != null) ? matcher.group(3) : null;
                         System.out.println(controller.buyItem(itemId, count, plantTypeName));
                         return;
-                    case MENU_EXIT:
-                        System.out.println("Exiting shop. Returning to main menu.");
-                        // App.setCurrentMenu(new MainMenuController().getView());
+                    case MENU_SHOW_CURRENT:
+                        System.out.println(controller.showCurrentMenu());
                         return;
                     default:
                         break;
