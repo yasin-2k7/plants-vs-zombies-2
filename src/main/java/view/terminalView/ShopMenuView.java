@@ -45,8 +45,12 @@ public class ShopMenuView implements View {
                         String plantTypeName = (matcher.groupCount() >= 3 && matcher.group(3) != null) ? matcher.group(3) : null;
                         System.out.println(controller.buyItem(itemId, count, plantTypeName));
                         return;
+                    case MENU_EXIT:
+                        controller.exitMenu();
+                        System.out.println("Exiting shop. Returning to greenhouse menu.");
+                        return;
                     case MENU_SHOW_CURRENT:
-                        System.out.println(controller.showCurrentMenu());
+                        controller.showCurrentMenu();
                         return;
                     default:
                         break;
@@ -55,4 +59,6 @@ public class ShopMenuView implements View {
         }
         System.out.println("Unknown command in Shop menu.");
     }
+
+
 }

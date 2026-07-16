@@ -24,4 +24,6 @@ public class NewsMenuView implements View{
     public void processCommand(String command) {
 
     }
+
+
 }

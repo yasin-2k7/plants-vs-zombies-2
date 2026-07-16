@@ -7,4 +7,6 @@ public class TravelLogMenuView implements View {
     public void processCommand(String command) {
 
     }
+
+
 }

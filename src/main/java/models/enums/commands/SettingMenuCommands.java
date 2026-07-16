@@ -5,9 +5,9 @@ import java.util.regex.Pattern;
 
 public enum SettingMenuCommands {
     MENU_ENTER(""),
-    MENU_SHOW_CURRENT(""),
-    MENU_EXIT(""),
-    MENU_SETTINGS_CHANGE_DIFFICULTY("");
+    MENU_SHOW_CURRENT("\\s*menu\\s+show\\s+current\\s*"),
+    MENU_EXIT("\\s*menu\\s+exit\\s*"),
+    MENU_SETTINGS_CHANGE_DIFFICULTY("\\s*menu\\s+settings\\s+change-difficulty\\s+-l\\s+([1-5])");
 
     private final String pattern;
     private final Pattern compiledPattern;

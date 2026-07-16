@@ -57,7 +57,7 @@ public class PlantMenuView implements View {
                         AppView.setCurrentScreen(GameMenuView.getInstance());
                         return;
                     case MENU_SHOW_CURRENT:
-                        System.out.println("plant Menu");
+                        controller.showCurrentMenu();
                         return;
                     case MENU_ENTER:
                         System.out.println("Already in Level Selection menu.");
@@ -69,4 +69,6 @@ public class PlantMenuView implements View {
         }
         System.out.println("Unknown command in Level Selection menu.");
     }
+
+
 }

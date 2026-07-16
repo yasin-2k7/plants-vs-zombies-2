@@ -42,7 +42,7 @@ public class ChapterMenuView implements View {
                         }
                         break;
                     case MENU_SHOW_CURRENT:
-                        System.out.println(AppView.currentScreen);
+                        controller.showCurrentMenu();
                         break;
                 }
                 break;
@@ -53,4 +53,6 @@ public class ChapterMenuView implements View {
         }
 
     }
+
+
 }

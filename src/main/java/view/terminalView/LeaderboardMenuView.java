@@ -8,4 +8,6 @@ public class LeaderboardMenuView implements View {
     public void processCommand(String command) {
 
     }
+
+
 }

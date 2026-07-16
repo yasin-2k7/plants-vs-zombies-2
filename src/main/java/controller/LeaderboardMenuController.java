@@ -1,5 +1,7 @@
 package controller;
 
+import view.terminalView.GameMenuView;
+
 public class LeaderboardMenuController implements MenuController{
     @Override
     public void changeMenu() {
@@ -9,5 +11,9 @@ public class LeaderboardMenuController implements MenuController{
     @Override
     public void exitMenu() {
 
+    }
+
+    public void showCurrentMenu(){
+        GameMenuView.getInstance().showResult("Current menu: leaderboard menu");
     }
 }

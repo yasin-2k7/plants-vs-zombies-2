@@ -4,6 +4,9 @@ import models.core.App;
 import models.core.User;
 import models.enums.PlantType;
 import models.shop.ShopList;
+import view.terminalView.AppView;
+import view.terminalView.GameMenuView;
+import view.terminalView.GreenhouseMenuView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,26 +20,24 @@ public class ShopMenuController implements MenuController {
 
     @Override
     public void exitMenu() {
-
+        AppView.currentScreen = GreenhouseMenuView.getInstance();
     }
 
     public List<String> showShopList() {
         List<String> output = new ArrayList<>();
         output.add("--- Permanent Items ---");
         shopList.getPermanentItems().forEach(i ->
-                output.add("[" + i.getId() + "] " + i.getName() + ": " + i.getCoinCost() + " coins / " + i.getDiamondCost() + " gems")
+                output.add(i.getName() + ": " + i.getCoinCost() + " coins / " + i.getDiamondCost() + " gems")
         );
         output.add("--- Daily Offer ---");
         if (shopList.getDailyOffer().isAvailableToday()) {
-            // آیدی 6 برای آفر روزانه
-            output.add("[6] " + shopList.getDailyOffer().getName() + " costs " +
+            output.add(shopList.getDailyOffer().getName() + " costs " +
                     shopList.getDailyOffer().getCoinCost() + " coins");
         } else {
             output.add("No daily offer available today.");
         }
         return output;
     }
-
 
     public String showDailyOffer() {
         if (shopList.getDailyOffer().isAvailableToday()) {
@@ -64,7 +65,8 @@ public class ShopMenuController implements MenuController {
 
         return shopList.buy(itemId, type, count);
     }
-    public String showCurrentMenu() {
-        return "shop Menu";
+
+    public void showCurrentMenu(){
+        GameMenuView.getInstance().showResult("Current menu: shop menu");
     }
 }
