@@ -70,8 +70,4 @@ public class LevelMenuController implements MenuController{
                 return List.of();
         }
     }
-
-    public void showCurrentMenu(){
-        GameMenuView.getInstance().showResult("Current menu: level menu");
-    }
 }

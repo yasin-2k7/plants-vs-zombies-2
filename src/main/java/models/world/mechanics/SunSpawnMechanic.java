@@ -1,7 +1,5 @@
 package models.world.mechanics;
 
-import models.core.App;
-import models.core.DifficultyCalculator;
 import models.world.GameWorld;
 import models.world.Sun;
 import models.world.SunType;
@@ -10,41 +8,37 @@ import java.util.Random;
 
 public class SunSpawnMechanic implements Mechanic{
     private long lastSpawnTick = 0;
-    private int spawnInterval = 10; //ms
+    private int spawnInterval = 120; //ms
 
     @Override
     public void applyMechanic(GameWorld world) {
         long now = world.getCurrentTick();
 
-        int difficulty = App.getCurrentUser().getGameDifficulty();
-        double increaseFactor = DifficultyCalculator.increaseFactor(difficulty);
-        int adjustedInterval = (int) Math.round(spawnInterval * increaseFactor);
-
-
-        if (now - lastSpawnTick >= adjustedInterval) {
+        if (now - lastSpawnTick >= spawnInterval) {
             spawnRandomSun(world);
+            spawnInterval = Math.max((int) (6+0.05* world.getCurrentTick()), 120);
             lastSpawnTick = now;
         }
 
-        world.getActiveSuns().removeIf(sun -> {
-            if(sun.isExpired()){
-                world.getSunsPool().release(sun);
-                return true;
-            }
-            return false;
-        });
     }
 
     private void spawnRandomSun(GameWorld world){
-        int amount = 0;
-        SunType type = SunType.NORMAL;
+        SunType type;
         Random random = new Random();
+        double r = random.nextDouble();
+
+        if (r < 0.80) {
+            type = SunType.NORMAL;
+        } else if (r < 0.95) {
+            type = SunType.SPECIAL;
+        } else {
+            type = SunType.RADIOACTIVE;
+        }
         int row = random.nextInt(world.getRows());
         int col = random.nextInt(world.getCols());
 
         Sun sun = world.getSunsPool().acquire();
-        System.out.println("DEBUG: Sun Object ID: " + System.identityHashCode(sun));
-        sun.setup(row, col, amount, type);
+        sun.setup(row, col, type);
         world.getActiveSuns().add(sun);
     }
 }

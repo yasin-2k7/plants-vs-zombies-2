@@ -26,12 +26,6 @@ public class AncientEgyptWorld extends GameWorld {
 
     @Override
     protected void applyChapterRules() {
-        Cell[][] grid = getGrid();
-        for (Cell[] row : grid) {
-            for (Cell cell : row) {
-                cell.setTerrain(new LandTerrain());
-            }
-        }
         spawnInitialGraves();
         setSandstormActive(true);
     }
@@ -56,7 +50,7 @@ public class AncientEgyptWorld extends GameWorld {
             float x = col * 100f + 50f;
             float y = row * 100f + 50f;
 
-            Grave grave = new Grave(x, y, row, col,  Grave.GraveType.NORMAL);
+            Grave grave = new Grave(x, y, row, col);
             cell.setObstacle(grave);
             cell.setPlantable(false);
 

@@ -34,7 +34,4 @@ public abstract class Obstacle implements Damageable {
             this.isDestroyed = true;
         }
     }
-    public boolean isDestroyed() {
-        return isDestroyed;
-    }
 }

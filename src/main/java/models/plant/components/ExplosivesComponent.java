@@ -43,6 +43,8 @@ public class ExplosivesComponent implements GameComponent {
 
     public void update(Plant owner) {
 
+        System.out.println("updating");
+
         if (!isArmed) {
             armTimer--;
             if (armTimer <= 0) {

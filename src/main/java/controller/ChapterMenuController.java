@@ -6,7 +6,6 @@ import models.enums.Chapter;
 import view.View;
 import view.terminalView.AppView;
 import view.terminalView.ChapterMenuView;
-import view.terminalView.GameMenuView;
 import view.terminalView.LevelMenuView;
 
 public class ChapterMenuController implements MenuController{
@@ -29,10 +28,6 @@ public class ChapterMenuController implements MenuController{
         user.setCurrentChapter(chapter);
         AppView.currentScreen = LevelMenuView.getInstance(new LevelMenuController());
         return "you choose " + chapter;
-    }
-
-    public void showCurrentMenu(){
-        GameMenuView.getInstance().showResult("Current menu: chapter menu");
     }
 
 

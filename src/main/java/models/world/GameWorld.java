@@ -25,7 +25,7 @@ public abstract class GameWorld {
 
     private GameState state;
 
-    private long currentTick = 0;
+    private int currentTick = 0;
 
     protected int plantFoods;
     protected int rows;
@@ -124,8 +124,8 @@ public abstract class GameWorld {
 
     // متد پیدا کردن گیاه بر اساس مختصات حرکتی زامبی
         public Plant getPlantAtPosition(float x, float y) {
-            int col = (int)(x / 100); //100 مثلا عرض هر سلول
-            int row = (int)(y / 100);
+            int col = (int)(x / App.getCellWidth());
+            int row = (int)(y / App.getCellHeight());
             if (row >= 0 && row < rows && col >= 0 && col < cols) {
                 if (Math.abs(x-grid[row][col].getX()) < App.getCellWidth()/4) {
                     return grid[row][col].getPlant();
@@ -205,8 +205,14 @@ public abstract class GameWorld {
             }
         }
 
+        for (Sun sun : activeSuns){
+            if (sun.getProducer() == null && sun.isExpired()){
+                sun.collect();
+            }
+        }
+
         activeSuns.removeIf(sun -> {
-            if(sun.isExpired() && sun.getProducer() == null){
+            if(sun.isCollected()){
                 sunsPool.release(sun);
                 return true;
             }
@@ -227,7 +233,6 @@ public abstract class GameWorld {
                 }
             }
         }
-        activeGrave.removeIf(Grave::isDestroyed);
 
         for(Mechanic mechanic : mechanics){
             mechanic.applyMechanic(this);
@@ -305,7 +310,7 @@ public abstract class GameWorld {
     public List<Projectile> getActiveProjectiles() { return activeProjectiles; }
     public LawnMowerManager getLawnMowerManager() { return lawnMowerManager; }
 
-    public long getCurrentTick() {
+    public int getCurrentTick() {
         return currentTick;
     }
 
@@ -384,8 +389,8 @@ public abstract class GameWorld {
     public void setSandstormActive(boolean sandstormActive) {
         this.sandstormActive = sandstormActive;
     }
-    private boolean plantingPhase = false;
 
-    public boolean isPlantingPhase() { return plantingPhase; }
-    public void setPlantingPhase(boolean plantingPhase) { this.plantingPhase = plantingPhase; }
+    public LevelSetup getLevelSetup() {
+        return levelSetup;
+    }
 }

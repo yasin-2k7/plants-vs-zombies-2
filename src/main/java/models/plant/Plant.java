@@ -1,5 +1,6 @@
 package models.plant;
 
+import controller.GameMenuController;
 import models.core.App;
 import models.enums.PlantType;
 import models.plant.components.PlacementBehaviorComponent;
@@ -13,12 +14,12 @@ public class Plant {
     private int health;
     private int x, y;
     private int damage;
-    private transient ArrayList<GameComponent> components = new ArrayList<>();
+    private ArrayList<GameComponent> components = new ArrayList<>();
     private boolean dead = false;
     private boolean sheep = false;
     private boolean disabled = false;
     private int slowTicks = 0;
-    private transient Cell cell = null;
+    private Cell cell = null;
     private int frozenAmount = 0;
     private boolean freeze = false;
 
@@ -60,7 +61,10 @@ public class Plant {
         this.cell = cell;
     }
 
-    public void die() { this.dead = true; }
+    public void die() {
+        this.dead = true;
+        GameMenuController.updateState("Plant " + this.getType().name() + " at (" + this.x + ", " + this.y + ") is destroyed.");
+    }
     public boolean isDead() { return dead; }
     public void setSheep(boolean sheep) { this.sheep = sheep; }
     public void setDisabled(boolean disabled) { this.disabled = disabled; }
@@ -115,11 +119,5 @@ public class Plant {
 
     public void destroy(){
 
-    }
-
-    public void initAfterLoad() {
-        if (this.components == null) {
-            this.components = new ArrayList<>();
-        }
     }
 }

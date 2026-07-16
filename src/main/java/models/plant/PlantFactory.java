@@ -846,9 +846,9 @@ public class PlantFactory {
     }
 
     private Plant buildGraveBuster(){
-        int level = App.getCurrentUser().getUnlockedPlantsLevels().get(PlantType.HOT_POTATO);
+        int level = App.getCurrentUser().getUnlockedPlantsLevels().get(PlantType.GRAVE_BUSTER);
         int delay = level >= 2 ? 30 : 20;
-        Plant p = new Plant(PlantType.HOT_POTATO, 300, 0);
+        Plant p = new Plant(PlantType.GRAVE_BUSTER, 300, 0);
         ExplosivesComponent component = new ExplosivesComponent(InstantTrigger.INSTANCE, new RemoveGraveBehavior(), 0, delay);
         if (level >= 4){
             component.scheduleDelayedBehavior(new AreaDamageBehavior(100, new CircularRange(1)), delay);
@@ -870,10 +870,6 @@ public class PlantFactory {
         p.addComponent(new SunProducerComponent(sunSize, 1, 0, false, false, 0, 0));
         // next component
         return p;
-    }
-
-    public static boolean isPlantSupported(PlantType type) {
-        return registry.containsKey(type);
     }
 
 

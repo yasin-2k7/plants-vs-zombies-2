@@ -1,7 +1,6 @@
 package models.core;
 
 import models.enums.Chapter;
-import models.enums.NewsType;
 import models.enums.PlantType;
 import models.greenhouse.GreenHouse;
 import models.quest.QuestStats;
@@ -32,8 +31,8 @@ public class User {
     private HashMap<PlantType, Integer> seedPackets;
     private HashMap<PlantType, Integer> unlockedPlantsLevels;
     private HashMap<PlantType, Boolean> plantBoosts;
+    private static ArrayList<News> allNews;
     private ArrayList<News> unreadNews;
-    private List<News> newsList = new ArrayList<>();
     private GreenHouse greenhouse;
     private transient boolean isLoaded = false;
     private int gameDifficulty = 3;
@@ -44,8 +43,8 @@ public class User {
         this.unlockedPlantsLevels = new HashMap<>();
         this.seedPackets = new HashMap<>();
         this.greenhouse = new GreenHouse();
-        this.coins = 10000;
-        this.gems = 1000;
+        this.coins = 100;
+        this.gems = 10;
         this.unlockedChapter = 1;
         this.unlockedLevel = 1;
         putInitialPlants();
@@ -69,24 +68,9 @@ public class User {
         if (this.plantBoosts == null) this.plantBoosts = new HashMap<>();
         if (this.unlockedPlantsLevels == null) this.unlockedPlantsLevels = new HashMap<>();
         if (this.seedPackets == null) this.seedPackets = new HashMap<>();
-        if (this.greenhouse == null) {
-            this.greenhouse = new GreenHouse();
-        } else {
-            // پیمایش تمام گلدان‌های گلخانه (4 سطر و 5 ستون)
-            for (int r = 1; r <= 4; r++) {
-                for (int c = 1; c <= 5; c++) {
-                    models.greenhouse.Pot pot = this.greenhouse.getPot(c, r);
-                    // اگر گلدان خالی نبود و گیاهی در آن وجود داشت، متد مقداردهی را صدا بزن
-                    if (pot != null && pot.getPlant() != null) {
-                        pot.getPlant().initAfterLoad();
-                    }
-                }
-            }
-        }
+        if (this.greenhouse == null) this.greenhouse = new GreenHouse();
         this.isLoaded = true;
     }
-
-
 
     private void save() {
         // فقط اگر کاربر از فایل لود شده باشد یا جدیداً ثبت‌نام کرده باشد، ذخیره کن
@@ -217,14 +201,12 @@ public class User {
         return securityQ;
     }
 
-    public List<News> getAllNews() {
-        return newsList;
+    public ArrayList<News> getAllNews() {
+        return allNews;
     }
 
     public ArrayList<News> getUnreadNews() {
-        return (ArrayList<News>) newsList.stream()
-                .filter(n -> !n.isRead())
-                .toList();
+        return unreadNews;
     }
 
     public String getHashPassword() {
@@ -233,10 +215,6 @@ public class User {
 
     public Chapter getCurrentChapter() {
         return currentChapter;
-    }
-
-    public int getGameDifficulty() {
-        return gameDifficulty;
     }
 
     public void setHashPassword(String hashPassword) { this.hashPassword = hashPassword;}
@@ -252,10 +230,11 @@ public class User {
     public void setSecurityA(String securityA) {this.securityA = securityA;}
 
     public void setGameDifficulty(int gameDifficulty) {
-        if(gameDifficulty < 1 || gameDifficulty > 5){
-            throw new IllegalArgumentException("Difficulty level must be between 1 and 5");
-        }
         this.gameDifficulty = gameDifficulty;
+    }
+
+    public int getGameDifficulty() {
+        return gameDifficulty;
     }
 
     public void setCurrentChapter(Chapter currentChapter) {
@@ -276,41 +255,5 @@ public class User {
 
     public int getUnlockedLevel() {
         return unlockedLevel;
-    }
-
-    public void addNews(News news){
-        newsList.add(news);
-    }
-
-    public void notifyPlantUnlock(String plantName){
-        addNews(new News(
-                "Unlock plant",
-                "plant" + plantName,
-                NewsType.PLANT_UNLOCKED
-        ));
-    }
-
-    public void notifyZombieUnlock(String zombieName){
-        addNews(new News(
-                "Unlock zombie",
-                "zombie" + zombieName,
-                NewsType.ZOMBIE_UNLOCKED
-        ));
-    }
-
-    public void notifyLevelUnlock(String levelName){
-        addNews(new News(
-                "Unlock new leve",
-                "level" + levelName,
-                NewsType.LEVEL_UNLOCKED
-        ));
-    }
-
-    public void notifyMinigameUnlocked(String minigameName){
-        addNews(new News(
-                "Unlock minigame",
-                "minigame" + minigameName,
-                NewsType.MINIGAME_UNLOCKED
-        ));
     }
 }

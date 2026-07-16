@@ -28,7 +28,7 @@ public class NormalLevelSetup implements LevelSetup{
         System.out.println("hi1");
         WaveManager waveManager = new WaveManager(waves);
         world.addMechanic(new NormalMechanic(waveManager));
-//        world.addMechanic(new SunSpawnMechanic());
+        world.addMechanic(new SunSpawnMechanic());
 
     }
 

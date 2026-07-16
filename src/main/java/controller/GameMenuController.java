@@ -9,18 +9,14 @@ import models.plant.card.PlantCard;
 import models.world.Cell;
 import models.world.GameWorld;
 import models.world.Sun;
+import models.world.SunType;
 import models.world.mechanics.NormalMechanic;
-import models.world.obstacles.Grave;
 import models.zombie.Zombie;
 import models.zombie.ZombieFactory;
-import models.zombie.wave.WaveManager;
 import models.zombie.zombiesType.ArmoredZombie;
 import view.terminalView.*;
 
-import java.util.ArrayList;
 import java.util.List;
-
-import static models.world.obstacles.Grave.GraveType.PLANT_FOOD;
 
 public class GameMenuController implements MenuController {
     @Override
@@ -58,15 +54,34 @@ public class GameMenuController implements MenuController {
     }
 
     public void collectSun(float x, float y){
-        List<Sun> sunsCopy = new ArrayList<>(App.getCurrentGame().getActiveSuns());
-        for (Sun sun : sunsCopy){
-            if (sun.getX() == x && sun.getY() == y){
-                GameWorld game = App.getCurrentGame();
-                sun.collect();
-                game.getActiveSuns().remove(sun);
-                game.setSun(game.getSun() + sun.getSize());
-                if (sun.getProducer() != null) sun.getProducer().getComponentSuns().remove(sun);
-                game.getSunsPool().release(sun);
+        for (Sun sun : App.getCurrentGame().getActiveSuns()){
+            if (sun.isCollected()) continue;
+            if (Math.abs(sun.getX() - x) < 2 && Math.abs(sun.getY() - y) < 2){
+                if (sun.getType() == SunType.RADIOACTIVE){
+                    Cell[][] grid = App.getCurrentGame().getGrid();
+                    sun.collect();
+                    Cell sunCell = Cell.findCell(sun.getX(), sun.getY(), grid);
+                    if (sunCell != null){
+                        List<Cell> zombieCells = Cell.getNeighborCells(sunCell, grid, 2);
+                        List<Zombie> zombies = Cell.getZombiesInCells(zombieCells);
+                        for (Zombie zombie : zombies){
+                            zombie.takeDamage(150, "NORMAL");
+                        }
+                        List<Cell> plantCells = Cell.getNeighborCells(sunCell, grid, 1);
+                        for (Cell cell : plantCells){
+                            if (cell.getPlant(PlantLayer.BASE) != null) cell.getPlant(PlantLayer.BASE).takeDamage(80);
+                            if (cell.getPlant(PlantLayer.MAIN) != null) cell.getPlant(PlantLayer.MAIN).takeDamage(80);
+                            if (cell.getPlant(PlantLayer.SHIELD) != null) cell.getPlant(PlantLayer.SHIELD).takeDamage(80);
+                        }
+                    }
+
+                }
+                else{
+                    GameWorld game = App.getCurrentGame();
+                    sun.collect();
+                    game.setSun(game.getSun() + sun.getSize());
+                    if (sun.getProducer() != null) sun.getProducer().getComponentSuns().remove(sun);
+                }
                 return;
             }
         }
@@ -213,21 +228,8 @@ public class GameMenuController implements MenuController {
                 Cell cell = App.getCurrentGame().getGrid()[y][x];
 
                 String terrainSymbol = cell.getTerrain().getTerminalSymbol(); // '.' , '~' , 'I' , 'O'
-                if (cell.hasObstacle() && cell.getObstacle() instanceof Grave) {
-                    Grave grave = (Grave) cell.getObstacle();
-                    switch (grave.getType()) {
-                        case SUN:
-                            terrainSymbol = "☀";
-                            break;
-                        case PLANT_FOOD:
-                            terrainSymbol = "⚡";
-                            break;
-                        default:
-                            terrainSymbol = "🪦";
-                            break;
-                    }
-                } else if (cell.hasObstacle()) {
-                    terrainSymbol = "🪦";
+                if (cell.hasObstacle()) {
+                    terrainSymbol = "O";
                 }
 
                 String plantSymbol = "    ";
@@ -325,28 +327,8 @@ public class GameMenuController implements MenuController {
         App.getCurrentGame().getActiveZombies().add(zombie);
     }
 
-    public void startZombieWaves() {
-        GameWorld game = App.getCurrentGame();
-        if (game == null) {
-            System.out.println("No game in progress.");
-            return;
-        }
+    public void startZombieWaves(){
 
-        if (!game.isPlantingPhase()) {
-            System.out.println("Waves are already started or this level doesn't support delayed waves.");
-            return;
-        }
-
-        game.setPlantingPhase(false);
-
-        NormalMechanic normal = game.getMechanic(NormalMechanic.class);
-        if (normal != null) {
-            WaveManager wm = normal.getWaveManager();
-            if (wm != null && !wm.isLevelCompleted()) {
-                wm.startFirstWave();
-                System.out.println("Zombie waves started!");
-            }
-        }
     }
 
 

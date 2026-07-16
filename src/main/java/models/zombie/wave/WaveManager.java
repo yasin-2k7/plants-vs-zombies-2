@@ -1,5 +1,6 @@
 package models.zombie.wave;
 
+import controller.GameMenuController;
 import models.core.App;
 import models.world.GameWorld;
 import models.zombie.Zombie;
@@ -34,9 +35,9 @@ public class WaveManager {
     private void printWaveStartMessage(Wave wave) {
         int waveNum = wave.getWaveNumber();
         if (wave.isFlagWave()) {
-            System.out.println("The final wave has come.");
+            GameMenuController.updateState("The final wave has come.");
         } else {
-            System.out.println("Wave " + waveNum + " started.");
+            GameMenuController.updateState("Wave " + waveNum + " started.");
         }
     }
 
@@ -127,29 +128,4 @@ public class WaveManager {
     }
     public int getKilledZombiesInCurrentWave() { return killedZombiesInCurrentWave; }
     public int getTotalZombiesInCurrentWave() { return totalZombiesInCurrentWave; }
-    public List<Wave> getWaves() {
-        return waves;
-    }
-
-    public int getTotalWavesCount() {
-        return waves != null ? waves.size() : 0;
-    }
-
-    public int getCurrentWaveIndex() {
-        return currentWaveIndex;
-    }
-    public void startFirstWave() {
-        if (waves.isEmpty()) return;
-        this.currentWaveIndex = 0;
-        this.currentWave = waves.get(0);
-        this.totalZombiesInCurrentWave = currentWave.getTotalZombieCount();
-        this.killedZombiesInCurrentWave = 0;
-        this.levelCompleted = false;
-        printWaveStartMessage(currentWave);
-        this.firstWaveStarted = true;
-    }
 }
-
-
-
-

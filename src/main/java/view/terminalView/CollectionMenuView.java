@@ -25,6 +25,4 @@ public class CollectionMenuView implements View {
     public void processCommand(String command) {
 
     }
-
-
 }

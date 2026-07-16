@@ -83,6 +83,7 @@ public class SunProducerComponent implements GameComponent {
         Sun newSun = App.getCurrentGame().getSunsPool().acquire();
         newSun.reset(owner.getX(), owner.getY(), sunSize, this);
         App.getCurrentGame().getActiveSuns().add(newSun);
+
         GameMenuController.updateState("plant " + owner.getType().name() + " produced a sun at (" + owner.getX() + ", " + owner.getY() + ")");
         return newSun;
     }

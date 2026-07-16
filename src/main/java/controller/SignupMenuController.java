@@ -3,7 +3,6 @@ package controller;
 import models.core.UserDataManager;
 import models.core.UserManager;
 import view.terminalView.AppView;
-import view.terminalView.GameMenuView;
 import view.terminalView.LoginMenuView;
 
 import java.util.ArrayList;
@@ -189,9 +188,5 @@ public class SignupMenuController implements MenuController{
 
     public List<String> getQuestions() {
         return questions;
-    }
-
-    public void showCurrentMenu(){
-        GameMenuView.getInstance().showResult("Current menu: signup menu");
     }
 }

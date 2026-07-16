@@ -30,8 +30,6 @@ public class Cell {
     private CellTerrain terrain;
 
     private boolean plantable = true;
-    private boolean necromancyPotential = false;
-    private boolean necromancyTriggered = false;
 
 
     public Cell(int row, int col, CellTerrain initialTerrain) {
@@ -91,16 +89,14 @@ public class Cell {
 
     public String handlePlanting(PlantType type) {
         if (!this.isPlantable()) {
-            return "you cannot plant in that place!";
-        }
-
-        if (this.hasObstacle()) {
-            return "you cannot plant in that place!";
+            if (!(this.obstacle instanceof Grave && type == PlantType.GRAVE_BUSTER)){
+                return "you cannot plant in that place!";
+            }
         }
 
         Plant newPlant = App.getFactory().createPlant(type, (int)x, (int)y, this);
 
-        if (!this.terrain.canPlant(newPlant, this)) {
+        if ((!(this.obstacle instanceof Grave && type == PlantType.GRAVE_BUSTER)) && (!this.terrain.canPlant(newPlant, this))) {
             return "you cannot plant in that place!";
         }
 
@@ -130,6 +126,18 @@ public class Cell {
             return null;
         }
         return "that place isn't empty!";
+    }
+
+    public static Cell findCell(float x, float y, Cell[][] grid){
+        for (Cell[] cellRows : grid){
+            for (Cell cell : cellRows){
+                if (cell.containsX(x) && cell.containsY(y)){
+                    return cell;
+                }
+            }
+        }
+        return null;
+
     }
 
     public static List<Cell> getNeighborCells(Cell inputCell, Cell[][] grid, int radius) {
@@ -249,6 +257,10 @@ public class Cell {
         return (x >= this.x - App.getCellWidth()/2 && x <= this.x + App.getCellWidth()/2);
     }
 
+    public boolean containsY(float y){
+        return (y >= this.y - App.getCellHeight()/2 && y <= this.y + App.getCellHeight()/2);
+    }
+
     public int getRow() {
         return row;
     }
@@ -275,8 +287,9 @@ public class Cell {
     }
 
     public boolean canPlant(Plant plant) {
-        return this.plantable && !hasObstacle() && terrain.canPlant(plant, this);
+        return this.plantable && terrain.canPlant(plant, this);
     }
+
     public boolean isWater() {
         return terrain.isWater();
     }
@@ -296,10 +309,5 @@ public class Cell {
     public boolean blocksProjectile() {
         return hasObstacle() && obstacle instanceof Grave grave && grave.blocksProjectiles();
     }
-
-    public boolean isNecromancyPotential() { return necromancyPotential; }
-    public void setNecromancyPotential(boolean value) { this.necromancyPotential = value; }
-    public boolean isNecromancyTriggered() { return necromancyTriggered; }
-    public void setNecromancyTriggered(boolean value) { this.necromancyTriggered = value; }
 
 }

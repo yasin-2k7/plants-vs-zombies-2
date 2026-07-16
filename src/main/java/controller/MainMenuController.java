@@ -15,21 +15,19 @@ public class MainMenuController implements MenuController {
                 AppView.setCurrentScreen(ChapterMenuView.getInstance());
                 return "Entering Chapter menu...";
             case "settings":
-                AppView.setCurrentScreen(SettingMenuView.getInstance(new SettingMenuController()));
+                AppView.setCurrentScreen(SettingMenuView.getInstance());
                 return "Entering Settings menu...";
             case "news":
                 AppView.setCurrentScreen(NewsMenuView.getInstance());
                 return "Entering News menu...";
             case "profile":
-                AppView.setCurrentScreen(ProfileMenuView.getInstance(new ProfileMenuController()));
+                AppView.setCurrentScreen(ProfileMenuView.getInstance());
                 return "Entering Profile menu...";
-            case "green house":
-                AppView.setCurrentScreen(GreenhouseMenuView.getInstance());
-                return "Entering green House...";
             default:
                 return "Invalid menu name.";
         }
     }
+
 
     @Override
     public void exitMenu() {
@@ -46,9 +44,7 @@ public class MainMenuController implements MenuController {
         return "Logged out successfully.";
     }
 
-
-
-    public void showCurrentMenu(){
-        GameMenuView.getInstance().showResult("Current menu: main menu");
+    public String showCurrentMenu() {
+        return "Main Menu";
     }
 }
