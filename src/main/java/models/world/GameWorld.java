@@ -27,6 +27,8 @@ public abstract class GameWorld {
 
     private GameState state;
 
+    private long currentTick = 0;
+
     protected int plantFoods;
     protected int rows;
     protected int cols;
@@ -55,6 +57,8 @@ public abstract class GameWorld {
     private GenericObjectPool<Projectile> projectilesPool = new GenericObjectPool<>(Projectile::new);
 
     private final List<LifespanComponent> smallShrooms = new ArrayList<>();
+
+    private boolean sandstormActive = false;
 
     private final List<Runnable> zombieKillListeners = new ArrayList<>();
     private final List<Runnable> plantEatenListeners = new ArrayList<>();
@@ -192,6 +196,8 @@ public abstract class GameWorld {
 
         if(state != GameState.PLAYING) return;
 
+        currentTick++;
+
 
         activePlants.forEach(Plant::update);
         activeZombies.forEach(Zombie::update);
@@ -213,6 +219,17 @@ public abstract class GameWorld {
         activeZombies.removeIf(Zombie::isDead);
         activePlants.removeIf(Plant::isDead);
         activeProjectiles.removeIf(Projectile::isDead);
+
+        for (Cell[] row : grid) {
+            for (Cell cell : row) {
+                if (cell.hasObstacle() && cell.getObstacle() instanceof Grave grave) {
+                    if (!grave.blocksProjectiles()) {
+                        cell.setPlantable(true);
+                        cell.removeObstacle();
+                    }
+                }
+            }
+        }
 
         for(Mechanic mechanic : mechanics){
             mechanic.applyMechanic(this);
@@ -290,6 +307,10 @@ public abstract class GameWorld {
     public List<Projectile> getActiveProjectiles() { return activeProjectiles; }
     public LawnMowerManager getLawnMowerManager() { return lawnMowerManager; }
 
+    public long getCurrentTick() {
+        return currentTick;
+    }
+
     public long getElapsedTime() {
         return System.currentTimeMillis() - startTime;
     }
@@ -347,5 +368,22 @@ public abstract class GameWorld {
 
     public boolean isConveyorMode() {
         return isConveyorMode;
+    }
+
+    public Cell getCellAt(float x, float y) {
+        int col = (int) (x / 100);
+        int row = (int) (y / 100);
+        if (row >= 0 && row < rows && col >= 0 && col < cols) {
+            return grid[row][col];
+        }
+        return null;
+    }
+
+    public boolean isSandstormActive() {
+        return sandstormActive;
+    }
+
+    public void setSandstormActive(boolean sandstormActive) {
+        this.sandstormActive = sandstormActive;
     }
 }

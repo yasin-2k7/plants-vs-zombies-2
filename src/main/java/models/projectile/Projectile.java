@@ -9,6 +9,7 @@ import models.pool.Resettable;
 import models.projectile.hitStrategies.HitStrategy;
 import models.projectile.movementStrategies.MovementStrategy;
 import models.projectile.strikeStrategies.CheckStrike;
+import models.world.Cell;
 import models.zombie.Zombie;
 
 public class Projectile implements Resettable{
@@ -27,6 +28,17 @@ public class Projectile implements Resettable{
         double oldX = x;
         double oldY = y;
         movementStrategy.move(this);
+
+        if (type.movement.equals("STRAIGHT")) {
+            Cell currentCell = App.getCurrentGame().getCellAt(x, y);
+            if (currentCell != null && currentCell.blocksProjectile()) {
+                hitStrategy.applyDamage(currentCell.getObstacle(), App.getCurrentGame().getActiveTargets(), this);
+                dead = true;
+                App.getCurrentGame().getProjectilesPool().release(this);
+                return;
+            }
+        }
+
         Zombie zombie = null;
         if (type.movement.equals("STRAIGHT")) {
             zombie = strikeStrategy.strike(x, y, oldX, oldY);
