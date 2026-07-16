@@ -4,6 +4,9 @@ import models.core.App;
 import models.core.PasswordHasher;
 import models.core.User;
 import models.core.UserDataManager;
+import view.terminalView.AppView;
+import view.terminalView.GameMenuView;
+import view.terminalView.MainMenuView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,7 +20,7 @@ public class ProfileMenuController implements MenuController{
 
     @Override
     public void exitMenu() {
-
+        AppView.currentScreen = MainMenuView.getInstance();
     }
 
     public String changeUsername(String newUsername){
@@ -104,6 +107,24 @@ public class ProfileMenuController implements MenuController{
         return "your pass changed.";
 
 
+    }
+
+    public String showInfo(){
+        User user = App.getCurrentUser();
+
+        String info = "Username: " + user.getUsername() + "\n" +
+                    "Nickname: " + user.getNickname() + "\n" +
+                    "Games number: "  + "\n" +
+                    "Coins: " + user.getCoins() + "\n" +
+                    "Gems: " + user.getGems() + "\n" +
+                    "Levels number: " + (user.getUserLevel() - 1) + "\n" +
+                    "Mu point: ";
+
+        return info;
+    }
+
+    public void showCurrentMenu(){
+        GameMenuView.getInstance().showResult("Current menu: profile menu");
     }
 
 }

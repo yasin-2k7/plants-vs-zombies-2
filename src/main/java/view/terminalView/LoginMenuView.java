@@ -67,7 +67,8 @@ public class LoginMenuView implements View{
                         controller.exitMenu();
                         break;
                     case MENU_SHOW_CURRENT:
-                        System.out.println(AppView.currentScreen);
+                        controller.showCurrentMenu();
+                        break;
                 }
                 break;
             }
@@ -76,4 +77,6 @@ public class LoginMenuView implements View{
             System.out.println("Invalid command!");
         }
     }
+
+
 }

@@ -4,6 +4,10 @@ import models.core.App;
 import models.core.User;
 import models.greenhouse.GreenHouse;
 import models.greenhouse.Pot;
+import view.terminalView.AppView;
+import view.terminalView.GameMenuView;
+import view.terminalView.MainMenuView;
+import view.terminalView.ShopMenuView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,11 +16,12 @@ public class GreenhouseMenuController implements MenuController {
 
     @Override
     public void changeMenu() {
+        AppView.currentScreen = ShopMenuView.getInstance();
     }
 
     @Override
     public void exitMenu() {
-
+        AppView.currentScreen = MainMenuView.getInstance();
     }
 
     private GreenHouse getGreenHouse() {
@@ -72,5 +77,9 @@ public class GreenhouseMenuController implements MenuController {
     public String grow(int x, int y) {
         GreenHouse greenHouse = getGreenHouse();
         return (greenHouse != null) ? greenHouse.grow(x, y) : "Error: No user logged in.";
+    }
+
+    public void showCurrentMenu(){
+        GameMenuView.getInstance().showResult("Current menu: greenhouse menu");
     }
 }

@@ -1,5 +1,7 @@
 package models.world.mechanics;
 
+import models.core.App;
+import models.core.DifficultyCalculator;
 import models.world.GameWorld;
 import models.world.Sun;
 import models.world.SunType;
@@ -8,13 +10,18 @@ import java.util.Random;
 
 public class SunSpawnMechanic implements Mechanic{
     private long lastSpawnTick = 0;
-    private int spawnInterval = 10000; //ms
+    private int spawnInterval = 10; //ms
 
     @Override
     public void applyMechanic(GameWorld world) {
         long now = world.getCurrentTick();
 
-        if (now - lastSpawnTick >= spawnInterval) {
+        int difficulty = App.getCurrentUser().getGameDifficulty();
+        double increaseFactor = DifficultyCalculator.increaseFactor(difficulty);
+        int adjustedInterval = (int) Math.round(spawnInterval * increaseFactor);
+
+
+        if (now - lastSpawnTick >= adjustedInterval) {
             spawnRandomSun(world);
             lastSpawnTick = now;
         }

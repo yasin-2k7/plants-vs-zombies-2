@@ -4,6 +4,9 @@ import models.core.App;
 import models.core.User;
 import models.enums.PlantType;
 import models.shop.ShopList;
+import view.terminalView.AppView;
+import view.terminalView.GameMenuView;
+import view.terminalView.GreenhouseMenuView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,7 +20,7 @@ public class ShopMenuController implements MenuController {
 
     @Override
     public void exitMenu() {
-
+        AppView.currentScreen = GreenhouseMenuView.getInstance();
     }
 
     public List<String> showShopList() {
@@ -61,5 +64,9 @@ public class ShopMenuController implements MenuController {
         }
 
         return shopList.buy(itemId, type, count);
+    }
+
+    public void showCurrentMenu(){
+        GameMenuView.getInstance().showResult("Current menu: shop menu");
     }
 }

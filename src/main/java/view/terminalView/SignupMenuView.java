@@ -92,10 +92,11 @@ public class SignupMenuView implements View{
                         break;
                     }
                     case MENU_SHOW_CURRENT:
-                        System.out.println(AppView.currentScreen);
+                        controller.showCurrentMenu();
                         break;
                     case MENU_ENTER:
                         controller.changeMenu();
+                        System.out.println("login menu\n");
                         break;
                     case MENU_EXIT:
                         controller.exitMenu();
@@ -108,4 +109,6 @@ public class SignupMenuView implements View{
             System.out.println("Invalid command!");
         }
     }
+
+
 }

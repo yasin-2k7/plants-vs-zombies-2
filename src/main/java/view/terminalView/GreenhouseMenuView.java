@@ -55,7 +55,15 @@ public class GreenhouseMenuView implements View {
                         System.out.println("Entering shop...");
                         return;
                     case MENU_EXIT:
+                        controller.exitMenu();
                         System.out.println("Exiting greenhouse. Returning to main menu.");
+                        return;
+                    case MENU_SHOW_CURRENT:
+                        controller.showCurrentMenu();
+                        return;
+                    case MENU_ENTER:
+                        controller.changeMenu();
+                        System.out.println("shop");
                         return;
                     default:
                         break;
@@ -64,4 +72,6 @@ public class GreenhouseMenuView implements View {
         }
         System.out.println("Unknown command in Greenhouse menu.");
     }
+
+
 }

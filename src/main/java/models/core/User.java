@@ -1,6 +1,7 @@
 package models.core;
 
 import models.enums.Chapter;
+import models.enums.NewsType;
 import models.enums.PlantType;
 import models.greenhouse.GreenHouse;
 import models.quest.QuestStats;
@@ -31,8 +32,8 @@ public class User {
     private HashMap<PlantType, Integer> seedPackets;
     private HashMap<PlantType, Integer> unlockedPlantsLevels;
     private HashMap<PlantType, Boolean> plantBoosts;
-    private static ArrayList<News> allNews;
     private ArrayList<News> unreadNews;
+    private List<News> newsList = new ArrayList<>();
     private GreenHouse greenhouse;
     private transient boolean isLoaded = false;
     private int gameDifficulty = 3;
@@ -201,12 +202,14 @@ public class User {
         return securityQ;
     }
 
-    public ArrayList<News> getAllNews() {
-        return allNews;
+    public List<News> getAllNews() {
+        return newsList;
     }
 
     public ArrayList<News> getUnreadNews() {
-        return unreadNews;
+        return (ArrayList<News>) newsList.stream()
+                .filter(n -> !n.isRead())
+                .toList();
     }
 
     public String getHashPassword() {
@@ -215,6 +218,10 @@ public class User {
 
     public Chapter getCurrentChapter() {
         return currentChapter;
+    }
+
+    public int getGameDifficulty() {
+        return gameDifficulty;
     }
 
     public void setHashPassword(String hashPassword) { this.hashPassword = hashPassword;}
@@ -230,6 +237,9 @@ public class User {
     public void setSecurityA(String securityA) {this.securityA = securityA;}
 
     public void setGameDifficulty(int gameDifficulty) {
+        if(gameDifficulty < 1 || gameDifficulty > 5){
+            throw new IllegalArgumentException("Difficulty level must be between 1 and 5");
+        }
         this.gameDifficulty = gameDifficulty;
     }
 
@@ -251,5 +261,41 @@ public class User {
 
     public int getUnlockedLevel() {
         return unlockedLevel;
+    }
+
+    public void addNews(News news){
+        newsList.add(news);
+    }
+
+    public void notifyPlantUnlock(String plantName){
+        addNews(new News(
+                "Unlock plant",
+                "plant" + plantName,
+                NewsType.PLANT_UNLOCKED
+        ));
+    }
+
+    public void notifyZombieUnlock(String zombieName){
+        addNews(new News(
+                "Unlock zombie",
+                "zombie" + zombieName,
+                NewsType.ZOMBIE_UNLOCKED
+        ));
+    }
+
+    public void notifyLevelUnlock(String levelName){
+        addNews(new News(
+                "Unlock new leve",
+                "level" + levelName,
+                NewsType.LEVEL_UNLOCKED
+        ));
+    }
+
+    public void notifyMinigameUnlocked(String minigameName){
+        addNews(new News(
+                "Unlock minigame",
+                "minigame" + minigameName,
+                NewsType.MINIGAME_UNLOCKED
+        ));
     }
 }

@@ -46,8 +46,11 @@ public class ShopMenuView implements View {
                         System.out.println(controller.buyItem(itemId, count, plantTypeName));
                         return;
                     case MENU_EXIT:
-                        System.out.println("Exiting shop. Returning to main menu.");
-                        // App.setCurrentMenu(new MainMenuController().getView());
+                        controller.exitMenu();
+                        System.out.println("Exiting shop. Returning to greenhouse menu.");
+                        return;
+                    case MENU_SHOW_CURRENT:
+                        controller.showCurrentMenu();
                         return;
                     default:
                         break;
@@ -56,4 +59,6 @@ public class ShopMenuView implements View {
         }
         System.out.println("Unknown command in Shop menu.");
     }
+
+
 }

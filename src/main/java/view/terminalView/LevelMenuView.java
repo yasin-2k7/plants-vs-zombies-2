@@ -36,11 +36,16 @@ public class LevelMenuView implements View{
                         }
                         break;
                     case MENU_SHOW_CURRENT:
-                        System.out.println(AppView.currentScreen);
+                        controller.showCurrentMenu();
                         break;
                     case CHOOSE_LEVEL:
                         int level = Integer.parseInt(matcher.group(1));
                         System.out.println(controller.chooseLevel(level));
+                        break;
+
+                    case MENU_EXIT:
+                        controller.exitMenu();
+                        System.out.println("main menu");
                         break;
 
 
@@ -52,4 +57,6 @@ public class LevelMenuView implements View{
             System.out.println("invalid command in level menu.");
         }
     }
+
+
 }
