@@ -4,12 +4,12 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public enum ShopMenuCommands {
-    MENU_ENTER("menu enter shop"),
-    MENU_SHOW_CURRENT("menu show current"),
-    MENU_EXIT("menu exit"),
-    SHOP_LIST("shop list"),
-    SHOP_DAILY("shop daily"),
-    SHOP_BUY("shop buy -i (\\w+) -n (\\d+)(?: -t (\\w+))?");
+    MENU_ENTER("^menu\\s+enter\\s+shop$"),
+    MENU_SHOW_CURRENT("^menu\\s+show\\s+current$"),
+    MENU_EXIT("^menu\\s+exit$"),
+    SHOP_LIST("^shop\\s+list$"),
+    SHOP_DAILY("^shop\\s+daily$"),
+    SHOP_BUY("^shop\\s+buy\\s+-i\\s+(\\w+)\\s+-n\\s+(\\d+)(?:\\s+-t\\s+(\\w+))?$");
 
     private final String pattern;
     private final Pattern compiledPattern;

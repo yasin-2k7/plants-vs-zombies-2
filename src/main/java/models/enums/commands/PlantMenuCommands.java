@@ -4,15 +4,15 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public enum PlantMenuCommands {
-    MENU_ENTER("menu enter level"),
-    MENU_SHOW_CURRENT("menu show current"),
-    MENU_EXIT("menu exit"),
-    SHOW_ALL_PLANTS("show all plants"),
-    SHOW_AVAILABLE_PLANTS("show available plants"),
-    ADD_PLANT("add plant -t (\\w+)"),
-    REMOVE_PLANT("remove plant -t (\\w+)"),
-    BOOST_PLANT("boost plant -t (\\w+)"),
-    START_GAME("start game");
+    MENU_ENTER("^menu\\s+enter\\s+level$"),
+    MENU_SHOW_CURRENT("^menu\\s+show\\s+current$"),
+    MENU_EXIT("^menu\\s+exit$"),
+    SHOW_ALL_PLANTS("^show\\s+all\\s+plants$"),
+    SHOW_AVAILABLE_PLANTS("^show\\s+available\\s+plants$"),
+    ADD_PLANT("^add\\s+plant\\s+-t\\s+(\\w+)$"),
+    REMOVE_PLANT("^remove\\s+plant\\s+-t\\s+(\\w+)$"),
+    BOOST_PLANT("^boost\\s+plant\\s+-t\\s+(\\w+)$"),
+    START_GAME("^start\\s+game$");
 
     private final String pattern;
     private final Pattern compiledPattern;

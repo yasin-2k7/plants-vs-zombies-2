@@ -44,8 +44,8 @@ public class User {
         this.unlockedPlantsLevels = new HashMap<>();
         this.seedPackets = new HashMap<>();
         this.greenhouse = new GreenHouse();
-        this.coins = 100;
-        this.gems = 10;
+        this.coins = 10000;
+        this.gems = 1000;
         this.unlockedChapter = 1;
         this.unlockedLevel = 1;
         putInitialPlants();
@@ -69,9 +69,24 @@ public class User {
         if (this.plantBoosts == null) this.plantBoosts = new HashMap<>();
         if (this.unlockedPlantsLevels == null) this.unlockedPlantsLevels = new HashMap<>();
         if (this.seedPackets == null) this.seedPackets = new HashMap<>();
-        if (this.greenhouse == null) this.greenhouse = new GreenHouse();
+        if (this.greenhouse == null) {
+            this.greenhouse = new GreenHouse();
+        } else {
+            // پیمایش تمام گلدان‌های گلخانه (4 سطر و 5 ستون)
+            for (int r = 1; r <= 4; r++) {
+                for (int c = 1; c <= 5; c++) {
+                    models.greenhouse.Pot pot = this.greenhouse.getPot(c, r);
+                    // اگر گلدان خالی نبود و گیاهی در آن وجود داشت، متد مقداردهی را صدا بزن
+                    if (pot != null && pot.getPlant() != null) {
+                        pot.getPlant().initAfterLoad();
+                    }
+                }
+            }
+        }
         this.isLoaded = true;
     }
+
+
 
     private void save() {
         // فقط اگر کاربر از فایل لود شده باشد یا جدیداً ثبت‌نام کرده باشد، ذخیره کن

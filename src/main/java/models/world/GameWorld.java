@@ -227,6 +227,7 @@ public abstract class GameWorld {
                 }
             }
         }
+        activeGrave.removeIf(Grave::isDestroyed);
 
         for(Mechanic mechanic : mechanics){
             mechanic.applyMechanic(this);
@@ -383,4 +384,8 @@ public abstract class GameWorld {
     public void setSandstormActive(boolean sandstormActive) {
         this.sandstormActive = sandstormActive;
     }
+    private boolean plantingPhase = false;
+
+    public boolean isPlantingPhase() { return plantingPhase; }
+    public void setPlantingPhase(boolean plantingPhase) { this.plantingPhase = plantingPhase; }
 }

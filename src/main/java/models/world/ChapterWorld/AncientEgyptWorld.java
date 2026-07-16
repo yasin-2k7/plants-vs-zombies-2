@@ -56,7 +56,7 @@ public class AncientEgyptWorld extends GameWorld {
             float x = col * 100f + 50f;
             float y = row * 100f + 50f;
 
-            Grave grave = new Grave(x, y, row, col);
+            Grave grave = new Grave(x, y, row, col,  Grave.GraveType.NORMAL);
             cell.setObstacle(grave);
             cell.setPlantable(false);
 

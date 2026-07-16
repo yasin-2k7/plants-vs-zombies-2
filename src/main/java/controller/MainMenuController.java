@@ -23,11 +23,13 @@ public class MainMenuController implements MenuController {
             case "profile":
                 AppView.setCurrentScreen(ProfileMenuView.getInstance(new ProfileMenuController()));
                 return "Entering Profile menu...";
+            case "green house":
+                AppView.setCurrentScreen(GreenhouseMenuView.getInstance());
+                return "Entering green House...";
             default:
                 return "Invalid menu name.";
         }
     }
-
 
     @Override
     public void exitMenu() {

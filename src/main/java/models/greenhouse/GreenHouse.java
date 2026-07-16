@@ -10,6 +10,7 @@ import models.world.cellTerrains.LandTerrain;
 
 import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 public class GreenHouse {
     private static final int ROWS = 4;
@@ -45,16 +46,16 @@ public class GreenHouse {
             return "Error: No user logged in.";
         }
 
-        PlantType chosenType;
-        if (random.nextDouble() < 0.5) {
-            chosenType = PlantType.MARIGOLD;
-        } else {
-            List<PlantType> unlockedWithPlantFood = user.getUnlockedPlantTypesWithPlantFood();
-            if (unlockedWithPlantFood.isEmpty()) {
-                return "Error: No unlocked plant with Plant Food ability available.";
-            }
-            chosenType = unlockedWithPlantFood.get(random.nextInt(unlockedWithPlantFood.size()));
+        List<PlantType> unlockedWithPlantFood = user.getUnlockedPlantTypesWithPlantFood();
+        List<PlantType> supportedTypes = unlockedWithPlantFood.stream()
+                .filter(PlantFactory::isPlantSupported)
+                .collect(Collectors.toList());
+
+        if (supportedTypes.isEmpty()) {
+            return "Error: No supported plant with Plant Food ability available.";
         }
+
+        PlantType chosenType = supportedTypes.get(random.nextInt(supportedTypes.size()));
 
         PlantFactory factory = App.getFactory();
         Plant newPlant = factory.createPlant(chosenType, x, y, new Cell(1,1, new LandTerrain()));
