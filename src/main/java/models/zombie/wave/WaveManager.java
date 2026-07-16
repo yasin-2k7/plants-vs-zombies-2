@@ -128,4 +128,16 @@ public class WaveManager {
     }
     public int getKilledZombiesInCurrentWave() { return killedZombiesInCurrentWave; }
     public int getTotalZombiesInCurrentWave() { return totalZombiesInCurrentWave; }
+
+    public List<Wave> getWaves() {
+        return waves;
+    }
+
+    public int getTotalWavesCount() {
+        return waves != null ? waves.size() : 0;
+    }
+
+    public int getCurrentWaveIndex() {
+        return currentWaveIndex;
+    }
 }

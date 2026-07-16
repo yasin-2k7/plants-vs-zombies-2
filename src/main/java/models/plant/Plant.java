@@ -14,17 +14,23 @@ public class Plant {
     private int health;
     private int x, y;
     private int damage;
-    private ArrayList<GameComponent> components = new ArrayList<>();
+    private transient ArrayList<GameComponent> components = new ArrayList<>();
     private boolean dead = false;
     private boolean sheep = false;
     private boolean disabled = false;
     private int slowTicks = 0;
-    private Cell cell = null;
+    private transient Cell cell = null;
     private int frozenAmount = 0;
     private boolean freeze = false;
 
     public void addComponent(GameComponent comp) {
         components.add(comp);
+    }
+
+    private void ensureComponentsInit() {
+        if (components == null) {
+            components = new ArrayList<>();
+        }
     }
 
     public void update() {

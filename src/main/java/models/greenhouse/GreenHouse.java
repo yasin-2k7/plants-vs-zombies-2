@@ -10,6 +10,7 @@ import models.world.cellTerrains.LandTerrain;
 
 import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 public class GreenHouse {
     private static final int ROWS = 4;
@@ -55,6 +56,7 @@ public class GreenHouse {
             }
             chosenType = unlockedWithPlantFood.get(random.nextInt(unlockedWithPlantFood.size()));
         }
+
 
         PlantFactory factory = App.getFactory();
         Plant newPlant = factory.createPlant(chosenType, x, y, new Cell(1,1, new LandTerrain()));

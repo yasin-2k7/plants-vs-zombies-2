@@ -46,7 +46,7 @@ public class User {
         this.greenhouse = new GreenHouse();
         this.coins = 100;
         this.gems = 10;
-        this.unlockedChapter = 1;
+        this.unlockedChapter = 4;
         this.unlockedLevel = 1;
         putInitialPlants();
     }

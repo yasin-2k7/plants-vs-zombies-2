@@ -74,6 +74,13 @@ public class PlantFactory {
     }
 
     public static Plant createPlant(PlantType type, int x, int y, Cell cell) {
+        java.util.function.Supplier<Plant> plantSupplier = registry.get(type);
+
+        if (plantSupplier == null) {
+            System.out.println("Error: Plant type " + type.name() + " is not registered in PlantFactory!");
+            return null;
+        }
+
         Plant newPlant = registry.get(type).get();
         newPlant.setCell(cell);
         newPlant.setX(x);
@@ -871,6 +878,11 @@ public class PlantFactory {
         // next component
         return p;
     }
+
+    public static boolean isPlantSupported(PlantType type) {
+        return registry.containsKey(type);
+    }
+
 
 
 

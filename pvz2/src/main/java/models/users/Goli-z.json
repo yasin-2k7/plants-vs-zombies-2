@@ -1,0 +1,221 @@
+{
+  "username": "Goli-z",
+  "hashPassword": "df111f98eaed8df0da9520a470236708207e55c59846a7d9dbf02e40af070930",
+  "nickname": "Goli",
+  "email": "zahragolafshani1385@gmai.com",
+  "gender": "female",
+  "securityQ": "1. What is your best friend\u0027s name?",
+  "securityA": "8d6d4f52ee2db64142fab11d1044eaeb7573b009f7bd404923326bc8c0e7ee06",
+  "unlockedChapter": 1,
+  "unlockedLevel": 1,
+  "currentLevel": 0,
+  "userLevel": 0,
+  "coins": 100,
+  "gems": 2,
+  "pot": 0,
+  "seedPackets": {},
+  "unlockedPlantsLevels": {
+    "REPEATER": 1,
+    "GRAVE_BUSTER": 1,
+    "PEASHOOTER": 1,
+    "POTATO_MINE": 1,
+    "ICEBERG_LETTUCE": 1,
+    "WALL_NUT": 1,
+    "CABBAGE_PULT": 1,
+    "SNOW_PEA": 1,
+    "SUNFLOWER": 1,
+    "LILY_PAD": 1,
+    "CHERRY_BOMB": 1
+  },
+  "plantBoosts": {
+    "POTATO_MINE": true
+  },
+  "greenhouse": {
+    "pots": [
+      [
+        {
+          "x": 1,
+          "y": 1,
+          "isLocked": false,
+          "plant": {
+            "type": "POTATO_MINE",
+            "health": 1000,
+            "x": 1,
+            "y": 1,
+            "damage": 1800,
+            "components": [
+              {
+                "explosiveBehavior": {
+                  "damage": 1800,
+                  "area": {
+                    "radius": 0
+                  }
+                },
+                "triggerStrategy": {
+                  "rangeX": 50.0
+                },
+                "postTriggerDelay": 10,
+                "maxPostTriggerDelay": 10,
+                "isArmed": false,
+                "isTriggered": false,
+                "armTimer": 150,
+                "lives": 1,
+                "delayTicksLeft": -2
+              }
+            ],
+            "dead": false,
+            "sheep": false,
+            "disabled": false,
+            "slowTicks": 0,
+            "frozenAmount": 0,
+            "freeze": false
+          },
+          "plantType": "POTATO_MINE",
+          "plantedTime": 1784150075829,
+          "isReady": true
+        },
+        {
+          "x": 2,
+          "y": 1,
+          "isLocked": false,
+          "plantedTime": 0,
+          "isReady": false
+        },
+        {
+          "x": 3,
+          "y": 1,
+          "isLocked": false,
+          "plantedTime": 0,
+          "isReady": false
+        },
+        {
+          "x": 4,
+          "y": 1,
+          "isLocked": false,
+          "plantedTime": 0,
+          "isReady": false
+        },
+        {
+          "x": 5,
+          "y": 1,
+          "isLocked": false,
+          "plantedTime": 0,
+          "isReady": false
+        }
+      ],
+      [
+        {
+          "x": 1,
+          "y": 2,
+          "isLocked": true,
+          "plantedTime": 0,
+          "isReady": false
+        },
+        {
+          "x": 2,
+          "y": 2,
+          "isLocked": true,
+          "plantedTime": 0,
+          "isReady": false
+        },
+        {
+          "x": 3,
+          "y": 2,
+          "isLocked": true,
+          "plantedTime": 0,
+          "isReady": false
+        },
+        {
+          "x": 4,
+          "y": 2,
+          "isLocked": true,
+          "plantedTime": 0,
+          "isReady": false
+        },
+        {
+          "x": 5,
+          "y": 2,
+          "isLocked": true,
+          "plantedTime": 0,
+          "isReady": false
+        }
+      ],
+      [
+        {
+          "x": 1,
+          "y": 3,
+          "isLocked": true,
+          "plantedTime": 0,
+          "isReady": false
+        },
+        {
+          "x": 2,
+          "y": 3,
+          "isLocked": true,
+          "plantedTime": 0,
+          "isReady": false
+        },
+        {
+          "x": 3,
+          "y": 3,
+          "isLocked": true,
+          "plantedTime": 0,
+          "isReady": false
+        },
+        {
+          "x": 4,
+          "y": 3,
+          "isLocked": true,
+          "plantedTime": 0,
+          "isReady": false
+        },
+        {
+          "x": 5,
+          "y": 3,
+          "isLocked": true,
+          "plantedTime": 0,
+          "isReady": false
+        }
+      ],
+      [
+        {
+          "x": 1,
+          "y": 4,
+          "isLocked": true,
+          "plantedTime": 0,
+          "isReady": false
+        },
+        {
+          "x": 2,
+          "y": 4,
+          "isLocked": true,
+          "plantedTime": 0,
+          "isReady": false
+        },
+        {
+          "x": 3,
+          "y": 4,
+          "isLocked": true,
+          "plantedTime": 0,
+          "isReady": false
+        },
+        {
+          "x": 4,
+          "y": 4,
+          "isLocked": true,
+          "plantedTime": 0,
+          "isReady": false
+        },
+        {
+          "x": 5,
+          "y": 4,
+          "isLocked": true,
+          "plantedTime": 0,
+          "isReady": false
+        }
+      ]
+    ]
+  },
+  "gameDifficulty": 3,
+  "plantFoods": 0
+}

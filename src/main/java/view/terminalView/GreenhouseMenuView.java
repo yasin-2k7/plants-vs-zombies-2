@@ -52,6 +52,7 @@ public class GreenhouseMenuView implements View {
                         System.out.println(controller.grow(gx, gy));
                         return;
                     case ENTER_SHOP:
+                        controller.changeMenu();
                         System.out.println("Entering shop...");
                         return;
                     case MENU_EXIT:
@@ -63,7 +64,7 @@ public class GreenhouseMenuView implements View {
                         return;
                     case MENU_ENTER:
                         controller.changeMenu();
-                        System.out.println("shop");
+                        System.out.println("Entering shop...");
                         return;
                     default:
                         break;

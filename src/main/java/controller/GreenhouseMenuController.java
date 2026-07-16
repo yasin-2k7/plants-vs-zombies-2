@@ -79,6 +79,11 @@ public class GreenhouseMenuController implements MenuController {
         return (greenHouse != null) ? greenHouse.grow(x, y) : "Error: No user logged in.";
     }
 
+//    public String enterShop() {
+//        AppView.currentScreen = ShopMenuView.getInstance();
+//        return "Enterning Shop...";
+//    }
+
     public void showCurrentMenu(){
         GameMenuView.getInstance().showResult("Current menu: greenhouse menu");
     }
