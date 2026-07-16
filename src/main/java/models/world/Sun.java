@@ -26,8 +26,8 @@ public class Sun implements Resettable {
     }
 
     public boolean isExpired(){
-        long elapsed = System.currentTimeMillis() - spawnTime;
-        return elapsed > 7000; //ms
+        long elapsed = game.getCurrentTick() - spawnTime;
+        return elapsed > 10; //ms
     }
 
     public void collect(){
@@ -39,7 +39,7 @@ public class Sun implements Resettable {
         this.y = row * App.getCellWidth() + App.getCellWidth()/2;
         this.size = amount;
         this.type = type;
-        this.spawnTime = System.currentTimeMillis();
+        this.spawnTime = game.getCurrentTick();
         this.isCollected = false;
         this.producer = null;
     }

@@ -6,11 +6,16 @@ import models.world.cellTerrains.LandTerrain;
 import models.world.levelSetup.LevelSetup;
 import models.world.loseCondition.LoseCondition;
 import models.world.mechanics.Mechanic;
+import models.world.obstacles.Grave;
 import models.world.winCondition.WinCondition;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 public class AncientEgyptWorld extends GameWorld {
+
+    private static final int MIN_GRAVES = 2;
+    private static final int MAX_GRAVES = 5;
 
     public AncientEgyptWorld(LevelSetup levelSetup, ArrayList<LoseCondition> loseConditions, WinCondition winCondition, ArrayList<Mechanic> mechanics) {
         super(levelSetup, loseConditions, winCondition, mechanics);
@@ -24,7 +29,37 @@ public class AncientEgyptWorld extends GameWorld {
                 cell.setTerrain(new LandTerrain());
             }
         }
+        spawnInitialGraves();
+        setSandstormActive(true);
     }
 
+    private void spawnInitialGraves() {
+        Random random = new Random();
+        int graveCount = MIN_GRAVES + random.nextInt(MAX_GRAVES - MIN_GRAVES + 1);
+        Cell[][] grid = getGrid();
+
+        int spawned = 0;
+        int attempts = 0;
+        int maxAttempts = graveCount * 10;
+
+        while (spawned < graveCount && attempts < maxAttempts) {
+            attempts++;
+            int row = random.nextInt(getRows());
+            int col = random.nextInt(getCols());
+
+            Cell cell = grid[row][col];
+            if (cell.hasObstacle() || !cell.isEmpty()) continue;
+
+            float x = col * 100f + 50f;
+            float y = row * 100f + 50f;
+
+            Grave grave = new Grave(x, y, row, col);
+            cell.setObstacle(grave);
+            cell.setPlantable(false);
+
+            addGrave(grave);
+            spawned++;
+        }
+    }
 
 }

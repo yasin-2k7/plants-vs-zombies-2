@@ -8,7 +8,7 @@ import java.util.Random;
 
 public class NormalMechanic implements Mechanic{
     private WaveManager waveManager;
-    private long lastZombieSpawnTime = 0;
+    private long lastZombieSpawnTick = 0;
     private int zombieSpawnInterval;
     private Random random = new Random();
 
@@ -18,13 +18,13 @@ public class NormalMechanic implements Mechanic{
 
     @Override
     public void applyMechanic(GameWorld world) {
-        long now = System.currentTimeMillis();
+        long now = world.getCurrentTick();
 
-        if(now - lastZombieSpawnTime >= zombieSpawnInterval){
+        if(now - lastZombieSpawnTick >= zombieSpawnInterval){
             if(!waveManager.isLevelCompleted()){
                 int lane = random.nextInt(world.getRows());
                 waveManager.spawnNextZombie(lane, world);
-                lastZombieSpawnTime = now;
+                lastZombieSpawnTick = now;
             }
         }
 

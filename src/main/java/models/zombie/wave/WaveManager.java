@@ -6,6 +6,7 @@ import models.zombie.Zombie;
 import models.zombie.ZombieFactory;
 
 import java.util.List;
+import java.util.Random;
 
 public class WaveManager {
     private List<Wave> waves;
@@ -72,7 +73,15 @@ public class WaveManager {
         Zombie zombie = new ZombieFactory().createZombie(entry.getZombie());
         if (zombie == null) return;
 
-        float x = (game.getCols()) * App.getCellWidth(); // فرض: عرض سلول ۱۰۰ و سمت راست
+        int spawnCol = game.getCols();
+
+        if (currentWave.isFlagWave() && game.isSandstormActive()) {
+            int columnsForward = 1 + new Random().nextInt(4);
+            spawnCol = Math.max(0, spawnCol - columnsForward);
+            System.out.println("A zombie rides a sandstorm and enters " + columnsForward + " columns ahead!");
+        }
+
+        float x = spawnCol * App.getCellWidth(); // فرض: عرض سلول ۱۰۰ و سمت راست
         float y = lane * App.getCellHeight() + App.getCellHeight()/2;
         zombie.setX(x);
         zombie.setY(y);

@@ -6,12 +6,11 @@ public class TimedWarLose implements LoseCondition{
     private long timeLimit;
     private int targetKills;
     private int currentKills = 0;
-    private long startTime;
+    private long startTime = -1;
 
     public TimedWarLose(long timeLimit, int targetKills){
         this.timeLimit = timeLimit;
         this.targetKills = targetKills;
-        this.startTime = System.currentTimeMillis();
     }
 
     public void onZombieKilled(){
@@ -21,7 +20,10 @@ public class TimedWarLose implements LoseCondition{
 
     @Override
     public boolean checkLose(GameWorld game) {
-        long elapsed = System.currentTimeMillis() - startTime;
+        if(startTime == -1){
+            startTime = game.getCurrentTick();
+        }
+        long elapsed = game.getCurrentTick() - startTime;
 
         return elapsed >= timeLimit && currentKills < targetKills;
     }

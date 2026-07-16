@@ -7,6 +7,7 @@ import models.plant.Plant;
 import models.plant.components.PlacementBehaviorComponent;
 import models.plant.components.ShooterComponent;
 import models.world.cellTerrains.CellTerrain;
+import models.world.obstacles.Grave;
 import models.world.obstacles.Obstacle;
 import models.zombie.Zombie;
 
@@ -286,4 +287,9 @@ public class Cell {
     public CellTerrain getTerrain() {
         return terrain;
     }
+
+    public boolean blocksProjectile() {
+        return hasObstacle() && obstacle instanceof Grave grave && grave.blocksProjectiles();
+    }
+
 }

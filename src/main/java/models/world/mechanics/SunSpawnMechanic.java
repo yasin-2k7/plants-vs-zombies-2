@@ -7,16 +7,16 @@ import models.world.SunType;
 import java.util.Random;
 
 public class SunSpawnMechanic implements Mechanic{
-    private long lastSpawnTime;
+    private long lastSpawnTick = 0;
     private int spawnInterval = 10000; //ms
 
     @Override
     public void applyMechanic(GameWorld world) {
-        long now = System.currentTimeMillis();
+        long now = world.getCurrentTick();
 
-        if (now - lastSpawnTime >= spawnInterval) {
+        if (now - lastSpawnTick >= spawnInterval) {
             spawnRandomSun(world);
-            lastSpawnTime = now;
+            lastSpawnTick = now;
         }
 
         world.getActiveSuns().removeIf(sun -> {
