@@ -5,6 +5,7 @@ import models.core.User;
 import models.core.UserDataManager;
 import models.core.UserManager;
 import view.terminalView.AppView;
+import view.terminalView.GameMenuView;
 import view.terminalView.MainMenuView;
 import view.terminalView.SignupMenuView;
 
@@ -79,5 +80,9 @@ public class LoginMenuController implements MenuController{
         } else {
             return "Failed to save the new password. Please try again.";
         }
+    }
+
+    public void showCurrentMenu(){
+        GameMenuView.getInstance().showResult("Current menu: login menu");
     }
 }

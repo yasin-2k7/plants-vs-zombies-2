@@ -1,6 +1,7 @@
 package models.zombie;
 
 import models.core.App;
+import models.core.DifficultyCalculator;
 import models.enums.Zombies;
 import models.zombie.data.ArmorData;
 import models.zombie.data.ArmorProperties;
@@ -41,10 +42,10 @@ public class ZombieFactory {
         ZombieData data = props.getObjdata();
 
         int difficulty = App.getCurrentUser().getGameDifficulty();
-        double increaseFactor = Diff
+        double increaseFactor = DifficultyCalculator.increaseFactor(difficulty);
 
-        int health = data.getHitpoints() ;
-        int eatDPS = data.getEatDPS();
+        int health = (int) Math.round(data.getHitpoints() * increaseFactor);
+        int eatDPS = (int) Math.round(data.getEatDPS() * increaseFactor);
         double speed = data.getSpeed();
 
         switch (objclass) {

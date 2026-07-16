@@ -14,26 +14,37 @@ public class ShopList {
 
     public ShopList() {
         permanentItems = new ArrayList<>();
-        permanentItems.add(new ShopItem("1", "Unlock Pot", 2000, 0, 20, true));
-        permanentItems.add(new ShopItem("2", "Plant Food", 0, 3, 3, true));
-        permanentItems.add(new ShopItem("3", "Random Seed Packet", 1000, 0, -1, true));
-        permanentItems.add(new ShopItem("4", "Specific Seed Packet", 0, 5, -1, true));
-        permanentItems.add(new ShopItem("5", "Currency Exchange", 0, 5, -1, true));
+        permanentItems.add(new ShopItem("Unlock Pot", 2000, 0, 20, true));
+        permanentItems.add(new ShopItem("Plant Food", 0, 3, 3, true));
+        permanentItems.add(new ShopItem("Random Seed Packet", 1000, 0, -1, true));
+        permanentItems.add(new ShopItem("Specific Seed Packet", 0, 5, -1, true));
+        permanentItems.add(new ShopItem("Currency Exchange", 0, 5, -1, true));
 
         PlantType[] types = PlantType.values();
         PlantType randomType = types[new Random().nextInt(types.length)];
         dailyOffer = new DailyOffer(randomType, 1600);
     }
 
-    public String buy(String itemId, PlantType plantType, int count) {
+    public String buy(String itemName, PlantType plantType, int count) {
         User user = App.getCurrentUser();
-        if (user == null) return "Error: No user logged in.";
-        if (count <= 0) return "Error: Count must be greater than zero.";
+        if (user == null) {
+            return "Error: No user logged in.";
+        }
 
-        if (dailyOffer != null && dailyOffer.getId().equals(itemId)) {
-            if (!dailyOffer.isAvailableToday()) return "Error: Daily offer already purchased or not available.";
-            if (count > 1) return "Error: Can only buy 1 daily offer.";
-            if (!dailyOffer.isAffordable(user.getCoins(), user.getGems())) return "Error: Not enough money for daily offer!";
+        if (count <= 0) {
+            return "Error: Count must be greater than zero.";
+        }
+
+        if (dailyOffer != null && dailyOffer.getName().equalsIgnoreCase(itemName)) {
+            if (!dailyOffer.isAvailableToday()) {
+                return "Error: Daily offer already purchased or not available.";
+            }
+            if (count > 1) {
+                return "Error: Can only buy 1 daily offer.";
+            }
+            if (!dailyOffer.isAffordable(user.getCoins(), user.getGems())) {
+                return "Error: Not enough money for daily offer!";
+            }
 
             user.spendCoins(dailyOffer.getCoinCost());
             dailyOffer.setPurchased(true);
@@ -43,12 +54,11 @@ public class ShopList {
 
         ShopItem selectedItem = null;
         for (ShopItem item : permanentItems) {
-            if (item.getId().equals(itemId)) {
+            if (item.getName().equalsIgnoreCase(itemName)) {
                 selectedItem = item;
                 break;
             }
         }
-
 
         if (selectedItem == null) {
             return "Error: Item not found.";
@@ -61,7 +71,7 @@ public class ShopList {
             return "Error: Not enough currency. Need " + totalCoinCost + " coins and " + totalGemCost + " gems.";
         }
 
-        String itemName = selectedItem.getName();
+        itemName = selectedItem.getName();
 
         if (itemName.equalsIgnoreCase("Unlock Pot")) {
             String result = "";

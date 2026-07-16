@@ -33,7 +33,7 @@ public class MainMenuView implements View {
                         System.out.println(controller.enterMenu(menuName));
                         return;
                     case MENU_SHOW_CURRENT:
-                        System.out.println(controller.showCurrentMenu());
+                        controller.showCurrentMenu();
                         return;
                     case MENU_LOGOUT:
                         System.out.println(controller.logout());
@@ -45,4 +45,6 @@ public class MainMenuView implements View {
         }
         System.out.println("Unknown command in Main menu.");
     }
+
+
 }

@@ -9,7 +9,7 @@ public class DailyOffer extends ShopItem {
     private boolean isPurchased;
 
     public DailyOffer(PlantType type, int coinCost) {
-        super("6", type.name(), coinCost, 0, 1, false);
+        super(type.name(), coinCost, 0, 1, false);
         this.plantType = type;
         this.offerDate = LocalDate.now();
         this.isPurchased = false;

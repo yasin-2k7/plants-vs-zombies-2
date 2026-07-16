@@ -1,5 +1,8 @@
 package models.zombie.wave;
 
+import models.core.App;
+import models.core.DifficultyCalculator;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -53,6 +56,10 @@ public class Wave {
     }
 
     public static List<Wave> generateWaves(int totalWaves, int baseDifficulty, List<WaveSpawnEntry> availableEntries, int spawnDelayTicks) {
+
+        int userDifficulty = App.getCurrentUser().getGameDifficulty();
+        double decreaseFactor = DifficultyCalculator.decreaseFactor(userDifficulty);
+
         List<Wave> waves = new ArrayList<>();
         for (int i = 1; i <= totalWaves; i++) {
             boolean isFinal = (i == totalWaves);
@@ -62,7 +69,7 @@ public class Wave {
             if (isFinal) {
                 difficulty *= 2;
             }
-            int cost = (int) Math.round(difficulty);
+            int cost = (int) Math.round(difficulty * decreaseFactor);
             Wave wave = generateRandomWave(i, cost, availableEntries, spawnDelayTicks, isFinal);
             waves.add(wave);
         }

@@ -4,6 +4,7 @@ import models.core.App;
 import models.core.News;
 import models.core.User;
 import models.core.UserDataManager;
+import view.terminalView.GameMenuView;
 
 import java.util.List;
 
@@ -26,5 +27,9 @@ public class NewsMenuController implements MenuController{
     public List<News> showNews(){
         User user = App.getCurrentUser();
         return user.getAllNews();
+    }
+
+    public void showCurrentMenu(){
+        GameMenuView.getInstance().showResult("Current menu: news menu");
     }
 }
