@@ -30,6 +30,8 @@ public class Cell {
     private CellTerrain terrain;
 
     private boolean plantable = true;
+    private boolean necromancyPotential = false;
+    private boolean necromancyTriggered = false;
 
 
     public Cell(int row, int col, CellTerrain initialTerrain) {
@@ -89,6 +91,10 @@ public class Cell {
 
     public String handlePlanting(PlantType type) {
         if (!this.isPlantable()) {
+            return "you cannot plant in that place!";
+        }
+
+        if (this.hasObstacle()) {
             return "you cannot plant in that place!";
         }
 
@@ -269,9 +275,8 @@ public class Cell {
     }
 
     public boolean canPlant(Plant plant) {
-        return this.plantable && terrain.canPlant(plant, this);
+        return this.plantable && !hasObstacle() && terrain.canPlant(plant, this);
     }
-
     public boolean isWater() {
         return terrain.isWater();
     }
@@ -291,5 +296,10 @@ public class Cell {
     public boolean blocksProjectile() {
         return hasObstacle() && obstacle instanceof Grave grave && grave.blocksProjectiles();
     }
+
+    public boolean isNecromancyPotential() { return necromancyPotential; }
+    public void setNecromancyPotential(boolean value) { this.necromancyPotential = value; }
+    public boolean isNecromancyTriggered() { return necromancyTriggered; }
+    public void setNecromancyTriggered(boolean value) { this.necromancyTriggered = value; }
 
 }

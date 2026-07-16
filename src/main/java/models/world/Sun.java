@@ -84,7 +84,9 @@ public class Sun implements Resettable {
     public void Click(){
         game.getActiveSuns().remove(this);
         game.setSun(game.getSun() + size);
-        producer.getComponentSuns().remove(this);
+        if (producer != null) {
+            producer.getComponentSuns().remove(this);
+        }
         game.getSunsPool().release(this);
     }
 }

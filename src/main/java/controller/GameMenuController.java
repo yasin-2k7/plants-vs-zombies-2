@@ -10,12 +10,17 @@ import models.world.Cell;
 import models.world.GameWorld;
 import models.world.Sun;
 import models.world.mechanics.NormalMechanic;
+import models.world.obstacles.Grave;
 import models.zombie.Zombie;
 import models.zombie.ZombieFactory;
+import models.zombie.wave.WaveManager;
 import models.zombie.zombiesType.ArmoredZombie;
 import view.terminalView.*;
 
+import java.util.ArrayList;
 import java.util.List;
+
+import static models.world.obstacles.Grave.GraveType.PLANT_FOOD;
 
 public class GameMenuController implements MenuController {
     @Override
@@ -53,7 +58,8 @@ public class GameMenuController implements MenuController {
     }
 
     public void collectSun(float x, float y){
-        for (Sun sun : App.getCurrentGame().getActiveSuns()){
+        List<Sun> sunsCopy = new ArrayList<>(App.getCurrentGame().getActiveSuns());
+        for (Sun sun : sunsCopy){
             if (sun.getX() == x && sun.getY() == y){
                 GameWorld game = App.getCurrentGame();
                 sun.collect();
@@ -207,8 +213,21 @@ public class GameMenuController implements MenuController {
                 Cell cell = App.getCurrentGame().getGrid()[y][x];
 
                 String terrainSymbol = cell.getTerrain().getTerminalSymbol(); // '.' , '~' , 'I' , 'O'
-                if (cell.hasObstacle()) {
-                    terrainSymbol = "O";
+                if (cell.hasObstacle() && cell.getObstacle() instanceof Grave) {
+                    Grave grave = (Grave) cell.getObstacle();
+                    switch (grave.getType()) {
+                        case SUN:
+                            terrainSymbol = "☀";
+                            break;
+                        case PLANT_FOOD:
+                            terrainSymbol = "⚡";
+                            break;
+                        default:
+                            terrainSymbol = "🪦";
+                            break;
+                    }
+                } else if (cell.hasObstacle()) {
+                    terrainSymbol = "🪦";
                 }
 
                 String plantSymbol = "    ";
@@ -306,8 +325,28 @@ public class GameMenuController implements MenuController {
         App.getCurrentGame().getActiveZombies().add(zombie);
     }
 
-    public void startZombieWaves(){
+    public void startZombieWaves() {
+        GameWorld game = App.getCurrentGame();
+        if (game == null) {
+            System.out.println("No game in progress.");
+            return;
+        }
 
+        if (!game.isPlantingPhase()) {
+            System.out.println("Waves are already started or this level doesn't support delayed waves.");
+            return;
+        }
+
+        game.setPlantingPhase(false);
+
+        NormalMechanic normal = game.getMechanic(NormalMechanic.class);
+        if (normal != null) {
+            WaveManager wm = normal.getWaveManager();
+            if (wm != null && !wm.isLevelCompleted()) {
+                wm.startFirstWave();
+                System.out.println("Zombie waves started!");
+            }
+        }
     }
 
 

@@ -33,6 +33,7 @@ public class PlantWhatYouGetLevelSetup implements LevelSetup{
         WaveManager waveManager = new WaveManager(waves);
         world.addMechanic(new NormalMechanic(waveManager));
         world.addMechanic(new ConveyorMechanic(availablePlants));
+        world.setPlantingPhase(true);
     }
 
     @Override
