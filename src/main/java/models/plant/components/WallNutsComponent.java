@@ -16,4 +16,9 @@ public class WallNutsComponent implements GameComponent {
     public void update(Plant owner) {
         //بررسی انواع دانه ها و مدت زمان مقاومت انها
     }
+
+    @Override
+    public void activatePlantFood(Plant owner) {
+
+    }
 }

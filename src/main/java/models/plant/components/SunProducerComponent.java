@@ -22,6 +22,7 @@ public class SunProducerComponent implements GameComponent {
     private boolean checkShroomSize;
     private boolean enable;
     private int growTimeToReduce;
+    private Plant owner;
 
     private final ArrayList<Sun> componentSuns = new ArrayList<>();
 
@@ -33,7 +34,7 @@ public class SunProducerComponent implements GameComponent {
         this.shroom = shroom;
         this.sunNumberWithPlantFood = sunNumberWithPlantFood;
         this.growTimeToReduce = growTimeToReduce;
-        this.lastProductionTicks = productionTime - 10;
+        this.lastProductionTicks = productionTime*10 - 10;
     }
 
     @Override
@@ -47,16 +48,16 @@ public class SunProducerComponent implements GameComponent {
         }
 
         if (shroom && checkShroomSize){
-            if (plantationTime*10 > (72-growTimeToReduce)){
+            if (plantationTime > 10*(72-growTimeToReduce)){
                 checkShroomSize = false;
                 setSunSize(75);
             }
-            else if (plantationTime > (24-growTimeToReduce)){
+            else if (plantationTime > 10*(24-growTimeToReduce)){
                 setSunSize(50);
             }
         }
 
-        if (lastProductionTicks*10 >= productionTime){
+        if (lastProductionTicks >= productionTime*10){
             enable = false;
             lastProductionTicks = 0;
             for (int i = 0; i < sunNumber; i++){
@@ -73,14 +74,20 @@ public class SunProducerComponent implements GameComponent {
 
     }
 
+    @Override
+    public void activatePlantFood(Plant owner) {
+        plantFoodEffect(owner);
+    }
+
     private Sun produceSun(Plant owner) {
         Sun newSun = App.getCurrentGame().getSunsPool().acquire();
         newSun.reset(owner.getX(), owner.getY(), sunSize, this);
         App.getCurrentGame().getActiveSuns().add(newSun);
-        System.out.println("DEBUG: Sun Object ID: " + System.identityHashCode(newSun));
         GameMenuController.updateState("plant " + owner.getType().name() + " produced a sun at (" + owner.getX() + ", " + owner.getY() + ")");
         return newSun;
     }
+
+
 
     public void plantFoodEffect(Plant owner){
         if (shroom){

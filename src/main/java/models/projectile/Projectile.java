@@ -21,11 +21,15 @@ public class Projectile implements Resettable{
     private ProjectileType type;
     private Zombie target;
     private int pierce;
+    private boolean dead = false;
 
     public void update() {
+        double oldX = x;
+        double oldY = y;
+        movementStrategy.move(this);
         Zombie zombie = null;
         if (type.movement.equals("STRAIGHT")) {
-            zombie = strikeStrategy.strike(x, y);
+            zombie = strikeStrategy.strike(x, y, oldX, oldY);
         } else if (type.movement.equals("LOBBED")) {
             zombie = strikeStrategy.strike(x, y, target);
         }
@@ -33,19 +37,18 @@ public class Projectile implements Resettable{
             hitStrategy.applyDamage(zombie, App.getCurrentGame().getActiveTargets(), this);
             pierce--;
             if (pierce == 0) {
-                App.getCurrentGame().getActiveProjectiles().remove(this);
+                dead = true;
                 App.getCurrentGame().getProjectilesPool().release(this);
                 return;
             }
         }
 
         if (movementStrategy.isDead(this)){
-            App.getCurrentGame().getActiveProjectiles().remove(this);
+            dead = true;
             App.getCurrentGame().getProjectilesPool().release(this);
-            return;
         }
 
-        movementStrategy.move(this);
+
     }
 
     @Override
@@ -66,6 +69,7 @@ public class Projectile implements Resettable{
         pierce = 1;
         targetX = 0;
         targetY = 0;
+        dead = false;
     }
 
     public void setPierce(int pierce) {
@@ -121,6 +125,12 @@ public class Projectile implements Resettable{
         targetX = target.getX();
         targetY = target.getY();
     }
+
+    public boolean isDead() {
+        return dead;
+    }
+
+
 
     public float getTargetX() {
         return targetX;

@@ -47,6 +47,7 @@ public class GameMenuView implements View{
                         float x = Float.parseFloat(matcher.group("x"));
                         float y = Float.parseFloat(matcher.group("y"));
                         controller.feedPlant(x, y);
+                        break;
                     case COLLECT_SUN:
                         x = Float.parseFloat(matcher.group("x"));
                         y = Float.parseFloat(matcher.group("y"));

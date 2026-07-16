@@ -17,6 +17,11 @@ public class MeleeAttackersComponent implements GameComponent {
         meleeAttack();
     }
 
+    @Override
+    public void activatePlantFood(Plant owner) {
+
+    }
+
     private void meleeAttack() {
         // TODO: اعمال دمیج مستقیم (بدون تولید پرتابه) به زامبیِ نزدیک
     }

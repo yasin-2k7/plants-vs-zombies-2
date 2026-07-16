@@ -5,6 +5,8 @@ import models.core.User;
 import models.enums.PlantType;
 import models.plant.Plant;
 import models.plant.PlantFactory;
+import models.world.Cell;
+import models.world.cellTerrains.LandTerrain;
 
 import java.util.List;
 import java.util.Random;
@@ -55,7 +57,7 @@ public class GreenHouse {
         }
 
         PlantFactory factory = App.getFactory();
-        Plant newPlant = factory.createPlant(chosenType, x, y);
+        Plant newPlant = factory.createPlant(chosenType, x, y, new Cell(1,1, new LandTerrain()));
         if (newPlant == null) {
             return "Error: Could not create plant.";
         }

@@ -15,4 +15,9 @@ public class HomingComponent implements GameComponent {
         // TODO: جستجو در تمام زمین بازی (نه فقط لاین خود گیاه) برای پیدا کردن هدف
         // TODO: ایجاد پرتابه‌ای که مسیرش را به سمت زامبی هدف کج می‌کند (قفل کردن روی هدف)
     }
+
+    @Override
+    public void activatePlantFood(Plant owner) {
+
+    }
 }

@@ -41,8 +41,8 @@ public class BouncingStrategy implements MovementStrategy{
             bounceCount++;
         }
 
-        projectile.setX(projectile.getX() + (speedX * 0.1f));
-        projectile.setY(projectile.getY() + (speedY * 0.1f));
+        projectile.setX(projectile.getX() + (speedX * 10));
+        projectile.setY(projectile.getY() + (speedY * 10));
     }
 
     @Override

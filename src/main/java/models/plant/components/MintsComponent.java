@@ -21,4 +21,9 @@ public class MintsComponent implements GameComponent {
             // TODO: حذف کردن این نعنا از زمین بازی پس از چند ثانیه
         }
     }
+
+    @Override
+    public void activatePlantFood(Plant owner) {
+
+    }
 }

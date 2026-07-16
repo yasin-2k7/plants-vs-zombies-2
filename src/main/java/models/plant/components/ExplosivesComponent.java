@@ -10,7 +10,7 @@ public class ExplosivesComponent implements GameComponent {
     private ExplosiveBehavior explosiveBehavior;
     private ExplosiveTrigger triggerStrategy;
     private int postTriggerDelay = 10;
-    private int maxPostTriggerDelay = 10;
+    private int maxPostTriggerDelay = 7;
     private boolean isArmed;
     private boolean isTriggered = false;
     private int armTimer;
@@ -39,6 +39,8 @@ public class ExplosivesComponent implements GameComponent {
         this.maxPostTriggerDelay = maxPostTriggerDelay;
     }
 
+
+
     public void update(Plant owner) {
 
         if (!isArmed) {
@@ -53,11 +55,14 @@ public class ExplosivesComponent implements GameComponent {
             postTriggerDelay--;
             if (postTriggerDelay <= 0) {
                 lives--;
+                explosiveBehavior.execute(owner);
                 if (lives > 0){
                     postTriggerDelay = maxPostTriggerDelay;
                     isTriggered = false;
                 }
-                explosiveBehavior.execute(owner);
+                else{
+                    owner.getCell().findAndRemovePlant();
+                }
             }
             return;
         }
@@ -70,11 +75,16 @@ public class ExplosivesComponent implements GameComponent {
             if (delayTicksLeft == 0) {
                 delayedBehavior.execute(owner);
                 delayTicksLeft = -1;
+                owner.getCell().findAndRemovePlant();
             }
         }
 
-        if (isTriggered && delayTicksLeft == -1){
-            owner.die();
+    }
+
+    @Override
+    public void activatePlantFood(Plant owner) {
+        if (this.plantFoodBehavior != null){
+            this.plantFoodBehavior.execute(owner, this);
         }
     }
 

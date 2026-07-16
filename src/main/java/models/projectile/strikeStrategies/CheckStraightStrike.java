@@ -5,9 +5,11 @@ import models.zombie.Zombie;
 
 public class CheckStraightStrike implements CheckStrike{
     @Override
-    public Zombie strike(double x, double y) {
+    public Zombie strike(double x, double y, double oldX, double oldY) {
         for (Zombie zombie : App.getCurrentGame().getActiveZombies()){
-            if (Math.abs(zombie.getX() - x) < 0.05 && Math.abs(zombie.getY() - y) < 0.05){
+            boolean xBetween = (zombie.getX() <= oldX && zombie.getX() >= x) || (zombie.getX() >= oldX && zombie.getX() <= x);
+            boolean yBetween = (zombie.getY() <= oldY && zombie.getY() >= y) || (zombie.getY() >= oldY && zombie.getY() <= y);
+            if (xBetween && yBetween){
                 return zombie;
             }
         }

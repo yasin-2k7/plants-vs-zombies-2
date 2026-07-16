@@ -14,7 +14,7 @@ public class LobbedMovementStrategy implements MovementStrategy{
 
     @Override
     public void move(Projectile projectile) {
-        float nextX = projectile.getX() + speed * 0.1f;
+        float nextX = projectile.getX() + speed * 10;
         projectile.setX(nextX);
 
         float totalXDistance = projectile.getTargetX() - projectile.getOriginX();

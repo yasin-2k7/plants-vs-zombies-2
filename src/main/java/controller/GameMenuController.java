@@ -54,7 +54,6 @@ public class GameMenuController implements MenuController {
 
     public void collectSun(float x, float y){
         for (Sun sun : App.getCurrentGame().getActiveSuns()){
-            System.out.println(sun.getX() + "" + sun.getY());
             if (sun.getX() == x && sun.getY() == y){
                 GameWorld game = App.getCurrentGame();
                 sun.collect();

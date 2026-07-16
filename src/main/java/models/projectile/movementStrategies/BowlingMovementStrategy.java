@@ -23,7 +23,7 @@ public class BowlingMovementStrategy implements MovementStrategy{
 
     @Override
     public void move(Projectile projectile) {
-        Zombie zombie = projectile.getStrikeStrategy().strike(projectile.getX(), projectile.getY());
+        Zombie zombie = projectile.getStrikeStrategy().strike(projectile.getX(), projectile.getY(), projectile.getX()-speedX*5, projectile.getY()-speedY*5);
         int sign;
         if (zombie != null){
             if (speedY == 0){
@@ -48,8 +48,8 @@ public class BowlingMovementStrategy implements MovementStrategy{
         } else if (projectile.getY() <= App.getFirstCellY() && speedY < 0) {
             speedY *= -1;
         }
-        projectile.setX(projectile.getX() + (speedX * 0.1f));
-        projectile.setY(projectile.getY() + (speedY * 0.1f));
+        projectile.setX(projectile.getX() + (speedX * 5));
+        projectile.setY(projectile.getY() + (speedY * 5));
     }
 
     @Override

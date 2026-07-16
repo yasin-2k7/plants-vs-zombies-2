@@ -109,6 +109,7 @@ public abstract class GameWorld {
 
         this.startTime = System.currentTimeMillis();
         this.state = GameState.PLAYING;
+        this.plantLists = new ArrayList<>();
 
         this.levelSetup.groundSetup(this);
         this.plantFoods = App.getCurrentUser().getPlantFoods();
@@ -125,7 +126,9 @@ public abstract class GameWorld {
             int col = (int)(x / 100); //100 مثلا عرض هر سلول
             int row = (int)(y / 100);
             if (row >= 0 && row < rows && col >= 0 && col < cols) {
-                return grid[row][col].getPlant();
+                if (Math.abs(x-grid[row][col].getX()) < App.getCellWidth()/4) {
+                    return grid[row][col].getPlant();
+                }
             }
             return null;
         }
@@ -209,6 +212,7 @@ public abstract class GameWorld {
 
         activeZombies.removeIf(Zombie::isDead);
         activePlants.removeIf(Plant::isDead);
+        activeProjectiles.removeIf(Projectile::isDead);
 
         for(Mechanic mechanic : mechanics){
             mechanic.applyMechanic(this);

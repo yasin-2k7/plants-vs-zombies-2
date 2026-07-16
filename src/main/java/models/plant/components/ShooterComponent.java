@@ -47,7 +47,7 @@ public class ShooterComponent implements GameComponent {
     private List<VisionStrategy> visions = new ArrayList<>();
     private List<Supplier<MovementStrategy>> movementStrategies = new ArrayList<>();
 
-    private CombinedDamageStrategy plantFoodStrategy = damageStrategy.get().changeDamage(damageStrategy.get().getDamage()*giantDamageFactor);
+    private CombinedDamageStrategy plantFoodStrategy;
 
     public void setPlantFoodStrategy(CombinedDamageStrategy plantFoodStrategy) {
         this.plantFoodStrategy = plantFoodStrategy;
@@ -77,13 +77,15 @@ public class ShooterComponent implements GameComponent {
         this.giantPierce = giantPierce;
         this.giantDamageFactor = giantDamageFactor;
         this.plantFoodBehavior = BurstPlantFood.INSTANCE;
+        plantFoodStrategy = damageStrategy.get().changeDamage(damageStrategy.get().getDamage()*giantDamageFactor);
     }
 
     public PlantFoodBehavior plantFoodBehavior;
 
 
 
-    public void activatePlantFood(){
+    @Override
+    public void activatePlantFood(Plant owner){
         if (plantFoodBehavior != null){
             plantFoodBehavior.activate(owner, this);
         }

@@ -41,9 +41,8 @@ public class Plant {
             components.getLast().update(this);
         }
         if (health <= 0){
-            die();
+            cell.findAndRemovePlant();
             App.getCurrentGame().notifyPlantEaten();
-            App.getCurrentGame().getActivePlants().remove(this);
         }
     }
 
@@ -55,6 +54,10 @@ public class Plant {
 
     public void setY(int y) {
         this.y = y;
+    }
+
+    public void setCell(Cell cell) {
+        this.cell = cell;
     }
 
     public void die() { this.dead = true; }
@@ -101,7 +104,9 @@ public class Plant {
     }
 
     public void activatePlantFood(){
-
+        for (GameComponent component : components){
+            component.activatePlantFood(this);
+        }
     }
 
     public int getHealth() {

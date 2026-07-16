@@ -68,7 +68,8 @@ public class BowlingChargeComponent implements GameComponent {
         bulbs[2] = new Bulb(ProjectileType.SMALL_BULB, thirdCharge);
     }
 
-    public void activatePlantFood(){
+    @Override
+    public void activatePlantFood(Plant owner){
         activePlantFood = true;
         shootingTimer = 0;
         plantFoodProjectileCount = 3;

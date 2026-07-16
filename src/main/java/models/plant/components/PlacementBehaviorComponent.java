@@ -35,6 +35,11 @@ public class PlacementBehaviorComponent implements GameComponent {
 
     }
 
+    @Override
+    public void activatePlantFood(Plant owner) {
+
+    }
+
     public PlantLayer getTargetLayer() {
         return targetLayer;
     }

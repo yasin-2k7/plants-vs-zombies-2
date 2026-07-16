@@ -73,9 +73,9 @@ public class PlantFactory {
         registry.put(PlantType.GRAVE_BUSTER, this::buildGraveBuster);
     }
 
-    public static Plant createPlant(PlantType type, int x, int y) {
+    public static Plant createPlant(PlantType type, int x, int y, Cell cell) {
         Plant newPlant = registry.get(type).get();
-
+        newPlant.setCell(cell);
         newPlant.setX(x);
         newPlant.setY(y);
         return newPlant;

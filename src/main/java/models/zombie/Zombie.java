@@ -1,5 +1,6 @@
 package models.zombie;
 
+import controller.GameMenuController;
 import models.Damageable;
 import models.enums.Zombies;
 import models.zombie.state.WalkingState;
@@ -71,7 +72,7 @@ public abstract class Zombie implements Damageable {
             if (isDead) return;
             this.isDead = true;
             // چاپ پیام مرگ
-            System.out.println("Zombie of type " + name.name() + " is dead at (" + (int)x + ", " + (int)y + ")");
+            GameMenuController.updateState("Zombie of type " + name.name() + " is dead at (" + (int)x + ", " + (int)y + ")");
         }
 
     public void applySlow(int ticks, double factor) {

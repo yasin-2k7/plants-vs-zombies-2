@@ -15,7 +15,8 @@ public class LifespanComponent implements GameComponent {
         this.maxLifeTime = maxLifeTime;
     }
 
-    public void activatePlantFood(){
+    @Override
+    public void activatePlantFood(Plant owner){
         App.getCurrentGame().triggerSmallShroomsPlantFood(type);
     }
 
@@ -32,4 +33,5 @@ public class LifespanComponent implements GameComponent {
             owner.destroy();
         }
     }
+
 }

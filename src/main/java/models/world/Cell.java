@@ -91,7 +91,7 @@ public class Cell {
             return "you cannot plant in that place!";
         }
 
-        Plant newPlant = App.getFactory().createPlant(type, (int)x, (int)y);
+        Plant newPlant = App.getFactory().createPlant(type, (int)x, (int)y, this);
 
         if (!this.terrain.canPlant(newPlant, this)) {
             return "you cannot plant in that place!";
@@ -221,17 +221,17 @@ public class Cell {
 
     public boolean findAndRemovePlant(){
         if (this.shieldPlant != null) {
-            App.getCurrentGame().getActivePlants().remove(this.shieldPlant);
+            this.shieldPlant.die();
             this.shieldPlant = null;
             return true;
         }
         if (this.mainPlant != null) {
-            App.getCurrentGame().getActivePlants().remove(this.mainPlant);
+            this.mainPlant.die();
             this.mainPlant = null;
             return true;
         }
         if (this.basePlant != null) {
-            App.getCurrentGame().getActivePlants().remove(this.basePlant);
+            this.basePlant.die();
             this.basePlant = null;
             return true;
         }

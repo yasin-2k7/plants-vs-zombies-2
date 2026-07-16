@@ -14,4 +14,9 @@ public class ModifireComponent implements GameComponent {
     public void update(Plant plant) {
         // TODO: اعمال تغییرات روی زمین
     }
+
+    @Override
+    public void activatePlantFood(Plant owner) {
+
+    }
 }
