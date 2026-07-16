@@ -1,19 +1,18 @@
 package models.miniGame.beghouled;
 
-import models.miniGame.MechanicsStrategy;
 import models.world.GameWorld;
+import models.world.mechanics.Mechanic;
 
 import java.util.List;
 
-public class BeghouledMechanics implements MechanicsStrategy {
+public class BeghouledMechanics implements Mechanic {
     private List<PlantUpgrade> availableUpgrades;
-    @Override
-    public void applyMechanics(GameWorld world) {
 
-    }
+
+
 
     @Override
-    public void handleCustomCommand(String command, GameWorld world) {
-        MechanicsStrategy.super.handleCustomCommand(command, world);
+    public void applyMechanic(GameWorld world) {
+
     }
 }

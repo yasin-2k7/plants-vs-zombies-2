@@ -1,12 +1,24 @@
 package models.miniGame.vaseBreaker;
 
-import models.miniGame.LevelSetupStrategy;
 import models.world.GameWorld;
+import models.world.levelSetup.LevelSetup;
 
-public class VaseBreakerSetup implements LevelSetupStrategy {
+public class VaseBreakerSetup implements LevelSetup {
+    private int rows;
+    private int cols;
+
+    public VaseBreakerSetup(int rows, int cols) {
+        this.rows = rows;
+        this.cols = cols;
+    }
 
     @Override
-    public void setupBoard(GameWorld world) {
+    public void groundSetup(GameWorld game) {
 
+    }
+
+    @Override
+    public boolean requirePlantSelection() {
+        return false;
     }
 }

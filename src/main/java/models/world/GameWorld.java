@@ -3,9 +3,7 @@ package models.world;
 import models.Damageable;
 import models.core.App;
 import models.enums.PlantType;
-import models.lawnMower.LawnMower;
 import models.lawnMower.LawnMowerManager;
-import models.miniGame.MechanicsStrategy;
 import models.plant.Plant;
 import models.plant.card.PlantCard;
 import models.plant.components.LifespanComponent;
@@ -33,7 +31,6 @@ public abstract class GameWorld {
     protected int rows;
     protected int cols;
     protected Cell[][] grid;
-    private MechanicsStrategy mechanicsStrategy;
     private int currentSun;
 
     private LevelSetup levelSetup;

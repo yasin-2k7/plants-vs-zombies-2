@@ -1,18 +1,14 @@
 package models.miniGame.vaseBreaker;
 
-import models.miniGame.MechanicsStrategy;
 import models.world.GameWorld;
+import models.world.mechanics.Mechanic;
 
-public class VaseBreakerMechanics implements MechanicsStrategy {
+public class VaseBreakerMechanics implements Mechanic {
 
-    @Override
-    public void applyMechanics(GameWorld world) {
-
-    }
 
     @Override
-    public void handleCustomCommand(String command, GameWorld world) {
-        MechanicsStrategy.super.handleCustomCommand(command, world);
+    public void applyMechanic(GameWorld world) {
+
     }
 }
 

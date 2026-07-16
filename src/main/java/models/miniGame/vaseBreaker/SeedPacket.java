@@ -1,4 +1,27 @@
 package models.miniGame.vaseBreaker;
 
+import models.enums.PlantType;
+
 public class SeedPacket {
+    private float x;
+    private float y;
+    private PlantType plantType;
+    private boolean collected;
+
+    public SeedPacket(float x, float y, PlantType plantType) {
+        this.x = x;
+        this.y = y;
+        this.plantType = plantType;
+        this.collected = false;
+    }
+
+
+    public float getX() { return x; }
+    public float getY() { return y; }
+    public PlantType getPlantType() { return plantType; }
+    public boolean isCollected() { return collected; }
+
+    public void collect() {
+        this.collected = true;
+    }
 }

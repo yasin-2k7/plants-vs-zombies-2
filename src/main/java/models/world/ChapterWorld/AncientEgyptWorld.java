@@ -17,7 +17,10 @@ public class AncientEgyptWorld extends GameWorld {
     private static final int MIN_GRAVES = 2;
     private static final int MAX_GRAVES = 5;
 
-    public AncientEgyptWorld(LevelSetup levelSetup, ArrayList<LoseCondition> loseConditions, WinCondition winCondition, ArrayList<Mechanic> mechanics) {
+    public AncientEgyptWorld(LevelSetup levelSetup,
+                             ArrayList<LoseCondition> loseConditions,
+                             WinCondition winCondition,
+                             ArrayList<Mechanic> mechanics) {
         super(levelSetup, loseConditions, winCondition, mechanics);
     }
 

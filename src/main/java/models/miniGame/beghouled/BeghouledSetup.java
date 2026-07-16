@@ -1,12 +1,19 @@
 package models.miniGame.beghouled;
 
-import models.miniGame.LevelSetupStrategy;
 import models.world.GameWorld;
+import models.world.levelSetup.LevelSetup;
 
-public class BeghouledSetup implements LevelSetupStrategy {
+public class BeghouledSetup implements LevelSetup {
+
+
 
     @Override
-    public void setupBoard(GameWorld world) {
+    public void groundSetup(GameWorld game) {
 
+    }
+
+    @Override
+    public boolean requirePlantSelection() {
+        return false;
     }
 }

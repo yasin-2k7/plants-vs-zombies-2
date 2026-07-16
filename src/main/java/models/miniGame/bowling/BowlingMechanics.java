@@ -1,15 +1,12 @@
 package models.miniGame.bowling;
 
-import models.miniGame.MechanicsStrategy;
 import models.world.GameWorld;
+import models.world.mechanics.Mechanic;
 
-public class BowlingMechanics implements MechanicsStrategy {
-    @Override
-    public void applyMechanics(GameWorld world) {
-    }
+public class BowlingMechanics implements Mechanic {
 
     @Override
-    public void handleCustomCommand(String command, GameWorld world) {
-        MechanicsStrategy.super.handleCustomCommand(command, world);
+    public void applyMechanic(GameWorld world) {
+
     }
 }
