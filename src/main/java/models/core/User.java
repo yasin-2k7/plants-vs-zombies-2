@@ -44,9 +44,9 @@ public class User {
         this.unlockedPlantsLevels = new HashMap<>();
         this.seedPackets = new HashMap<>();
         this.greenhouse = new GreenHouse();
-        this.coins = 100;
-        this.gems = 10;
-        this.unlockedChapter = 1;
+        this.coins = 10000;
+        this.gems = 1000;
+        this.unlockedChapter = 4;
         this.unlockedLevel = 1;
         putInitialPlants();
     }

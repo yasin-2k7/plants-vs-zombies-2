@@ -2,8 +2,6 @@ package models.core;
 
 import models.enums.NewsType;
 
-
-
 public class News {
     private final String title;
     private final String message;
@@ -30,8 +28,6 @@ public class News {
     public NewsType getType() {
         return type;
     }
-
-
 
     public boolean isRead() {
         return read;

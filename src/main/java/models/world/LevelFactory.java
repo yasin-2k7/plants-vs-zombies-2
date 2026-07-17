@@ -10,10 +10,7 @@ import models.world.ChapterWorld.DarkAgesWorld;
 import models.world.ChapterWorld.FrostbiteCavesWorld;
 import models.world.levelSetup.*;
 import models.world.loseCondition.*;
-import models.world.mechanics.ConveyorMechanic;
-import models.world.mechanics.Mechanic;
-import models.world.mechanics.NormalMechanic;
-import models.world.mechanics.SunSpawnMechanic;
+import models.world.mechanics.*;
 import models.world.winCondition.NormalWin;
 import models.world.winCondition.TimedWarWin;
 import models.world.winCondition.WinCondition;
@@ -286,12 +283,14 @@ public class LevelFactory {
         LoseCondition loseCondition = new NormalLose();
         WinCondition winCondition = new NormalWin();
 
+        ArrayList<Mechanic> mechanics = new ArrayList<>();
+        mechanics.add(new DarkAgesMechanic());
 
         return new DarkAgesWorld(
                 levelSetup,
                 new ArrayList<>(List.of(loseCondition)),
                 winCondition,
-                new ArrayList<>()
+                mechanics
         );
 
     }
@@ -311,12 +310,14 @@ public class LevelFactory {
         LoseCondition loseCondition = new NormalLose();
         WinCondition winCondition = new NormalWin();
 
+        ArrayList<Mechanic> mechanics = new ArrayList<>();
+        mechanics.add(new DarkAgesMechanic());
 
         return new DarkAgesWorld(
                 levelSetup,
                 new ArrayList<>(List.of(loseCondition)),
                 winCondition,
-                new ArrayList<>()
+                mechanics
         );
 
     }
@@ -336,12 +337,14 @@ public class LevelFactory {
         LoseCondition loseCondition = new LoveYourPlantsLose(5);
         WinCondition winCondition = new NormalWin();
 
+        ArrayList<Mechanic> mechanics = new ArrayList<>();
+        mechanics.add(new DarkAgesMechanic());
 
         return new DarkAgesWorld(
                 levelSetup,
                 new ArrayList<>(List.of(loseCondition)),
                 winCondition,
-                new ArrayList<>()
+                mechanics
         );
 
     }
@@ -352,7 +355,6 @@ public class LevelFactory {
 
         List<WaveSpawnEntry> availableZombies = List.of(
                 new WaveSpawnEntry("ZombieDefault", 100)
-
         );
 
         List<Wave> waves = Wave.generateWaves(5, 200, availableZombies, 60);
@@ -361,14 +363,15 @@ public class LevelFactory {
         LoseCondition loseCondition = new NormalLose();
         WinCondition winCondition = new NormalWin();
 
+        ArrayList<Mechanic> mechanics = new ArrayList<>();
+        mechanics.add(new DarkAgesMechanic());
 
-        return new AncientEgyptWorld(
+        return new DarkAgesWorld(
                 levelSetup,
                 new ArrayList<>(List.of(loseCondition)),
                 winCondition,
-                new ArrayList<>()
+                mechanics
         );
-
     }
 
     private static GameWorld createFrostbiteCavesLevel1(){
