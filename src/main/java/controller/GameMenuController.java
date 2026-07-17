@@ -1,7 +1,6 @@
 package controller;
 
 import models.core.App;
-import models.core.User;
 import models.enums.PlantLayer;
 import models.enums.PlantType;
 import models.enums.Zombies;
@@ -87,11 +86,6 @@ public class GameMenuController implements MenuController {
                     GameWorld game = App.getCurrentGame();
                     sun.collect();
                     game.setSun(game.getSun() + sun.getSize());
-                    User user = App.getCurrentUser();
-                    if (user != null) {
-                        user.getQuestManager().getStats().addSunsCollectedToday(sun.getSize());
-                        user.getQuestManager().checkAllQuests(user);
-                    }
                     if (sun.getProducer() != null) sun.getProducer().getComponentSuns().remove(sun);
                 }
                 return;
@@ -377,5 +371,6 @@ public class GameMenuController implements MenuController {
     public void startZombieWaves(){
 
     }
+
 
 }

@@ -3,6 +3,8 @@ package models.lawnMower;
 import models.core.App;
 import models.world.GameState;
 import models.zombie.Zombie;
+
+import java.util.Comparator;
 import java.util.List;
 import java.util.ArrayList;
 
@@ -18,9 +20,13 @@ public class LawnMowerManager {
     }
 
     public void updateMowers(List<Zombie> allZombies) {
+
         checkActivations(allZombies);
 
         for (LawnMower mower : mowers) {
+            List<Zombie> zombies = getZombiesInRow(allZombies, mower.getRow());
+            zombies.stream()
+                    .min(Comparator.comparingDouble(Zombie::getX)).ifPresent(mower::checkCollision);
             if (mower.isActive()) {
                 mower.mowZombies(getZombiesInRow(allZombies, mower.getRow()));
                 mower.move();

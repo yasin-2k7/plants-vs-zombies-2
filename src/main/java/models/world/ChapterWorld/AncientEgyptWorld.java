@@ -23,12 +23,6 @@ public class AncientEgyptWorld extends GameWorld {
 
     @Override
     protected void applyChapterRules() {
-        Cell[][] grid = getGrid();
-        for (Cell[] row : grid) {
-            for (Cell cell : row) {
-                cell.setTerrain(new LandTerrain());
-            }
-        }
         spawnInitialGraves();
         setSandstormActive(true);
     }

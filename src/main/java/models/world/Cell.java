@@ -289,7 +289,7 @@ public class Cell {
     }
 
     public boolean canPlant(Plant plant) {
-        return this.plantable && !hasObstacle() && terrain.canPlant(plant, this);
+        return this.plantable && terrain.canPlant(plant, this);
     }
 
     public boolean isWater() {

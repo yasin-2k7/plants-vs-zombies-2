@@ -227,7 +227,15 @@ public abstract class GameWorld {
             return false;
         });
 
-        activeZombies.removeIf(Zombie::isDead);
+        lawnMowerManager.updateMowers(activeZombies);
+
+        activeZombies.removeIf(zombie -> {
+            if (zombie.isDead()) {
+                this.notifyZombieKilled();
+                return true;
+            }
+            return false;
+        });
         activePlants.removeIf(Plant::isDead);
         activeProjectiles.removeIf(Projectile::isDead);
 

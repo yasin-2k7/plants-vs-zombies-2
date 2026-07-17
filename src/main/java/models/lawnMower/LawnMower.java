@@ -7,7 +7,7 @@ public class LawnMower {
     private boolean isActive;
     private boolean isSpent;
     private double positionX;
-    private double speed = 5.0;
+    private double speed = 150.0;
     private boolean isAlive = true;
 
     public LawnMower(int row) {
@@ -20,7 +20,7 @@ public class LawnMower {
     public void activate() {
         if (!isActive && !isSpent) {
             this.isActive = true;
-            this.isAlive = false;
+            this.isAlive = true;
             System.out.println("The lawn mower in the row " + row + "is triggered and killed these zombies:");
         }
     }
@@ -51,6 +51,7 @@ public class LawnMower {
         if (isActive) {
             positionX += speed;
             if (isOutOfBounds()) {
+                isAlive = false;
                 isActive = false;
                 isSpent = true;
             }
