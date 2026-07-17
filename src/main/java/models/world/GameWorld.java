@@ -3,7 +3,9 @@ package models.world;
 import models.Damageable;
 import models.core.App;
 import models.enums.PlantType;
+import models.lawnMower.LawnMower;
 import models.lawnMower.LawnMowerManager;
+//import models.miniGame.MechanicsStrategy;
 import models.plant.Plant;
 import models.plant.card.PlantCard;
 import models.plant.components.LifespanComponent;
@@ -389,8 +391,11 @@ public abstract class GameWorld {
     public void setSandstormActive(boolean sandstormActive) {
         this.sandstormActive = sandstormActive;
     }
+    private boolean plantingPhase = false;
 
     public LevelSetup getLevelSetup() {
         return levelSetup;
     }
+    public boolean isPlantingPhase() { return plantingPhase; }
+    public void setPlantingPhase(boolean plantingPhase) { this.plantingPhase = plantingPhase; }
 }

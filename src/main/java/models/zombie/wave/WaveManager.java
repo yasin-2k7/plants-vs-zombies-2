@@ -140,4 +140,14 @@ public class WaveManager {
     public int getCurrentWaveIndex() {
         return currentWaveIndex;
     }
+    public void startFirstWave() {
+        if (waves.isEmpty()) return;
+        this.currentWaveIndex = 0;
+        this.currentWave = waves.get(0);
+        this.totalZombiesInCurrentWave = currentWave.getTotalZombieCount();
+        this.killedZombiesInCurrentWave = 0;
+        this.levelCompleted = false;
+        printWaveStartMessage(currentWave);
+        this.firstWaveStarted = true;
+    }
 }

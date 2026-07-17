@@ -11,6 +11,7 @@ import models.world.GameWorld;
 import models.world.Sun;
 import models.world.SunType;
 import models.world.mechanics.NormalMechanic;
+import models.world.obstacles.Grave;
 import models.zombie.Zombie;
 import models.zombie.ZombieFactory;
 import models.zombie.wave.WaveManager;
@@ -242,8 +243,21 @@ public class GameMenuController implements MenuController {
                 Cell cell = App.getCurrentGame().getGrid()[y][x];
 
                 String terrainSymbol = cell.getTerrain().getTerminalSymbol(); // '.' , '~' , 'I' , 'O'
-                if (cell.hasObstacle()) {
-                    terrainSymbol = "O";
+                if (cell.hasObstacle() && cell.getObstacle() instanceof Grave) {
+                    Grave grave = (Grave) cell.getObstacle();
+                    switch (grave.getType()) {
+                        case SUN:
+                            terrainSymbol = "🪦☀";
+                            break;
+                        case PLANT_FOOD:
+                            terrainSymbol = "🪦⚡";
+                            break;
+                        default:
+                            terrainSymbol = "🪦";
+                            break;
+                    }
+                } else if (cell.hasObstacle()) {
+                    terrainSymbol = "🪦";
                 }
 
                 String plantSymbol = "    ";

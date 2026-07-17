@@ -126,4 +126,10 @@ public class Plant {
     public void destroy(){
 
     }
+
+    public void initAfterLoad() {
+        if (this.components == null) {
+            this.components = new ArrayList<>();
+        }
+    }
 }
