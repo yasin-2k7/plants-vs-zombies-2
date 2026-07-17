@@ -28,6 +28,8 @@ public class Cell {
     private Plant shieldPlant;
     private Obstacle obstacle;
     private CellTerrain terrain;
+    private boolean lowLyingCoast;
+    private int slippingDir = 0;
 
     private boolean plantable = true;
     private boolean necromancyPotential = false;
@@ -309,7 +311,7 @@ public class Cell {
     }
 
     public boolean blocksProjectile() {
-        return hasObstacle() && obstacle instanceof Grave grave && grave.blocksProjectiles();
+        return hasObstacle() && obstacle.isDestroyed();
     }
 
     public boolean isNecromancyPotential() { return necromancyPotential; }
@@ -317,4 +319,20 @@ public class Cell {
     public boolean isNecromancyTriggered() { return necromancyTriggered; }
     public void setNecromancyTriggered(boolean value) { this.necromancyTriggered = value; }
 
+
+    public boolean isLowLyingCoast() {
+        return lowLyingCoast;
+    }
+
+    public void setLowLyingCoast(boolean lowLyingCoast) {
+        this.lowLyingCoast = lowLyingCoast;
+    }
+
+    public int getSlippingDir() {
+        return slippingDir;
+    }
+
+    public void setSlippingDir(int slippingDir) {
+        this.slippingDir = slippingDir;
+    }
 }

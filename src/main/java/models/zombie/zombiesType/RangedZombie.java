@@ -26,7 +26,7 @@ public class RangedZombie extends Zombie {
         switch (projectileType) {
             case "SNOWBALL":
                 // گیاه را کند می‌کند (یا یخ می‌زند)
-                target.applySlow(100); // 100 تیک کندی
+                target.increaseFrozenAmount();
                 break;
             case "OCTOPUS":
                 // گیاه را با اختاپوس می‌پوشاند (غیرفعال)

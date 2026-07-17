@@ -3,6 +3,7 @@ package models.zombie.zombiesType;
 import models.core.App;
 import models.enums.Zombies;
 import models.plant.Plant;
+import models.world.Cell;
 import models.world.GameWorld;
 import models.zombie.Zombie;
 
@@ -25,6 +26,14 @@ public class DodoRiderZombie extends Zombie {
                 if (obstacle != null && !obstacle.isDead()) {
                     handleObstacle(obstacle);
                 }
+                Cell zombieCell = Cell.findCell(x, y, game.getGrid());
+                if (zombieCell != null){
+                    Cell previousCell = Cell.previousCell(zombieCell,game.getGrid());
+                    if (previousCell != null && previousCell.getSlippingDir() != 0){
+                        this.x -= 210;
+                    }
+                }
+
             }
         }
         super.update(); // حرکت یا خوردن

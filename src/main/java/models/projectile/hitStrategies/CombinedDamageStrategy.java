@@ -3,6 +3,7 @@ package models.projectile.hitStrategies;
 import models.Damageable;
 import models.enums.ProjectileType;
 import models.projectile.Projectile;
+import models.world.obstacles.IceBlock;
 import models.zombie.Zombie;
 
 import java.util.List;
@@ -53,6 +54,7 @@ public class CombinedDamageStrategy implements HitStrategy{
         this.element = element;
     }
 
+    @Override
     public int getDamage() {
         return damage;
     }
@@ -85,19 +87,29 @@ public class CombinedDamageStrategy implements HitStrategy{
     }
 
     private void applySpecialDamage(Damageable target, Projectile projectile){
-        if (!(target instanceof Zombie)) {
-            return;
-        }
         switch (element){
             case "NORMAL":
                 break;
             case "ICE":
-                ((Zombie) target).applySlow(chillTime, 0.5);
+                if (target instanceof Zombie zombie){
+                    zombie.applySlow(chillTime, 0.5, false);
+                }
                 break;
             case "FIRE":
+                if (target instanceof Zombie zombie){
+                    if (zombie.getIceHealth() > 0){
+                        zombie.setIceHealth(0);
+                    }
+                    zombie.unfreeze();
+                }
+                else if (target instanceof IceBlock){
+                    target.takeDamage(600, "FIRE");
+                }
                 break;
             case "STUN":
-                ((Zombie) target).disableFor(20);
+                if (target instanceof Zombie zombie) {
+                    zombie.disableFor(20);
+                }
                 break;
             case "POISON":
                 break;
@@ -105,4 +117,11 @@ public class CombinedDamageStrategy implements HitStrategy{
                 break;
         }
     }
+
+    @Override
+    public String getElement() {
+        return element;
+    }
+
+
 }
