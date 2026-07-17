@@ -81,7 +81,8 @@ public class GameMenuController implements MenuController {
                 else{
                     GameWorld game = App.getCurrentGame();
                     sun.collect();
-                    game.setSun(game.getSun() + sun.getSize());
+                    int sunSize = sun.getProducer() == null ? sun.getType().amount : sun.getSize();
+                    game.setSun(game.getSun() + sunSize);
                     if (sun.getProducer() != null) sun.getProducer().getComponentSuns().remove(sun);
                 }
                 return;

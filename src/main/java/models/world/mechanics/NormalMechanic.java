@@ -20,7 +20,8 @@ public class NormalMechanic implements Mechanic{
 
     @Override
     public void applyMechanic(GameWorld world) {
-//        long now = world.getCurrentTick();
+//        long now = System.currentTimeMillis();
+//
 //        if(now - lastZombieSpawnTime >= zombieSpawnInterval){
 //            if(!waveManager.isLevelCompleted()){
 //                int lane = random.nextInt(world.getRows());
@@ -39,6 +40,7 @@ public class NormalMechanic implements Mechanic{
         if(!waveManager.update()){
             waveManager.spawnNextZombie(random.nextInt(world.getRows()), world);
         }
+
 
         world.getActiveZombies().stream()
                 .filter(Zombie::isDead)

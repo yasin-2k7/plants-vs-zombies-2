@@ -31,7 +31,7 @@ public abstract class Zombie implements Damageable {
     }
 
     public void update() {
-        if (isDead) return;
+        if (isDead || health <= 0) return;
         if (slowTicksRemaining > 0) {
             slowTicksRemaining--;
             if (slowTicksRemaining == 0) {

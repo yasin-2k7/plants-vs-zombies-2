@@ -25,11 +25,11 @@ public class NormalLevelSetup implements LevelSetup{
         world.setConveyorMode(false);
         buildGrid(world, rows, cols);
 
-        System.out.println("hi1");
         WaveManager waveManager = new WaveManager(waves);
         world.addMechanic(new NormalMechanic(waveManager));
         world.addMechanic(new SunSpawnMechanic());
 
+        world.registerZombieKillListener(() -> waveManager.onZombieKilled(null));
     }
 
     @Override

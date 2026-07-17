@@ -860,6 +860,7 @@ public class PlantFactory {
         if (level >= 4){
             component.scheduleDelayedBehavior(new AreaDamageBehavior(100, new CircularRange(1)), delay);
         }
+        p.addComponent(component);
         return p;
     }
 
