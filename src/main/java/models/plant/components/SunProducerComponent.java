@@ -70,8 +70,6 @@ public class SunProducerComponent implements GameComponent {
         }
 
 
-
-
     }
 
     @Override
