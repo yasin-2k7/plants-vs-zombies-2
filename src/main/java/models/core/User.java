@@ -4,6 +4,7 @@ import models.enums.Chapter;
 import models.enums.NewsType;
 import models.enums.PlantType;
 import models.greenhouse.GreenHouse;
+import models.quest.QuestManager;
 import models.quest.QuestStats;
 
 import java.util.ArrayList;
@@ -38,6 +39,8 @@ public class User {
     private transient boolean isLoaded = false;
     private int gameDifficulty = 3;
     private int plantFoods = 0;
+    private QuestManager questManager = new QuestManager();
+
 
     public User(){
         this.plantBoosts = new HashMap<>();
@@ -46,7 +49,7 @@ public class User {
         this.greenhouse = new GreenHouse();
         this.coins = 10000;
         this.gems = 1000;
-        this.unlockedChapter = 4;
+        this.unlockedChapter = 1;
         this.unlockedLevel = 1;
         putInitialPlants();
     }
@@ -71,6 +74,12 @@ public class User {
         if (this.seedPackets == null) this.seedPackets = new HashMap<>();
         if (this.greenhouse == null) this.greenhouse = new GreenHouse();
         this.isLoaded = true;
+    }
+
+    public void initQuests() {
+        questManager.generateMainQuests(this);
+        questManager.resetDailyIfNeeded();
+        questManager.generateDailyQuests(this);
     }
 
     private void save() {
@@ -285,7 +294,7 @@ public class User {
 
     public void notifyLevelUnlock(String levelName){
         addNews(new News(
-                "Unlock new leve",
+                "Unlock new level",
                 "level" + levelName,
                 NewsType.LEVEL_UNLOCKED
         ));
@@ -298,4 +307,10 @@ public class User {
                 NewsType.MINIGAME_UNLOCKED
         ));
     }
+
+    public QuestManager getQuestManager() {
+        return questManager;
+    }
+
+    public int getPot() {return pot;}
 }

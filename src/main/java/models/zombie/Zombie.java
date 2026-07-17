@@ -2,6 +2,7 @@ package models.zombie;
 
 import controller.GameMenuController;
 import models.Damageable;
+import models.enums.PlantType;
 import models.enums.Zombies;
 import models.zombie.state.WalkingState;
 import models.zombie.state.ZombieState;
@@ -20,6 +21,9 @@ public abstract class Zombie implements Damageable {
     private double slowFactor = 0.5;            // ضریب کندی
     private int disabledTicksRemaining;
     private int freezedTicksRemaining;
+
+    private PlantType killerPlantType;
+
 
     public Zombie(Zombies name, int health, double speed, int damage) {
         this.name = name;
@@ -138,4 +142,12 @@ public abstract class Zombie implements Damageable {
     public void setHealth(int health) { this.health = health; }
     public Zombies getName() { return name; }
     public int getDamage() {return damage;}
+
+    public void setKiller(PlantType killer) {
+        this.killerPlantType = killer;
+    }
+
+    public PlantType getKillerPlantType() {
+        return killerPlantType;
+    }
 }

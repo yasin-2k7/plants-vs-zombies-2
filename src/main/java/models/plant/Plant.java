@@ -2,6 +2,7 @@ package models.plant;
 
 import controller.GameMenuController;
 import models.core.App;
+import models.core.User;
 import models.enums.PlantType;
 import models.plant.components.PlacementBehaviorComponent;
 import models.plant.components.SunProducerComponent;
@@ -50,6 +51,10 @@ public class Plant {
         if (health <= 0){
             cell.findAndRemovePlant();
             App.getCurrentGame().notifyPlantEaten();
+        }
+        User user = App.getCurrentUser();
+        if (user != null) {
+            user.getQuestManager().getStats().incrementPlantsLost();
         }
     }
 

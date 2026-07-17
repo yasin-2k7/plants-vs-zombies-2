@@ -2,6 +2,8 @@ package models.world;
 
 import models.Damageable;
 import models.core.App;
+import models.core.User;
+import models.enums.Chapter;
 import models.enums.PlantType;
 import models.lawnMower.LawnMower;
 import models.lawnMower.LawnMowerManager;
@@ -11,6 +13,7 @@ import models.plant.card.PlantCard;
 import models.plant.components.LifespanComponent;
 import models.pool.GenericObjectPool;
 import models.projectile.Projectile;
+import models.quest.QuestStats;
 import models.world.levelSetup.LevelSetup;
 import models.world.loseCondition.LoseCondition;
 import models.world.mechanics.Mechanic;
@@ -19,6 +22,7 @@ import models.world.winCondition.WinCondition;
 import models.zombie.Zombie;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 public abstract class GameWorld {
@@ -28,6 +32,8 @@ public abstract class GameWorld {
     private GameState state;
 
     private int currentTick = 0;
+
+    private Chapter currentChapter;
 
     protected int plantFoods;
     protected int rows;
@@ -236,12 +242,37 @@ public abstract class GameWorld {
             }
         }
 
+        Iterator<Zombie> zombieIterator = activeZombies.iterator();
+        while (zombieIterator.hasNext()) {
+            Zombie zombie = zombieIterator.next();
+            if (zombie.isDead()) {
+                User user = App.getCurrentUser();
+                if (user != null) {
+                    QuestStats stats = user.getQuestManager().getStats();
+                    stats.addZombiesKilledToday(1);
+                    stats.addTotalZombiesKilled(1);
+
+                    String chapter = currentChapter.name();
+                    stats.addZombiesKilledByChapter(chapter, 1);
+
+                    if (zombie.getKillerPlantType() != null) {
+                        stats.addZombiesKilledByPlant(zombie.getKillerPlantType(), 1);
+                    }
+                }
+                zombieIterator.remove();
+            }
+        }
+
         for(Mechanic mechanic : mechanics){
             mechanic.applyMechanic(this);
         }
 
         if(winCondition.checkWin(this)){
             state = GameState.WON;
+            User user = App.getCurrentUser();
+            if (user != null) {
+                user.getQuestManager().getStats().setLevelWon(true);
+            }
         }
 
         for(LoseCondition lose : loseConditions){
@@ -249,6 +280,7 @@ public abstract class GameWorld {
                 state = GameState.LOST;
             }
         }
+
     }
 
 
@@ -398,4 +430,6 @@ public abstract class GameWorld {
     }
     public boolean isPlantingPhase() { return plantingPhase; }
     public void setPlantingPhase(boolean plantingPhase) { this.plantingPhase = plantingPhase; }
+    public Chapter getCurrentChapter() {return currentChapter;}
+    public void setCurrentChapter(Chapter chapter) {this.currentChapter = chapter;}
 }

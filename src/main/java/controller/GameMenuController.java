@@ -1,6 +1,7 @@
 package controller;
 
 import models.core.App;
+import models.core.User;
 import models.enums.PlantLayer;
 import models.enums.PlantType;
 import models.enums.Zombies;
@@ -34,6 +35,10 @@ public class GameMenuController implements MenuController {
         if (menuName.equalsIgnoreCase("collection")) {
             AppView.setCurrentScreen(CollectionMenuView.getInstance());
             return "Entering collection menu...";
+        } else if (menuName.equalsIgnoreCase("travel log")) {
+            AppView.setCurrentScreen(TravelLogMenuView.getInstance());
+            TravelLogMenuView.getInstance().showCurrentPage();
+            return "Entering Travel Log...";
         }
         return "Invalid menu name!";
     }
@@ -82,6 +87,11 @@ public class GameMenuController implements MenuController {
                     GameWorld game = App.getCurrentGame();
                     sun.collect();
                     game.setSun(game.getSun() + sun.getSize());
+                    User user = App.getCurrentUser();
+                    if (user != null) {
+                        user.getQuestManager().getStats().addSunsCollectedToday(sun.getSize());
+                        user.getQuestManager().checkAllQuests(user);
+                    }
                     if (sun.getProducer() != null) sun.getProducer().getComponentSuns().remove(sun);
                 }
                 return;
@@ -96,11 +106,20 @@ public class GameMenuController implements MenuController {
 
     public void cheatAddSun(int count){
         App.getCurrentGame().setSun(25*count+App.getCurrentGame().getSun());
+        GameMenuView.getInstance().showResult("Cheat activated! Added " + count + " suns. ☀️");
     }
 
-    public void releaseTheNuke(){
-        for (Zombie zombie : App.getCurrentGame().getActiveZombies()){
-            zombie.die();
+    public void releaseTheNuke() {
+        GameWorld game = App.getCurrentGame();
+        NormalMechanic normal = game.getMechanic(NormalMechanic.class);
+        if (normal != null && normal.getWaveManager() != null) {
+            normal.getWaveManager().releaseTheNuke(game);
+        } else {
+            for (Zombie zombie : game.getActiveZombies()) {
+                zombie.die();
+            }
+            game.getActiveZombies().clear();
+            System.out.println("All zombies eliminated by nuke (fallback)!");
         }
     }
 
@@ -358,6 +377,5 @@ public class GameMenuController implements MenuController {
     public void startZombieWaves(){
 
     }
-
 
 }

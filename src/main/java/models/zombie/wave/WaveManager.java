@@ -101,7 +101,8 @@ public class WaveManager {
         List<Zombie> zombies = game.getActiveZombies();
         for (Zombie z : zombies) {
             if (!z.isDead()) {
-                z.die(); // این متد پیام مرگ را چاپ می‌کند
+                z.die();
+                onZombieKilled(z);
             }
         }
         zombies.clear();
