@@ -117,7 +117,8 @@ public abstract class Zombie implements Damageable {
     public float getY() { return y; }
     public void setY(float y) { this.y = y; }
     public double getSpeed() { return speed; }
-    public void setSpeed(double speed) { this.speed = speed;
+    public void setSpeed(double speed) {
+        this.speed = speed;
         if (slowTicksRemaining == 0) {
             this.originalSpeed = speed;
         }}
@@ -138,4 +139,8 @@ public abstract class Zombie implements Damageable {
     public void setHealth(int health) { this.health = health; }
     public Zombies getName() { return name; }
     public int getDamage() {return damage;}
+
+    public void setDead(boolean dead) {
+        isDead = dead;
+    }
 }

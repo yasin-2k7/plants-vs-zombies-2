@@ -42,10 +42,13 @@ public class AncientEgyptWorld extends GameWorld {
         int attempts = 0;
         int maxAttempts = graveCount * 10;
 
+        int minCol = 4;
+        int maxCol = 8;
+
         while (spawned < graveCount && attempts < maxAttempts) {
             attempts++;
             int row = random.nextInt(getRows());
-            int col = random.nextInt(getCols());
+            int col = minCol + random.nextInt(maxCol - minCol + 1);
 
             Cell cell = grid[row][col];
             if (cell.hasObstacle() || !cell.isEmpty()) continue;

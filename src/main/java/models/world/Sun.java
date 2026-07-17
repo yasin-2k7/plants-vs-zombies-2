@@ -49,7 +49,8 @@ public class Sun implements Resettable {
         isCollected = true;
     }
 
-    public void setup(int row, int col, SunType type){
+    public void setup(GameWorld game, int row, int col, SunType type){
+        this.game = game;
         this.finalX = col * App.getCellWidth() + App.getCellWidth()/2;
         this.finalY = row * App.getCellHeight() + App.getCellHeight()/2;
         this.x = finalX;

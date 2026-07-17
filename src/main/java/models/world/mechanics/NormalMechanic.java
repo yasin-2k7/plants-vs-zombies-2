@@ -1,5 +1,7 @@
 package models.world.mechanics;
 
+import models.core.App;
+import models.core.DifficultyCalculator;
 import models.world.GameWorld;
 import models.zombie.Zombie;
 import models.zombie.wave.WaveManager;
@@ -18,8 +20,7 @@ public class NormalMechanic implements Mechanic{
 
     @Override
     public void applyMechanic(GameWorld world) {
-//        long now = System.currentTimeMillis();
-//
+//        long now = world.getCurrentTick();
 //        if(now - lastZombieSpawnTime >= zombieSpawnInterval){
 //            if(!waveManager.isLevelCompleted()){
 //                int lane = random.nextInt(world.getRows());
@@ -28,10 +29,16 @@ public class NormalMechanic implements Mechanic{
 //            }
 //        }
 
-        if (!waveManager.update()){
+
+        int difficulty = App.getCurrentUser().getGameDifficulty();
+        double decreaseFactor = DifficultyCalculator.decreaseFactor(difficulty);
+        int adjustedInterval = (int) Math.round(zombieSpawnInterval * decreaseFactor);
+
+
+
+        if(!waveManager.update()){
             waveManager.spawnNextZombie(random.nextInt(world.getRows()), world);
         }
-
 
         world.getActiveZombies().stream()
                 .filter(Zombie::isDead)
