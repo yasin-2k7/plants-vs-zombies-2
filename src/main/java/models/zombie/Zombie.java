@@ -7,8 +7,12 @@ import models.enums.Zombies;
 import models.zombie.state.WalkingState;
 import models.zombie.state.ZombieState;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public abstract class Zombie implements Damageable {
     protected Zombies name;
+    protected String specificName; // متغیر جدید برای نگهداری نام دقیق زامبی
     protected int health;
     protected int maxHealth;
     protected double speed;
@@ -21,6 +25,7 @@ public abstract class Zombie implements Damageable {
     private double slowFactor = 0.5;            // ضریب کندی
     private int disabledTicksRemaining;
     private int freezedTicksRemaining;
+    protected List<String> armorTypes = new ArrayList<>();
 
     private PlantType killerPlantType;
 
@@ -63,21 +68,21 @@ public abstract class Zombie implements Damageable {
         this.x -= this.speed; // حرکت به چپ
     }
 
-        @Override
-        public void takeDamage(int amount, String damageType) {
-            if (isDead) return;
-            this.health -= amount;
-            if (this.health <= 0) {
-                die();
-            }
+    @Override
+    public void takeDamage(int amount, String damageType) {
+        if (isDead) return;
+        this.health -= amount;
+        if (this.health <= 0) {
+            die();
         }
+    }
 
-        public void die() {
-            if (isDead) return;
-            this.isDead = true;
-            // چاپ پیام مرگ
-            GameMenuController.updateState("Zombie of type " + name.name() + " is dead at (" + (int)x + ", " + (int)y + ")");
-        }
+    public void die() {
+        if (isDead) return;
+        this.isDead = true;
+        // چاپ پیام مرگ
+        GameMenuController.updateState("Zombie of type " + name.name() + " is dead at (" + (int)x + ", " + (int)y + ")");
+    }
 
     public void applySlow(int ticks, double factor) {
         if (ticks <= 0) return;
@@ -141,6 +146,10 @@ public abstract class Zombie implements Damageable {
     public int getHealth() { return health; }
     public void setHealth(int health) { this.health = health; }
     public Zombies getName() { return name; }
+
+    public String getSpecificName() { return specificName; }
+    public void setSpecificName(String specificName) { this.specificName = specificName; }
+
     public int getDamage() {return damage;}
 
     public void setKiller(PlantType killer) {
@@ -149,5 +158,13 @@ public abstract class Zombie implements Damageable {
 
     public PlantType getKillerPlantType() {
         return killerPlantType;
+    }
+
+    public void addArmorType(String type) {
+        this.armorTypes.add(type);
+    }
+
+    public List<String> getArmorTypes() {
+        return armorTypes;
     }
 }
