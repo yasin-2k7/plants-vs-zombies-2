@@ -12,7 +12,7 @@ import java.util.List;
 
 public abstract class Zombie implements Damageable {
     protected Zombies name;
-    protected String specificName; // متغیر جدید برای نگهداری نام دقیق زامبی
+    protected String specificName;
     protected int health;
     protected int maxHealth;
     protected double speed;
@@ -28,6 +28,8 @@ public abstract class Zombie implements Damageable {
     protected List<String> armorTypes = new ArrayList<>();
 
     private PlantType killerPlantType;
+
+    private int iceHealth = 0;
 
 
     public Zombie(Zombies name, int health, double speed, int damage) {
@@ -129,7 +131,18 @@ public abstract class Zombie implements Damageable {
     public void setSpeed(double speed) { this.speed = speed;
         if (slowTicksRemaining == 0) {
             this.originalSpeed = speed;
-        }}
+        }
+    }
+
+    //incomplete
+    public void unfreeze() {
+        this.iceHealth = 0;
+        this.freezedTicksRemaining = 0;
+    }
+
+    public void applySlow(int ticks, double factor, boolean someFlag) {
+        applySlow(ticks, factor);
+    }
 
     public int getSlowTicksRemaining() {
         return slowTicksRemaining;
@@ -167,4 +180,8 @@ public abstract class Zombie implements Damageable {
     public List<String> getArmorTypes() {
         return armorTypes;
     }
+
+    public int getIceHealth() {return iceHealth;}
+    public void setIceHealth(int iceHealth) {this.iceHealth = iceHealth;}
+
 }

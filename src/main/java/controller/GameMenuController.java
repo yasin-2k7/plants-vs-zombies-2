@@ -1,6 +1,7 @@
 package controller;
 
 import models.core.App;
+import models.core.User;
 import models.enums.PlantLayer;
 import models.enums.PlantType;
 import models.enums.Zombies;
@@ -87,6 +88,11 @@ public class GameMenuController implements MenuController {
                     sun.collect();
                     game.setSun(game.getSun() + sun.getSize());
                     if (sun.getProducer() != null) sun.getProducer().getComponentSuns().remove(sun);
+                    User user = App.getCurrentUser();
+                    if (user != null) {
+                        user.getQuestStats().addSunsCollectedToday(sun.getSize());
+                        user.getQuestManager().checkAllQuests(user);
+                    }
                 }
                 return;
             }
@@ -112,7 +118,7 @@ public class GameMenuController implements MenuController {
             for (Zombie zombie : game.getActiveZombies()) {
                 zombie.die();
             }
-            game.getActiveZombies().clear();
+//            game.getActiveZombies().clear();
             System.out.println("All zombies eliminated by nuke (fallback)!");
         }
     }

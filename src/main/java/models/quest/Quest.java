@@ -10,7 +10,7 @@ public abstract class Quest implements Comparable<Quest> {
     private QuestPriority priority;
     private boolean isCompleted;
     private Reward reward;
-    private Predicate<QuestStats> condition;
+    private transient Predicate<QuestStats> condition;
 
     public Quest(String id, String description, QuestPriority priority, Predicate<QuestStats> condition, Reward reward) {
         this.id = id;
@@ -43,4 +43,5 @@ public abstract class Quest implements Comparable<Quest> {
     public String getDescription() { return description; }
     public boolean isCompleted() { return isCompleted; }
     public QuestPriority getPriority() {return priority;}
+    public void setCompleted(boolean completed) {this.isCompleted = completed;}
 }
