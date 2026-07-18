@@ -4,16 +4,27 @@ import models.enums.PlantType;
 import models.world.GameWorld;
 import models.world.levelSetup.LevelSetup;
 import models.zombie.Zombie;
+import models.zombie.ZombieFactory;
 
+import java.util.List;
 import java.util.Random;
 
 public class VaseBreakerSetup implements LevelSetup {
     private int rows;
     private int cols;
+    private final List<String> normalVaseZombies;
+    private final List<String> giantVaseZombies;
+    private final List<PlantType> possiblePlants;
 
-    public VaseBreakerSetup(int rows, int cols) {
+    public VaseBreakerSetup(int rows, int cols,
+                            List<String> normalVaseZombies,
+                            List<String> giantVaseZombies,
+                            List<PlantType> possiblePlants) {
         this.rows = rows;
         this.cols = cols;
+        this.normalVaseZombies = normalVaseZombies;
+        this.giantVaseZombies = giantVaseZombies;
+        this.possiblePlants = possiblePlants;
     }
 
     @Override
@@ -21,23 +32,28 @@ public class VaseBreakerSetup implements LevelSetup {
         world.setConveyorMode(false);
         buildGrid(world, rows, cols);
 
+        VaseBreakerLevel level = (VaseBreakerLevel) world;
+
         Random random = new Random();
 
-        for(int r = 0; r < rows; r++){
-            for(int c = 4; c < cols; c++){
+        for (int r = 0; r < rows; r++) {
+            for (int c = 4; c < cols; c++) {
                 VaseType type = getRandomVaseType(random);
+
                 Zombie hiddenZombie = null;
                 SeedPacket hiddenSeed = null;
 
-                float spawnX = c * 100 + 50;
-                float spawnY = r * 100 + 50;
-
-                if(type == VaseType.PLANT){
-                    PlantType randomPlant = getRandomPlantType(random);
+                if (type == VaseType.PLANT) {
+                    PlantType randomPlant = possiblePlants.get(random.nextInt(possiblePlants.size()));
+                    float spawnX = c * 100 + 50;
+                    float spawnY = r * 100 + 50;
                     hiddenSeed = new SeedPacket(spawnX, spawnY, randomPlant);
                 } else {
-                    hiddenZombie = createZombieForVase(type);
+                    hiddenZombie = createZombieForVase(type, random);
                 }
+
+                Vase vase = new Vase(r, c, type, hiddenZombie, hiddenSeed);
+                level.addVase(vase);
             }
         }
     }
@@ -54,14 +70,12 @@ public class VaseBreakerSetup implements LevelSetup {
         return VaseType.GIANT;
     }
 
-    private PlantType getRandomPlantType(Random random) {
-        PlantType[] plants = {PlantType.PEASHOOTER, PlantType.SNOW_PEA, PlantType.WALL_NUT};
-        return plants[random.nextInt(plants.length)];
-    }
 
-    private Zombie createZombieForVase(VaseType type) {
-
-
-        return null;
+    private Zombie createZombieForVase(VaseType type, Random random) {
+        ZombieFactory factory = new ZombieFactory();
+        List<String> pool = (type == VaseType.GIANT) ? giantVaseZombies : normalVaseZombies;
+        if (pool == null || pool.isEmpty()) return null;
+        String alias = pool.get(random.nextInt(pool.size()));
+        return factory.createZombie(alias);
     }
 }

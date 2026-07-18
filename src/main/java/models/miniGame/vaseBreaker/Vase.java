@@ -20,8 +20,8 @@ public class Vase {
         this.hiddenSeed = hiddenSeed;
     }
 
-    public void breakVase(VaseBreakerLevel level){
-        if(isBroken) return;
+    public String breakVase(VaseBreakerLevel level){
+        if(isBroken) return "This vase is already broken.";
         isBroken = true;
 
         float spawnX = col * 100 + 50;
@@ -31,11 +31,14 @@ public class Vase {
             hiddenZombie.setX(spawnX);
             hiddenZombie.setY(spawnY);
             level.addZombie(hiddenZombie);
+            return "A " + hiddenZombie.getName().name() + " zombie jumps out!";
         }
 
         if (hiddenSeed != null) {
             level.getDroppedSeeds().add(hiddenSeed);
+            return "You found a " + hiddenSeed.getPlantType().name() + " seed packet!";
         }
+        return "The vase was empty.";
 
     }
 

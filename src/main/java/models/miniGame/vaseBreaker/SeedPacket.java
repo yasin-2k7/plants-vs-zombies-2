@@ -7,12 +7,22 @@ public class SeedPacket {
     private float y;
     private PlantType plantType;
     private boolean collected;
+    private int ticksAlive = 0;
+    private static final int EXPIRE_AFTER_TICKS = 50;
 
     public SeedPacket(float x, float y, PlantType plantType) {
         this.x = x;
         this.y = y;
         this.plantType = plantType;
         this.collected = false;
+    }
+
+    public void tick() {
+        if (!collected) ticksAlive++;
+    }
+
+    public boolean isExpired() {
+        return !collected && ticksAlive >= EXPIRE_AFTER_TICKS;
     }
 
 
