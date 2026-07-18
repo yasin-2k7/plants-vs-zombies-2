@@ -4,6 +4,7 @@ import models.enums.Chapter;
 import models.enums.NewsType;
 import models.enums.PlantType;
 import models.greenhouse.GreenHouse;
+import models.quest.QuestManager;
 import models.quest.QuestStats;
 
 import java.util.ArrayList;
@@ -32,23 +33,58 @@ public class User {
     private HashMap<PlantType, Integer> seedPackets;
     private HashMap<PlantType, Integer> unlockedPlantsLevels;
     private HashMap<PlantType, Boolean> plantBoosts;
+    private HashMap<String, Boolean> showedZombies;
     private ArrayList<News> unreadNews;
     private List<News> newsList = new ArrayList<>();
     private GreenHouse greenhouse;
     private transient boolean isLoaded = false;
     private int gameDifficulty = 3;
     private int plantFoods = 0;
+    private QuestManager questManager = new QuestManager();
+
 
     public User(){
         this.plantBoosts = new HashMap<>();
         this.unlockedPlantsLevels = new HashMap<>();
         this.seedPackets = new HashMap<>();
+        this.showedZombies = new HashMap<>();
         this.greenhouse = new GreenHouse();
         this.coins = 10000;
         this.gems = 1000;
-        this.unlockedChapter = 4;
+        this.unlockedChapter = 1;
         this.unlockedLevel = 1;
         putInitialPlants();
+        putZombies();
+    }
+
+    private void putZombies(){
+        showedZombies.put("ZombieDefault", false);
+        showedZombies.put("ZombieConeHead", false);
+        showedZombies.put("ZombieBucketHead", false);
+        showedZombies.put("ZombieBrickHead", false);
+        showedZombies.put("ZombieKnight", false);
+        showedZombies.put("ZombieGargantuar", false);
+        showedZombies.put("ZombieImp", false);
+        showedZombies.put("ZombieRa", false);
+        showedZombies.put("ZombieExplorer", false);
+        showedZombies.put("ZombieTombRaiser", false);
+        showedZombies.put("ZombieIceAgeDodo", false);
+        showedZombies.put("ZombieIceAgeHunter", false);
+        showedZombies.put("ZombieIceAgeTroglobite", false);
+        showedZombies.put("ZombieBeachFisherman", false);
+        showedZombies.put("ZombieBeachOctopus", false);
+        showedZombies.put("ZombieBeachSnorkel", false);
+        showedZombies.put("ZombieDarkJuggler", false);
+        showedZombies.put("ZombieWizard", false);
+        showedZombies.put("ZombieDarkKing", false);
+        showedZombies.put("ZombieDarkImpDragon", false);
+        showedZombies.put("ZombieModernAllStar", false);
+        showedZombies.put("ZombieLostCityJane", false);
+        showedZombies.put("ZombieCrystalSkull", false);
+        showedZombies.put("ZombieProspector", false);
+        showedZombies.put("ZombiePiano", false);
+        showedZombies.put("ZombieArcade", false);
+        showedZombies.put("ZombieNewspaper", false);
     }
 
     private void putInitialPlants(){
@@ -73,6 +109,12 @@ public class User {
         this.isLoaded = true;
     }
 
+    public void initQuests() {
+        questManager.generateMainQuests(this);
+        questManager.resetDailyIfNeeded();
+        questManager.generateDailyQuests(this);
+    }
+
     private void save() {
         // فقط اگر کاربر از فایل لود شده باشد یا جدیداً ثبت‌نام کرده باشد، ذخیره کن
         if (isLoaded || !username.isEmpty()) {
@@ -88,6 +130,10 @@ public class User {
 
     public int getSeedPacketsCount(PlantType type) {
         return this.seedPackets.getOrDefault(type, 0);
+    }
+
+    public HashMap<PlantType, Integer> getSeedPackets() {
+        return seedPackets;
     }
 
     public boolean checkPassword(String password) {
@@ -267,6 +313,10 @@ public class User {
         newsList.add(news);
     }
 
+    public HashMap<String, Boolean> getShowedZombies() {
+        return showedZombies;
+    }
+
     public void notifyPlantUnlock(String plantName){
         addNews(new News(
                 "Unlock plant",
@@ -285,7 +335,7 @@ public class User {
 
     public void notifyLevelUnlock(String levelName){
         addNews(new News(
-                "Unlock new leve",
+                "Unlock new level",
                 "level" + levelName,
                 NewsType.LEVEL_UNLOCKED
         ));
@@ -298,4 +348,10 @@ public class User {
                 NewsType.MINIGAME_UNLOCKED
         ));
     }
+
+    public QuestManager getQuestManager() {
+        return questManager;
+    }
+
+    public int getPot() {return pot;}
 }

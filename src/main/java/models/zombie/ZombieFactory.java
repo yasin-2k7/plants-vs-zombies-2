@@ -13,6 +13,7 @@ import models.zombie.data.ZombieData;
 import models.zombie.data.ZombieProperties;
 import models.zombie.zombiesType.*;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -63,52 +64,83 @@ public class ZombieFactory {
         int eatDPS = (int) Math.round(data.getEatDPS() * increaseFactor);
         double speed = data.getSpeed();
 
+        Zombie createdZombie = null;
+
         switch (objclass) {
             case "ZombiePropertySheet":
-                return buildBasicZombie(health, eatDPS, speed, data);
+                createdZombie = buildBasicZombie(health, eatDPS, speed, data);
+                break;
             case "ZombieGargantuarProps":
-                return new SpawnerZombie(health, speed, eatDPS, true);
+                createdZombie = new SpawnerZombie(health, speed, eatDPS, true);
+                break;
             case "ZombieRaProps":
-                return new SunStealerZombie(health, speed, eatDPS, true);
+                createdZombie = new SunStealerZombie(health, speed, eatDPS, true);
+                break;
             case "ZombieExplorerProps":
-                return new ElementalZombie(health, speed, eatDPS, true);
+                createdZombie = new ElementalZombie(health, speed, eatDPS, true);
+                break;
             case "ZombieIceAgeHunterProps":
-                return new RangedZombie(health, speed, eatDPS, "SNOWBALL");
+                createdZombie = new RangedZombie(health, speed, eatDPS, "SNOWBALL");
+                break;
             case "ZombieBeachOctopusProps":
-                return new RangedZombie(health, speed, eatDPS, "OCTOPUS");
+                createdZombie = new RangedZombie(health, speed, eatDPS, "OCTOPUS");
+                break;
             case "ZombieTombRaiserProps":
-                return new RangedZombie(health, speed, eatDPS, "BONE");
+                createdZombie = new RangedZombie(health, speed, eatDPS, "BONE");
+                break;
             case "ZombieDarkJugglerProps":
-                return new DeflectorZombie(health, speed, eatDPS, true);
+                createdZombie = new DeflectorZombie(health, speed, eatDPS, true);
+                break;
             case "ZombieLostCityJaneProps": // چتردار
-                return new DeflectorZombie(health, speed, eatDPS, false);
+                createdZombie = new DeflectorZombie(health, speed, eatDPS, false);
+                break;
             case "ZombieDarkWizardProps":
-                return new WizardZombie(health, speed, eatDPS);
+                createdZombie = new WizardZombie(health, speed, eatDPS);
+                break;
             case "ZombieDarkKingProps":
-                return new SpawnerZombie(health, speed, eatDPS, false);
+                createdZombie = new SpawnerZombie(health, speed, eatDPS, false);
+                break;
             case "ZombieBeachFishermanProps":
-                return new FishermanZombie(health, eatDPS);
+                createdZombie = new FishermanZombie(health, eatDPS);
+                break;
             case "ZombieIceAgeDodoProps":
-                return new DodoRiderZombie(health, speed, eatDPS);
+                createdZombie = new DodoRiderZombie(health, speed, eatDPS);
+                break;
             case "ZombieModernAllStarProps":
-                return new PhasingZombie(health, speed, eatDPS, 0, false);
+                createdZombie = new PhasingZombie(health, speed, eatDPS, 0, false);
+                break;
             case "ZombieNewspaperProps":
-                return new PhasingZombie(health, speed, eatDPS, 800, true);
+                createdZombie = new PhasingZombie(health, speed, eatDPS, 800, true);
+                break;
             case "ZombiePianoProps":
-                return new PusherZombie(health, speed, eatDPS, "PIANO", 0);
+                createdZombie = new PusherZombie(health, speed, eatDPS, "PIANO", 0);
+                break;
             case "ZombieArcadeProps":
-                return new PusherZombie(health, speed, eatDPS, "ARCADE", 600);
+                createdZombie = new PusherZombie(health, speed, eatDPS, "ARCADE", 600);
+                break;
             case "ZombieIceAgeTroglobiteProps":
-                return new PusherZombie(health, speed, eatDPS, "ICEBLOCK", 600);
+                createdZombie = new PusherZombie(health, speed, eatDPS, "ICEBLOCK", 600);
+                break;
             case "ZombieBeachSnorkelProps":
-                return new SnorkelZombie(health, speed, eatDPS);
+                createdZombie = new SnorkelZombie(health, speed, eatDPS);
+                break;
             case "ZombieImpProps":
-                return new ImpZombie(health, speed, eatDPS, false);
+                createdZombie = new ImpZombie(health, speed, eatDPS, false);
+                break;
             case "ZombieDarkImpDragonProps":
-                return new ImpZombie(health, speed, eatDPS, true);
+                createdZombie = new ImpZombie(health, speed, eatDPS, true);
+                break;
             default:
-                return buildBasicZombie(health, eatDPS, speed, data);
+                createdZombie = buildBasicZombie(health, eatDPS, speed, data);
+                break;
         }
+
+        // مقداردهی نام خاص (Alias)
+        if (createdZombie != null) {
+            createdZombie.setSpecificName(alias);
+        }
+
+        return createdZombie;
     }
 
     private Zombie buildBasicZombie(int health, int eatDPS, double speed, ZombieData data) {
@@ -116,18 +148,23 @@ public class ZombieFactory {
         if (armorRefs != null && !armorRefs.isEmpty()) {
             int totalArmorHealth = 0;
             boolean magnetic = false;
+            List<String> currentArmorTypes = new ArrayList<>();
             for (String ref : armorRefs) {
                 String alias = extractAlias(ref);
                 ArmorProperties armor = ZombieRegistry.getArmorProperties(alias);
                 if (armor != null) {
                     ArmorData ad = armor.getObjdata();
                     totalArmorHealth += ad.getBaseHealth();
+                    currentArmorTypes.add(ad.getArmorType());
                     if (ad.getArmorFlags().contains("metallic")) {
                         magnetic = true;
                     }
                 }
             }
-            return new ArmoredZombie(health, speed, eatDPS, totalArmorHealth, magnetic);
+            ArmoredZombie zombie = new ArmoredZombie(health, speed, eatDPS, totalArmorHealth, magnetic);
+            zombie.getArmorTypes().addAll(currentArmorTypes);
+
+            return zombie;
         }
         // زامبی معمولی (بدون زره)
         return new Zombie(Zombies.ZOMBIE, health, speed, eatDPS) {};

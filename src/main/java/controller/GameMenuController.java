@@ -35,6 +35,10 @@ public class GameMenuController implements MenuController {
         if (menuName.equalsIgnoreCase("collection")) {
             AppView.setCurrentScreen(CollectionMenuView.getInstance());
             return "Entering collection menu...";
+        } else if (menuName.equalsIgnoreCase("travel log")) {
+            AppView.setCurrentScreen(TravelLogMenuView.getInstance());
+            TravelLogMenuView.getInstance().showCurrentPage();
+            return "Entering Travel Log...";
         }
         return "Invalid menu name!";
     }
@@ -82,8 +86,7 @@ public class GameMenuController implements MenuController {
                 else{
                     GameWorld game = App.getCurrentGame();
                     sun.collect();
-                    int sunSize = sun.getProducer() == null ? sun.getType().amount : sun.getSize();
-                    game.setSun(game.getSun() + sunSize);
+                    game.setSun(game.getSun() + sun.getSize());
                     if (sun.getProducer() != null) sun.getProducer().getComponentSuns().remove(sun);
                 }
                 return;
@@ -98,11 +101,20 @@ public class GameMenuController implements MenuController {
 
     public void cheatAddSun(int count){
         App.getCurrentGame().setSun(25*count+App.getCurrentGame().getSun());
+        GameMenuView.getInstance().showResult("Cheat activated! Added " + count + " suns. ☀️");
     }
 
-    public void releaseTheNuke(){
-        for (Zombie zombie : App.getCurrentGame().getActiveZombies()){
-            zombie.die();
+    public void releaseTheNuke() {
+        GameWorld game = App.getCurrentGame();
+        NormalMechanic normal = game.getMechanic(NormalMechanic.class);
+        if (normal != null && normal.getWaveManager() != null) {
+            normal.getWaveManager().releaseTheNuke(game);
+        } else {
+            for (Zombie zombie : game.getActiveZombies()) {
+                zombie.die();
+            }
+            game.getActiveZombies().clear();
+            System.out.println("All zombies eliminated by nuke (fallback)!");
         }
     }
 
@@ -213,7 +225,6 @@ public class GameMenuController implements MenuController {
         }
     }
 
-    // how to get waves?
     public void showMap(){
         int currentWaveNum = 1;
         int totalWaves = 1;
@@ -310,22 +321,36 @@ public class GameMenuController implements MenuController {
         }
         GameMenuView.getInstance().showResult("zombies in this tile:");
         for (Zombie zombie : Cell.getZombiesInCells(List.of(selectedCell))){
-            GameMenuView.getInstance().showResult(zombie.getName().name() + " | health: " + zombie.getHealth() + " | damage: "+ zombie.getDamage());
+            GameMenuView.getInstance().showResult(App.getArmoredZombieName(zombie.getSpecificName()) + " | health: " + zombie.getHealth() + " | damage: "+ zombie.getDamage());
         }
     }
 
     public void zombieInfo(){
         for (Zombie zombie : App.getCurrentGame().getActiveZombies()){
-            GameMenuView.getInstance().showResult(zombie.getName().name() + ":");
-            GameMenuView.getInstance().showResult("position: (" + zombie.getX() + ", " + zombie.getY() + ")");
-            GameMenuView.getInstance().showResult("health: " + zombie.getHealth());
-            GameMenuView.getInstance().showResult("armor health: " + (zombie instanceof ArmoredZombie? ((ArmoredZombie)zombie).getArmorHealth() : ""));
-            GameMenuView.getInstance().showResult("effects:");
-            if (zombie.getDisabledTicksRemaining() > 0) GameMenuView.getInstance().showResult("stunned " + zombie.getDisabledTicksRemaining());
-            if (zombie.getFreezedTicksRemaining() > 0) GameMenuView.getInstance().showResult("frozen " + zombie.getFreezedTicksRemaining());
-            if (zombie.getSlowTicksRemaining() > 0) GameMenuView.getInstance().showResult("slowed " + zombie.getSlowTicksRemaining());
+            GameMenuView.getInstance().showResult(App.getArmoredZombieName(zombie.getSpecificName()) + ":");
+            GameMenuView.getInstance().showResult("    position: (" + zombie.getX() + ", " + zombie.getY() + ")");
+            GameMenuView.getInstance().showResult("    health: " + zombie.getHealth());
+            GameMenuView.getInstance().showResult("    armor health: " + "\n        " + (zombie instanceof ArmoredZombie armoredZombie? handleArmor(armoredZombie) : ""));
+            GameMenuView.getInstance().showResult("    effects:");
+            if (zombie.getDisabledTicksRemaining() > 0) GameMenuView.getInstance().showResult("        stunned " + zombie.getDisabledTicksRemaining());
+            if (zombie.getFreezedTicksRemaining() > 0) GameMenuView.getInstance().showResult("         frozen " + zombie.getFreezedTicksRemaining());
+            if (zombie.getSlowTicksRemaining() > 0) GameMenuView.getInstance().showResult("        slowed " + zombie.getSlowTicksRemaining());
             GameMenuView.getInstance().showResult("");
         }
+    }
+
+    private String handleArmor(ArmoredZombie armoredZombie){
+        if (armoredZombie.getArmorHealth() <= 0) return "";
+        if (armoredZombie.getSpecificName().equalsIgnoreCase("ZombieDarkArmor3")){
+            if (armoredZombie.getArmorHealth() > 1600){
+                return ("crown: " + (armoredZombie.getArmorHealth()-1600) + "\n"
+                + "shoulderArmor: 1600");
+            }
+            else {
+                return ("shoulderArmor: " + (armoredZombie.getArmorHealth()));
+            }
+        }
+        return (armoredZombie.getArmorTypes().getFirst() + ": " + armoredZombie.getArmorHealth());
     }
 
     public void cheatSpawnZombie(String type, float x, float y){

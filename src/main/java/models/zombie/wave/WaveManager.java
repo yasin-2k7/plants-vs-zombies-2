@@ -74,6 +74,11 @@ public class WaveManager {
         Zombie zombie = new ZombieFactory().createZombie(entry.getZombie());
         if (zombie == null) return;
 
+        if (!App.getCurrentUser().getShowedZombies().get(App.getArmoredZombieName(zombie.getSpecificName()))){
+            App.getCurrentUser().getShowedZombies().put(App.getArmoredZombieName(zombie.getSpecificName()), true);
+            App.getCurrentUser().notifyZombieUnlock(App.getArmoredZombieName(zombie.getSpecificName()));
+        }
+
         int spawnCol = game.getCols();
 
         if (currentWave.isFlagWave() && game.isSandstormActive()) {
@@ -101,7 +106,8 @@ public class WaveManager {
         List<Zombie> zombies = game.getActiveZombies();
         for (Zombie z : zombies) {
             if (!z.isDead()) {
-                z.die(); // این متد پیام مرگ را چاپ می‌کند
+                z.die();
+                onZombieKilled(z);
             }
         }
         zombies.clear();

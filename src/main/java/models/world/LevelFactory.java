@@ -50,8 +50,6 @@ public class LevelFactory {
                 default -> throw new IllegalArgumentException("invalid level for frostbite caves");
             };
         };
-
-
     }
 
     private static GameWorld createAncientEgyptLevel1(){
@@ -59,8 +57,7 @@ public class LevelFactory {
         int cols = 9;
 
         List<WaveSpawnEntry> availableZombies = List.of(
-                new WaveSpawnEntry("ZombieDefault", 100)
-
+                new WaveSpawnEntry("ZombieDefault", 100)   // کاراکتر اضافی حذف شد
         );
 
         List<Wave> waves = Wave.generateWaves(5, 200, availableZombies, 60);
@@ -69,14 +66,14 @@ public class LevelFactory {
         LoseCondition loseCondition = new NormalLose();
         WinCondition winCondition = new NormalWin();
 
-
-        return new AncientEgyptWorld(
+        AncientEgyptWorld world = new AncientEgyptWorld(
                 levelSetup,
                 new ArrayList<>(List.of(loseCondition)),
                 winCondition,
                 new ArrayList<>()
         );
-
+        world.setCurrentChapter(Chapter.EGYPT);
+        return world;
     }
 
     private static GameWorld createAncientEgyptLevel2(){
@@ -85,7 +82,6 @@ public class LevelFactory {
 
         List<WaveSpawnEntry> availableZombies = List.of(
                 new WaveSpawnEntry("ZombieDefault", 100)
-
         );
 
         List<Wave> waves = Wave.generateWaves(5, 200, availableZombies, 60);
@@ -94,14 +90,14 @@ public class LevelFactory {
         LoseCondition loseCondition = new DeadLineLose(4);
         WinCondition winCondition = new NormalWin();
 
-
-        return new AncientEgyptWorld(
+        AncientEgyptWorld world = new AncientEgyptWorld(
                 levelSetup,
                 new ArrayList<>(List.of(loseCondition)),
                 winCondition,
                 new ArrayList<>()
         );
-
+        world.setCurrentChapter(Chapter.EGYPT);
+        return world;
     }
 
     private static GameWorld createAncientEgyptLevel3(){
@@ -110,7 +106,6 @@ public class LevelFactory {
 
         List<WaveSpawnEntry> availableZombies = List.of(
                 new WaveSpawnEntry("ZombieDefault", 100)
-
         );
 
         List<Wave> waves = Wave.generateWaves(5, 200, availableZombies, 60);
@@ -123,14 +118,14 @@ public class LevelFactory {
         LoseCondition loseCondition = new NormalLose();
         WinCondition winCondition = new NormalWin();
 
-
-        return new AncientEgyptWorld(
+        AncientEgyptWorld world = new AncientEgyptWorld(
                 levelSetup,
                 new ArrayList<>(List.of(loseCondition)),
                 winCondition,
                 new ArrayList<>()
         );
-
+        world.setCurrentChapter(Chapter.EGYPT);
+        return world;
     }
 
     private static GameWorld createAncientEgyptLevel4(){
@@ -139,7 +134,6 @@ public class LevelFactory {
 
         List<WaveSpawnEntry> availableZombies = List.of(
                 new WaveSpawnEntry("ZombieDefault", 100)
-
         );
 
         List<Wave> waves = Wave.generateWaves(5, 200, availableZombies, 60);
@@ -148,14 +142,14 @@ public class LevelFactory {
         LoseCondition loseCondition = new NormalLose();
         WinCondition winCondition = new NormalWin();
 
-
-        return new AncientEgyptWorld(
+        AncientEgyptWorld world = new AncientEgyptWorld(
                 levelSetup,
                 new ArrayList<>(List.of(loseCondition)),
                 winCondition,
                 new ArrayList<>()
         );
-
+        world.setCurrentChapter(Chapter.EGYPT);
+        return world;
     }
 
     private static GameWorld createBigWaveBeachLevel1(){
@@ -164,7 +158,6 @@ public class LevelFactory {
 
         List<WaveSpawnEntry> availableZombies = List.of(
                 new WaveSpawnEntry("ZombieDefault", 100)
-
         );
 
         List<Wave> waves = Wave.generateWaves(5, 200, availableZombies, 60);
@@ -173,14 +166,14 @@ public class LevelFactory {
         LoseCondition loseCondition = new NormalLose();
         WinCondition winCondition = new NormalWin();
 
-
-        return new BigWaveBeachWorld(
+        BigWaveBeachWorld world = new BigWaveBeachWorld(
                 levelSetup,
                 new ArrayList<>(List.of(loseCondition)),
                 winCondition,
                 new ArrayList<>()
         );
-
+        world.setCurrentChapter(Chapter.BIG_WAVE_BEACH);
+        return world;
     }
 
     private static GameWorld createBigWaveBeachLevel2(){
@@ -189,7 +182,6 @@ public class LevelFactory {
 
         List<WaveSpawnEntry> availableZombies = List.of(
                 new WaveSpawnEntry("ZombieDefault", 100)
-
         );
 
         List<Wave> waves = Wave.generateWaves(5, 200, availableZombies, 60);
@@ -204,14 +196,14 @@ public class LevelFactory {
         LoseCondition loseCondition = new NormalLose();
         WinCondition winCondition = new NormalWin();
 
-
-        return new BigWaveBeachWorld(
+        BigWaveBeachWorld world = new BigWaveBeachWorld(
                 levelSetup,
                 new ArrayList<>(List.of(loseCondition)),
                 winCondition,
                 new ArrayList<>()
         );
-
+        world.setCurrentChapter(Chapter.BIG_WAVE_BEACH);
+        return world;
     }
 
     private static GameWorld createBigWaveBeachLevel3(){
@@ -220,7 +212,6 @@ public class LevelFactory {
 
         List<WaveSpawnEntry> availableZombies = List.of(
                 new WaveSpawnEntry("ZombieDefault", 100)
-
         );
 
         List<Wave> waves = Wave.generateWaves(5, 200, availableZombies, 60);
@@ -229,16 +220,15 @@ public class LevelFactory {
         TimedWarLose loseCondition = new TimedWarLose(5000, 12);
         WinCondition winCondition = new TimedWarWin(loseCondition);
 
-        GameWorld world = new BigWaveBeachWorld(
+        BigWaveBeachWorld world = new BigWaveBeachWorld(
                 levelSetup,
                 new ArrayList<>(List.of(loseCondition)),
                 winCondition,
                 new ArrayList<>()
         );
         world.registerZombieKillListener(loseCondition::onZombieKilled);
-
+        world.setCurrentChapter(Chapter.BIG_WAVE_BEACH);
         return world;
-
     }
 
     private static GameWorld createBigWaveBeachLevel4(){
@@ -247,7 +237,6 @@ public class LevelFactory {
 
         List<WaveSpawnEntry> availableZombies = List.of(
                 new WaveSpawnEntry("ZombieDefault", 100)
-
         );
 
         List<Wave> waves = Wave.generateWaves(5, 200, availableZombies, 60);
@@ -256,14 +245,14 @@ public class LevelFactory {
         LoseCondition loseCondition = new NormalLose();
         WinCondition winCondition = new NormalWin();
 
-
-        return new AncientEgyptWorld(
+        AncientEgyptWorld world = new AncientEgyptWorld(
                 levelSetup,
                 new ArrayList<>(List.of(loseCondition)),
                 winCondition,
                 new ArrayList<>()
         );
-
+        world.setCurrentChapter(Chapter.BIG_WAVE_BEACH);
+        return world;
     }
 
     private static GameWorld createDarkAgesLevel1(){
@@ -272,7 +261,6 @@ public class LevelFactory {
 
         List<WaveSpawnEntry> availableZombies = List.of(
                 new WaveSpawnEntry("ZombieDefault", 100)
-
         );
 
         List<Wave> waves = Wave.generateWaves(5, 200, availableZombies, 60);
@@ -284,13 +272,14 @@ public class LevelFactory {
         ArrayList<Mechanic> mechanics = new ArrayList<>();
         mechanics.add(new DarkAgesMechanic());
 
-        return new DarkAgesWorld(
+        DarkAgesWorld world = new DarkAgesWorld(
                 levelSetup,
                 new ArrayList<>(List.of(loseCondition)),
                 winCondition,
                 mechanics
         );
-
+        world.setCurrentChapter(Chapter.DARK_AGES);
+        return world;
     }
 
     private static GameWorld createDarkAgesLevel2(){
@@ -299,7 +288,6 @@ public class LevelFactory {
 
         List<WaveSpawnEntry> availableZombies = List.of(
                 new WaveSpawnEntry("ZombieDefault", 100)
-
         );
 
         List<Wave> waves = Wave.generateWaves(5, 200, availableZombies, 60);
@@ -311,13 +299,14 @@ public class LevelFactory {
         ArrayList<Mechanic> mechanics = new ArrayList<>();
         mechanics.add(new DarkAgesMechanic());
 
-        return new DarkAgesWorld(
+        DarkAgesWorld world = new DarkAgesWorld(
                 levelSetup,
                 new ArrayList<>(List.of(loseCondition)),
                 winCondition,
                 mechanics
         );
-
+        world.setCurrentChapter(Chapter.DARK_AGES);
+        return world;
     }
 
     private static GameWorld createDarkAgesLevel3(){
@@ -326,7 +315,6 @@ public class LevelFactory {
 
         List<WaveSpawnEntry> availableZombies = List.of(
                 new WaveSpawnEntry("ZombieDefault", 100)
-
         );
 
         List<Wave> waves = Wave.generateWaves(5, 200, availableZombies, 60);
@@ -338,13 +326,14 @@ public class LevelFactory {
         ArrayList<Mechanic> mechanics = new ArrayList<>();
         mechanics.add(new DarkAgesMechanic());
 
-        return new DarkAgesWorld(
+        DarkAgesWorld world = new DarkAgesWorld(
                 levelSetup,
                 new ArrayList<>(List.of(loseCondition)),
                 winCondition,
                 mechanics
         );
-
+        world.setCurrentChapter(Chapter.DARK_AGES);
+        return world;
     }
 
     private static GameWorld createDarkAgesLevel4(){
@@ -364,12 +353,14 @@ public class LevelFactory {
         ArrayList<Mechanic> mechanics = new ArrayList<>();
         mechanics.add(new DarkAgesMechanic());
 
-        return new DarkAgesWorld(
+        DarkAgesWorld world = new DarkAgesWorld(
                 levelSetup,
                 new ArrayList<>(List.of(loseCondition)),
                 winCondition,
                 mechanics
         );
+        world.setCurrentChapter(Chapter.DARK_AGES);
+        return world;
     }
 
     private static GameWorld createFrostbiteCavesLevel1(){
@@ -378,7 +369,6 @@ public class LevelFactory {
 
         List<WaveSpawnEntry> availableZombies = List.of(
                 new WaveSpawnEntry("ZombieDefault", 100)
-
         );
 
         List<Wave> waves = Wave.generateWaves(5, 200, availableZombies, 60);
@@ -387,14 +377,14 @@ public class LevelFactory {
         LoseCondition loseCondition = new NormalLose();
         WinCondition winCondition = new NormalWin();
 
-
-        return new FrostbiteCavesWorld(
+        FrostbiteCavesWorld world = new FrostbiteCavesWorld(
                 levelSetup,
                 new ArrayList<>(List.of(loseCondition)),
                 winCondition,
                 new ArrayList<>()
         );
-
+        world.setCurrentChapter(Chapter.FROSTBITE_CAVES);
+        return world;
     }
 
     private static GameWorld createFrostbiteCavesLevel2(){
@@ -403,7 +393,6 @@ public class LevelFactory {
 
         List<WaveSpawnEntry> availableZombies = List.of(
                 new WaveSpawnEntry("ZombieDefault", 100)
-
         );
 
         List<Wave> waves = Wave.generateWaves(5, 200, availableZombies, 60);
@@ -416,14 +405,14 @@ public class LevelFactory {
         LoseCondition loseCondition = new NormalLose();
         WinCondition winCondition = new NormalWin();
 
-
-        return new FrostbiteCavesWorld(
+        FrostbiteCavesWorld world = new FrostbiteCavesWorld(
                 levelSetup,
                 new ArrayList<>(List.of(loseCondition)),
                 winCondition,
                 new ArrayList<>()
         );
-
+        world.setCurrentChapter(Chapter.FROSTBITE_CAVES);
+        return world;
     }
 
     private static GameWorld createFrostbiteCavesLevel3(){
@@ -432,7 +421,6 @@ public class LevelFactory {
 
         List<WaveSpawnEntry> availableZombies = List.of(
                 new WaveSpawnEntry("ZombieDefault", 100)
-
         );
 
         List<Wave> waves = Wave.generateWaves(5, 200, availableZombies, 60);
@@ -441,14 +429,14 @@ public class LevelFactory {
         LoseCondition loseCondition = new NormalLose();
         WinCondition winCondition = new NormalWin();
 
-
-        return new FrostbiteCavesWorld(
+        FrostbiteCavesWorld world = new FrostbiteCavesWorld(
                 levelSetup,
                 new ArrayList<>(List.of(loseCondition)),
                 winCondition,
                 new ArrayList<>()
         );
-
+        world.setCurrentChapter(Chapter.FROSTBITE_CAVES);
+        return world;
     }
 
     private static GameWorld createFrostbiteCavesLevel4(){
@@ -457,7 +445,6 @@ public class LevelFactory {
 
         List<WaveSpawnEntry> availableZombies = List.of(
                 new WaveSpawnEntry("ZombieDefault", 100)
-
         );
 
         List<Wave> waves = Wave.generateWaves(5, 200, availableZombies, 60);
@@ -466,14 +453,13 @@ public class LevelFactory {
         LoseCondition loseCondition = new NormalLose();
         WinCondition winCondition = new NormalWin();
 
-
-        return new AncientEgyptWorld(
+        AncientEgyptWorld world = new AncientEgyptWorld(
                 levelSetup,
                 new ArrayList<>(List.of(loseCondition)),
                 winCondition,
                 new ArrayList<>()
         );
-
+        world.setCurrentChapter(Chapter.FROSTBITE_CAVES);
+        return world;
     }
-
 }

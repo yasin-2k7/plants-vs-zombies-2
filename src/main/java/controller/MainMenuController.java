@@ -26,6 +26,10 @@ public class MainMenuController implements MenuController {
             case "green house":
                 AppView.setCurrentScreen(GreenhouseMenuView.getInstance());
                 return "Entering green House...";
+            case "travel log":
+                AppView.setCurrentScreen(TravelLogMenuView.getInstance());
+                TravelLogMenuView.getInstance().showCurrentPage();
+                return "Entering Travel Log...";
             default:
                 return "Invalid menu name.";
         }

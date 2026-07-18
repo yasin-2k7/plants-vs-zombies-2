@@ -49,8 +49,10 @@ public class Sun implements Resettable {
         isCollected = true;
     }
 
-    public void setup(GameWorld game, int row, int col, SunType type){
-        this.game = game;
+    public void setup(int row, int col, SunType type){
+        if (game == null) {
+            game = App.getCurrentGame();
+        }
         this.finalX = col * App.getCellWidth() + App.getCellWidth()/2;
         this.finalY = row * App.getCellHeight() + App.getCellHeight()/2;
         this.x = finalX;
@@ -62,7 +64,6 @@ public class Sun implements Resettable {
         this.producer = null;
         GameMenuController.updateState("New " + type + " sun is dropping at position (" + finalX + ", " + finalY + ")");
     }
-
 
 
     @Override

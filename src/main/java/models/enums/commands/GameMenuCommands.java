@@ -10,7 +10,7 @@ public enum GameMenuCommands {
     ADVANCE_TIME("\\s*advance\\s+time\\s+-t\\s+(?<count>\\d+)\\s+tick\\s*"),
     COLLECT_SUN("\\s*collect\\s+sun\\s+-l\\s+\\(\\s*(?<x>\\d+)\\s*,\\s*(?<y>\\d+)\\s*\\)\\s*"),
     SHOW_SUN_AMOUNT("\\s*show\\s+sun\\s+amount\\s*"),
-    CHEAT_ADD_SUNS("\\s*cheat\\s+add\\s+-n\\s+(?<count>\\d+)\\s+sun\\s*"),
+    CHEAT_ADD_SUNS("\\s*cheat\\s+add\\s+-n\\s+(?<count>\\d+)\\s+suns\\s*"),
     RELEASE_THE_NUKE("\\s*release\\s+the\\s+nuke\\s*"),
     PLANT_PLANT("\\s*plant\\s+plant\\s+-t\\s+(?<type>\\S+)\\s+-l\\s+\\(\\s*(?<x>\\d+)\\s*,\\s*(?<y>\\d+)\\s*\\)\\s*"),
     CHEAT_REMOVE_COOLDOWN("\\s*cheat\\s+remove-cooldown\\s*"),
