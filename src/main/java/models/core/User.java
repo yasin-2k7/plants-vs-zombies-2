@@ -33,6 +33,7 @@ public class User {
     private HashMap<PlantType, Integer> seedPackets;
     private HashMap<PlantType, Integer> unlockedPlantsLevels;
     private HashMap<PlantType, Boolean> plantBoosts;
+    private HashMap<String, Boolean> showedZombies;
     private ArrayList<News> unreadNews;
     private List<News> newsList = new ArrayList<>();
     private GreenHouse greenhouse;
@@ -46,6 +47,7 @@ public class User {
         this.plantBoosts = new HashMap<>();
         this.unlockedPlantsLevels = new HashMap<>();
         this.seedPackets = new HashMap<>();
+        this.showedZombies = new HashMap<>();
         this.greenhouse = new GreenHouse();
         this.coins = 10000;
         this.gems = 1000;
@@ -97,6 +99,10 @@ public class User {
 
     public int getSeedPacketsCount(PlantType type) {
         return this.seedPackets.getOrDefault(type, 0);
+    }
+
+    public HashMap<PlantType, Integer> getSeedPackets() {
+        return seedPackets;
     }
 
     public boolean checkPassword(String password) {
@@ -274,6 +280,10 @@ public class User {
 
     public void addNews(News news){
         newsList.add(news);
+    }
+
+    public HashMap<String, Boolean> getShowedZombies() {
+        return showedZombies;
     }
 
     public void notifyPlantUnlock(String plantName){

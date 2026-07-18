@@ -5,16 +5,16 @@ import java.util.regex.Pattern;
 
 public enum CollectionMenuCommands {
     MENU_ENTER(""),
-    MENU_SHOW_CURRENT(""),
-    MENU_EXIT(""),
-    MENU_COLLECTION_SHOW_PLANTS(""),
-    MENU_COLLECTION_SHOW_ALL_PLANTS(""),
-    MENU_COLLECTION_SHOW_ZOMBIES(""),
-    MENU_COLLECTION_SHOW_ALL_ZOMBIES(""),
-    MENU_COLLECTION_SHOW_ONE_PLANT(""),
-    MENU_COLLECTION_SHOW_ONE_ZOMBIE(""),
-    MENU_COLLECTION_UPGRADE(""),
-    MENU_COLLECTION_PURCHASE("");
+    MENU_SHOW_CURRENT("\\s*menu\\s+show\\s+current\\s*"),
+    MENU_EXIT("\\s*menu\\s+exit\\s*"),
+    MENU_COLLECTION_SHOW_PLANTS("\\s*menu\\s+collection\\s+show\\s+plants\\s*"),
+    MENU_COLLECTION_SHOW_ALL_PLANTS("\\s*menu\\s+collection\\s+show\\s+all\\s+plants\\s*"),
+    MENU_COLLECTION_SHOW_ZOMBIES("\\s*menu\\s+collection\\s+show\\s+zombies\\s*"),
+    MENU_COLLECTION_SHOW_ALL_ZOMBIES("\\s*menu\\s+collection\\s+show\\s+all\\s+zombies\\s*"),
+    MENU_COLLECTION_SHOW_ONE_PLANT("\\s*menu\\s+collection\\s+show-plant\\s+-p\\s+(?<plant>\\S+)\\s*"),
+    MENU_COLLECTION_SHOW_ONE_ZOMBIE("\\s*menu\\s+collection\\s+show\\s+zombie\\s+-z\\s+(?<zombie>\\S+)\\s*"),
+    MENU_COLLECTION_UPGRADE("\\s*menu\\s+collection\\s+upgrade-plant\\s+-p\\s+(?<plant>\\S+)\\s*"),
+    MENU_COLLECTION_PURCHASE("\\s*menu\\s+collection\\s+purchase-plant\\s+-p\\s+(?<plant>\\S+)\\s*");
 
     private final String pattern;
     private final Pattern compiledPattern;
