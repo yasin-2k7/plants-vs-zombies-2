@@ -17,6 +17,7 @@ public class UserManager {
             if (user != null) {
                 currentUser = user;
                 App.setCurrentUser(user);
+                user.initQuests();
             }
         }
     }
@@ -56,6 +57,7 @@ public class UserManager {
         if (user.checkPassword(password)) {
             currentUser = user;
             App.setCurrentUser(user);
+            user.initQuests();
             if(stayLoggedIn == true){
                 UserDataManager.saveLoggedInUser(username);
             }

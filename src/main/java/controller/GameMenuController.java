@@ -34,6 +34,10 @@ public class GameMenuController implements MenuController {
         if (menuName.equalsIgnoreCase("collection")) {
             AppView.setCurrentScreen(CollectionMenuView.getInstance());
             return "Entering collection menu...";
+        } else if (menuName.equalsIgnoreCase("travel log")) {
+            AppView.setCurrentScreen(TravelLogMenuView.getInstance());
+            TravelLogMenuView.getInstance().showCurrentPage();
+            return "Entering Travel Log...";
         }
         return "Invalid menu name!";
     }
@@ -81,8 +85,7 @@ public class GameMenuController implements MenuController {
                 else{
                     GameWorld game = App.getCurrentGame();
                     sun.collect();
-                    int sunSize = sun.getProducer() == null ? sun.getType().amount : sun.getSize();
-                    game.setSun(game.getSun() + sunSize);
+                    game.setSun(game.getSun() + sun.getSize());
                     if (sun.getProducer() != null) sun.getProducer().getComponentSuns().remove(sun);
                 }
                 return;
@@ -97,11 +100,20 @@ public class GameMenuController implements MenuController {
 
     public void cheatAddSun(int count){
         App.getCurrentGame().setSun(25*count+App.getCurrentGame().getSun());
+        GameMenuView.getInstance().showResult("Cheat activated! Added " + count + " suns. ☀️");
     }
 
-    public void releaseTheNuke(){
-        for (Zombie zombie : App.getCurrentGame().getActiveZombies()){
-            zombie.die();
+    public void releaseTheNuke() {
+        GameWorld game = App.getCurrentGame();
+        NormalMechanic normal = game.getMechanic(NormalMechanic.class);
+        if (normal != null && normal.getWaveManager() != null) {
+            normal.getWaveManager().releaseTheNuke(game);
+        } else {
+            for (Zombie zombie : game.getActiveZombies()) {
+                zombie.die();
+            }
+            game.getActiveZombies().clear();
+            System.out.println("All zombies eliminated by nuke (fallback)!");
         }
     }
 
