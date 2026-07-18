@@ -73,6 +73,7 @@ public class WaveManager {
 
         Zombie zombie = new ZombieFactory().createZombie(entry.getZombie());
         if (zombie == null) return;
+        if (App.getCurrentUser().getShowedZombies().containsKey())
 
         int spawnCol = game.getCols();
 

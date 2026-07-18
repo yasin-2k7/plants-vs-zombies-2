@@ -33,26 +33,26 @@ public class GameMenuView implements View{
                             return;
                         }
                         controller.advanceTime(count);
-                        break;
+                        return;
                     case MENU_EXIT:
                         controller.exitMenu();
-                        break;
+                        return;
                     case MENU_ENTER:
                         controller.enterMenu(matcher.group("name"));
-                        break;
+                        return;
                     case SHOW_MAP:
                         controller.showMap();
-                        break;
+                        return;
                     case FEED_PLANT:
                         float x = Float.parseFloat(matcher.group("x"));
                         float y = Float.parseFloat(matcher.group("y"));
                         controller.feedPlant(x, y);
-                        break;
+                        return;
                     case COLLECT_SUN:
                         x = Float.parseFloat(matcher.group("x"));
                         y = Float.parseFloat(matcher.group("y"));
                         controller.collectSun(x, y);
-                        break;
+                        return;
                     case PLANT_PLANT:
                         String type = matcher.group("type");
                         x = Float.parseFloat(matcher.group("x"));
@@ -69,55 +69,57 @@ public class GameMenuView implements View{
                             return;
                         }
                         controller.plantPlant(selectedType, x, y);
-                        break;
+                        return;
                     case PLUCK_PLANT:
                         x = Float.parseFloat(matcher.group("x"));
                         y = Float.parseFloat(matcher.group("y"));
                         controller.pluckPlant(x, y);
-                        break;
+                        return;
                     case ZOMBIE_INFO:
                         controller.zombieInfo();
-                        break;
+                        return;
                     case CHEAT_ADD_SUNS:
                         int amount = Integer.parseInt(matcher.group("count"));
                         controller.cheatAddSun(amount);
-                        break;
+                        return;
                     case SHOW_SUN_AMOUNT:
                         controller.showSunAmount();
-                        break;
+                        return;
                     case RELEASE_THE_NUKE:
                         controller.releaseTheNuke();
-                        break;
+                        return;
                     case MENU_SHOW_CURRENT:
                         controller.showCurrentMenu();
-                        break;
+                        return;
                     case SHOW_TILE_STATUS:
                         x = Float.parseFloat(matcher.group("x"));
                         y = Float.parseFloat(matcher.group("y"));
                         controller.showTileStatus(x, y);
-                        break;
+                        return;
                     case CHEAT_SPAWN_ZOMBIE:
                         type = matcher.group("type");
                         x = Float.parseFloat(matcher.group("x"));
                         y = Float.parseFloat(matcher.group("y"));
                         controller.cheatSpawnZombie(type, x, y);
-                        break;
+                        return;
                     case SHOW_PLANTS_STATUS:
                         controller.showPlantsStatus();
-                        break;
+                        return;
                     case CHEAT_REMOVE_COOLDOWN:
                         controller.removeCooldown();
-                        break;
+                        return;
                     case CHEAT_ADD_PLANT_FOOD:
                         controller.cheatAddPlantFood();
-                        break;
+                        return;
                     case START_ZOMBIE_WAVES:
-                        break;
+                        return;
                     default:
-                        System.out.println("invalid command!");
+                        break;
+
                 }
             }
         }
+        System.out.println("invalid command!");
     }
 
     public void showResult(String message){

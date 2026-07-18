@@ -14,14 +14,14 @@ public class CombinedDamageStrategy implements HitStrategy{
     private float radius = 0;
     private String element = "NORMAL";
     private int chillTime = 50;
-    private float poisonDamageOnTick = 5;
+    private int poisonDamageOnTick = 5;
     private ProjectileType projectileType;
 
-    public float getPoisonDamageOnTick() {
+    public int getPoisonDamageOnTick() {
         return poisonDamageOnTick;
     }
 
-    public void setPoisonDamageOnTick(float poisonDamageOnTick) {
+    public void setPoisonDamageOnTick(int poisonDamageOnTick) {
         this.poisonDamageOnTick = poisonDamageOnTick;
     }
 
@@ -34,7 +34,7 @@ public class CombinedDamageStrategy implements HitStrategy{
     }
 
     private CombinedDamageStrategy(int damage, int neighborDamage, float radius,
-                                   String element, int chillTime, float poisonDamageOnTick,
+                                   String element, int chillTime, int poisonDamageOnTick,
                                    ProjectileType projectileType) {
         this.damage = damage;
         this.neighborDamage = neighborDamage;
@@ -112,8 +112,14 @@ public class CombinedDamageStrategy implements HitStrategy{
                 }
                 break;
             case "POISON":
+                if (target instanceof Zombie zombie){
+                    zombie.setHealth(zombie.getHealth()-poisonDamageOnTick);
+                }
                 break;
             case "MOVE":
+                if (target instanceof Zombie zombie){
+                    zombie.setX(zombie.getX() + 100);
+                }
                 break;
         }
     }
