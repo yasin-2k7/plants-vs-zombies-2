@@ -2,7 +2,6 @@ package models.zombie.wave;
 
 import controller.GameMenuController;
 import models.core.App;
-import models.core.User;
 import models.world.GameWorld;
 import models.zombie.Zombie;
 import models.zombie.ZombieFactory;
@@ -75,6 +74,11 @@ public class WaveManager {
         Zombie zombie = new ZombieFactory().createZombie(entry.getZombie());
         if (zombie == null) return;
         if (App.getCurrentUser().getShowedZombies().containsKey(entry.getZombieAlias())) {
+
+        if (!App.getCurrentUser().getShowedZombies().get(App.getArmoredZombieName(zombie.getSpecificName()))){
+            App.getCurrentUser().getShowedZombies().put(App.getArmoredZombieName(zombie.getSpecificName()), true);
+            App.getCurrentUser().notifyZombieUnlock(App.getArmoredZombieName(zombie.getSpecificName()));
+        }
 
         int spawnCol = game.getCols();
 

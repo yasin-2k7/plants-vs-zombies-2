@@ -55,6 +55,37 @@ public class User {
         this.unlockedLevel = 1;
         this.questStats = new QuestStats();
         putInitialPlants();
+        putZombies();
+    }
+
+    private void putZombies(){
+        showedZombies.put("ZombieDefault", false);
+        showedZombies.put("ZombieConeHead", false);
+        showedZombies.put("ZombieBucketHead", false);
+        showedZombies.put("ZombieBrickHead", false);
+        showedZombies.put("ZombieKnight", false);
+        showedZombies.put("ZombieGargantuar", false);
+        showedZombies.put("ZombieImp", false);
+        showedZombies.put("ZombieRa", false);
+        showedZombies.put("ZombieExplorer", false);
+        showedZombies.put("ZombieTombRaiser", false);
+        showedZombies.put("ZombieIceAgeDodo", false);
+        showedZombies.put("ZombieIceAgeHunter", false);
+        showedZombies.put("ZombieIceAgeTroglobite", false);
+        showedZombies.put("ZombieBeachFisherman", false);
+        showedZombies.put("ZombieBeachOctopus", false);
+        showedZombies.put("ZombieBeachSnorkel", false);
+        showedZombies.put("ZombieDarkJuggler", false);
+        showedZombies.put("ZombieWizard", false);
+        showedZombies.put("ZombieDarkKing", false);
+        showedZombies.put("ZombieDarkImpDragon", false);
+        showedZombies.put("ZombieModernAllStar", false);
+        showedZombies.put("ZombieLostCityJane", false);
+        showedZombies.put("ZombieCrystalSkull", false);
+        showedZombies.put("ZombieProspector", false);
+        showedZombies.put("ZombiePiano", false);
+        showedZombies.put("ZombieArcade", false);
+        showedZombies.put("ZombieNewspaper", false);
     }
 
     private void putInitialPlants(){

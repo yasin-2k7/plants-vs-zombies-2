@@ -1,9 +1,19 @@
 package models.miniGame.beghouled;
 
-import models.plant.Plant;
+import models.enums.PlantType;
 
 public class PlantUpgrade {
-    private Class<? extends Plant> from;
-    private Class<? extends Plant> to;
-    private int cost;
+    private final PlantType from;
+    private final PlantType to;
+    private final int cost;
+
+    public PlantUpgrade(PlantType from, PlantType to, int cost) {
+        this.from = from;
+        this.to = to;
+        this.cost = cost;
+    }
+
+    public PlantType getFrom() { return from; }
+    public PlantType getTo() { return to; }
+    public int getCost() { return cost; }
 }

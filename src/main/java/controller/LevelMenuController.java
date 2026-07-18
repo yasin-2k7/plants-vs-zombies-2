@@ -3,21 +3,13 @@ package controller;
 import models.core.App;
 import models.core.User;
 import models.enums.Chapter;
-import models.enums.LevelType;
 import models.world.Cell;
-import models.world.ChapterWorld.AncientEgyptWorld;
 import models.world.GameWorld;
 import models.world.LevelFactory;
-import models.world.levelSetup.NormalLevelSetup;
-import models.world.loseCondition.NormalLose;
-import models.world.winCondition.NormalWin;
-import models.zombie.wave.Wave;
 import view.terminalView.AppView;
 import view.terminalView.GameMenuView;
 import view.terminalView.PlantMenuView;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 public class LevelMenuController implements MenuController{

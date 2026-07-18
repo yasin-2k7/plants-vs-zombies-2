@@ -8,7 +8,7 @@ import java.util.Queue;
 
 public class BowlingLevel extends GameWorld {
     private List<BowlingBall> activeBalls;
-    private Queue<Plant> conveyorBelt;
+    private List<Plant> conveyorBelt;
     private int redLineCol;
 
     @Override

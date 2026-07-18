@@ -1,9 +1,25 @@
 package models.miniGame;
 
 import models.world.GameWorld;
+import models.world.levelSetup.LevelSetup;
+import models.world.loseCondition.LoseCondition;
+import models.world.mechanics.Mechanic;
+import models.world.winCondition.WinCondition;
 
-public abstract class MiniGameLevel extends GameWorld {
+import java.util.ArrayList;
+
+public class MiniGameLevel extends GameWorld {
     protected int levelNumber;
 
-    public MiniGameLevel(){}
+    public MiniGameLevel(LevelSetup levelSetup, ArrayList<LoseCondition> loseConditions,
+                         WinCondition winCondition, ArrayList<Mechanic> mechanics) {
+        super(levelSetup, loseConditions, winCondition, mechanics);
+    }
+
+    @Override
+    protected void applyChapterRules() {
+
+    }
+
+
 }
