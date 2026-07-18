@@ -44,6 +44,9 @@ public class ChapterMenuView implements View {
                     case MENU_SHOW_CURRENT:
                         controller.showCurrentMenu();
                         break;
+                    case MENU_ENTER:
+                        controller.changeMenu();
+                        break;
                 }
                 break;
             }

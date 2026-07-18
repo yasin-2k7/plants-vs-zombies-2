@@ -43,12 +43,14 @@ public class CollectionMenuController implements MenuController{
 
     public void showZombies(){
         for (String name : App.getCurrentUser().getShowedZombies().keySet()){
-            CollectionMenuView.getInstance().showResult(name);
+            if (App.getCurrentUser().getShowedZombies().get(name)) CollectionMenuView.getInstance().showResult(name);
         }
     }
 
     public void showAllZombies(){
-
+        for (String name : App.getCurrentUser().getShowedZombies().keySet()){
+            CollectionMenuView.getInstance().showResult(name);
+        }
     }
 
     public void showPlant(PlantType type){
@@ -61,22 +63,28 @@ public class CollectionMenuController implements MenuController{
     }
 
     public void showZombie(String name){
+        String zombieName = App.getZombieId(name);
         Zombie zombie;
         try{
-            zombie = new ZombieFactory().createZombie(name);
+            zombie = new ZombieFactory().createZombie(zombieName);
         } catch (Exception e) {
             CollectionMenuView.getInstance().showResult("Zombie doesn't exist.");
             return;
         }
 
         if (!App.getCurrentUser().getShowedZombies().containsKey(name)){
-            CollectionMenuView.getInstance().showResult("this zombie is locked.");
+            CollectionMenuView.getInstance().showResult("Zombie doesn't exist.");
+            return;
+        }
+
+        if (!App.getCurrentUser().getShowedZombies().get(name)){
+            CollectionMenuView.getInstance().showResult("Zombie is locked.");
             return;
         }
 
         CollectionMenuView.getInstance().showResult(name + "\n"
                 + "Health: " + zombie.getHealth() + "\n"
-                + "Damage: " + zombie.getDamage() + "\n"
+                + "Damage: " + zombie.getDamage()/10 + "\n"
                 + "Speed: " + (int) (zombie.getSpeed()*15));
 
     }

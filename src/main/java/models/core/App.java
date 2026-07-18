@@ -64,4 +64,34 @@ public class App {
     public static View getCurrentScreen() {
         return currentScreen;
     }
+
+    public static String getArmoredZombieName(String id){
+        switch (id){
+            case "ZombieArmor1":
+                return "ZombieConeHead";
+            case "ZombieArmor2":
+                return "ZombieBucketHead";
+            case "ZombieDarkArmor3":
+                return "ZombieKnight";
+            case "ZombieArmor4":
+                return "ZombieBrickHead";
+            default:
+                return id;
+        }
+    }
+
+    public static String getZombieId(String name){
+        switch (name){
+            case "ZombieConeHead":
+                return "ZombieArmor1";
+            case "ZombieBucketHead":
+                return "ZombieArmor2";
+            case "ZombieKnight":
+                return "ZombieDarkArmor3";
+            case "ZombieBrickHead":
+                return "ZombieArmor4";
+            default:
+                return name;
+        }
+    }
 }

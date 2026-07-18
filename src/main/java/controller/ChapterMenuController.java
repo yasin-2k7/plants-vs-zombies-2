@@ -4,16 +4,13 @@ import models.core.App;
 import models.core.User;
 import models.enums.Chapter;
 import view.View;
-import view.terminalView.AppView;
-import view.terminalView.ChapterMenuView;
-import view.terminalView.GameMenuView;
-import view.terminalView.LevelMenuView;
+import view.terminalView.*;
 
 public class ChapterMenuController implements MenuController{
 
     @Override
     public void changeMenu() {
-        AppView.currentScreen = LevelMenuView.getInstance(new LevelMenuController());
+        AppView.currentScreen = CollectionMenuView.getInstance();
     }
 
     @Override

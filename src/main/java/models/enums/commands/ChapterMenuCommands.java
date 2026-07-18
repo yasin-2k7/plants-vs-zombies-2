@@ -4,9 +4,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public enum ChapterMenuCommands {
-    MENU_ENTER(""),
+    MENU_ENTER("\\s*menu\\s+enter\\s+collection\\s+menu\\s*"),
     MENU_SHOW_CURRENT("^menu\\s+show\\s+current$"),
-    MENU_EXIT(""),
+    MENU_EXIT("\\s*menu\\s+exit\\s*"),
     MENU_ENTER_CHAPTER(""),
     MENU_GREENHOUSE(""),
     MENU_TRAVEL_LOG(""),
