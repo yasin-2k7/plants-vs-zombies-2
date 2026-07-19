@@ -1,13 +1,15 @@
-// فایل: controller/TravelLogMenuController.java
 package controller;
 
 import models.core.App;
 import models.core.User;
+import models.miniGame.MiniGameFactory;
+import models.miniGame.MiniGames;
 import models.quest.Quest;
 import models.quest.QuestPriority;
 import models.quest.types.DailyQuest;
 import models.quest.types.MainQuest;
 import models.quest.types.EpicChallengeQuest;
+import models.world.GameWorld;
 import view.terminalView.AppView;
 import view.terminalView.GameMenuView;
 import view.terminalView.MainMenuView;
@@ -36,7 +38,7 @@ public class TravelLogMenuController implements MenuController {
 
     public String changePage(String pageName) {
         if (pageName.equalsIgnoreCase("daily") || pageName.equalsIgnoreCase("main")
-                || pageName.equalsIgnoreCase("epic") || pageName.equalsIgnoreCase("minigame")) {
+                || pageName.equalsIgnoreCase("epic") || pageName.equalsIgnoreCase("minigame")){
             this.currentPage = pageName.toLowerCase();
             return "Switched to " + pageName + " page.";
         }
@@ -46,7 +48,7 @@ public class TravelLogMenuController implements MenuController {
     public void displayCurrentPage() {
         User user = App.getCurrentUser();
         if (user == null) {
-            System.out.println("No user logged in.");
+            GameMenuView.getInstance().showResult("No user logged in.");
             return;
         }
 
@@ -68,7 +70,7 @@ public class TravelLogMenuController implements MenuController {
                 displayMinigames();
                 break;
             default:
-                System.out.println("Unknown page.");
+                GameMenuView.getInstance().showResult("Unknown page.");
         }
     }
 
@@ -79,21 +81,21 @@ public class TravelLogMenuController implements MenuController {
                 .collect(Collectors.toList());
 
         if (filtered.isEmpty()) {
-            System.out.println("No " + type.getSimpleName() + " quests available.");
+            GameMenuView.getInstance().showResult("No " + type.getSimpleName() + " quests available.");
             return;
         }
 
-        System.out.println("===== " + type.getSimpleName() + " Quests =====");
+        GameMenuView.getInstance().showResult("===== " + type.getSimpleName() + " Quests =====");
         for (Quest q : filtered) {
             String status = q.isCompleted() ? "[✓ COMPLETED]" : "[✗ IN PROGRESS]";
             String priorityIcon = getPriorityIcon(q.getPriority());
             if (q.isCompleted()) {
-                System.out.println("✅ " + q.getDescription() + " " + status);
+                GameMenuView.getInstance().showResult("✅ " + q.getDescription() + " " + status);
             } else {
-                System.out.println(priorityIcon + " " + q.getDescription() + " " + status);
+                GameMenuView.getInstance().showResult(priorityIcon + " " + q.getDescription() + " " + status);
             }
         }
-        System.out.println("================================");
+        GameMenuView.getInstance().showResult("================================");
     }
 
     private String getPriorityIcon(QuestPriority priority) {
@@ -107,11 +109,41 @@ public class TravelLogMenuController implements MenuController {
     }
 
     private void displayMinigames() {
-        System.out.println("===== Minigames =====");
-        System.out.println("1. Beghouled");
-        System.out.println("2. Bowling");
-        System.out.println("3. Conveyor");
-        System.out.println("(Coming soon...)");
-        System.out.println("=====================");
+        GameMenuView.getInstance().showResult("===== Minigames =====");
+        GameMenuView.getInstance().showResult("1. Beghouled");
+        GameMenuView.getInstance().showResult("2. Bowling");
+        GameMenuView.getInstance().showResult("3. Vase Breaker");
+        GameMenuView.getInstance().showResult("4. IZombie");
+        GameMenuView.getInstance().showResult("4. Zombotany");
+        GameMenuView.getInstance().showResult("=====================");
+    }
+
+    public void selectMinigame(String minigameName, int level) {
+        MiniGames selected = parseMinigameName(minigameName);
+        if (selected == null) {
+            GameMenuView.getInstance().showResult("Invalid minigame name. Available: beghouled, bowling, vasebreaker," +
+                    " izombie, zombotany.");
+            return;
+        }
+
+        try {
+            GameWorld world = MiniGameFactory.createMiniGameLevel(selected, level);
+            App.setCurrentGame(world);
+            AppView.setCurrentScreen(GameMenuView.getInstance());
+            GameMenuView.getInstance().showResult("Starting " + selected.name() + " - Level " + level + "!");
+        } catch (IllegalArgumentException e) {
+            GameMenuView.getInstance().showResult(e.getMessage());
+        }
+    }
+
+    private MiniGames parseMinigameName(String name) {
+        return switch (name.toLowerCase()) {
+            case "beghouled" -> MiniGames.BEGHOULED;
+            case "bowling" -> MiniGames.BOWLING;
+            case "vasebreaker", "vase_breaker" -> MiniGames.VASE_BREAKER;
+            case "izombie", "i_zombie" -> MiniGames.I_ZOMBIE;
+            case "zombotany" -> MiniGames.ZOMBOTANY;
+            default -> null;
+        };
     }
 }

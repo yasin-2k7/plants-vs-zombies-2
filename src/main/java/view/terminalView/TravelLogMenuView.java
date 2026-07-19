@@ -42,6 +42,11 @@ public class TravelLogMenuView implements View {
                         System.out.println(result);
                         controller.displayCurrentPage();
                         break;
+                    case PLAY_MINIGAME:
+                        String minigameName = matcher.group(1);
+                        int level = Integer.parseInt(matcher.group(2));
+                        controller.selectMinigame(minigameName, level);
+                        break;
                     case MENU_ENTER:
                         System.out.println("Entering sub-menu not implemented.");
                         break;
