@@ -5,8 +5,8 @@ import java.util.regex.Pattern;
 
 public enum LeaderboardMenuCommands {
     MENU_ENTER(""),
-    MENU_SHOW_CURRENT(""),
-    MENU_EXIT("");
+    MENU_SHOW_CURRENT("^menu\\s+show\\s+current$"),
+    MENU_EXIT("\\s*menu\\s+exit\\s*");
 
     private final String pattern;
     private final Pattern compiledPattern;

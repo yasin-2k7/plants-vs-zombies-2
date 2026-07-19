@@ -30,4 +30,6 @@ public class ArmoredZombie extends Zombie {
 
     public int getArmorHealth() { return armorHealth; }
     public boolean isMagnetic() { return isMagnetic; }
+
+
 }

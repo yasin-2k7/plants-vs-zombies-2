@@ -13,6 +13,7 @@ import view.terminalView.GameMenuView;
 import view.terminalView.MainMenuView;
 import view.terminalView.TravelLogMenuView;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -49,17 +50,19 @@ public class TravelLogMenuController implements MenuController {
             return;
         }
 
-        List<Quest> quests = user.getQuestManager().getActiveQuests();
+        List<Quest> allQuests = new ArrayList<>();
+        allQuests.addAll(user.getQuestManager().getActiveQuests());
+        allQuests.addAll(user.getQuestManager().getCompletedQuests());
 
         switch (currentPage) {
             case "daily":
-                displayQuests(quests, DailyQuest.class);
+                displayQuests(allQuests, DailyQuest.class);
                 break;
             case "main":
-                displayQuests(quests, MainQuest.class);
+                displayQuests(allQuests, MainQuest.class);
                 break;
             case "epic":
-                displayQuests(quests, EpicChallengeQuest.class);
+                displayQuests(allQuests, EpicChallengeQuest.class);
                 break;
             case "minigame":
                 displayMinigames();
@@ -72,6 +75,7 @@ public class TravelLogMenuController implements MenuController {
     private void displayQuests(List<Quest> allQuests, Class<? extends Quest> type) {
         List<Quest> filtered = allQuests.stream()
                 .filter(type::isInstance)
+                .sorted((q1, q2) -> q1.getPriority().compareTo(q2.getPriority()))
                 .collect(Collectors.toList());
 
         if (filtered.isEmpty()) {
@@ -79,14 +83,15 @@ public class TravelLogMenuController implements MenuController {
             return;
         }
 
-        // مرتب‌سازی بر اساس اولویت (بحرانی > بالا > متوسط > کم)
-        filtered.sort((q1, q2) -> q1.getPriority().compareTo(q2.getPriority()));
-
         System.out.println("===== " + type.getSimpleName() + " Quests =====");
         for (Quest q : filtered) {
             String status = q.isCompleted() ? "[✓ COMPLETED]" : "[✗ IN PROGRESS]";
             String priorityIcon = getPriorityIcon(q.getPriority());
-            System.out.println(priorityIcon + " " + q.getDescription() + " " + status);
+            if (q.isCompleted()) {
+                System.out.println("✅ " + q.getDescription() + " " + status);
+            } else {
+                System.out.println(priorityIcon + " " + q.getDescription() + " " + status);
+            }
         }
         System.out.println("================================");
     }

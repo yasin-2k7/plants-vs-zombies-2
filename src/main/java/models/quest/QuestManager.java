@@ -1,5 +1,6 @@
 package models.quest;
 
+import controller.GameMenuController;
 import models.core.User;
 import models.enums.Chapter;
 import models.enums.PlantFamily;
@@ -15,14 +16,17 @@ import java.util.stream.Collectors;
 public class QuestManager {
     private List<Quest> activeQuests = new ArrayList<>();
     private List<Quest> completedQuests = new ArrayList<>();
-    private QuestStats stats = new QuestStats();
 
     public void checkAllQuests(User user) {
+        QuestStats stats = user.getQuestStats();
         Iterator<Quest> iterator = activeQuests.iterator();
         while (iterator.hasNext()) {
             Quest quest = iterator.next();
             if (quest.checkCompletion(stats)) {
                 quest.complete(user);
+                String msg = "🎉 Quest completed: " + quest.getDescription();
+                GameMenuController.updateState(msg);
+                user.addCompletedQuest(quest.getId());
                 completedQuests.add(quest);
                 iterator.remove();
             }
@@ -46,6 +50,18 @@ public class QuestManager {
         DailyQuest cactusQuest = QuestFactory.createCactusOnlyQuest();
         activeQuests.add(cactusQuest);
 
+        // 8. تخریب‌گر حرفه‌ای
+        activeQuests.add(QuestFactory.createExplosiveDestroyerQuest());
+
+        // 9. تقارن
+        activeQuests.add(QuestFactory.createSymmetryQuest());
+
+        // 10. کشتار خانوادگی (برای هر خانواده به‌جز خانواده‌های خاص)
+        for (PlantFamily family : PlantFamily.values()) {
+            if (family != PlantFamily.SUN_PRODUCER && family != PlantFamily.MODIFIER) {
+                activeQuests.add(QuestFactory.createFamilySlaughterQuest(family));
+            }
+        }
     }
 
     public void generateMainQuests(User user) {
@@ -60,6 +76,15 @@ public class QuestManager {
             MainQuest ecoQuest = QuestFactory.createEconomicVegetarianQuest(n);
             activeQuests.add(ecoQuest);
         }
+
+        // 7. سرعت عمل
+        activeQuests.add(QuestFactory.createSpeedQuest());
+    }
+
+    // متد جدید برای تولید کوئست‌های Epic
+    public void generateEpicQuests(User user) {
+        // 6. استاد دفاع
+        activeQuests.add(QuestFactory.createMasterDefenseQuest());
     }
 
     private int getRandomSunAmount() {
@@ -84,11 +109,11 @@ public class QuestManager {
         return activeQuests;
     }
 
-    public QuestStats getStats() { return stats; }
     public void addQuest(Quest quest) { this.activeQuests.add(quest); }
 
-    public void resetDailyIfNeeded() {
+    public void resetDailyIfNeeded(User user) {
         LocalDate today = LocalDate.now();
+        QuestStats stats = user.getQuestStats();
         if (!today.equals(stats.getLastResetDate())) {
             stats.resetDailyStats();
             activeQuests.removeIf(q -> q instanceof DailyQuest && !((DailyQuest) q).isAvailableToday());
@@ -96,4 +121,8 @@ public class QuestManager {
     }
 
     public List<Quest> getActiveQuests() {return activeQuests;}
+
+    public List<Quest> getCompletedQuests() {
+        return completedQuests;
+    }
 }

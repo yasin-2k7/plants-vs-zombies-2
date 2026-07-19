@@ -2,6 +2,7 @@ package models.projectile;
 
 import models.Damageable;
 import models.core.App;
+import models.enums.PlantType;
 import models.enums.ProjectileType;
 import models.plant.components.SunProducerComponent;
 import models.plant.visions.VisionStrategy;
@@ -23,6 +24,7 @@ public class Projectile implements Resettable{
     private Zombie target;
     private int pierce;
     private boolean dead = false;
+    private PlantType plantType;
 
     public void update() {
         double oldX = x;
@@ -84,7 +86,8 @@ public class Projectile implements Resettable{
     }
 
     @Override
-    public void reset(float x, float y, int size, SunProducerComponent component) {}
+    public void reset(float x, float y, int size, SunProducerComponent component) {
+    }
     @Override
     public void reset(float x, float y) {}
 
@@ -102,6 +105,7 @@ public class Projectile implements Resettable{
         targetX = 0;
         targetY = 0;
         dead = false;
+        this.plantType = null;
     }
 
     public void setPierce(int pierce) {
@@ -171,4 +175,7 @@ public class Projectile implements Resettable{
     public float getTargetY() {
         return targetY;
     }
+
+    public void setPlantType(PlantType plantType) {this.plantType = plantType;}
+    public PlantType getPlantType() {return plantType;}
 }

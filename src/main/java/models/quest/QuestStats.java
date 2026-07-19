@@ -1,5 +1,6 @@
 package models.quest;
 
+import models.enums.PlantFamily;
 import models.enums.PlantType;
 import java.time.LocalDate;
 import java.util.HashMap;
@@ -34,6 +35,15 @@ public class QuestStats {
     private PlantType exclusivePlantUsed;
     private boolean onlyPlantKills;
 
+    private int explosivePlantsUsedInLevel;
+    private boolean symmetryAchieved;
+    private PlantFamily exclusiveFamilyUsed;
+    private boolean onlyFamilyKills;
+    private long firstWaveStartTime;
+    private int zombiesKilledInFirstWave;
+    private boolean firstWaveStarted;
+    private int finalSunCount;
+
     private Map<String, Integer> zombiesKilledByChapter = new HashMap<>();
 
     public QuestStats() {
@@ -47,6 +57,14 @@ public class QuestStats {
         this.explosivesUsedToday = 0;
         this.usedSymmetryToday = false;
         this.lastResetDate = LocalDate.now();
+        this.explosivePlantsUsedInLevel = 0;
+        this.symmetryAchieved = false;
+        this.exclusiveFamilyUsed = null;
+        this.onlyFamilyKills = true;
+        this.firstWaveStartTime = 0;
+        this.zombiesKilledInFirstWave = 0;
+        this.firstWaveStarted = false;
+        this.finalSunCount = -1;
     }
 
     public void resetLevelStats() {
@@ -102,5 +120,30 @@ public class QuestStats {
     public PlantType getExclusivePlantUsed() { return exclusivePlantUsed; }
     public boolean isOnlyPlantKills() { return onlyPlantKills; }
     public LocalDate getLastResetDate() {return lastResetDate;}
+
+    public int getExplosivePlantsUsedInLevel() { return explosivePlantsUsedInLevel; }
+    public void incrementExplosivePlantsUsed() { this.explosivePlantsUsedInLevel++; }
+
+    public boolean isSymmetryAchieved() { return symmetryAchieved; }
+    public void setSymmetryAchieved(boolean symmetryAchieved) { this.symmetryAchieved = symmetryAchieved; }
+
+    public PlantFamily getExclusiveFamilyUsed() { return exclusiveFamilyUsed; }
+    public boolean isOnlyFamilyKills() { return onlyFamilyKills; }
+    public void addZombieKilledByFamily(PlantFamily family) {
+        if (exclusiveFamilyUsed == null) {
+            exclusiveFamilyUsed = family;
+        } else if (!exclusiveFamilyUsed.equals(family)) {
+            onlyFamilyKills = false;
+        }
+    }
+
+    public long getFirstWaveStartTime() { return firstWaveStartTime; }
+    public void setFirstWaveStartTime(long time) { this.firstWaveStartTime = time; this.firstWaveStarted = true; }
+    public int getZombiesKilledInFirstWave() { return zombiesKilledInFirstWave; }
+    public void incrementZombiesKilledInFirstWave() { this.zombiesKilledInFirstWave++; }
+    public boolean isFirstWaveStarted() { return firstWaveStarted; }
+
+    public int getFinalSunCount() { return finalSunCount; }
+    public void setFinalSunCount(int finalSunCount) { this.finalSunCount = finalSunCount; }
 
 }

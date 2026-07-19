@@ -6,9 +6,9 @@ import java.util.regex.Pattern;
 public enum NewsMenuCommands {
     MENU_ENTER(""),
     MENU_SHOW_CURRENT("^menu\\s+show\\s+current$"),
-    MENU_EXIT(""),
-    MENU_NEWS_SHOW_UNREAD(""),
-    MENU_NEWS_SHOW_ALL("");
+    MENU_EXIT("\\s*menu\\s+exit\\s*"),
+    MENU_NEWS_SHOW_UNREAD("\\s*menu\\s+news\\s+show\\s+unread\\s*"),
+    MENU_NEWS_SHOW_ALL("\\s*menu\\s+news\\s+show\\s+all\\s*");
 
     private final String pattern;
     private final Pattern compiledPattern;

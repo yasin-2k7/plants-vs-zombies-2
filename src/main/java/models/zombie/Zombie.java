@@ -15,7 +15,7 @@ import java.util.List;
 
 public abstract class Zombie implements Damageable {
     protected Zombies name;
-    protected String specificName; // متغیر جدید برای نگهداری نام دقیق زامبی
+    protected String specificName;
     protected int health;
     protected int maxHealth;
     protected double speed;
@@ -199,9 +199,5 @@ public abstract class Zombie implements Damageable {
 
     public List<String> getArmorTypes() {
         return armorTypes;
-    }
-
-    public void setDead(boolean dead) {
-        isDead = dead;
     }
 }

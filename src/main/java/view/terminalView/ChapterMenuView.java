@@ -47,6 +47,29 @@ public class ChapterMenuView implements View {
                     case MENU_ENTER:
                         controller.changeMenu();
                         break;
+                    case MENU_EXIT:
+                        controller.exitMenu();
+                        break;
+                    case MENU_GREENHOUSE:
+                        controller.greenHouse();
+                        break;
+                    case MENU_CHEAT_ADD:
+                        String type = matcher.group("type");
+                        int amount = Integer.parseInt(matcher.group("amount"));
+                        controller.cheatAdd(type, amount);
+                        break;
+                    case MENU_TRAVEL_LOG:
+                        controller.travelLog();
+                        break;
+                    case MENU_LEADERBOARD:
+                        controller.leaderboard();
+                        break;
+                    case MENU_GEM_WALLET:
+                        controller.gemWallet();
+                        break;
+                    case MENU_COIN_WALLET:
+                        controller.coinWallet();
+                        break;
                 }
                 break;
             }
@@ -56,6 +79,12 @@ public class ChapterMenuView implements View {
         }
 
     }
+
+
+    public void showResult(String message){
+        System.out.println(message);
+    }
+
 
 
 }

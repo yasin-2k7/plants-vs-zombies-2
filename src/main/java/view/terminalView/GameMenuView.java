@@ -22,6 +22,7 @@ public class GameMenuView implements View{
     private GameMenuController controller;
     @Override
     public void processCommand(String command) {
+        command = command.trim();
         for (GameMenuCommands gameMenuCommands : GameMenuCommands.values()) {
             Matcher matcher = gameMenuCommands.matcher(command);
             if (matcher.matches()) {

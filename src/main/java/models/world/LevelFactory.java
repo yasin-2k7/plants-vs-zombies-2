@@ -73,6 +73,7 @@ public class LevelFactory {
                 new ArrayList<>()
         );
         world.setCurrentChapter(Chapter.EGYPT);
+        world.setWillUnlockLevel(true);
         return world;
     }
 
@@ -97,6 +98,7 @@ public class LevelFactory {
                 new ArrayList<>()
         );
         world.setCurrentChapter(Chapter.EGYPT);
+        world.setWillUnlockLevel(true);
         return world;
     }
 
@@ -125,6 +127,7 @@ public class LevelFactory {
                 new ArrayList<>()
         );
         world.setCurrentChapter(Chapter.EGYPT);
+        world.setWillUnlockLevel(true);
         return world;
     }
 
@@ -149,6 +152,7 @@ public class LevelFactory {
                 new ArrayList<>()
         );
         world.setCurrentChapter(Chapter.EGYPT);
+        world.setWillUnlockLevel(true);
         return world;
     }
 
@@ -173,6 +177,7 @@ public class LevelFactory {
                 new ArrayList<>()
         );
         world.setCurrentChapter(Chapter.BIG_WAVE_BEACH);
+        world.setWillUnlockLevel(true);
         return world;
     }
 
@@ -203,6 +208,7 @@ public class LevelFactory {
                 new ArrayList<>()
         );
         world.setCurrentChapter(Chapter.BIG_WAVE_BEACH);
+        world.setWillUnlockLevel(true);
         return world;
     }
 
@@ -228,6 +234,7 @@ public class LevelFactory {
         );
         world.registerZombieKillListener(loseCondition::onZombieKilled);
         world.setCurrentChapter(Chapter.BIG_WAVE_BEACH);
+        world.setWillUnlockLevel(true);
         return world;
     }
 
@@ -252,6 +259,7 @@ public class LevelFactory {
                 new ArrayList<>()
         );
         world.setCurrentChapter(Chapter.BIG_WAVE_BEACH);
+        world.setWillUnlockLevel(true);
         return world;
     }
 
@@ -279,6 +287,7 @@ public class LevelFactory {
                 mechanics
         );
         world.setCurrentChapter(Chapter.DARK_AGES);
+        world.setWillUnlockLevel(true);
         return world;
     }
 
@@ -306,6 +315,7 @@ public class LevelFactory {
                 mechanics
         );
         world.setCurrentChapter(Chapter.DARK_AGES);
+        world.setWillUnlockLevel(true);
         return world;
     }
 
@@ -333,6 +343,7 @@ public class LevelFactory {
                 mechanics
         );
         world.setCurrentChapter(Chapter.DARK_AGES);
+        world.setWillUnlockLevel(true);
         return world;
     }
 
@@ -360,6 +371,7 @@ public class LevelFactory {
                 mechanics
         );
         world.setCurrentChapter(Chapter.DARK_AGES);
+        world.setWillUnlockLevel(true);
         return world;
     }
 
@@ -384,6 +396,7 @@ public class LevelFactory {
                 new ArrayList<>()
         );
         world.setCurrentChapter(Chapter.FROSTBITE_CAVES);
+        world.setWillUnlockLevel(true);
         return world;
     }
 
@@ -412,6 +425,7 @@ public class LevelFactory {
                 new ArrayList<>()
         );
         world.setCurrentChapter(Chapter.FROSTBITE_CAVES);
+        world.setWillUnlockLevel(true);
         return world;
     }
 
@@ -436,6 +450,7 @@ public class LevelFactory {
                 new ArrayList<>()
         );
         world.setCurrentChapter(Chapter.FROSTBITE_CAVES);
+        world.setWillUnlockLevel(true);
         return world;
     }
 

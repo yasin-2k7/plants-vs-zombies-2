@@ -4,12 +4,11 @@ import models.enums.Chapter;
 import models.enums.NewsType;
 import models.enums.PlantType;
 import models.greenhouse.GreenHouse;
+import models.quest.Quest;
 import models.quest.QuestManager;
 import models.quest.QuestStats;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 public class User {
     private QuestStats questStats;
@@ -40,7 +39,8 @@ public class User {
     private transient boolean isLoaded = false;
     private int gameDifficulty = 3;
     private int plantFoods = 0;
-    private QuestManager questManager = new QuestManager();
+    private transient QuestManager questManager = new QuestManager();
+    private Set<String> completedQuestIds = new HashSet<>();
 
 
     public User(){
@@ -53,6 +53,7 @@ public class User {
         this.gems = 1000;
         this.unlockedChapter = 1;
         this.unlockedLevel = 1;
+        this.questStats = new QuestStats();
         putInitialPlants();
         putZombies();
     }
@@ -106,13 +107,24 @@ public class User {
         if (this.unlockedPlantsLevels == null) this.unlockedPlantsLevels = new HashMap<>();
         if (this.seedPackets == null) this.seedPackets = new HashMap<>();
         if (this.greenhouse == null) this.greenhouse = new GreenHouse();
+        if (this.questStats == null) this.questStats = new QuestStats();
         this.isLoaded = true;
+        if (this.questManager == null) {
+            this.questManager = new QuestManager();
+        }
     }
 
     public void initQuests() {
         questManager.generateMainQuests(this);
-        questManager.resetDailyIfNeeded();
+        questManager.generateEpicQuests(this);
+        questManager.resetDailyIfNeeded(this);
         questManager.generateDailyQuests(this);
+
+        for (Quest q : questManager.getActiveQuests()) {
+            if (completedQuestIds.contains(q.getId())) {
+                q.setCompleted(true);
+            }
+        }
     }
 
     private void save() {
@@ -354,4 +366,27 @@ public class User {
     }
 
     public int getPot() {return pot;}
+
+    public QuestStats getQuestStats() { return questStats; }
+    public Set<String> getCompletedQuestIds() { return completedQuestIds; }
+    public void addCompletedQuest(String questId) {
+        completedQuestIds.add(questId);
+        save();
+    }
+
+    public void unlockLevel() {
+        int newLevel = unlockedLevel == 4 ? 1 : unlockedLevel+1;
+        int newChapter = newLevel == 1 ? unlockedChapter+1 : unlockedChapter;
+        unlockedLevel = newLevel;
+        unlockedChapter = newChapter;
+        notifyLevelUnlock(newChapter + "-" + newLevel);
+    }
+
+    public void setCoins(int coins) {
+        this.coins = coins;
+    }
+
+    public void setGems(int gems) {
+        this.gems = gems;
+    }
 }

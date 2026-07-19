@@ -73,6 +73,7 @@ public class WaveManager {
 
         Zombie zombie = new ZombieFactory().createZombie(entry.getZombie());
         if (zombie == null) return;
+        if (App.getCurrentUser().getShowedZombies().containsKey(entry.getZombieAlias())) {
 
         if (!App.getCurrentUser().getShowedZombies().get(App.getArmoredZombieName(zombie.getSpecificName()))){
             App.getCurrentUser().getShowedZombies().put(App.getArmoredZombieName(zombie.getSpecificName()), true);
@@ -100,6 +101,7 @@ public class WaveManager {
         System.out.println("Zombie " + typeName + " spawned at wave " + waveNum +
                 " in lane " + (lane+1) + " which costed " + cost + ".");
     }
+    }
 
     // تقلب: تمام زامبی‌های فعال را نابود می‌کند
     public void releaseTheNuke(GameWorld game) {
@@ -110,7 +112,7 @@ public class WaveManager {
                 onZombieKilled(z);
             }
         }
-        zombies.clear();
+        //zombies.clear();
         System.out.println("All zombies eliminated by nuke!");
     }
 
@@ -146,6 +148,7 @@ public class WaveManager {
     public int getCurrentWaveIndex() {
         return currentWaveIndex;
     }
+
     public void startFirstWave() {
         if (waves.isEmpty()) return;
         this.currentWaveIndex = 0;
@@ -155,5 +158,11 @@ public class WaveManager {
         this.levelCompleted = false;
         printWaveStartMessage(currentWave);
         this.firstWaveStarted = true;
+        if (App.getCurrentGame() != null) {
+            User user = App.getCurrentUser();
+            if (user != null && !user.getQuestStats().isFirstWaveStarted()) {
+                user.getQuestStats().setFirstWaveStartTime(System.currentTimeMillis());
+            }
+        }
     }
 }

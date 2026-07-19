@@ -13,7 +13,7 @@ public enum GameMenuCommands {
     CHEAT_ADD_SUNS("\\s*cheat\\s+add\\s+-n\\s+(?<count>\\d+)\\s+suns\\s*"),
     RELEASE_THE_NUKE("\\s*release\\s+the\\s+nuke\\s*"),
     PLANT_PLANT("\\s*plant\\s+plant\\s+-t\\s+(?<type>\\S+)\\s+-l\\s+\\(\\s*(?<x>\\d+)\\s*,\\s*(?<y>\\d+)\\s*\\)\\s*"),
-    CHEAT_REMOVE_COOLDOWN("\\s*cheat\\s+remove-cooldown\\s*"),
+    CHEAT_REMOVE_COOLDOWN("(?i)\\s*cheat\\s+remove-cooldown\\s*"),
     PLUCK_PLANT("\\s*pluck\\s+plant\\s+-l\\s+\\(\\s*(?<x>\\d+)\\s*,\\s*(?<y>\\d+)\\s*\\)\\s*"),
     FEED_PLANT("\\s*feed\\s+plant\\s+-l\\s+\\(\\s*(?<x>\\d+)\\s*,\\s*(?<y>\\d+)\\s*\\)\\s*"),
     CHEAT_ADD_PLANT_FOOD("\\s*cheat\\s+add-plant-food\\s*"),

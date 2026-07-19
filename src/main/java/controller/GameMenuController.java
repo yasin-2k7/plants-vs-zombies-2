@@ -1,6 +1,7 @@
 package controller;
 
 import models.core.App;
+import models.core.User;
 import models.enums.PlantLayer;
 import models.enums.PlantType;
 import models.enums.Zombies;
@@ -23,6 +24,19 @@ import view.terminalView.*;
 import java.util.List;
 
 public class GameMenuController implements MenuController {
+    public static void handleWinning(GameWorld gameWorld) {
+        GameMenuView.getInstance().showResult("Dear humanz, zis is not done yet; we will come back to eat your brainz, humanz.");
+        if (gameWorld.isWillUnlockLevel()){
+            App.getCurrentUser().unlockLevel();
+        }
+        AppView.setCurrentScreen(MainMenuView.getInstance());
+    }
+
+    public static void handleLosing(GameWorld gameWorld) {
+        GameMenuView.getInstance().showResult(("The zombie ate your brain; LOSER!!!"));
+        AppView.setCurrentScreen(MainMenuView.getInstance());
+    }
+
     @Override
     public void changeMenu() {
 
@@ -89,6 +103,11 @@ public class GameMenuController implements MenuController {
                     sun.collect();
                     game.setSun(game.getSun() + sun.getSize());
                     if (sun.getProducer() != null) sun.getProducer().getComponentSuns().remove(sun);
+                    User user = App.getCurrentUser();
+                    if (user != null) {
+                        user.getQuestStats().addSunsCollectedToday(sun.getSize());
+                        user.getQuestManager().checkAllQuests(user);
+                    }
                 }
                 return;
             }
@@ -114,7 +133,7 @@ public class GameMenuController implements MenuController {
             for (Zombie zombie : game.getActiveZombies()) {
                 zombie.die();
             }
-            game.getActiveZombies().clear();
+//            game.getActiveZombies().clear();
             System.out.println("All zombies eliminated by nuke (fallback)!");
         }
     }

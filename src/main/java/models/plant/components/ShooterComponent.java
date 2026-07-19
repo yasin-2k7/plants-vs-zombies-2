@@ -138,6 +138,7 @@ public class ShooterComponent implements GameComponent {
                     p.reset(owner.getX(), owner.getY() + movementStrategy.get().changeOriginY(), damageStrategy.get(), movementStrategy.get(),strikeStrategy, bulletType);
                     if (normalPierce != 1) {p.setPierce(normalPierce);}
                 }
+                p.setPlantType(owner.getType());
 
                 p.setTarget(target);
                 App.getCurrentGame().getActiveProjectiles().add(p);

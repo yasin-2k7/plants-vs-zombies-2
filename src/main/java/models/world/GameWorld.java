@@ -1,9 +1,11 @@
 package models.world;
 
+import controller.GameMenuController;
 import models.Damageable;
 import models.core.App;
 import models.core.User;
 import models.enums.Chapter;
+import models.enums.PlantFamily;
 import models.enums.PlantType;
 import models.lawnMower.LawnMower;
 import models.lawnMower.LawnMowerManager;
@@ -17,9 +19,11 @@ import models.quest.QuestStats;
 import models.world.levelSetup.LevelSetup;
 import models.world.loseCondition.LoseCondition;
 import models.world.mechanics.Mechanic;
+import models.world.mechanics.NormalMechanic;
 import models.world.obstacles.Grave;
 import models.world.winCondition.WinCondition;
 import models.zombie.Zombie;
+import models.zombie.wave.WaveManager;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -34,6 +38,8 @@ public abstract class GameWorld {
     private int currentTick = 0;
 
     private Chapter currentChapter;
+
+    private boolean willUnlockLevel = false;
 
     protected int plantFoods;
     protected int rows;
@@ -254,9 +260,10 @@ public abstract class GameWorld {
         while (zombieIterator.hasNext()) {
             Zombie zombie = zombieIterator.next();
             if (zombie.isDead()) {
+                this.notifyZombieKilled();
                 User user = App.getCurrentUser();
                 if (user != null) {
-                    QuestStats stats = user.getQuestManager().getStats();
+                    QuestStats stats = user.getQuestStats();
                     stats.addZombiesKilledToday(1);
                     stats.addTotalZombiesKilled(1);
 
@@ -265,7 +272,25 @@ public abstract class GameWorld {
 
                     if (zombie.getKillerPlantType() != null) {
                         stats.addZombiesKilledByPlant(zombie.getKillerPlantType(), 1);
+                        // برای کوئست ۱۰
+                        PlantFamily family = zombie.getKillerPlantType().family;
+                        stats.addZombieKilledByFamily(family);
                     }
+
+                    // برای کوئست ۷ (سرعت عمل)
+                    NormalMechanic normal = getMechanic(NormalMechanic.class);
+                    if (normal != null && normal.getWaveManager() != null) {
+                        WaveManager wm = normal.getWaveManager();
+                        if (wm.getCurrentWaveIndex() == 0 && wm.getCurrentWave() != null) {
+                            // موج اول
+                            if (!stats.isFirstWaveStarted()) {
+                                stats.setFirstWaveStartTime(System.currentTimeMillis());
+                            }
+                            stats.incrementZombiesKilledInFirstWave();
+                        }
+                    }
+
+                    user.getQuestManager().checkAllQuests(user);
                 }
                 zombieIterator.remove();
             }
@@ -279,16 +304,42 @@ public abstract class GameWorld {
             state = GameState.WON;
             User user = App.getCurrentUser();
             if (user != null) {
+                QuestStats stats = user.getQuestStats();
+                stats.setLevelWon(true);
+                stats.setFinalSunCount(this.currentSun);   //  کوئست 6
+                // بررسی تقارن (کوئست ۹)
+                boolean symmetric = isGardenSymmetric();
+                stats.setSymmetryAchieved(symmetric);
+
+                user.getQuestManager().checkAllQuests(user);
                 user.getQuestManager().getStats().setLevelWon(true);
+                GameMenuController.handleWinning(this);
             }
         }
 
         for(LoseCondition lose : loseConditions){
             if(lose.checkLose(this)){
                 state = GameState.LOST;
+                GameMenuController.handleLosing(this);
             }
         }
 
+    }
+
+    public boolean isGardenSymmetric() {
+        if (grid == null || rows == 0 || cols == 0) return false;
+        int middleRow = rows / 2;
+        for (int r = 0; r < rows; r++) {
+            if (r == middleRow) continue; // ردیف وسط را نادیده می‌گیریم
+            for (int c = 0; c < cols / 2; c++) {
+                Plant left = grid[r][c].getPlant();
+                Plant right = grid[r][cols - 1 - c].getPlant();
+                if (left == null && right == null) continue;
+                if (left == null || right == null) return false;
+                if (left.getType() != right.getType()) return false;
+            }
+        }
+        return true;
     }
 
 
@@ -440,4 +491,12 @@ public abstract class GameWorld {
     public void setPlantingPhase(boolean plantingPhase) { this.plantingPhase = plantingPhase; }
     public Chapter getCurrentChapter() {return currentChapter;}
     public void setCurrentChapter(Chapter chapter) {this.currentChapter = chapter;}
+
+    public void setWillUnlockLevel(boolean willUnlockLevel) {
+        this.willUnlockLevel = willUnlockLevel;
+    }
+
+    public boolean isWillUnlockLevel() {
+        return willUnlockLevel;
+    }
 }
