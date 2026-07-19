@@ -44,7 +44,7 @@ public class LawnMowerManager {
                     if (!mower.isSpent() && !mower.isActive()) {
                         mower.activate();
                     } else if (mower.isSpent()) {
-                        System.out.println("The zombie ate your brain; LOSER!!!");
+
 
                         // TODO: در اینجا باید به GameWorld سیگنال باخت ارسال کنید
                         App.getCurrentGame().setState(GameState.LOST);

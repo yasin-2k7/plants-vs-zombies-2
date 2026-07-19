@@ -21,6 +21,19 @@ import view.terminalView.*;
 import java.util.List;
 
 public class GameMenuController implements MenuController {
+    public static void handleWinning(GameWorld gameWorld) {
+        GameMenuView.getInstance().showResult("Dear humanz, zis is not done yet; we will come back to eat your brainz, humanz.");
+        if (gameWorld.isWillUnlockLevel()){
+            App.getCurrentUser().unlockLevel();
+        }
+        AppView.setCurrentScreen(MainMenuView.getInstance());
+    }
+
+    public static void handleLosing(GameWorld gameWorld) {
+        GameMenuView.getInstance().showResult(("The zombie ate your brain; LOSER!!!"));
+        AppView.setCurrentScreen(MainMenuView.getInstance());
+    }
+
     @Override
     public void changeMenu() {
 

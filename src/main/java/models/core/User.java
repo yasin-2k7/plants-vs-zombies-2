@@ -354,4 +354,20 @@ public class User {
     }
 
     public int getPot() {return pot;}
+
+    public void unlockLevel() {
+        int newLevel = unlockedLevel == 4 ? 1 : unlockedLevel+1;
+        int newChapter = newLevel == 1 ? unlockedChapter+1 : unlockedChapter;
+        unlockedLevel = newLevel;
+        unlockedChapter = newChapter;
+        notifyLevelUnlock(newChapter + "-" + newLevel);
+    }
+
+    public void setCoins(int coins) {
+        this.coins = coins;
+    }
+
+    public void setGems(int gems) {
+        this.gems = gems;
+    }
 }
