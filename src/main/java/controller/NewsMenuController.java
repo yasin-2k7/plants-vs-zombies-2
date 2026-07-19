@@ -4,7 +4,9 @@ import models.core.App;
 import models.core.News;
 import models.core.User;
 import models.core.UserDataManager;
+import view.terminalView.AppView;
 import view.terminalView.GameMenuView;
+import view.terminalView.MainMenuView;
 
 import java.util.List;
 
@@ -16,7 +18,7 @@ public class NewsMenuController implements MenuController{
 
     @Override
     public void exitMenu() {
-
+        AppView.setCurrentScreen(MainMenuView.getInstance());
     }
 
     public List<News> showNewsUnread(){
