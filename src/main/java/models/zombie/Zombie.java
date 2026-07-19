@@ -15,7 +15,7 @@ import java.util.List;
 
 public abstract class Zombie implements Damageable {
     protected Zombies name;
-    protected String specificName; // متغیر جدید برای نگهداری نام دقیق زامبی
+    protected String specificName;
     protected int health;
     protected int maxHealth;
     protected double speed;
@@ -39,12 +39,12 @@ public abstract class Zombie implements Damageable {
         this.health = health;
         this.maxHealth = health;
         this.speed = speed*15;
-        this.damage = damage/10;
+        this.damage = damage;
         this.currentState = new WalkingState();
     }
 
     public void update() {
-        if (isDead || health <= 0 || iceHealth > 0) return;
+        if (isDead || health <= 0) return;
         if (slowTicksRemaining > 0) {
             slowTicksRemaining--;
             if (slowTicksRemaining == 0) {
@@ -58,7 +58,7 @@ public abstract class Zombie implements Damageable {
         }
         if (freezedTicksRemaining > 0) {
             freezedTicksRemaining--;
-            if (freezedTicksRemaining == 0) applySlow(20, 0.5, true);
+            if (freezedTicksRemaining == 0) applySlow(20, 0.5);
             return;
         }
         Cell currentCell = Cell.findZombieCell(App.getCurrentGame().getGrid(), this);
@@ -102,6 +102,7 @@ public abstract class Zombie implements Damageable {
     public void die() {
             if (isDead) return;
             this.isDead = true;
+            // چاپ پیام مرگ
             GameMenuController.updateState("Zombie of type " + name.name() + " is dead at (" + (int)x + ", " + (int)y + ")");
         }
 

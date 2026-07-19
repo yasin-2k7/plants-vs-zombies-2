@@ -1,6 +1,8 @@
 package models.world;
 
 import models.core.App;
+import models.core.User;
+import models.enums.PlantFamily;
 import models.enums.PlantLayer;
 import models.enums.PlantType;
 import models.plant.Plant;
@@ -127,6 +129,12 @@ public class Cell {
         if (isLayerEmpty(layer)) {
             setPlant(newPlant, layer);
             App.getCurrentGame().getActivePlants().add(newPlant);
+
+            User user = App.getCurrentUser();
+            if (user != null && newPlant.getType().family == PlantFamily.EXPLOSIVE) {
+                user.getQuestStats().incrementExplosivePlantsUsed();
+                user.getQuestManager().checkAllQuests(user);
+            }
             return null;
         }
         return "that place isn't empty!";

@@ -3,6 +3,10 @@ package models.zombie;
 import models.core.App;
 import models.core.DifficultyCalculator;
 import models.enums.Zombies;
+import models.miniGame.zombotany.JalapenoZombie;
+import models.miniGame.zombotany.PeashooterZombie;
+import models.miniGame.zombotany.SquashZombie;
+import models.miniGame.zombotany.WallnutZombie;
 import models.zombie.data.ArmorData;
 import models.zombie.data.ArmorProperties;
 import models.zombie.data.ZombieData;
@@ -31,10 +35,21 @@ public class ZombieFactory {
         enumToAlias.put(Zombies.ELEMENTAL, "ZombieExplorer");
         enumToAlias.put(Zombies.DODO_RIDER, "ZombieIceAgeDodo");
         enumToAlias.put(Zombies.DEFLECTOR, "ZombieDarkJuggler");
+
+        enumToAlias.put(Zombies.PEASHOOTER_ZOMBIE, "ZombiePeashooter");
+        enumToAlias.put(Zombies.JALAPENO_ZOMBIE, "ZombieJalapeno");
+        enumToAlias.put(Zombies.WALLNUT_ZOMBIE, "ZombieWallnut");
+        enumToAlias.put(Zombies.SQUASH_ZOMBIE, "ZombieSquash");
     }
 
     // متد اصلی: ساخت زامبی بر اساس alias
     public Zombie createZombie(String alias) {
+
+        Zombie zombotanyZombie = createZombotanyZombie(alias);
+        if (zombotanyZombie != null) {
+            return zombotanyZombie;
+        }
+
         ZombieProperties props = ZombieRegistry.getZombieProperties(alias);
         if (props == null) {
             throw new IllegalArgumentException("Unknown zombie alias: " + alias);
@@ -172,5 +187,15 @@ public class ZombieFactory {
         String alias = enumToAlias.get(type);
         if (alias == null) return null;
         return createZombie(alias);
+    }
+
+    private Zombie createZombotanyZombie(String alias) {
+        return switch (alias) {
+            case "ZombiePeashooter"->new PeashooterZombie(Zombies.PEASHOOTER_ZOMBIE, 200,1.0, 20);
+            case "ZombieWallnut" -> new WallnutZombie(Zombies.WALLNUT_ZOMBIE, 4000, 0.3, 100);
+            case "ZombieJalapeno" -> new JalapenoZombie(Zombies.JALAPENO_ZOMBIE, 200, 1.0, 100);
+            case "ZombieSquash" -> new SquashZombie(Zombies.SQUASH_ZOMBIE, 200, 3.0, 500);
+            default -> null;
+        };
     }
 }

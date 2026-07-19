@@ -11,7 +11,7 @@ import java.util.Random;
 public class NormalMechanic implements Mechanic{
     private WaveManager waveManager;
     private long lastZombieSpawnTime = 0;
-    private int zombieSpawnInterval = 60;
+    private int zombieSpawnInterval;
     private Random random = new Random();
 
     public NormalMechanic(WaveManager waveManager){
@@ -20,14 +20,9 @@ public class NormalMechanic implements Mechanic{
 
     @Override
     public void applyMechanic(GameWorld world) {
-        long now = world.getCurrentTick();
-
-        int difficulty = App.getCurrentUser().getGameDifficulty();
-        double decreaseFactor = DifficultyCalculator.decreaseFactor(difficulty);
-        int adjustedInterval = (int) Math.round(zombieSpawnInterval * decreaseFactor); // فاصله کمتر = سرعت بیشتر
-
-
-//        if(now - lastZombieSpawnTime >= adjustedInterval){
+//        long now = System.currentTimeMillis();
+//
+//        if(now - lastZombieSpawnTime >= zombieSpawnInterval){
 //            if(!waveManager.isLevelCompleted()){
 //                int lane = random.nextInt(world.getRows());
 //                waveManager.spawnNextZombie(lane, world);
@@ -35,11 +30,17 @@ public class NormalMechanic implements Mechanic{
 //            }
 //        }
 
-        if (!waveManager.update()){
+
+        int difficulty = App.getCurrentUser().getGameDifficulty();
+        double decreaseFactor = DifficultyCalculator.decreaseFactor(difficulty);
+        int adjustedInterval = (int) Math.round(zombieSpawnInterval * decreaseFactor);
+
+
+
+        if(!waveManager.update()){
             waveManager.spawnNextZombie(random.nextInt(world.getRows()), world);
         }
 
-        waveManager.update();
 
         world.getActiveZombies().stream()
                 .filter(Zombie::isDead)

@@ -86,7 +86,7 @@ public class Plant {
         }
         User user = App.getCurrentUser();
         if (user != null) {
-            user.getQuestManager().getStats().incrementPlantsLost();
+            user.getQuestStats().incrementPlantsLost();
         }
     }
 

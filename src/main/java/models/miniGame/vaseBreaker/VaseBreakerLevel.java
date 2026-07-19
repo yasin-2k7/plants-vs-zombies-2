@@ -1,5 +1,6 @@
 package models.miniGame.vaseBreaker;
 
+import models.enums.PlantType;
 import models.plant.card.PlantCard;
 import models.world.GameWorld;
 import models.world.levelSetup.LevelSetup;
@@ -13,6 +14,7 @@ import java.util.List;
 public class VaseBreakerLevel extends GameWorld {
     private List<Vase> vases;
     private List<SeedPacket> droppedSeeds;
+    private PlantType heldSeed = null;
 
     public VaseBreakerLevel(LevelSetup levelSetup,
                             ArrayList<LoseCondition> loseConditions,
@@ -32,14 +34,18 @@ public class VaseBreakerLevel extends GameWorld {
     public void tick() {
         super.tick();
 
-        droppedSeeds.removeIf(SeedPacket::isCollected);
+        for (SeedPacket seed : droppedSeeds) {
+            seed.tick();
+        }
+
+        droppedSeeds.removeIf(SeedPacket::isExpired);
     }
 
-    public void breakVaseAt(int row, int col){
+    public String breakVaseAt(int row, int col){
         Vase vase = getVaseAt(row, col);
-        if (vase != null && !vase.isBroken()) {
-            vase.breakVase(this);
-        }
+        if (vase == null) return "There is no vase at that location.";
+        if (vase.isBroken()) return "This vase is already broken.";
+        return vase.breakVase(this);
     }
 
     public Vase getVaseAt(int row, int col) {
@@ -51,12 +57,38 @@ public class VaseBreakerLevel extends GameWorld {
         return null;
     }
 
-    public void collectSeedPacket(SeedPacket packet){
-        if (packet != null && !packet.isCollected()) {
-            packet.collect();
-            PlantCard card = new PlantCard(packet.getPlantType(), 0, 0);
-            getConveyorBelt().add(card);
+    public SeedPacket getSeedPacketAt(int row, int col) {
+        for (SeedPacket seed : droppedSeeds) {
+            int seedRow = (int) (seed.getY() / 100);
+            int seedCol = (int) (seed.getX() / 100);
+            if (seedRow == row && seedCol == col) {
+                return seed;
+            }
         }
+        return null;
+    }
+
+    public String pickUpSeedAt(int row, int col) {
+        if (heldSeed != null) {
+            return "You are already holding a " + heldSeed.name() + " seed! Plant it first.";
+        }
+
+        SeedPacket seed = getSeedPacketAt(row, col);
+        if (seed == null) return "There is no seed packet at that location.";
+
+        heldSeed = seed.getPlantType();
+        seed.collect();
+        droppedSeeds.remove(seed);
+        return "You picked up a " + heldSeed.name() + " seed!";
+    }
+
+
+    public PlantType getHeldSeed() {
+        return heldSeed;
+    }
+
+    public void clearHeldSeed() {
+        heldSeed = null;
     }
 
     public List<Vase> getVases() { return vases; }

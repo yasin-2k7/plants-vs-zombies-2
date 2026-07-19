@@ -74,12 +74,18 @@ public class CombinedDamageStrategy implements HitStrategy{
     public void applyDamage(Damageable target, List<Damageable> allTargets, Projectile projectile) {
         target.takeDamage(damage, "NORMAL");
         applySpecialDamage(target, projectile);
+        if (target instanceof Zombie && projectile.getPlantType() != null) {
+            ((Zombie) target).setKiller(projectile.getPlantType());
+        }
         if (radius > 0) {
             for (Damageable extraTarget : allTargets){
                 if (extraTarget != target){
                     if (projectile.distanceTo(extraTarget) <= radius){
                         extraTarget.takeDamage(neighborDamage, "NORMAL");
                         applySpecialDamage(extraTarget, projectile);
+                        if (extraTarget instanceof Zombie && projectile.getPlantType() != null) {
+                            ((Zombie) extraTarget).setKiller(projectile.getPlantType());
+                        }
                     }
                 }
             }
