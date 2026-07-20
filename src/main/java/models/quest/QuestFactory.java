@@ -1,11 +1,15 @@
 package models.quest;
 
+import models.core.App;
+import models.enums.Chapter;
 import models.enums.PlantFamily;
 import models.enums.PlantType;
 import models.quest.reward.*;
 import models.quest.types.DailyQuest;
 import models.quest.types.EpicChallengeQuest;
 import models.quest.types.MainQuest;
+import models.world.ChapterWorld.DarkAgesWorld;
+import models.world.GameWorld;
 
 import java.time.LocalDate;
 import java.util.function.Predicate;
@@ -128,5 +132,125 @@ public class QuestFactory {
                         stats.getTotalZombiesKilled() >= 10; // حداقل ۱۰ کشته
         Reward reward = new CurrencyReward(1000, 0);
         return new DailyQuest(id, desc, QuestPriority.MEDIUM, condition, reward);
+    }
+
+    // 11. شکوفایی در محدودیت‌ها (Daily)
+    public static DailyQuest createFlourishInRestrictionsQuest(PlantFamily family) {
+        String date = LocalDate.now().toString();
+        String id = "daily_flourish_" + family.name() + "_" + date;
+        String desc = "Win a level without using any plant from " + family.name() + " family";
+        Predicate<QuestStats> condition = stats ->
+                stats.isLevelWon() && !stats.getFamiliesUsedInLevel().contains(family);
+        Reward reward = new CurrencyReward(0, 100);
+        return new DailyQuest(id, desc, QuestPriority.HIGH, condition, reward);
+    }
+
+    // 12. شب یا صبح (Epic)
+    public static EpicChallengeQuest createNightOrMorningQuest() {
+        String date = LocalDate.now().toString();
+        String id = "epic_night_morning_" + date;
+        String desc = "Finish a day level using only mushroom plants (night plants)";
+        Predicate<QuestStats> condition = stats -> {
+            if (!stats.isLevelWon()) return false;
+            // بررسی اینکه مرحله روز باشد (نه شب)
+            GameWorld game = App.getCurrentGame();
+            if (game == null) return false;
+            // بررسی اینکه مرحله روز است (نه Dark Ages که شب است)
+            // و نه حالت شب در سایر مراحل
+            if (game instanceof DarkAgesWorld) return false;
+            // همه گیاهان کاشته شده باید قارچ باشند
+            return stats.getTotalPlantsUsedInLevel() > 0 &&
+                    stats.getTotalPlantsUsedInLevel() == stats.getMushroomPlantsUsedInLevel();
+        };
+        Reward reward = new CurrencyReward(0, 20);
+        return new EpicChallengeQuest(id, desc, condition, reward);
+    }
+
+    // 13. برد پشت برد (Daily)
+    public static DailyQuest createWinStreakQuest() {
+        String date = LocalDate.now().toString();
+        String id = "daily_win_streak_" + date;
+        String desc = "Win 5 consecutive levels with maximum difficulty (level 5)";
+        Predicate<QuestStats> condition = stats -> stats.getConsecutiveWinsMaxDifficulty() >= 5;
+        Reward reward = new CurrencyReward(5000, 0);
+        return new DailyQuest(id, desc, QuestPriority.MEDIUM, condition, reward);
+    }
+
+    // 14. تقریبا پیروز (Daily)
+    public static DailyQuest createAlmostVictoryQuest() {
+        String date = LocalDate.now().toString();
+        String id = "daily_almost_victory_" + date;
+        String desc = "Kill 10 zombies in the first column of a row without a lawnmower";
+        Predicate<QuestStats> condition = stats ->
+                stats.getZombiesKilledInFirstColumnWithoutMower() >= 10;
+        Reward reward = new CurrencyReward(300, 0);
+        return new DailyQuest(id, desc, QuestPriority.MEDIUM, condition, reward);
+    }
+
+    // 15. OCD نَمَنَ (Daily)
+    public static DailyQuest createOCDQuest() {
+        String date = LocalDate.now().toString();
+        String id = "daily_ocd_" + date;
+        String desc = "Win a level with no symmetry in the garden (except middle row)";
+        Predicate<QuestStats> condition = stats ->
+                stats.isLevelWon() && !stats.isSymmetryAchieved();
+        Reward reward = new CurrencyReward(800, 0);
+        return new DailyQuest(id, desc, QuestPriority.MEDIUM, condition, reward);
+    }
+
+    // 16. روز ابری (Daily)
+    public static DailyQuest createCloudyDayQuest() {
+        String date = LocalDate.now().toString();
+        String id = "daily_cloudy_day_" + date;
+        String desc = "Win a level using only 3 sun-producing plants";
+        Predicate<QuestStats> condition = stats ->
+                stats.isLevelWon() && stats.getSunProducerPlantsInLevel() == 3;
+        Reward reward = new CurrencyReward(0, 10);
+        return new DailyQuest(id, desc, QuestPriority.HIGH, condition, reward);
+    }
+
+    // 17. یه ستون کمتر (Daily)
+    public static DailyQuest createOneLessColumnQuest(int n) {
+        String date = LocalDate.now().toString();
+        String id = "daily_one_less_column_" + n + "_" + date;
+        String desc = "Win a level without planting any plant in column " + n;
+        Predicate<QuestStats> condition = stats ->
+                stats.isLevelWon() && stats.getEmptyColumnsInLevel().contains(n);
+        Reward reward = new CurrencyReward(0, 10);
+        return new DailyQuest(id, desc, QuestPriority.HIGH, condition, reward);
+    }
+
+    // 18. سطر بی دفاع (Daily)
+    public static DailyQuest createDefenselessRowQuest(int n) {
+        String date = LocalDate.now().toString();
+        String id = "daily_defenseless_row_" + n + "_" + date;
+        String desc = "Win a level without planting any plant in row " + n;
+        Predicate<QuestStats> condition = stats ->
+                stats.isLevelWon() && stats.getEmptyRowsInLevel().contains(n);
+        Reward reward = new CurrencyReward(0, 20);
+        return new DailyQuest(id, desc, QuestPriority.HIGH, condition, reward);
+    }
+
+    // 19. صلیب بی دفاع (Daily)
+    public static DailyQuest createCrossDefenselessQuest(int n) {
+        String date = LocalDate.now().toString();
+        String id = "daily_cross_defenseless_" + n + "_" + date;
+        String desc = "Win a level with column " + n + " and row " + n + " empty";
+        Predicate<QuestStats> condition = stats ->
+                stats.isLevelWon() &&
+                        stats.getEmptyColumnForCross() == n &&
+                        stats.getEmptyRowForCross() == n;
+        Reward reward = new CurrencyReward(0, 25);
+        return new DailyQuest(id, desc, QuestPriority.HIGH, condition, reward);
+    }
+
+    // 20. وقت چمن‌زنی (Epic)
+    public static EpicChallengeQuest createLawnmowerTimeQuest(int n) {
+        String date = LocalDate.now().toString();
+        String id = "epic_lawnmower_time_" + n + "_" + date;
+        String desc = "Kill at least " + n + " zombies using lawnmowers";
+        Predicate<QuestStats> condition = stats -> stats.getLawnmowerKills() >= n;
+        Reward reward = new CurrencyReward(0, n); // n الماس
+        return new EpicChallengeQuest(id, desc, condition, reward);
     }
 }

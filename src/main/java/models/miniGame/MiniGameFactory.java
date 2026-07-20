@@ -1,6 +1,12 @@
 package models.miniGame;
 
+import models.enums.PlantType;
 import models.miniGame.IZombie.IZombieLevel;
+import models.miniGame.IZombie.IZombieSetup;
+import models.miniGame.beghouled.BeghouledSetup;
+import models.miniGame.beghouled.BeghouledWinCondition;
+import models.miniGame.beghouled.PlantUpgrade;
+import models.miniGame.bowling.BowlingSetup;
 import models.miniGame.vaseBreaker.VaseBreakerLevel;
 import models.miniGame.vaseBreaker.VaseBreakerSetup;
 import models.world.GameWorld;
@@ -10,6 +16,8 @@ import models.world.loseCondition.LoseCondition;
 import models.world.loseCondition.NormalLose;
 import models.world.winCondition.NormalWin;
 import models.world.winCondition.WinCondition;
+import models.zombie.Zombie;
+import models.zombie.ZombieFactory;
 import models.zombie.wave.Wave;
 import models.zombie.wave.WaveSpawnEntry;
 
@@ -58,16 +66,14 @@ public class MiniGameFactory {
 
     }
 
-    private static GameWorld createVaseBreakerLevel1(){
-        int rows = 5;
-        int cols = 9;
+    private static GameWorld createVaseBreakerLevel1() {
+        int rows = 5, cols = 9;
 
-        List<WaveSpawnEntry> availableZombies = List.of(
-                new WaveSpawnEntry("ZombieDefault", 100)
+        List<String> normalVaseZombies = List.of("ZombieDefault");
+        List<String> giantVaseZombies = List.of();
+        List<PlantType> possiblePlants = List.of(PlantType.PEASHOOTER, PlantType.WALL_NUT);
 
-        );
-
-        LevelSetup levelSetup = new VaseBreakerSetup(rows, cols);
+        LevelSetup levelSetup = new VaseBreakerSetup(rows, cols, normalVaseZombies, giantVaseZombies, possiblePlants);
         LoseCondition loseCondition = new NormalLose();
         WinCondition winCondition = new NormalWin();
 
@@ -81,18 +87,14 @@ public class MiniGameFactory {
 
     }
 
-    private static GameWorld createVaseBreakerLevel2(){
-        int rows = 5;
-        int cols = 9;
+    private static GameWorld createVaseBreakerLevel2() {
+        int rows = 5, cols = 9;
 
-        List<WaveSpawnEntry> availableZombies = List.of(
-                new WaveSpawnEntry("ZombieDefault", 100)
+        List<String> normalVaseZombies = List.of("ZombieDefault", "ZombieArmor1");
+        List<String> giantVaseZombies = List.of("ZombieGargantuar");
+        List<PlantType> possiblePlants = List.of(PlantType.PEASHOOTER, PlantType.WALL_NUT, PlantType.SNOW_PEA);
 
-        );
-
-        List<Wave> waves = Wave.generateWaves(5, 200, availableZombies, 60);
-
-        LevelSetup levelSetup = new NormalLevelSetup(rows, cols, waves);
+        LevelSetup levelSetup = new VaseBreakerSetup(rows, cols, normalVaseZombies, giantVaseZombies, possiblePlants);
         LoseCondition loseCondition = new NormalLose();
         WinCondition winCondition = new NormalWin();
 
@@ -106,18 +108,14 @@ public class MiniGameFactory {
 
     }
 
-    private static GameWorld createVaseBreakerLevel3(){
-        int rows = 5;
-        int cols = 9;
+    private static GameWorld createVaseBreakerLevel3() {
+        int rows = 5, cols = 9;
 
-        List<WaveSpawnEntry> availableZombies = List.of(
-                new WaveSpawnEntry("ZombieDefault", 100)
+        List<String> normalVaseZombies = List.of("ZombieArmor1", "ZombieWizard");
+        List<String> giantVaseZombies = List.of("ZombieGargantuar", "ZombieDarkKing");
+        List<PlantType> possiblePlants = List.of(PlantType.PEASHOOTER, PlantType.WALL_NUT, PlantType.SNOW_PEA, PlantType.CHOMPER);
 
-        );
-
-        List<Wave> waves = Wave.generateWaves(5, 200, availableZombies, 60);
-
-        LevelSetup levelSetup = new NormalLevelSetup(rows, cols, waves);
+        LevelSetup levelSetup = new VaseBreakerSetup(rows, cols, normalVaseZombies, giantVaseZombies, possiblePlants);
         LoseCondition loseCondition = new NormalLose();
         WinCondition winCondition = new NormalWin();
 
@@ -131,23 +129,19 @@ public class MiniGameFactory {
 
     }
 
-    private static GameWorld createBowlingLevel1(){
-        int rows = 5;
-        int cols = 9;
+    private static GameWorld createBowlingLevel1() {
+        int rows = 5, cols = 9, redLineCol = 3;
 
-        List<WaveSpawnEntry> availableZombies = List.of(
+        List<WaveSpawnEntry> zombies = List.of(
                 new WaveSpawnEntry("ZombieDefault", 100)
 
         );
 
-        List<Wave> waves = Wave.generateWaves(5, 200, availableZombies, 60);
-
-        LevelSetup levelSetup = new NormalLevelSetup(rows, cols, waves);
+        LevelSetup levelSetup = new BowlingSetup(rows, cols, redLineCol, zombies, 3, 150);
         LoseCondition loseCondition = new NormalLose();
         WinCondition winCondition = new NormalWin();
 
-
-        return new MiniGameLevel(
+        return new MiniGameWorld(
                 levelSetup,
                 new ArrayList<>(List.of(loseCondition)),
                 winCondition,
@@ -156,23 +150,19 @@ public class MiniGameFactory {
 
     }
 
-    private static GameWorld createBowlingLevel2(){
-        int rows = 5;
-        int cols = 9;
+    private static GameWorld createBowlingLevel2() {
+        int rows = 5, cols = 9, redLineCol = 3;
 
-        List<WaveSpawnEntry> availableZombies = List.of(
-                new WaveSpawnEntry("ZombieDefault", 100)
-
+        List<WaveSpawnEntry> zombies = List.of(
+                new WaveSpawnEntry("ZombieDefault", 100),
+                new WaveSpawnEntry("ZombieArmor1", 150)
         );
 
-        List<Wave> waves = Wave.generateWaves(5, 200, availableZombies, 60);
-
-        LevelSetup levelSetup = new NormalLevelSetup(rows, cols, waves);
+        LevelSetup levelSetup = new BowlingSetup(rows, cols, redLineCol, zombies, 4, 250);
         LoseCondition loseCondition = new NormalLose();
         WinCondition winCondition = new NormalWin();
 
-
-        return new MiniGameLevel(
+        return new MiniGameWorld(
                 levelSetup,
                 new ArrayList<>(List.of(loseCondition)),
                 winCondition,
@@ -181,46 +171,34 @@ public class MiniGameFactory {
 
     }
 
-    private static GameWorld createBowlingLevel3(){
-        int rows = 5;
-        int cols = 9;
+    private static GameWorld createBowlingLevel3() {
+        int rows = 5, cols = 9, redLineCol = 3;
 
-        List<WaveSpawnEntry> availableZombies = List.of(
-                new WaveSpawnEntry("ZombieDefault", 100)
-
+        List<WaveSpawnEntry> zombies = List.of(
+                new WaveSpawnEntry("ZombieArmor1", 150),
+                new WaveSpawnEntry("ZombieGargantuar", 400)
         );
 
-        List<Wave> waves = Wave.generateWaves(5, 200, availableZombies, 60);
-
-        LevelSetup levelSetup = new NormalLevelSetup(rows, cols, waves);
+        LevelSetup levelSetup = new BowlingSetup(rows, cols, redLineCol, zombies, 5, 350);
         LoseCondition loseCondition = new NormalLose();
         WinCondition winCondition = new NormalWin();
 
-
-        return new MiniGameLevel(
+        return new MiniGameWorld(
                 levelSetup,
                 new ArrayList<>(List.of(loseCondition)),
                 winCondition,
                 new ArrayList<>()
         );
-
     }
 
-    private static GameWorld createIZombieLevel1(){
-        int rows = 5;
-        int cols = 9;
-
-        List<WaveSpawnEntry> availableZombies = List.of(
-                new WaveSpawnEntry("ZombieDefault", 100)
-
+    private static GameWorld createIZombieLevel1() {
+        List<Zombie> availableZombies = List.of(
+                new ZombieFactory().createZombie("ZombieDefault")
         );
 
-        List<Wave> waves = Wave.generateWaves(5, 200, availableZombies, 60);
-
-        LevelSetup levelSetup = new NormalLevelSetup(rows, cols, waves);
+        LevelSetup levelSetup = new IZombieSetup(5, 9, availableZombies);
         LoseCondition loseCondition = new NormalLose();
         WinCondition winCondition = new NormalWin();
-
 
         return new IZombieLevel(
                 levelSetup,
@@ -228,24 +206,17 @@ public class MiniGameFactory {
                 winCondition,
                 new ArrayList<>()
         );
-
     }
 
-    private static GameWorld createIZombieLevel2(){
-        int rows = 5;
-        int cols = 9;
-
-        List<WaveSpawnEntry> availableZombies = List.of(
-                new WaveSpawnEntry("ZombieDefault", 100)
-
+    private static GameWorld createIZombieLevel2() {
+        List<Zombie> availableZombies = List.of(
+                new ZombieFactory().createZombie("ZombieDefault"),
+                new ZombieFactory().createZombie("ZombieArmor1")
         );
 
-        List<Wave> waves = Wave.generateWaves(5, 200, availableZombies, 60);
-
-        LevelSetup levelSetup = new NormalLevelSetup(rows, cols, waves);
+        LevelSetup levelSetup = new IZombieSetup(5, 9, availableZombies);
         LoseCondition loseCondition = new NormalLose();
         WinCondition winCondition = new NormalWin();
-
 
         return new IZombieLevel(
                 levelSetup,
@@ -253,24 +224,17 @@ public class MiniGameFactory {
                 winCondition,
                 new ArrayList<>()
         );
-
     }
 
-    private static GameWorld createIZombieLevel3(){
-        int rows = 5;
-        int cols = 9;
-
-        List<WaveSpawnEntry> availableZombies = List.of(
-                new WaveSpawnEntry("ZombieDefault", 100)
-
+    private static GameWorld createIZombieLevel3() {
+        List<Zombie> availableZombies = List.of(
+                new ZombieFactory().createZombie("ZombieArmor1"),
+                new ZombieFactory().createZombie("ZombieGargantuar")
         );
 
-        List<Wave> waves = Wave.generateWaves(5, 200, availableZombies, 60);
-
-        LevelSetup levelSetup = new NormalLevelSetup(rows, cols, waves);
+        LevelSetup levelSetup = new IZombieSetup(5, 9, availableZombies);
         LoseCondition loseCondition = new NormalLose();
         WinCondition winCondition = new NormalWin();
-
 
         return new IZombieLevel(
                 levelSetup,
@@ -278,26 +242,53 @@ public class MiniGameFactory {
                 winCondition,
                 new ArrayList<>()
         );
-
     }
 
-    private static GameWorld createBeghouledLevel1(){
-        int rows = 5;
-        int cols = 9;
-
-        List<WaveSpawnEntry> availableZombies = List.of(
+    private static GameWorld createBeghouledLevel1() {
+        List<PlantType> plants = List.of(
+                PlantType.PEASHOOTER, PlantType.SUNFLOWER, PlantType.WALL_NUT,
+                PlantType.CABBAGE_PULT, PlantType.MELON_PULT
+        );
+        List<PlantUpgrade> upgrades = List.of(
+                new PlantUpgrade(PlantType.PEASHOOTER, PlantType.REPEATER, 500),
+                new PlantUpgrade(PlantType.WALL_NUT, PlantType.TALL_NUT, 500)
+        );
+        List<WaveSpawnEntry> zombies = List.of(
                 new WaveSpawnEntry("ZombieDefault", 100)
-
         );
 
-        List<Wave> waves = Wave.generateWaves(5, 200, availableZombies, 60);
-
-        LevelSetup levelSetup = new NormalLevelSetup(rows, cols, waves);
+        LevelSetup levelSetup = new BeghouledSetup(5, 9, plants, upgrades, 5, zombies);
         LoseCondition loseCondition = new NormalLose();
-        WinCondition winCondition = new NormalWin();
+        WinCondition winCondition = new BeghouledWinCondition();
 
+        return new MiniGameWorld(
+                levelSetup,
+                new ArrayList<>(List.of(loseCondition)),
+                winCondition,
+                new ArrayList<>()
+        );
+    }
 
-        return new MiniGameLevel(
+    private static GameWorld createBeghouledLevel2() {
+        List<PlantType> plants = List.of(
+                PlantType.PEASHOOTER, PlantType.SUNFLOWER, PlantType.WALL_NUT,
+                PlantType.CABBAGE_PULT, PlantType.MELON_PULT
+        );
+        List<PlantUpgrade> upgrades = List.of(
+                new PlantUpgrade(PlantType.PEASHOOTER, PlantType.REPEATER, 500),
+                new PlantUpgrade(PlantType.WALL_NUT, PlantType.TALL_NUT, 500),
+                new PlantUpgrade(PlantType.CABBAGE_PULT, PlantType.MELON_PULT, 1000)
+        );
+        List<WaveSpawnEntry> zombies = List.of(
+                new WaveSpawnEntry("ZombieDefault", 100),
+                new WaveSpawnEntry("ZombieArmor1", 150)
+        );
+
+        LevelSetup levelSetup = new BeghouledSetup(5, 9, plants, upgrades, 8, zombies);
+        LoseCondition loseCondition = new NormalLose();
+        WinCondition winCondition = new BeghouledWinCondition();
+
+        return new MiniGameWorld(
                 levelSetup,
                 new ArrayList<>(List.of(loseCondition)),
                 winCondition,
@@ -306,129 +297,90 @@ public class MiniGameFactory {
 
     }
 
-    private static GameWorld createBeghouledLevel2(){
-        int rows = 5;
-        int cols = 9;
-
-        List<WaveSpawnEntry> availableZombies = List.of(
-                new WaveSpawnEntry("ZombieDefault", 100)
-
+    private static GameWorld createBeghouledLevel3() {
+        List<PlantType> plants = List.of(
+                PlantType.PEASHOOTER, PlantType.SUNFLOWER, PlantType.WALL_NUT,
+                PlantType.CABBAGE_PULT, PlantType.MELON_PULT
+        );
+        List<PlantUpgrade> upgrades = List.of(
+                new PlantUpgrade(PlantType.PEASHOOTER, PlantType.REPEATER, 500),
+                new PlantUpgrade(PlantType.WALL_NUT, PlantType.TALL_NUT, 500),
+                new PlantUpgrade(PlantType.CABBAGE_PULT, PlantType.MELON_PULT, 1000),
+                new PlantUpgrade(PlantType.MELON_PULT, PlantType.WINTER_MELON, 750)
+        );
+        List<WaveSpawnEntry> zombies = List.of(
+                new WaveSpawnEntry("ZombieArmor1", 150),
+                new WaveSpawnEntry("ZombieGargantuar", 400)
         );
 
-        List<Wave> waves = Wave.generateWaves(5, 200, availableZombies, 60);
-
-        LevelSetup levelSetup = new NormalLevelSetup(rows, cols, waves);
+        LevelSetup levelSetup = new BeghouledSetup(5, 9, plants, upgrades, 12, zombies);
         LoseCondition loseCondition = new NormalLose();
-        WinCondition winCondition = new NormalWin();
+        WinCondition winCondition = new BeghouledWinCondition();
 
-
-        return new MiniGameLevel(
+        return new MiniGameWorld(
                 levelSetup,
                 new ArrayList<>(List.of(loseCondition)),
                 winCondition,
                 new ArrayList<>()
         );
-
     }
 
-    private static GameWorld createBeghouledLevel3(){
-        int rows = 5;
-        int cols = 9;
-
-        List<WaveSpawnEntry> availableZombies = List.of(
-                new WaveSpawnEntry("ZombieDefault", 100)
-
+    private static GameWorld createZombotanyLevel1() {
+        List<WaveSpawnEntry> zombies = List.of(
+                new WaveSpawnEntry("ZombieDefault", 100),
+                new WaveSpawnEntry("ZombiePeashooter", 150)
         );
 
-        List<Wave> waves = Wave.generateWaves(5, 200, availableZombies, 60);
-
-        LevelSetup levelSetup = new NormalLevelSetup(rows, cols, waves);
+        LevelSetup levelSetup = new models.world.levelSetup.NormalLevelSetup(5, 9, models.zombie.wave.Wave.generateWaves(3, 200, zombies, 40));
         LoseCondition loseCondition = new NormalLose();
         WinCondition winCondition = new NormalWin();
 
-
-        return new MiniGameLevel(
+        return new MiniGameWorld(
                 levelSetup,
                 new ArrayList<>(List.of(loseCondition)),
                 winCondition,
                 new ArrayList<>()
         );
-
     }
 
-    private static GameWorld createZombotanyLevel1(){
-        int rows = 5;
-        int cols = 9;
-
-        List<WaveSpawnEntry> availableZombies = List.of(
-                new WaveSpawnEntry("ZombieDefault", 100)
-
+    private static GameWorld createZombotanyLevel2() {
+        List<WaveSpawnEntry> zombies = List.of(
+                new WaveSpawnEntry("ZombieDefault", 100),
+                new WaveSpawnEntry("ZombiePeashooter", 150),
+                new WaveSpawnEntry("ZombieWallnut", 200),
+                new WaveSpawnEntry("ZombieSquash", 150)
         );
 
-        List<Wave> waves = Wave.generateWaves(5, 200, availableZombies, 60);
-
-        LevelSetup levelSetup = new NormalLevelSetup(rows, cols, waves);
+        LevelSetup levelSetup = new models.world.levelSetup.NormalLevelSetup(5, 9, models.zombie.wave.Wave.generateWaves(4, 300, zombies, 40));
         LoseCondition loseCondition = new NormalLose();
         WinCondition winCondition = new NormalWin();
 
-
-        return new MiniGameLevel(
+        return new MiniGameWorld(
                 levelSetup,
                 new ArrayList<>(List.of(loseCondition)),
                 winCondition,
                 new ArrayList<>()
         );
-
     }
 
-    private static GameWorld createZombotanyLevel2(){
-        int rows = 5;
-        int cols = 9;
-
-        List<WaveSpawnEntry> availableZombies = List.of(
-                new WaveSpawnEntry("ZombieDefault", 100)
-
+    private static GameWorld createZombotanyLevel3() {
+        List<WaveSpawnEntry> zombies = List.of(
+                new WaveSpawnEntry("ZombiePeashooter", 150),
+                new WaveSpawnEntry("ZombieWallnut", 200),
+                new WaveSpawnEntry("ZombieJalapeno", 150),
+                new WaveSpawnEntry("ZombieSquash", 150)
         );
 
-        List<Wave> waves = Wave.generateWaves(5, 200, availableZombies, 60);
-
-        LevelSetup levelSetup = new NormalLevelSetup(rows, cols, waves);
+        LevelSetup levelSetup = new models.world.levelSetup.NormalLevelSetup(5, 9, models.zombie.wave.Wave.generateWaves(5, 400, zombies, 40));
         LoseCondition loseCondition = new NormalLose();
         WinCondition winCondition = new NormalWin();
 
-
-        return new MiniGameLevel(
+        return new MiniGameWorld(
                 levelSetup,
                 new ArrayList<>(List.of(loseCondition)),
                 winCondition,
                 new ArrayList<>()
         );
-
-    }
-
-    private static GameWorld createZombotanyLevel3(){
-        int rows = 5;
-        int cols = 9;
-
-        List<WaveSpawnEntry> availableZombies = List.of(
-                new WaveSpawnEntry("ZombieDefault", 100)
-
-        );
-
-        List<Wave> waves = Wave.generateWaves(5, 200, availableZombies, 60);
-
-        LevelSetup levelSetup = new NormalLevelSetup(rows, cols, waves);
-        LoseCondition loseCondition = new NormalLose();
-        WinCondition winCondition = new NormalWin();
-
-
-        return new MiniGameLevel(
-                levelSetup,
-                new ArrayList<>(List.of(loseCondition)),
-                winCondition,
-                new ArrayList<>()
-        );
-
     }
 
 }

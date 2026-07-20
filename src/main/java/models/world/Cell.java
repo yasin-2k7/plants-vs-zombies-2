@@ -8,6 +8,7 @@ import models.enums.PlantType;
 import models.plant.Plant;
 import models.plant.components.PlacementBehaviorComponent;
 import models.plant.components.ShooterComponent;
+import models.quest.QuestStats;
 import models.world.cellTerrains.CellTerrain;
 import models.world.obstacles.Grave;
 import models.world.obstacles.Obstacle;
@@ -131,8 +132,22 @@ public class Cell {
             App.getCurrentGame().getActivePlants().add(newPlant);
 
             User user = App.getCurrentUser();
-            if (user != null && newPlant.getType().family == PlantFamily.EXPLOSIVE) {
-                user.getQuestStats().incrementExplosivePlantsUsed();
+            if (user != null) {
+                QuestStats stats = user.getQuestStats();
+                // برای کوئست ۱۱
+                stats.addFamilyUsedInLevel(newPlant.getType().family);
+                // برای کوئست ۱۲
+                stats.incrementTotalPlantsUsed();
+                if (Plant.isMushroom(newPlant.getType())) {
+                    stats.incrementMushroomPlantsUsed();
+                }
+                // برای کوئست ۸ (انفجاری)
+                if (newPlant.getType().family == PlantFamily.EXPLOSIVE) {
+                    stats.incrementExplosivePlantsUsed();
+                }
+                if (newPlant.getType().family == PlantFamily.SUN_PRODUCER) {
+                    stats.incrementSunProducerPlantsInLevel();
+                }
                 user.getQuestManager().checkAllQuests(user);
             }
             return null;

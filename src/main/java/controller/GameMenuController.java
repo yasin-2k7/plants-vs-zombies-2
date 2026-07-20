@@ -5,13 +5,14 @@ import models.core.User;
 import models.enums.PlantLayer;
 import models.enums.PlantType;
 import models.enums.Zombies;
+import models.miniGame.IZombie.IZombieLevel;
+import models.miniGame.beghouled.BeghouledMechanics;
+import models.miniGame.bowling.BowlingBallType;
+import models.miniGame.bowling.BowlingMechanics;
 import models.miniGame.vaseBreaker.VaseBreakerLevel;
 import models.plant.Plant;
 import models.plant.card.PlantCard;
-import models.world.Cell;
-import models.world.GameWorld;
-import models.world.Sun;
-import models.world.SunType;
+import models.world.*;
 import models.world.mechanics.NormalMechanic;
 import models.world.obstacles.Grave;
 import models.zombie.Zombie;
@@ -445,6 +446,73 @@ public class GameMenuController implements MenuController {
             level.clearHeldSeed();
             GameMenuView.getInstance().showResult("Planted " + heldType.name() + "!");
         }
+    }
+
+    public void placeZombie(String type, float x, float y){
+        GameWorld world = App.getCurrentGame();
+        if(!(world instanceof IZombieLevel level)){
+            GameMenuView.getInstance().showResult("this command is only available in I Zombie!");
+            return;
+        }
+        Zombie zombie;
+        try {
+            zombie = new ZombieFactory().createZombie(type);
+        } catch (Exception e) {
+            GameMenuView.getInstance().showResult("invalid zombie");
+            return;
+        }
+        boolean allowed = level.getAvailableZombies().stream()
+                .anyMatch(z -> z.getName().name().equalsIgnoreCase(type));
+        if (!allowed) {
+            GameMenuView.getInstance().showResult("u dont have this zombie");
+            return;
+        }
+        GameMenuView.getInstance().showResult(level.placeZombie(zombie, x, y));
+    }
+
+    public void swapPlants(int row1, int col1, int row2, int col2){
+        GameWorld game = App.getCurrentGame();
+        BeghouledMechanics mechanics = game.getMechanic(BeghouledMechanics.class);
+        if (mechanics == null){
+            GameMenuView.getInstance().showResult("this command is only available in Beghouled!");
+            return;
+        }
+
+        GridPosition a = new GridPosition(row1, col1);
+        GridPosition b = new GridPosition(row2, col2);
+
+        String error = mechanics.trySwap(game, a, b);
+        if (error != null){
+            GameMenuView.getInstance().showResult(error);
+        } else {
+            GameMenuView.getInstance().showResult("Swap successful! Score: " + mechanics.getScore() + "/" + mechanics.getTargetScore());
+        }
+    }
+
+    public void upgradePlant(PlantType type){
+        GameWorld game = App.getCurrentGame();
+        BeghouledMechanics mechanics = game.getMechanic(BeghouledMechanics.class);
+        if (mechanics == null){
+            GameMenuView.getInstance().showResult("this command is only available in Beghouled!");
+            return;
+        }
+
+        String error = mechanics.upgradePlant(game, type);
+        if (error != null){
+            GameMenuView.getInstance().showResult(error);
+        } else {
+            GameMenuView.getInstance().showResult("Upgrade successful! Remaining sun: " + game.getSun());
+        }
+    }
+
+    public void throwBowlingBall(BowlingBallType type, float x, float y) {
+        GameWorld game = App.getCurrentGame();
+        BowlingMechanics mechanics = game.getMechanic(BowlingMechanics.class);
+        if (mechanics == null) {
+            GameMenuView.getInstance().showResult("this command is only available in Bowling!");
+            return;
+        }
+        GameMenuView.getInstance().showResult(mechanics.throwBall(game, type, x, y));
     }
 
 

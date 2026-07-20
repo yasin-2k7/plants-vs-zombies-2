@@ -1,6 +1,8 @@
 package models.quest.reward;
 
+import models.core.News;
 import models.core.User;
+import models.enums.NewsType;
 import models.enums.PlantType;
 
 import java.util.ArrayList;
@@ -24,6 +26,11 @@ public class RandomUnlockReward implements Reward {
 
         if (locked.isEmpty()) {
             new CurrencyReward(50, 0).apply(user);
+            user.addNews(new News(
+                    "All plants unlocked!",
+                    "Received 50 coins as bonus reward.",
+                    NewsType.PLANT_UNLOCKED
+            ));
         } else {
             PlantType toUnlock = locked.get(new Random().nextInt(locked.size()));
             user.unlockPlant(toUnlock);

@@ -8,10 +8,10 @@ import models.world.winCondition.WinCondition;
 
 import java.util.ArrayList;
 
-public class MiniGameLevel extends GameWorld {
+public class MiniGameWorld extends GameWorld {
     protected int levelNumber;
 
-    public MiniGameLevel(LevelSetup levelSetup, ArrayList<LoseCondition> loseConditions,
+    public MiniGameWorld(LevelSetup levelSetup, ArrayList<LoseCondition> loseConditions,
                          WinCondition winCondition, ArrayList<Mechanic> mechanics) {
         super(levelSetup, loseConditions, winCondition, mechanics);
     }

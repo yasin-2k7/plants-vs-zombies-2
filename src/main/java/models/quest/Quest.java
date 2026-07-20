@@ -22,16 +22,17 @@ public abstract class Quest implements Comparable<Quest> {
     }
 
     public void complete(User user) {
-        if (this.isCompleted && this.reward != null) {
+        if (!this.isCompleted && this.reward != null) {
             this.reward.apply(user);
+            this.isCompleted = true;
         }
     }
 
     public boolean checkCompletion(QuestStats stats) {
         if (!isCompleted && condition != null && condition.test(stats)) {
-            this.isCompleted = true;
+            return true;
         }
-        return this.isCompleted;
+        return false;
     }
 
     @Override
@@ -44,4 +45,5 @@ public abstract class Quest implements Comparable<Quest> {
     public boolean isCompleted() { return isCompleted; }
     public QuestPriority getPriority() {return priority;}
     public void setCompleted(boolean completed) {this.isCompleted = completed;}
+    public Reward getReward() { return reward; }
 }

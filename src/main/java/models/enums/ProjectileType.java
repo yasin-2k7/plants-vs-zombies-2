@@ -30,7 +30,9 @@ public enum ProjectileType {
     PEPPER("LOBBED"),
     SPECIAL_PEPPER("LOBBED"),
     SPECIAL_ICE_MELON("LOBBED"),
-    ICE_MELON("LOBBED");
+    ICE_MELON("LOBBED"),
+
+    BOWLING_STRAIGHT("STRAIGHT");
 
 
     public final String movement;

@@ -11,7 +11,7 @@ public enum ProfileMenuCommands {
     MENU_PROFILE_CHANGE_NICKNAME("\\s*menu\\s+profile\\s+change-nickname\\s+-n\\s+(\\S+)\\s*"),
     MENU_PROFILE_CHANGE_EMAIL("\\s*menu\\s+profile\\s+change-email\\s+-e\\s+(\\S+)\\s*"),
     MENU_PROFILE_CHANGE_PASSWORD("\\s*menu\\s+profile\\s+change-password\\s+-p\\s+(\\S+)\\s+-o\\s+(\\S+)\\s*"),
-    MENU_PROFILE_SHOW_INFO("\\s*menu\\s+profile\\s+show-info\\s");
+    MENU_PROFILE_SHOW_INFO("\\s*menu\\s+profile\\s+show-info\\s*");
 
     private final String pattern;
     private final Pattern compiledPattern;
