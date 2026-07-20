@@ -79,13 +79,16 @@ public class IZombieSetup implements LevelSetup {
 
         }
 
-
-
     }
 
     private Plant createPlantInstance(PlantType type, int row, int col) {
-        Plant peaPlant = new Plant(PlantType.PEASHOOTER, 300, 100);
-        return peaPlant;
+        return switch (type) {
+            case PEASHOOTER -> new Plant(PlantType.PEASHOOTER, 300, 100);
+            case SNOW_PEA -> new Plant(PlantType.SNOW_PEA, 300, 80);
+            case WALL_NUT -> new Plant(PlantType.WALL_NUT, 4000, 0);
+            case SUNFLOWER -> new Plant(PlantType.SUNFLOWER, 300, 0);
+            default -> new Plant(type, 300, 100);
+        };
     }
 
     @Override

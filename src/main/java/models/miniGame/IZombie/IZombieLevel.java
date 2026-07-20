@@ -59,21 +59,22 @@ public class IZombieLevel extends GameWorld {
 
     }
 
-    public boolean canPlaceZombie(Zombie zombie, float x, float y){
+
+    public String placeZombie(Zombie zombie, float x, float y) {
         int col = (int) (x / 100);
-        if (col < redLineCol) return false;
-
-        int cost = getZombieCost(zombie);
-        return getSun() >= cost;
-    }
-
-    public void placeZombie(Zombie zombie, float x, float y) {
-        if (canPlaceZombie(zombie, x, y)) {
-            setSun(getSun() - getZombieCost(zombie));
-            zombie.setX(x);
-            zombie.setY(y);
-            addZombie(zombie);
+        if(col < redLineCol) {
+            return "u cant place zombie here";
         }
+        int cost = getZombieCost(zombie);
+        if(!(getSun() >= cost)){
+            return "u dont have enough sun";
+        }
+
+        setSun(getSun() - getZombieCost(zombie));
+        zombie.setX(x);
+        zombie.setY(y);
+        addZombie(zombie);
+        return "zombie place at " + x + ", " + y;
     }
 
     public int getZombieCost(Zombie zombie) {

@@ -1,7 +1,7 @@
 package models.miniGame.bowling;
 
 public enum BowlingBallType {
-    WALLNUT,
+    NORMAL,
     EXPLODE_O_NUT,
     GIANT_WALLNUT
 }

@@ -1,5 +1,6 @@
 package models.world;
 
+import controller.GameMenuController;
 import models.Damageable;
 import models.core.App;
 import models.core.User;
@@ -37,6 +38,8 @@ public abstract class GameWorld {
     private int currentTick = 0;
 
     private Chapter currentChapter;
+
+    private boolean willUnlockLevel = false;
 
     protected int plantFoods;
     protected int rows;
@@ -232,6 +235,13 @@ public abstract class GameWorld {
 
         lawnMowerManager.updateMowers(activeZombies);
 
+        activeZombies.removeIf(zombie -> {
+            if (zombie.isDead()) {
+                this.notifyZombieKilled();
+                return true;
+            }
+            return false;
+        });
         activePlants.removeIf(Plant::isDead);
         activeProjectiles.removeIf(Projectile::isDead);
 
@@ -356,12 +366,15 @@ public abstract class GameWorld {
                 }
 
                 user.getQuestManager().checkAllQuests(user);
+                user.getQuestManager().getStats().setLevelWon(true);
+                GameMenuController.handleWinning(this);
             }
         }
 
         for(LoseCondition lose : loseConditions){
             if(lose.checkLose(this)){
                 state = GameState.LOST;
+                GameMenuController.handleLosing(this);
             }
         }
 
@@ -547,4 +560,12 @@ public abstract class GameWorld {
     public void setPlantingPhase(boolean plantingPhase) { this.plantingPhase = plantingPhase; }
     public Chapter getCurrentChapter() {return currentChapter;}
     public void setCurrentChapter(Chapter chapter) {this.currentChapter = chapter;}
+
+    public void setWillUnlockLevel(boolean willUnlockLevel) {
+        this.willUnlockLevel = willUnlockLevel;
+    }
+
+    public boolean isWillUnlockLevel() {
+        return willUnlockLevel;
+    }
 }
