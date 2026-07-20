@@ -1,5 +1,8 @@
 package models.lawnMower;
 import java.util.List;
+
+import models.core.App;
+import models.core.User;
 import models.zombie.Zombie;
 
 public class LawnMower {
@@ -34,14 +37,21 @@ public class LawnMower {
     }
 
     // متد نابود کردن زامبی‌ها هنگام عبور
+    // در LawnMower.mowZombies:
     public void mowZombies(List<Zombie> zombiesInRow) {
         if (!isActive) return;
 
         for (Zombie z : zombiesInRow) {
             if (!z.isDead() && z.getX() <= this.positionX) {
                 if (!z.isBoss()) {
-                System.out.println("- " + z.getName().name());
-                z.takeDamage(99999, "MOWER"); // دمیج بالا برای کشتن قطعی
+                    z.setKiller(null);  // چمن‌زن توسط گیاه کشته نشده
+                    z.takeDamage(99999, "MOWER");
+
+                    User user = App.getCurrentUser();
+                    if (user != null) {
+                        user.getQuestStats().incrementLawnmowerKills();
+                        user.getQuestManager().checkAllQuests(user);
+                    }
                 }
             }
         }

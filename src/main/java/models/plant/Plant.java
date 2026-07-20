@@ -171,10 +171,15 @@ public class Plant {
             this.components = new ArrayList<>();
         }
     }
-
-
-
     public void setFire(boolean fire) {
         isFire = fire;
+    }
+
+    public static boolean isMushroom(PlantType type) {
+        return switch (type) {
+            case SUN_SHROOM, PUFF_SHROOM, FUME_SHROOM, SEA_SHROOM,
+                 ICE_SHROOM, DOOM_SHROOM, MAGNET_SHROOM, HYPNO_SHROOM -> true;
+            default -> false;
+        };
     }
 }

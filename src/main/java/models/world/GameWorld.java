@@ -266,7 +266,6 @@ public abstract class GameWorld {
                         PlantFamily family = zombie.getKillerPlantType().family;
                         stats.addZombieKilledByFamily(family);
                     }
-
                     // برای کوئست ۷ (سرعت عمل)
                     NormalMechanic normal = getMechanic(NormalMechanic.class);
                     if (normal != null && normal.getWaveManager() != null) {
@@ -279,6 +278,14 @@ public abstract class GameWorld {
                             stats.incrementZombiesKilledInFirstWave();
                         }
                     }
+
+                    // کوئست ۱۴: کشته شدن در ستون اول بدون چمن‌زن
+                    if (zombie.getX() < 50) { // تقریباً ستون اول
+                        int row = (int) (zombie.getY() / App.getCellHeight());
+                        LawnMower mower = this.lawnMowerManager.getMowers().get(row);                        if (mower != null && !mower.isAlive()) {
+                            stats.incrementZombiesKilledInFirstColumnWithoutMower();
+                        }
+                }
 
                     user.getQuestManager().checkAllQuests(user);
                 }
@@ -298,8 +305,55 @@ public abstract class GameWorld {
                 stats.setLevelWon(true);
                 stats.setFinalSunCount(this.currentSun);   //  کوئست 6
                 // بررسی تقارن (کوئست ۹)
-                boolean symmetric = isGardenSymmetric();
+                boolean symmetric = isGardenSymmetricExceptMiddleRow();
                 stats.setSymmetryAchieved(symmetric);
+
+                // کوئست ۱۳: برد با بیشترین سختی
+                int difficulty = user.getGameDifficulty();
+                if (difficulty == 5) {
+                    stats.incrementConsecutiveWinsMaxDifficulty();
+                } else {
+                    stats.resetConsecutiveWinsMaxDifficulty();
+                }
+
+                // ---- کوئست ۱۷: ستون‌های خالی ----
+                for (int c = 0; c < cols; c++) {
+                    boolean hasPlant = false;
+                    for (int r = 0; r < rows; r++) {
+                        if (!grid[r][c].isEmpty()) {
+                            hasPlant = true;
+                            break;
+                        }
+                    }
+                    if (!hasPlant) {
+                        stats.addEmptyColumnInLevel(c);
+                    }
+                }
+
+                // ---- کوئست ۱۸: سطرهای خالی ----
+                for (int r = 0; r < rows; r++) {
+                    boolean hasPlant = false;
+                    for (int c = 0; c < cols; c++) {
+                        if (!grid[r][c].isEmpty()) {
+                            hasPlant = true;
+                            break;
+                        }
+                    }
+                    if (!hasPlant) {
+                        stats.addEmptyRowInLevel(r);
+                    }
+                }
+
+                // کوئست ۱۹: صلیب بی دفاع
+                // بررسی می‌کنیم که برای هر n (0 تا min(rows, cols)-1) ستون و ردیف n خالی است
+                int minDim = Math.min(rows, cols);
+                for (int n = 0; n < minDim; n++) {
+                    if (stats.getEmptyColumnsInLevel().contains(n) && stats.getEmptyRowsInLevel().contains(n)) {
+                        stats.setEmptyColumnForCross(n);
+                        stats.setEmptyRowForCross(n);
+                        break; // فقط کوچکترین n را ثبت می‌کنیم
+                    }
+                }
 
                 user.getQuestManager().checkAllQuests(user);
             }
@@ -317,7 +371,22 @@ public abstract class GameWorld {
         if (grid == null || rows == 0 || cols == 0) return false;
         int middleRow = rows / 2;
         for (int r = 0; r < rows; r++) {
-            if (r == middleRow) continue; // ردیف وسط را نادیده می‌گیریم
+            for (int c = 0; c < cols / 2; c++) {
+                Plant left = grid[r][c].getPlant();
+                Plant right = grid[r][cols - 1 - c].getPlant();
+                if (left == null && right == null) continue;
+                if (left == null || right == null) return false;
+                if (left.getType() != right.getType()) return false;
+            }
+        }
+        return true;
+    }
+
+    public boolean isGardenSymmetricExceptMiddleRow() {
+        if (grid == null || rows == 0 || cols == 0) return false;
+        int middleRow = rows / 2;
+        for (int r = 0; r < rows; r++) {
+            if (r == middleRow) continue;  // ردیف وسط را نادیده می‌گیریم
             for (int c = 0; c < cols / 2; c++) {
                 Plant left = grid[r][c].getPlant();
                 Plant right = grid[r][cols - 1 - c].getPlant();

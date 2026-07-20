@@ -51,7 +51,7 @@ public class IZombieLevel extends GameWorld {
             if (brain != null && !brain.isEaten()) {
                 if (zombie.getX() <= brain.getX() + 20) {
                     brain.eat();
-                    zombie.setDead(true);
+                    zombie.die();
                 }
             }
         }

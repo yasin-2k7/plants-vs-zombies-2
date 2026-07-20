@@ -58,7 +58,7 @@ public abstract class Zombie implements Damageable {
         }
         if (freezedTicksRemaining > 0) {
             freezedTicksRemaining--;
-            if (freezedTicksRemaining == 0) applySlow(20, 0.5);
+            if (freezedTicksRemaining == 0) applySlow(20, 0.5, true);
             return;
         }
         Cell currentCell = Cell.findZombieCell(App.getCurrentGame().getGrid(), this);

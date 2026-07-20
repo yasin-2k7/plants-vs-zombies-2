@@ -22,7 +22,7 @@ public class QuestManager {
         Iterator<Quest> iterator = activeQuests.iterator();
         while (iterator.hasNext()) {
             Quest quest = iterator.next();
-            if (quest.checkCompletion(stats)) {
+            if (!quest.isCompleted() && quest.checkCompletion(stats)) {
                 quest.complete(user);
                 String msg = "🎉 Quest completed: " + quest.getDescription();
                 GameMenuController.updateState(msg);
@@ -62,6 +62,22 @@ public class QuestManager {
                 activeQuests.add(QuestFactory.createFamilySlaughterQuest(family));
             }
         }
+
+        // 11. شکوفایی در محدودیت‌ها (برای هر خانواده به جز خانواده‌های خاص)
+        for (PlantFamily family : PlantFamily.values()) {
+            if (family != PlantFamily.SUN_PRODUCER && family != PlantFamily.MODIFIER) {
+                activeQuests.add(QuestFactory.createFlourishInRestrictionsQuest(family));
+            }
+        }
+
+        // 13. برد پشت برد
+        activeQuests.add(QuestFactory.createWinStreakQuest());
+
+        // 14. تقریبا پیروز
+        activeQuests.add(QuestFactory.createAlmostVictoryQuest());
+
+        // 15. OCD نَمَنَ
+        activeQuests.add(QuestFactory.createOCDQuest());
     }
 
     public void generateMainQuests(User user) {
@@ -79,14 +95,40 @@ public class QuestManager {
 
         // 7. سرعت عمل
         activeQuests.add(QuestFactory.createSpeedQuest());
+
+        // 16. روز ابری
+        activeQuests.add(QuestFactory.createCloudyDayQuest());
+
+        // 17. یه ستون کمتر (برای n=1 تا تعداد ستون‌های بازی، مثلاً 9)
+        for (int n = 0; n < 9; n++) {
+            activeQuests.add(QuestFactory.createOneLessColumnQuest(n));
+        }
+
+        // 18. سطر بی دفاع (برای n=0 تا تعداد سطرها، مثلاً 5)
+        for (int n = 0; n < 5; n++) {
+            activeQuests.add(QuestFactory.createDefenselessRowQuest(n));
+        }
+
+        // 19. صلیب بی دفاع (برای n های 0 تا min(سطرها, ستون‌ها))
+        int minDim = Math.min(5, 9);
+        for (int n = 0; n < minDim; n++) {
+            activeQuests.add(QuestFactory.createCrossDefenselessQuest(n));
+        }
     }
 
     // متد جدید برای تولید کوئست‌های Epic
     public void generateEpicQuests(User user) {
         // 6. استاد دفاع
         activeQuests.add(QuestFactory.createMasterDefenseQuest());
-    }
+        // 12. شب یا صبح
+        activeQuests.add(QuestFactory.createNightOrMorningQuest());
 
+        // 20. وقت چمن‌زنی (برای n های 10، 20، 30، 40، 50)
+        int[] options = {10, 20, 30, 40, 50};
+        for (int n : options) {
+            activeQuests.add(QuestFactory.createLawnmowerTimeQuest(n));
+        }
+    }
     private int getRandomSunAmount() {
         int[] options = {3000, 4000, 5000};
         return options[new Random().nextInt(options.length)];

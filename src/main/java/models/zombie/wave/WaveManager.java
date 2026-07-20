@@ -2,6 +2,7 @@ package models.zombie.wave;
 
 import controller.GameMenuController;
 import models.core.App;
+import models.core.User;
 import models.world.GameWorld;
 import models.zombie.Zombie;
 import models.zombie.ZombieFactory;
@@ -73,6 +74,7 @@ public class WaveManager {
 
         Zombie zombie = new ZombieFactory().createZombie(entry.getZombie());
         if (zombie == null) return;
+
         if (App.getCurrentUser().getShowedZombies().containsKey(entry.getZombieAlias())) {
 
         if (!App.getCurrentUser().getShowedZombies().get(App.getArmoredZombieName(zombie.getSpecificName()))){
@@ -88,7 +90,7 @@ public class WaveManager {
             System.out.println("A zombie rides a sandstorm and enters " + columnsForward + " columns ahead!");
         }
 
-        float x = spawnCol * App.getCellWidth(); // فرض: عرض سلول ۱۰۰ و سمت راست
+        float x = spawnCol * App.getCellWidth();
         float y = lane * App.getCellHeight() + App.getCellHeight()/2;
         zombie.setX(x);
         zombie.setY(y);

@@ -1,5 +1,6 @@
 package models.miniGame;
 
+import models.enums.PlantType;
 import models.miniGame.IZombie.IZombieLevel;
 import models.miniGame.vaseBreaker.VaseBreakerLevel;
 import models.miniGame.vaseBreaker.VaseBreakerSetup;
@@ -62,12 +63,23 @@ public class MiniGameFactory {
         int rows = 5;
         int cols = 9;
 
-        List<WaveSpawnEntry> availableZombies = List.of(
-                new WaveSpawnEntry("ZombieDefault", 100)
-
+        List<String> normalVaseZombies = List.of(
+                "ZombieDefault",
+                "ZombieConeHead"
         );
 
-        LevelSetup levelSetup = new VaseBreakerSetup(rows, cols);
+        List<String> giantVaseZombies = List.of(
+                "ZombieBucketHead",
+                "ZombieGargantuar"
+        );
+
+        List<PlantType> possiblePlants = List.of(
+                PlantType.PEASHOOTER,
+                PlantType.SNOW_PEA,
+                PlantType.WALL_NUT
+        );
+
+        LevelSetup levelSetup = new VaseBreakerSetup(rows, cols, normalVaseZombies, giantVaseZombies, possiblePlants);
         LoseCondition loseCondition = new NormalLose();
         WinCondition winCondition = new NormalWin();
 
