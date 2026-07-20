@@ -3,7 +3,7 @@ package controller;
 import models.core.App;
 import models.enums.PlantType;
 import models.plant.Plant;
-import models.plant.PlantFactory;
+import models.plant.factory.PlantFactory;
 import models.plant.card.PlantCard;
 import models.plant.card.PlantCardFactory;
 import models.zombie.Zombie;

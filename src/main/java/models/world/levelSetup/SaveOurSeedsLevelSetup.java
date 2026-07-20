@@ -1,8 +1,6 @@
 package models.world.levelSetup;
 
 import models.enums.PlantType;
-import models.plant.Plant;
-import models.plant.PlantFactory;
 import models.world.Cell;
 import models.world.GameWorld;
 import models.world.cellTerrains.LandTerrain;

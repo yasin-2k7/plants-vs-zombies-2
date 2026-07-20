@@ -3,7 +3,7 @@ package models.miniGame.beghouled;
 import models.enums.PlantLayer;
 import models.enums.PlantType;
 import models.plant.Plant;
-import models.plant.PlantFactory;
+import models.plant.factory.PlantFactory;
 import models.world.Cell;
 import models.world.GameWorld;
 import models.world.GridPosition;

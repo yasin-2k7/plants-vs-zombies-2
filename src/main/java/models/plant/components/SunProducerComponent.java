@@ -22,11 +22,16 @@ public class SunProducerComponent implements GameComponent {
     private boolean checkShroomSize;
     private boolean enable;
     private int growTimeToReduce;
-    private Plant owner;
+
+    private boolean isInstant;
 
     private final ArrayList<Sun> componentSuns = new ArrayList<>();
 
     public SunProducerComponent(int sunSize, int sunNumber, int productionTime, boolean doubleSunChance, boolean shroom, int sunNumberWithPlantFood, int growTimeToReduce) {
+        this(sunSize, sunNumber, productionTime, doubleSunChance, shroom, sunNumberWithPlantFood, growTimeToReduce, false);
+    }
+
+    public SunProducerComponent(int sunSize, int sunNumber, int productionTime, boolean doubleSunChance, boolean shroom, int sunNumberWithPlantFood, int growTimeToReduce, boolean isInstant) {
         this.sunSize = sunSize;
         this.sunNumber = sunNumber;
         this.productionTime = productionTime;
@@ -34,12 +39,12 @@ public class SunProducerComponent implements GameComponent {
         this.shroom = shroom;
         this.sunNumberWithPlantFood = sunNumberWithPlantFood;
         this.growTimeToReduce = growTimeToReduce;
-        this.lastProductionTicks = productionTime*10 - 10;
+        this.isInstant = isInstant;
+        this.lastProductionTicks = productionTime * 10 - 10;
     }
 
     @Override
     public void update(Plant owner) {
-        // TODO: بررسی زمان گذشته شده (مثلا هر 20 ثانیه یک بار خورشید تولید شود)
 
         tick();
         if (owner.getType().equals(PlantType.SUN_BEAN)){
@@ -63,9 +68,16 @@ public class SunProducerComponent implements GameComponent {
             for (int i = 0; i < sunNumber; i++){
                 componentSuns.add(produceSun(owner));
             }
+            if (isInstant) {
+                if (owner.getCell() != null) {
+                    owner.getCell().findAndRemovePlant();
+                }
+                owner.die();
+                return;
+            }
         }
 
-        if (componentSuns.isEmpty()){
+        if (!isInstant && componentSuns.isEmpty()){
             enable = true;
         }
 

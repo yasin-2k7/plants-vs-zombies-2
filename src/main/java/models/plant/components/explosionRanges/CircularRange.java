@@ -20,7 +20,11 @@ public class CircularRange implements ExplosionRange{
 
     @Override
     public List<Cell> getCells(Plant owner) {
-        if (owner.getComponent(ExplosivesComponent.class).getTarget() == null) return Cell.getNeighborCells(owner.getCell(), LevelMenuController.getGameCells(), radius);
-        return Cell.getNeighborCells(owner.getComponent(ExplosivesComponent.class).getTarget(), LevelMenuController.getGameCells(), radius);
+        if (owner.getComponent(ExplosivesComponent.class) == null ||
+            owner.getComponent(ExplosivesComponent.class).getTarget() == null){
+            return Cell.getNeighborCells(owner.getCell(), LevelMenuController.getGameCells(), radius);
+        }
+        return Cell.getNeighborCells(owner.getComponent(ExplosivesComponent.class).getTarget(),
+                                        LevelMenuController.getGameCells(), radius);
     }
 }

@@ -4,13 +4,12 @@ import models.core.App;
 import models.core.User;
 import models.enums.PlantType;
 import models.plant.Plant;
-import models.plant.PlantFactory;
+import models.plant.factory.PlantFactory;
 import models.world.Cell;
 import models.world.cellTerrains.LandTerrain;
 
 import java.util.List;
 import java.util.Random;
-import java.util.stream.Collectors;
 
 public class GreenHouse {
     private static final int ROWS = 4;

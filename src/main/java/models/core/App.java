@@ -2,7 +2,7 @@ package models.core;
 
 import controller.MenuController;
 import models.greenhouse.GreenHouse;
-import models.plant.PlantFactory;
+import models.plant.factory.PlantFactory;
 import models.world.GameWorld;
 import view.View;
 

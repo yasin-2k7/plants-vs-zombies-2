@@ -197,9 +197,54 @@ public abstract class GameWorld {
 
     }
 
-    public void ShowDetails(){
+    private void processZombieDeath(Zombie zombie) {
+        this.notifyZombieKilled();
 
+        User user = App.getCurrentUser();
+        if (user == null) return;
+
+        QuestStats stats = user.getQuestStats();
+        stats.addZombiesKilledToday(1);
+        stats.addTotalZombiesKilled(1);
+
+        String chapter = currentChapter.name();
+        stats.addZombiesKilledByChapter(chapter, 1);
+
+        // ثبت آمار بر اساس نوع گیاه کشنده
+        if (zombie.getKillerPlantType() != null) {
+            stats.addZombiesKilledByPlant(zombie.getKillerPlantType(), 1);
+            PlantFamily family = zombie.getKillerPlantType().family;
+            stats.addZombieKilledByFamily(family);
+        }
+
+        // ثبت آمار برای کوئست ۷ (سرعت عمل در موج اول)
+        NormalMechanic normal = getMechanic(NormalMechanic.class);
+        if (normal != null && normal.getWaveManager() != null) {
+            WaveManager wm = normal.getWaveManager();
+            if (wm.getCurrentWaveIndex() == 0 && wm.getCurrentWave() != null) {
+                if (!stats.isFirstWaveStarted()) {
+                    stats.setFirstWaveStartTime(System.currentTimeMillis());
+                }
+                stats.incrementZombiesKilledInFirstWave();
+            }
+        }
+
+        // بررسی نهایی تمام کوئست‌ها
+        user.getQuestManager().checkAllQuests(user);
     }
+
+    private void cleanupDeadZombies() {
+        Iterator<Zombie> zombieIterator = activeZombies.iterator();
+        while (zombieIterator.hasNext()) {
+            Zombie zombie = zombieIterator.next();
+            if (zombie.isDead()) {
+                processZombieDeath(zombie); // ۱. ثبت کامل آمار و کوئست‌ها
+                zombieIterator.remove();    // ۲. حذف ایمن از لیست زامبی‌های فعال
+            }
+        }
+    }
+
+
 
     protected abstract void applyChapterRules();
 
@@ -256,45 +301,7 @@ public abstract class GameWorld {
             }
         }
 
-        Iterator<Zombie> zombieIterator = activeZombies.iterator();
-        while (zombieIterator.hasNext()) {
-            Zombie zombie = zombieIterator.next();
-            if (zombie.isDead()) {
-                this.notifyZombieKilled();
-                User user = App.getCurrentUser();
-                if (user != null) {
-                    QuestStats stats = user.getQuestStats();
-                    stats.addZombiesKilledToday(1);
-                    stats.addTotalZombiesKilled(1);
-
-                    String chapter = currentChapter.name();
-                    stats.addZombiesKilledByChapter(chapter, 1);
-
-                    if (zombie.getKillerPlantType() != null) {
-                        stats.addZombiesKilledByPlant(zombie.getKillerPlantType(), 1);
-                        // برای کوئست ۱۰
-                        PlantFamily family = zombie.getKillerPlantType().family;
-                        stats.addZombieKilledByFamily(family);
-                    }
-
-                    // برای کوئست ۷ (سرعت عمل)
-                    NormalMechanic normal = getMechanic(NormalMechanic.class);
-                    if (normal != null && normal.getWaveManager() != null) {
-                        WaveManager wm = normal.getWaveManager();
-                        if (wm.getCurrentWaveIndex() == 0 && wm.getCurrentWave() != null) {
-                            // موج اول
-                            if (!stats.isFirstWaveStarted()) {
-                                stats.setFirstWaveStartTime(System.currentTimeMillis());
-                            }
-                            stats.incrementZombiesKilledInFirstWave();
-                        }
-                    }
-
-                    user.getQuestManager().checkAllQuests(user);
-                }
-                zombieIterator.remove();
-            }
-        }
+        cleanupDeadZombies();
 
         for(Mechanic mechanic : mechanics){
             mechanic.applyMechanic(this);

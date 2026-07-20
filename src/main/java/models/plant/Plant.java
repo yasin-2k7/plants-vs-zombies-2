@@ -77,17 +77,15 @@ public class Plant {
             return;
         }
         health -= damage;
-        if (type.equals(PlantType.GOLD_BLOOM)){
-            components.getLast().update(this);
-        }
         if (health <= 0){
-            cell.findAndRemovePlant();
+            User user = App.getCurrentUser();
+            if (user != null) {
+                user.getQuestStats().incrementPlantsLost();
+            }
             App.getCurrentGame().notifyPlantEaten();
+            die();
         }
-        User user = App.getCurrentUser();
-        if (user != null) {
-            user.getQuestStats().incrementPlantsLost();
-        }
+
     }
 
     public Plant(PlantType type, int health, int damage) {
@@ -105,7 +103,14 @@ public class Plant {
     }
 
     public void die() {
+        if (this.dead) return;
+
         this.dead = true;
+
+        if (this.cell != null) {
+            this.cell.findAndRemovePlant();
+            this.cell = null;
+        }
         GameMenuController.updateState("Plant " + this.getType().name() + " at (" + this.x + ", " + this.y + ") is destroyed.");
     }
     public boolean isDead() { return dead; }

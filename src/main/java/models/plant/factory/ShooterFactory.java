@@ -1,16 +1,14 @@
-package models.plant;
+package models.plant.factory;
 
-import controller.LevelMenuController;
 import models.core.App;
 import models.enums.PlantLayer;
 import models.enums.PlantType;
 import models.enums.ProjectileType;
-import models.plant.components.*;
-import models.plant.components.explosionRanges.CircularRange;
-import models.plant.components.explosionRanges.LineRange;
-import models.plant.components.explosiveBehaviors.*;
-import models.plant.components.explosiveTriggers.InstantTrigger;
-import models.plant.components.explosiveTriggers.ProximityTrigger;
+import models.plant.Plant;
+import models.plant.components.BowlingChargeComponent;
+import models.plant.components.LifespanComponent;
+import models.plant.components.PlacementBehaviorComponent;
+import models.plant.components.ShooterComponent;
 import models.plant.components.shooterPlantFoodBehaviors.RandomTargetPlantFood;
 import models.plant.visions.RotatedVisionStrategy;
 import models.plant.visions.StraightVisionStrategy;
@@ -21,137 +19,46 @@ import models.projectile.movementStrategies.MovementStrategy;
 import models.projectile.movementStrategies.StraightMovementStrategy;
 import models.projectile.strikeStrategies.CheckLobbedStrike;
 import models.projectile.strikeStrategies.CheckStraightStrike;
-import models.world.Cell;
-import models.zombie.Zombie;
-
-import java.util.*;
+import java.util.Map;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
-public class PlantFactory {
-    private static final Map<PlantType, Supplier<Plant>> registry = new HashMap<>();
-
-    public PlantFactory(){
-        registry.put(PlantType.SUNFLOWER, this::buildSunflower);
-        registry.put(PlantType.TWIN_SUNFLOWER, this::buildTwinSunflower);
-        registry.put(PlantType.SUN_SHROOM, this::buildSunShroom);
-        registry.put(PlantType.PRIMAL_SUNFLOWER, this::buildPrimalSunflower);
-        registry.put(PlantType.GOLD_BLOOM, this::buildGoldBloom);
-        registry.put(PlantType.PEASHOOTER, this::buildPeaShooter);
-        registry.put(PlantType.REPEATER, this::buildRepeater);
-        registry.put(PlantType.THREEPEATER, this::buildThreepeater);
-        registry.put(PlantType.SNOW_PEA, this::buildSnowPea);
-        registry.put(PlantType.ROTOBAGA, this::buildRotobaga);
-        registry.put(PlantType.PEA_POD, this::buildPeaPod);
-        registry.put(PlantType.SPLIT_PEA, this::buildSplitPea);
-        registry.put(PlantType.CITRON, this::buildCitron);
-        registry.put(PlantType.BOWLING_BULB, this::buildBowlingBulb);
-        registry.put(PlantType.CACTUS, this::buildCactus);
-        registry.put(PlantType.FIRE_PEASHOOTER, this::buildFirePeashooter);
-        registry.put(PlantType.STARFRUIT, this::buildStarfruit);
-        registry.put(PlantType.GOO_PEASHOOTER, this::buildGooPeashooter);
-        registry.put(PlantType.MEGA_GATLING_PEA, this::buildMegaGatlingPea);
-        registry.put(PlantType.SEA_SHROOM, this::buildSeaShroom);
-        registry.put(PlantType.PUFF_SHROOM, this::buildPuffShroom);
-        registry.put(PlantType.FUME_SHROOM, this::buildFumeShroom);
-        registry.put(PlantType.CABBAGE_PULT, this::buildCabbagePult);
-        registry.put(PlantType.KERNEL_PULT, this::buildKernelPult);
-        registry.put(PlantType.MELON_PULT, this::buildMelonPult);
-        registry.put(PlantType.WINTER_MELON, this::buildWinterMelonPult);
-        registry.put(PlantType.PEPPER_PULT, this::buildPepperPult);
-        registry.put(PlantType.POTATO_MINE, this::buildPotatoMine);
-        registry.put(PlantType.PRIMAL_POTATO_MINE, this::buildPrimalPotatoMine);
-        registry.put(PlantType.CHERRY_BOMB, this::buildCherryBomb);
-        registry.put(PlantType.SQUASH, this::buildSquash);
-        registry.put(PlantType.GRAPESHOT, this::buildGrapeshot);
-        registry.put(PlantType.JALAPENO, this::buildJalapeno);
-        registry.put(PlantType.DOOM_SHROOM, this::buildDoomShroom);
-        registry.put(PlantType.TANGLE_KELP, this::buildTangleKelp);
-        registry.put(PlantType.ICEBERG_LETTUCE, this::buildIcebergLettuce);
-        registry.put(PlantType.ICE_SHROOM, this::buildIceShroom);
-        registry.put(PlantType.HOT_POTATO, this::buildHotPotato);
-        registry.put(PlantType.GRAVE_BUSTER, this::buildGraveBuster);
+public class ShooterFactory {
+    static void register(Map<PlantType, Supplier<Plant>> registry) {
+        registry.put(PlantType.PEASHOOTER, ShooterFactory::buildPeaShooter);
+        registry.put(PlantType.REPEATER, ShooterFactory::buildRepeater);
+        registry.put(PlantType.THREEPEATER, ShooterFactory::buildThreepeater);
+        registry.put(PlantType.SNOW_PEA, ShooterFactory::buildSnowPea);
+        registry.put(PlantType.ROTOBAGA, ShooterFactory::buildRotobaga);
+        registry.put(PlantType.PEA_POD, ShooterFactory::buildPeaPod);
+        registry.put(PlantType.SPLIT_PEA, ShooterFactory::buildSplitPea);
+        registry.put(PlantType.CITRON, ShooterFactory::buildCitron);
+        registry.put(PlantType.BOWLING_BULB, ShooterFactory::buildBowlingBulb);
+        registry.put(PlantType.CACTUS, ShooterFactory::buildCactus);
+        registry.put(PlantType.FIRE_PEASHOOTER, ShooterFactory::buildFirePeashooter);
+        registry.put(PlantType.STARFRUIT, ShooterFactory::buildStarfruit);
+        registry.put(PlantType.GOO_PEASHOOTER, ShooterFactory::buildGooPeashooter);
+        registry.put(PlantType.MEGA_GATLING_PEA, ShooterFactory::buildMegaGatlingPea);
+        registry.put(PlantType.SEA_SHROOM, ShooterFactory::buildSeaShroom);
+        registry.put(PlantType.PUFF_SHROOM, ShooterFactory::buildPuffShroom);
+        registry.put(PlantType.FUME_SHROOM, ShooterFactory::buildFumeShroom);
+        registry.put(PlantType.CABBAGE_PULT, ShooterFactory::buildCabbagePult);
+        registry.put(PlantType.KERNEL_PULT, ShooterFactory::buildKernelPult);
+        registry.put(PlantType.MELON_PULT, ShooterFactory::buildMelonPult);
+        registry.put(PlantType.WINTER_MELON, ShooterFactory::buildWinterMelonPult);
+        registry.put(PlantType.PEPPER_PULT, ShooterFactory::buildPepperPult);
     }
 
-    public static Plant createPlant(PlantType type, int x, int y, Cell cell) {
-        java.util.function.Supplier<Plant> plantSupplier = registry.get(type);
-
-        if (plantSupplier == null) {
-            System.out.println("Error: Plant type " + type.name() + " is not registered in PlantFactory!");
-            return null;
-        }
-
-        Plant newPlant = registry.get(type).get();
-        newPlant.setCell(cell);
-        newPlant.setX(x);
-        newPlant.setY(y);
-        return newPlant;
-    }
-
-    private Plant buildSunflower() {
-        int level = App.getCurrentUser().getUnlockedPlantsLevels().get(PlantType.SUNFLOWER);
-        int health = level >= 3 ? 450 : 300;
-        int prodTime = level >= 2 ? 24 : 22;
-        boolean doubleSunChance = level == 4;
-        Plant p = new Plant(PlantType.SUNFLOWER, health, 0);
-        p.addComponent(new SunProducerComponent(50, 1, prodTime, doubleSunChance, false, 3, 0));
-        return p;
-    }
-
-    private Plant buildTwinSunflower() {
-        int level = App.getCurrentUser().getUnlockedPlantsLevels().get(PlantType.TWIN_SUNFLOWER);
-        int health = level >= 3 ? 450 : 300;
-        int prodTime = level >= 2 ? 24 : 22;
-        Plant p = new Plant(PlantType.TWIN_SUNFLOWER, health, 0);
-        p.addComponent(new SunProducerComponent(50, 2, prodTime, false, false, 5, 0));
-        return p;
-    }
-
-    private Plant buildSunShroom() {
-        int level = App.getCurrentUser().getUnlockedPlantsLevels().get(PlantType.SUN_SHROOM);
-        int health = level >= 3 ? 450 : 300;
-        int growTimeReduce = level >= 2 ? 5 : 0;
-        boolean doubleSunChance = level == 4;
-        Plant p = new Plant(PlantType.SUN_SHROOM, health, 0);
-        p.addComponent(new SunProducerComponent(25, 1, 24, doubleSunChance, true, 3, growTimeReduce));
-        return p;
-    }
-
-    private Plant buildPrimalSunflower() {
-        int level = App.getCurrentUser().getUnlockedPlantsLevels().get(PlantType.PRIMAL_SUNFLOWER);
-        int health = level >= 3 ? 450 : 300;
-        int prodTime = level >= 2 ? 24 : 22;
-        Plant p = new Plant(PlantType.PRIMAL_SUNFLOWER, health, 0);
-        p.addComponent(new SunProducerComponent(75, 1, prodTime, false, false, 3, 0));
-        return p;
-    }
-
-    private Plant buildGoldBloom() {
-        int level = App.getCurrentUser().getUnlockedPlantsLevels().get(PlantType.GOLD_BLOOM);
-        Plant p = new Plant(PlantType.SUN_SHROOM, 0, 0);
-        int sunNumber = level >= 3 ? 17 : 15;
-        p.addComponent(new SunProducerComponent(25, sunNumber, 0, false, false, 0, 0));
-        return p;
-    }
-
-    private Plant buildPeaShooter(){
+    private static Plant buildPeaShooter(){
         int level = App.getCurrentUser().getUnlockedPlantsLevels().get(PlantType.PEASHOOTER);
         int health = level >= 3 ? 450 : 300;
         int damage = level >= 2 ? 30 : 20;
         Plant p = new Plant(PlantType.PEASHOOTER, health, damage);
         CombinedDamageStrategy combinedDamageStrategy = new CombinedDamageStrategy(damage, ProjectileType.PEA);
         ShooterComponent newComponent = new ShooterComponent(ProjectileType.PEA,
-                                            null,
-                                            15,
-                                            1,
-                                            20,
-                                            false,
-                                            () -> combinedDamageStrategy,
-                                            new CheckStraightStrike(),
-                                            0,
-                                            1,
-                                            0,
-                                            0);
+                null, 15, 1,
+                20, false, () -> combinedDamageStrategy,
+                new CheckStraightStrike(), 0, 1,
+                0, 0);
         newComponent.getVisions().add(new StraightVisionStrategy(1000, App.getCellHeight(), false));
         MovementStrategy movementStrategy = new StraightMovementStrategy(5, 0, 0);
         newComponent.getMovementStrategies().add(() -> movementStrategy);
@@ -159,24 +66,17 @@ public class PlantFactory {
         return p;
     }
 
-    private Plant buildRepeater(){
+    private static Plant buildRepeater(){
         int level = App.getCurrentUser().getUnlockedPlantsLevels().get(PlantType.REPEATER);
         int health = level >= 3 ? 500 : 300;
         int damage = level >= 2 ? 30 : 20;
         Plant p = new Plant(PlantType.REPEATER, health, damage);
         CombinedDamageStrategy combinedDamageStrategy = new CombinedDamageStrategy(damage, ProjectileType.PEA);
         ShooterComponent newComponent = new ShooterComponent(ProjectileType.PEA,
-                ProjectileType.GIANT_PEA,
-                15,
-                2,
-                30,
-                true,
-                () -> combinedDamageStrategy,
-                new CheckStraightStrike(),
-                1,
-                1,
-                1,
-                20);
+                ProjectileType.GIANT_PEA, 15, 2,
+                30, true, () -> combinedDamageStrategy,
+                new CheckStraightStrike(), 1, 1,
+                1, 20);
         newComponent.getVisions().add(new StraightVisionStrategy(1000, App.getCellHeight(), false));
         MovementStrategy movementStrategy = new StraightMovementStrategy(5, 0, 0);
         newComponent.getMovementStrategies().add(() -> movementStrategy);
@@ -184,24 +84,17 @@ public class PlantFactory {
         return p;
     }
 
-    private Plant buildThreepeater(){ // plant food...
+    private static Plant buildThreepeater(){ // plant food...
         int level = App.getCurrentUser().getUnlockedPlantsLevels().get(PlantType.THREEPEATER);
         int health = level >= 4 ? 500 : 300;
         int damage = level >= 3 ? 30 : 20;
         Plant p = new Plant(PlantType.THREEPEATER, health, 0);
         CombinedDamageStrategy combinedDamageStrategy = new CombinedDamageStrategy(damage, ProjectileType.PEA);
         ShooterComponent newComponent = new ShooterComponent(ProjectileType.PEA,
-                null,
-                15,
-                1,
-                30,
-                false,
-                () -> combinedDamageStrategy,
-                new CheckStraightStrike(),
-                0,
-                1,
-                0,
-                0);
+                null, 15, 1,
+                30, false, () -> combinedDamageStrategy,
+                new CheckStraightStrike(), 0, 1,
+                0, 0);
         newComponent.getVisions().add(new StraightVisionStrategy(1000, 3*App.getCellHeight(), false));
         for (int i = -1; i <= 1; i++){
             final int finalI = i;
@@ -212,7 +105,7 @@ public class PlantFactory {
         return p;
     }
 
-    private Plant buildSnowPea(){
+    private static Plant buildSnowPea(){
         int level = App.getCurrentUser().getUnlockedPlantsLevels().get(PlantType.SNOW_PEA);
         int damage = level >= 2 ? 30 : 20;
         Plant p = new Plant(PlantType.SNOW_PEA, 300, damage);
@@ -222,17 +115,10 @@ public class PlantFactory {
             combinedDamageStrategy.setChillTime(combinedDamageStrategy.getChillTime() + 20);
         }
         ShooterComponent newComponent = new ShooterComponent(ProjectileType.ICE_PEA,
-                null,
-                15,
-                1,
-                20,
-                false,
-                () -> combinedDamageStrategy,
-                new CheckStraightStrike(),
-                0,
-                1,
-                0,
-                0);
+                null, 15, 1,
+                20, false, () -> combinedDamageStrategy,
+                new CheckStraightStrike(), 0, 1,
+                0, 0);
         newComponent.getVisions().add(new StraightVisionStrategy(1000, App.getCellHeight(), false));
         MovementStrategy movementStrategy = new StraightMovementStrategy(5, 0, 0);
         newComponent.getMovementStrategies().add(() -> movementStrategy);
@@ -240,7 +126,7 @@ public class PlantFactory {
         return p;
     }
 
-    private Plant buildRotobaga(){
+    private static Plant buildRotobaga(){
         int level = App.getCurrentUser().getUnlockedPlantsLevels().get(PlantType.ROTOBAGA);
         int damage = level >= 2 ? 20 : 10;
         int health = level >= 3 ? 450 : 300;
@@ -248,17 +134,10 @@ public class PlantFactory {
         CombinedDamageStrategy combinedDamageStrategy = new CombinedDamageStrategy(damage, ProjectileType.ROTOBAGA_PROJECTILE);
         for (int i = 0; i < 4; i++){
             ShooterComponent shooterComponent = new ShooterComponent(ProjectileType.ROTOBAGA_PROJECTILE,
-                    null,
-                    15,
-                    1,
-                    20,
-                    false,
-                    () -> combinedDamageStrategy,
-                    new CheckStraightStrike(),
-                    0,
-                    1,
-                    0,
-                    0);
+                    null, 15, 1,
+                    20, false, () -> combinedDamageStrategy,
+                    new CheckStraightStrike(), 0, 1,
+                    0, 0);
             final int finalI = i;
             shooterComponent.getVisions().add(new RotatedVisionStrategy((float) (i * Math.PI/2 + Math.PI/4), App.getCellHeight(), 1000));
             MovementStrategy movementStrategy = new StraightMovementStrategy((float) (5*Math.cos(finalI * Math.PI/2 + Math.PI/4)), (float) (5*Math.sin(finalI * Math.PI/2 + Math.PI/4)),0);
@@ -268,7 +147,7 @@ public class PlantFactory {
         return p;
     }
 
-    private Plant buildPeaPod(){
+    private static Plant buildPeaPod(){
         int level = App.getCurrentUser().getUnlockedPlantsLevels().get(PlantType.PEA_POD);
         int damage = level >= 2 ? 30 : 20;
         int health = level >= 3 ? 500 : 300;
@@ -276,15 +155,9 @@ public class PlantFactory {
         CombinedDamageStrategy combinedDamageStrategy = new CombinedDamageStrategy(damage, ProjectileType.PEA);
         ShooterComponent newComponent = new ShooterComponent(ProjectileType.PEA,
                 ProjectileType.GIANT_PEA,
-                15,
-                1,
-                1,
-                true,
-                () -> combinedDamageStrategy,
-                new CheckStraightStrike(),
-                1,
-                1,
-                1,
+                15, 1, 1,
+                true, () -> combinedDamageStrategy, new CheckStraightStrike(),
+                1, 1, 1,
                 20);
         newComponent.getVisions().add(new StraightVisionStrategy(1000, App.getCellHeight(), false));
         MovementStrategy movementStrategy = new StraightMovementStrategy(5, 0, 0);
@@ -293,7 +166,7 @@ public class PlantFactory {
         return p;
     }
 
-    private Plant buildSplitPea(){
+    private static Plant buildSplitPea(){
         int level = App.getCurrentUser().getUnlockedPlantsLevels().get(PlantType.SPLIT_PEA);
         int damage = level >= 2 ? 30 : 20;
         int health = level >= 3 ? 500 : 300;
@@ -301,17 +174,10 @@ public class PlantFactory {
         CombinedDamageStrategy combinedDamageStrategy = new CombinedDamageStrategy(damage, ProjectileType.PEA);
         for (int i = 0; i <= 1; i++){
             ShooterComponent newComponent = new ShooterComponent(ProjectileType.PEA,
-                    null,
-                    15,
-                    i+1,
-                    20,
-                    false,
-                    () -> combinedDamageStrategy,
-                    new CheckStraightStrike(),
-                    0,
-                    1,
-                    0,
-                    0);
+                    null, 15, i+1,
+                    20, false, () -> combinedDamageStrategy,
+                    new CheckStraightStrike(), 0, 1,
+                    0, 0);
             final int finalI = i;
             newComponent.getVisions().add(new StraightVisionStrategy(1000 * (float)Math.cos(i*Math.PI), App.getCellHeight(), false));
             MovementStrategy movementStrategy = new StraightMovementStrategy(5 * (float)Math.cos(finalI*Math.PI), 0, 0);
@@ -321,24 +187,17 @@ public class PlantFactory {
         return p;
     }
 
-    private Plant buildCitron(){
+    private static Plant buildCitron(){
         int level = App.getCurrentUser().getUnlockedPlantsLevels().get(PlantType.CITRON);
         int damage = level >= 3 ? 950 : 800;
         int chargeTime = level >= 2 ? 80 : 90;
         Plant p = new Plant(PlantType.CITRON, 300, damage);
         CombinedDamageStrategy combinedDamageStrategy = new CombinedDamageStrategy(damage, ProjectileType.CITRON);
         ShooterComponent newComponent = new ShooterComponent(ProjectileType.CITRON,
-                ProjectileType.PLASMA,
-                chargeTime,
-                1,
-                1,
-                true,
-                () -> combinedDamageStrategy,
-                new CheckStraightStrike(),
-                1,
-                1,
-                100,
-                20);
+                ProjectileType.PLASMA, chargeTime, 1,
+                1, true, () -> combinedDamageStrategy,
+                new CheckStraightStrike(), 1, 1,
+                100, 20);
         newComponent.getVisions().add(new StraightVisionStrategy(1000, App.getCellHeight(), false));
         MovementStrategy movementStrategy = new StraightMovementStrategy(5, 0, 0);
         newComponent.getMovementStrategies().add(() -> movementStrategy);
@@ -346,7 +205,7 @@ public class PlantFactory {
         return p;
     }
 
-    private Plant buildBowlingBulb(){
+    private static Plant buildBowlingBulb(){
         int level = App.getCurrentUser().getUnlockedPlantsLevels().get(PlantType.BOWLING_BULB);
         int regenReduce = level >= 2 ? 1 : 0;
         int damageAddition = level >= 3 ? 15 : 0;
@@ -359,24 +218,17 @@ public class PlantFactory {
         return p;
     }
 
-    private Plant buildCactus(){
+    private static Plant buildCactus(){
         int level = App.getCurrentUser().getUnlockedPlantsLevels().get(PlantType.CACTUS);
         int damage = level >= 3 ? 40 : 30;
         int pierce = level >= 2 ? 4 : 3;
         Plant p = new Plant(PlantType.CACTUS, 300, damage);
         CombinedDamageStrategy combinedDamageStrategy = new CombinedDamageStrategy(damage, ProjectileType.CACTUS);
         ShooterComponent newComponent = new ShooterComponent(ProjectileType.CACTUS,
-                ProjectileType.CACTUS_SPECIAL,
-                15,
-                1,
-                20,
-                true,
-                () -> combinedDamageStrategy,
-                new CheckStraightStrike(),
-                20,
-                pierce,
-                100,
-                4);
+                ProjectileType.CACTUS_SPECIAL, 15, 1,
+                20, true, () -> combinedDamageStrategy,
+                new CheckStraightStrike(), 20, pierce,
+                100, 4);
         newComponent.getVisions().add(new StraightVisionStrategy(1000, App.getCellHeight(), false));
         MovementStrategy movementStrategy = new StraightMovementStrategy(5, 0, 0);
         newComponent.getMovementStrategies().add(() -> movementStrategy);
@@ -384,7 +236,7 @@ public class PlantFactory {
         return p;
     }
 
-    private Plant buildFirePeashooter(){
+    private static Plant buildFirePeashooter(){
         int level = App.getCurrentUser().getUnlockedPlantsLevels().get(PlantType.FIRE_PEASHOOTER);
         int damage = level >= 2 ? 60 : 40;
         int health = level >= 3 ? 500 : 300;
@@ -392,17 +244,10 @@ public class PlantFactory {
         CombinedDamageStrategy combinedDamageStrategy = new CombinedDamageStrategy(damage, ProjectileType.FIRE_PEA);
         combinedDamageStrategy.setElement("FIRE");
         ShooterComponent newComponent = new ShooterComponent(ProjectileType.FIRE_PEA,
-                null,
-                15,
-                1,
-                20,
-                false,
-                () -> combinedDamageStrategy,
-                new CheckStraightStrike(),
-                0,
-                1,
-                0,
-                0);
+                null, 15, 1,
+                20, false, () -> combinedDamageStrategy,
+                new CheckStraightStrike(), 0, 1,
+                0, 0);
         newComponent.getVisions().add(new StraightVisionStrategy(1000, App.getCellHeight(), false));
         MovementStrategy movementStrategy = new StraightMovementStrategy(5, 0, 0);
         newComponent.getMovementStrategies().add(() -> movementStrategy);
@@ -410,24 +255,17 @@ public class PlantFactory {
         return p;
     }
 
-    private Plant buildStarfruit(){
+    private static Plant buildStarfruit(){
         int level = App.getCurrentUser().getUnlockedPlantsLevels().get(PlantType.STARFRUIT);
         int shootingTime = level >= 2 ? 13 : 15;
         int damage = level >= 3 ? 30 : 20;
         Plant p = new Plant(PlantType.STARFRUIT, 300, damage);
         CombinedDamageStrategy combinedDamageStrategy = new CombinedDamageStrategy(damage, ProjectileType.STAR);
         ShooterComponent newComponent = new ShooterComponent(ProjectileType.STAR,
-                null,
-                shootingTime,
-                1,
-                20,
-                false,
-                () -> combinedDamageStrategy,
-                new CheckStraightStrike(),
-                0,
-                1,
-                0,
-                0);
+                null, shootingTime, 1,
+                20, false, () -> combinedDamageStrategy,
+                new CheckStraightStrike(), 0, 1,
+                0, 0);
         float angel = (float) -Math.PI/3;
         for (int i = 0; i < 5; i++){
             int changeFactor = i == 1 ? 2 : 3;
@@ -441,7 +279,7 @@ public class PlantFactory {
         return p;
     }
 
-    private Plant buildGooPeashooter(){
+    private static Plant buildGooPeashooter(){
         int level = App.getCurrentUser().getUnlockedPlantsLevels().get(PlantType.GOO_PEASHOOTER);
         int health = level >= 3 ? 30 : 20;
         Plant p = new Plant(PlantType.GOO_PEASHOOTER, health, 20);
@@ -454,17 +292,10 @@ public class PlantFactory {
             plantFoodStrategy.setPoisonDamageOnTick(combinedDamageStrategy.getPoisonDamageOnTick());
         }
         ShooterComponent newComponent = new ShooterComponent(ProjectileType.GOO,
-                ProjectileType.GOO_SPECIAL,
-                15,
-                1,
-                20,
-                true,
-                () -> combinedDamageStrategy,
-                new CheckStraightStrike(),
-                20,
-                1,
-                1,
-                1);
+                ProjectileType.GOO_SPECIAL, 15, 1,
+                20, true, () -> combinedDamageStrategy,
+                new CheckStraightStrike(), 20, 1,
+                1, 1);
         newComponent.setPlantFoodStrategy(plantFoodStrategy);
 
         newComponent.getVisions().add(new StraightVisionStrategy(1000, App.getCellHeight(), false));
@@ -474,24 +305,17 @@ public class PlantFactory {
         return p;
     }
 
-    private Plant buildMegaGatlingPea(){
+    private static Plant buildMegaGatlingPea(){
         int level = App.getCurrentUser().getUnlockedPlantsLevels().get(PlantType.MEGA_GATLING_PEA);
         int damage = level >= 2 ? 30 : 20;
         int plantFoodChance = level >= 3 ? 10 : 5;
         Plant p = new Plant(PlantType.MEGA_GATLING_PEA, 300, damage);
         CombinedDamageStrategy combinedDamageStrategy = new CombinedDamageStrategy(damage, ProjectileType.PEA);
         ShooterComponent newComponent = new ShooterComponent(ProjectileType.PEA,
-                ProjectileType.GIANT_PEA,
-                15,
-                4,
-                30,
-                true,
-                () -> combinedDamageStrategy,
-                new CheckStraightStrike(),
-                4,
-                1,
-                1,
-                20);
+                ProjectileType.GIANT_PEA, 15, 4,
+                30, true, () -> combinedDamageStrategy,
+                new CheckStraightStrike(), 4, 1,
+                1, 20);
         newComponent.getVisions().add(new StraightVisionStrategy(1000, App.getCellHeight(), false));
         MovementStrategy movementStrategy = new StraightMovementStrategy(5, 0, 0);
         newComponent.getMovementStrategies().add(() -> movementStrategy);
@@ -504,7 +328,7 @@ public class PlantFactory {
         return p;
     }
 
-    private Plant buildSeaShroom(){
+    private static Plant buildSeaShroom(){
         int level = App.getCurrentUser().getUnlockedPlantsLevels().get(PlantType.SEA_SHROOM);
         float range = (level >= 2 ? 5 : 4) * App.getCellWidth();
         int damage = level >= 3 ? 25 : 20;
@@ -512,17 +336,10 @@ public class PlantFactory {
         Plant p = new Plant(PlantType.SEA_SHROOM, 300, damage);
         CombinedDamageStrategy combinedDamageStrategy = new CombinedDamageStrategy(damage, ProjectileType.SMALL_SHROOM);
         ShooterComponent newComponent = new ShooterComponent(ProjectileType.SMALL_SHROOM,
-                ProjectileType.SMALL_SHROOM,
-                15,
-                1,
-                20,
-                false,
-                () -> combinedDamageStrategy,
-                new CheckStraightStrike(),
-                0,
-                1,
-                0,
-                0);
+                ProjectileType.SMALL_SHROOM, 15, 1,
+                20, false, () -> combinedDamageStrategy,
+                new CheckStraightStrike(), 0, 1,
+                0, 0);
         newComponent.getVisions().add(new StraightVisionStrategy(range, App.getCellHeight(), false));
         MovementStrategy movementStrategy = new StraightMovementStrategy(5, 0, 0);
         newComponent.getMovementStrategies().add(() -> movementStrategy);
@@ -531,7 +348,7 @@ public class PlantFactory {
         return p;
     }
 
-    private Plant buildPuffShroom(){
+    private static Plant buildPuffShroom(){
         int level = App.getCurrentUser().getUnlockedPlantsLevels().get(PlantType.PUFF_SHROOM);
         float range = (level >= 4 ? 5 : 4) * App.getCellWidth();
         int damage = level >= 3 ? 30 : 20;
@@ -539,17 +356,10 @@ public class PlantFactory {
         Plant p = new Plant(PlantType.PUFF_SHROOM, 300, damage);
         CombinedDamageStrategy combinedDamageStrategy = new CombinedDamageStrategy(damage, ProjectileType.SMALL_SHROOM);
         ShooterComponent newComponent = new ShooterComponent(ProjectileType.SMALL_SHROOM,
-                ProjectileType.SMALL_SHROOM,
-                15,
-                1,
-                20,
-                false,
-                () -> combinedDamageStrategy,
-                new CheckStraightStrike(),
-                0,
-                1,
-                0,
-                0);
+                ProjectileType.SMALL_SHROOM, 15, 1,
+                20, false, () -> combinedDamageStrategy,
+                new CheckStraightStrike(), 0, 1,
+                0, 0);
         newComponent.getVisions().add(new StraightVisionStrategy(range, App.getCellHeight(), false));
         MovementStrategy movementStrategy = new StraightMovementStrategy(5, 0, 0);
         newComponent.getMovementStrategies().add(() -> movementStrategy);
@@ -558,24 +368,17 @@ public class PlantFactory {
         return p;
     }
 
-    private Plant buildFumeShroom(){
+    private static Plant buildFumeShroom(){
         int level = App.getCurrentUser().getUnlockedPlantsLevels().get(PlantType.FUME_SHROOM);
         float range = (level >= 2 ? 6 : 5) * App.getCellWidth();
         int damage = level >= 3 ? 30 : 20;
         Plant p = new Plant(PlantType.FUME_SHROOM, 300, damage);
         CombinedDamageStrategy combinedDamageStrategy = new CombinedDamageStrategy(damage, ProjectileType.FUME);
         ShooterComponent newComponent = new ShooterComponent(ProjectileType.FUME,
-                ProjectileType.FUME_SPECIAL,
-                15,
-                1,
-                1,
-                true,
-                () -> combinedDamageStrategy,
-                new CheckStraightStrike(),
-                1,
-                100,
-                100,
-                2);
+                ProjectileType.FUME_SPECIAL, 15, 1,
+                1, true, () -> combinedDamageStrategy,
+                new CheckStraightStrike(), 1, 100,
+                100, 2);
         CombinedDamageStrategy plantFoodStrategy = new CombinedDamageStrategy(damage, ProjectileType.FUME_SPECIAL);
         plantFoodStrategy.setElement("MOVE");
         newComponent.setPlantFoodStrategy(plantFoodStrategy);
@@ -586,7 +389,7 @@ public class PlantFactory {
         return p;
     }
 
-    private Plant buildCabbagePult(){
+    private static Plant buildCabbagePult(){
         int level = App.getCurrentUser().getUnlockedPlantsLevels().get(PlantType.CABBAGE_PULT);
         int damage = level >= 2 ? 50 : 40;
         int shootingTime = level >= 3 ? 25 : 29;
@@ -594,17 +397,10 @@ public class PlantFactory {
         Plant p = new Plant(PlantType.CABBAGE_PULT, health, damage);
         CombinedDamageStrategy combinedDamageStrategy = new CombinedDamageStrategy(damage, ProjectileType.CABBAGE);
         ShooterComponent newComponent = new ShooterComponent(ProjectileType.CABBAGE,
-                ProjectileType.SPECIAL_CABBAGE,
-                shootingTime,
-                1,
-                0,
-                false,
-                () -> combinedDamageStrategy,
-                new CheckLobbedStrike(),
-                0,
-                1,
-                0,
-                2);
+                ProjectileType.SPECIAL_CABBAGE, shootingTime, 1,
+                0, false, () -> combinedDamageStrategy,
+                new CheckLobbedStrike(), 0, 1,
+                0, 2);
         newComponent.getVisions().add(new StraightVisionStrategy(1000, App.getCellHeight(), true));
         newComponent.getMovementStrategies().add(LobbedMovementStrategy::new);
         newComponent.setPlantFoodBehavior(new RandomTargetPlantFood(6));
@@ -612,24 +408,17 @@ public class PlantFactory {
         return p;
     }
 
-    private Plant buildKernelPult(){
+    private static Plant buildKernelPult(){
         int level = App.getCurrentUser().getUnlockedPlantsLevels().get(PlantType.KERNEL_PULT);
         float butterChance = level >= 2 ? 0.25f : 0.2f;
         int damageAddition = level >= 3 ? 10 : 0;
         int health = level >= 4 ? 450 : 300;
         Plant p = new Plant(PlantType.KERNEL_PULT, health, 0);
         ShooterComponent newComponent = new ShooterComponent(ProjectileType.KERNEL,
-                ProjectileType.BUTTER,
-                29,
-                1,
-                0,
-                false,
-                null,
-                new CheckLobbedStrike(),
-                0,
-                1,
-                0,
-                0);
+                ProjectileType.BUTTER, 29, 1,
+                0, false, null,
+                new CheckLobbedStrike(), 0, 1,
+                0, 0);
         newComponent.getVisions().add(new StraightVisionStrategy(1000, App.getCellHeight(), true));
         newComponent.getMovementStrategies().add(LobbedMovementStrategy::new);
         newComponent.setAttackCallback(owner -> {
@@ -654,24 +443,17 @@ public class PlantFactory {
         return p;
     }
 
-    private Plant buildMelonPult(){
+    private static Plant buildMelonPult(){
         int level = App.getCurrentUser().getUnlockedPlantsLevels().get(PlantType.MELON_PULT);
         int damage = level >= 3 ? 110 : 80;
         int aoeDamage = level >= 4 ? 55 : 40;
         Plant p = new Plant(PlantType.MELON_PULT, 300, damage);
         CombinedDamageStrategy combinedDamageStrategy = new CombinedDamageStrategy(damage, aoeDamage, 200, ProjectileType.MELON);
         ShooterComponent newComponent = new ShooterComponent(ProjectileType.MELON,
-                ProjectileType.SPECIAL_MELON,
-                29,
-                1,
-                0,
-                false,
-                () -> combinedDamageStrategy,
-                new CheckLobbedStrike(),
-                0,
-                1,
-                0,
-                2);
+                ProjectileType.SPECIAL_MELON, 29, 1,
+                0, false, () -> combinedDamageStrategy,
+                new CheckLobbedStrike(), 0, 1,
+                0, 2);
         newComponent.getVisions().add(new StraightVisionStrategy(1000, App.getCellHeight(), true));
         newComponent.getMovementStrategies().add(LobbedMovementStrategy::new);
         newComponent.setPlantFoodBehavior(new RandomTargetPlantFood(6));
@@ -679,24 +461,17 @@ public class PlantFactory {
         return p;
     }
 
-    private Plant buildWinterMelonPult(){
+    private static Plant buildWinterMelonPult(){
         int level = App.getCurrentUser().getUnlockedPlantsLevels().get(PlantType.WINTER_MELON);
         int aoeDamage = level >= 3 ? 55 : 40;
         Plant p = new Plant(PlantType.WINTER_MELON, 300, 80);
         CombinedDamageStrategy combinedDamageStrategy = new CombinedDamageStrategy(80, aoeDamage, 200, ProjectileType.ICE_MELON);
         combinedDamageStrategy.setElement("ICE");
         ShooterComponent newComponent = new ShooterComponent(ProjectileType.ICE_MELON,
-                ProjectileType.SPECIAL_ICE_MELON,
-                29,
-                1,
-                0,
-                false,
-                () -> combinedDamageStrategy,
-                new CheckLobbedStrike(),
-                0,
-                1,
-                0,
-                2);
+                ProjectileType.SPECIAL_ICE_MELON, 29, 1,
+                0, false, () -> combinedDamageStrategy,
+                new CheckLobbedStrike(), 0, 1,
+                0, 2);
         newComponent.getVisions().add(new StraightVisionStrategy(1000, App.getCellHeight(), true));
         newComponent.getMovementStrategies().add(LobbedMovementStrategy::new);
         newComponent.setPlantFoodBehavior(new RandomTargetPlantFood(6));
@@ -704,7 +479,7 @@ public class PlantFactory {
         return p;
     }
 
-    private Plant buildPepperPult(){
+    private static Plant buildPepperPult(){
         int level = App.getCurrentUser().getUnlockedPlantsLevels().get(PlantType.PEPPER_PULT);
         int damage = level >= 2 ? 65 : 50;
         int radius = level >= 3 ? 250 : 200;
@@ -712,179 +487,14 @@ public class PlantFactory {
         CombinedDamageStrategy combinedDamageStrategy = new CombinedDamageStrategy(80, damage/2, radius, ProjectileType.PEPPER);
         combinedDamageStrategy.setElement("FIRE");
         ShooterComponent newComponent = new ShooterComponent(ProjectileType.PEPPER,
-                ProjectileType.SPECIAL_PEPPER,
-                29,
-                1,
-                0,
-                false,
-                () -> combinedDamageStrategy,
-                new CheckLobbedStrike(),
-                0,
-                1,
-                0,
-                2);
+                ProjectileType.SPECIAL_PEPPER, 29, 1,
+                0, false, () -> combinedDamageStrategy,
+                new CheckLobbedStrike(), 0, 1,
+                0, 2);
         newComponent.getVisions().add(new StraightVisionStrategy(1000, App.getCellHeight(), true));
         newComponent.getMovementStrategies().add(LobbedMovementStrategy::new);
         newComponent.setPlantFoodBehavior(new RandomTargetPlantFood(6));
         p.addComponent(newComponent);
         return p;
     }
-
-    private Plant buildPotatoMine(){
-        int level = App.getCurrentUser().getUnlockedPlantsLevels().get(PlantType.POTATO_MINE);
-        int armTime = level >= 2 ? 120 : 150;
-        int damage = level >= 4 ? 2400 : 1800;
-        Plant p = new Plant(PlantType.POTATO_MINE, 1000, damage);
-        p.addComponent(new ExplosivesComponent(new ProximityTrigger(App.getCellWidth()), new AreaDamageBehavior(damage, new CircularRange(0)), armTime));
-        return p;
-    }
-
-    private Plant buildPrimalPotatoMine(){
-        int level = App.getCurrentUser().getUnlockedPlantsLevels().get(PlantType.PRIMAL_POTATO_MINE);
-        int armTime = level >= 2 ? 40 : 50;
-        int damage = level >= 4 ? 2800 : 2400;
-        Plant p = new Plant(PlantType.PRIMAL_POTATO_MINE, 1000, damage);
-        p.addComponent(new ExplosivesComponent(new ProximityTrigger(App.getCellWidth()), new AreaDamageBehavior(damage, new CircularRange(1)), armTime));
-        return p;
-    }
-
-    private Plant buildCherryBomb(){
-        int level = App.getCurrentUser().getUnlockedPlantsLevels().get(PlantType.CHERRY_BOMB);
-        int damage = level >= 3 ? 2400 : 1800;
-        Plant p = new Plant(PlantType.CHERRY_BOMB, 1000, damage);
-        p.addComponent(new ExplosivesComponent(InstantTrigger.INSTANCE, new AreaDamageBehavior(damage, new CircularRange(1)), 0));
-        return p;
-    }
-
-    private Plant buildSquash(){
-        int level = App.getCurrentUser().getUnlockedPlantsLevels().get(PlantType.SQUASH);
-        int damage = level >= 3 ? 2400 : 1800;
-        Plant p = new Plant(PlantType.SQUASH, 1000, damage);
-        ExplosivesComponent component = new ExplosivesComponent(new ProximityTrigger(App.getCellWidth()*3), new AreaDamageBehavior(damage, new CircularRange(0)), 0);
-        if (level >= 4 ) component.setLives(2);
-        p.addComponent(component);
-        component.setPlantFoodBehavior((owner, comp) -> {
-            List<Zombie> allZombies = new ArrayList<>(App.getCurrentGame().getActiveZombies());
-            Collections.shuffle(allZombies);
-            allZombies.stream()
-                    .limit(2)
-                    .forEach(Zombie::die);
-        });
-        return p;
-    }
-
-    private Plant buildGrapeshot(){
-        int level = App.getCurrentUser().getUnlockedPlantsLevels().get(PlantType.GRAPESHOT);
-        int damage = level >= 2 ? 2400 : 1800;
-        int bounceMax = level >= 3 ? 4 : 3;
-        Plant p = new Plant(PlantType.GRAPESHOT, 1000, damage);
-        p.addComponent(new ExplosivesComponent(InstantTrigger.INSTANCE, new CompositeBehavior(new AreaDamageBehavior(damage, new CircularRange(1)), new GrapeshotBehavior(bounceMax)), 0));
-        return p;
-    }
-
-    private Plant buildJalapeno(){
-        int level = App.getCurrentUser().getUnlockedPlantsLevels().get(PlantType.JALAPENO);
-        int damage = level >= 3 ? 2400 : 1800;
-        Plant p = new Plant(PlantType.JALAPENO, 1000, damage);
-        p.addComponent(new ExplosivesComponent(InstantTrigger.INSTANCE, new CompositeBehavior(new AreaDamageBehavior(damage, LineRange.INSTANCE), new MeltIceBehavior(LineRange.INSTANCE)), 0));
-        return p;
-    }
-
-    private Plant buildDoomShroom(){
-        int level = App.getCurrentUser().getUnlockedPlantsLevels().get(PlantType.DOOM_SHROOM);
-        int damage = level >= 3 ? 2600 : 1800;
-        Plant p = new Plant(PlantType.DOOM_SHROOM, 1000, damage);
-        p.addComponent(new ExplosivesComponent(InstantTrigger.INSTANCE, new CompositeBehavior(new AreaDamageBehavior(damage, new CircularRange(2)), new MakeUnplantableBehavior(new CircularRange(0))), 0));
-        return p;
-    }
-
-    private Plant buildTangleKelp(){
-        int level = App.getCurrentUser().getUnlockedPlantsLevels().get(PlantType.TANGLE_KELP);
-        Plant p = new Plant(PlantType.TANGLE_KELP, 1000, 20000);
-        ExplosivesComponent component = new ExplosivesComponent(new ProximityTrigger(App.getCellWidth()), new SingleTargetDamageBehavior(new CircularRange(0)), 0);
-        if (level >= 3 ) component.setLives(2);
-        component.setPlantFoodBehavior((owner, comp) -> {
-            List<Zombie> waterZombies = App.getCurrentGame().getActiveZombies().stream()
-                    .filter(zombie -> {
-                        Cell zombieCell = Cell.findZombieCell(LevelMenuController.getGameCells(), zombie);
-                        return zombieCell != null && zombieCell.isWater();
-                    })
-                    .collect(Collectors.toList());
-            Collections.shuffle(waterZombies);
-            waterZombies.stream()
-                    .limit(3)
-                    .forEach(Zombie::die);
-        });
-        p.addComponent(component);
-        return p;
-    }
-
-    private Plant buildIcebergLettuce(){
-        int level = App.getCurrentUser().getUnlockedPlantsLevels().get(PlantType.ICEBERG_LETTUCE);
-        int freezeTime = level >= 3 ? 60 : 40;
-        Plant p = new Plant(PlantType.ICEBERG_LETTUCE, 1000, 0);
-        ExplosivesComponent component = new ExplosivesComponent(new ProximityTrigger(App.getCellWidth()), new FreezeZombieBehavior(new CircularRange(0), freezeTime), 0);
-        component.setPlantFoodBehavior((owner, comp) -> {
-         //   App.getCurrentGame().getActiveZombies()
-               //     .forEach(zombie -> zombie.freeze(40));
-        });
-        p.addComponent(component);
-        return p;
-    }
-
-    private Plant buildIceShroom(){
-        int level = App.getCurrentUser().getUnlockedPlantsLevels().get(PlantType.ICE_SHROOM);
-        int freezeTime = level >= 2 ? 60 : 40;
-        int damage = level >= 4 ? 50 : 0;
-        Plant p = new Plant(PlantType.ICE_SHROOM, 1000, damage);
-        p.addComponent(new ExplosivesComponent(InstantTrigger.INSTANCE, new CompositeBehavior(new FreezeZombieBehavior(new CircularRange(10), freezeTime), new AreaDamageBehavior(damage, new CircularRange(10))), 0));
-        return p;
-    }
-
-    private Plant buildHotPotato(){
-        int level = App.getCurrentUser().getUnlockedPlantsLevels().get(PlantType.HOT_POTATO);
-        int radius = level >= 3 ? 1 : 0;
-        Plant p = new Plant(PlantType.HOT_POTATO, 1000, 0);
-        ExplosivesComponent component = new ExplosivesComponent(InstantTrigger.INSTANCE, new MeltIceBehavior(new CircularRange(radius)), 0);
-        if (level >= 4){
-            component.scheduleDelayedBehavior(new AreaDamageBehavior(100, new CircularRange(1)), 20);
-        }
-        return p;
-    }
-
-    private Plant buildGraveBuster(){
-        int level = App.getCurrentUser().getUnlockedPlantsLevels().get(PlantType.GRAVE_BUSTER);
-        int delay = level >= 2 ? 30 : 20;
-        Plant p = new Plant(PlantType.GRAVE_BUSTER, 300, 0);
-        ExplosivesComponent component = new ExplosivesComponent(InstantTrigger.INSTANCE, new RemoveGraveBehavior(), 0, delay);
-        if (level >= 4){
-            component.scheduleDelayedBehavior(new AreaDamageBehavior(100, new CircularRange(1)), delay);
-        }
-        p.addComponent(component);
-        return p;
-    }
-
-
-
-
-
-// not completed...
-
-    private Plant buildSunBean(){
-        int level = App.getCurrentUser().getUnlockedPlantsLevels().get(PlantType.SUN_BEAN);
-        int health = level >= 3 ? 450 : 300;
-        int sunSize = level >= 2 ? 10 : 5;
-        Plant p = new Plant(PlantType.SUN_BEAN, health, 0);
-        p.addComponent(new SunProducerComponent(sunSize, 1, 0, false, false, 0, 0));
-        // next component
-        return p;
-    }
-
-    public static boolean isPlantSupported(PlantType type) {
-        return registry.containsKey(type);
-    }
-
-
-
-
 }
