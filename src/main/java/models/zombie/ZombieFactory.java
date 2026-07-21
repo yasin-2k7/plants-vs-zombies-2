@@ -17,12 +17,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 
 public class ZombieFactory {
+    private static final Logger logger = Logger.getLogger(ZombieFactory.class.getName());
     private static final Map<Zombies, String> enumToAlias = new HashMap<>();
     static {
         enumToAlias.put(Zombies.ZOMBIE, "ZombieDefault");
-        enumToAlias.put(Zombies.ARMORED, "ZombieArmor1"); // نمونه
+        enumToAlias.put(Zombies.ARMORED, "ZombieArmor1");
         enumToAlias.put(Zombies.WIZARD, "ZombieWizard");
         enumToAlias.put(Zombies.SUN_STEALER, "ZombieRa");
         enumToAlias.put(Zombies.SPAWNER, "ZombieGargantuar");
@@ -35,16 +37,13 @@ public class ZombieFactory {
         enumToAlias.put(Zombies.ELEMENTAL, "ZombieExplorer");
         enumToAlias.put(Zombies.DODO_RIDER, "ZombieIceAgeDodo");
         enumToAlias.put(Zombies.DEFLECTOR, "ZombieDarkJuggler");
-
         enumToAlias.put(Zombies.PEASHOOTER_ZOMBIE, "ZombiePeashooter");
         enumToAlias.put(Zombies.JALAPENO_ZOMBIE, "ZombieJalapeno");
         enumToAlias.put(Zombies.WALLNUT_ZOMBIE, "ZombieWallnut");
         enumToAlias.put(Zombies.SQUASH_ZOMBIE, "ZombieSquash");
     }
 
-    // متد اصلی: ساخت زامبی بر اساس alias
     public Zombie createZombie(String alias) {
-
         Zombie zombotanyZombie = createZombotanyZombie(alias);
         if (zombotanyZombie != null) {
             return zombotanyZombie;
@@ -52,7 +51,11 @@ public class ZombieFactory {
 
         ZombieProperties props = ZombieRegistry.getZombieProperties(alias);
         if (props == null) {
-            throw new IllegalArgumentException("Unknown zombie alias: " + alias);
+            logger.warning("Unknown zombie alias: " + alias + " — using default ZombieDefault.");
+            props = ZombieRegistry.getZombieProperties("ZombieDefault");
+            if (props == null) {
+                throw new IllegalArgumentException("Cannot find even default zombie: " + alias);
+            }
         }
         String objclass = props.getObjclass();
         ZombieData data = props.getObjdata();
@@ -76,8 +79,14 @@ public class ZombieFactory {
             case "ZombieRaProps":
                 createdZombie = new SunStealerZombie(health, speed, eatDPS, true);
                 break;
+            case "ZombieCrystalSkullProps":
+                createdZombie = new SunStealerZombie(health, speed, eatDPS, false);
+                break;
             case "ZombieExplorerProps":
                 createdZombie = new ElementalZombie(health, speed, eatDPS, true);
+                break;
+            case "ZombieProspectorProps":
+                createdZombie = new ElementalZombie(health, speed, eatDPS, false); // false = Prospector
                 break;
             case "ZombieIceAgeHunterProps":
                 createdZombie = new RangedZombie(health, speed, eatDPS, "SNOWBALL");
@@ -91,7 +100,7 @@ public class ZombieFactory {
             case "ZombieDarkJugglerProps":
                 createdZombie = new DeflectorZombie(health, speed, eatDPS, true);
                 break;
-            case "ZombieLostCityJaneProps": // چتردار
+            case "ZombieLostCityJaneProps":
                 createdZombie = new DeflectorZombie(health, speed, eatDPS, false);
                 break;
             case "ZombieDarkWizardProps":
@@ -113,10 +122,10 @@ public class ZombieFactory {
                 createdZombie = new PhasingZombie(health, speed, eatDPS, 800, true);
                 break;
             case "ZombiePianoProps":
-                createdZombie = new PusherZombie(health, speed, eatDPS, "PIANO", 0);
+                createdZombie = new PusherZombie(health, speed, eatDPS, "PIANO", 1100);
                 break;
             case "ZombieArcadeProps":
-                createdZombie = new PusherZombie(health, speed, eatDPS, "ARCADE", 600);
+                createdZombie = new PusherZombie(health, speed, eatDPS, "ARCADE", 1100);
                 break;
             case "ZombieIceAgeTroglobiteProps":
                 createdZombie = new PusherZombie(health, speed, eatDPS, "ICEBLOCK", 600);
@@ -135,9 +144,11 @@ public class ZombieFactory {
                 break;
         }
 
-        // مقداردهی نام خاص (Alias)
         if (createdZombie != null) {
             createdZombie.setSpecificName(alias);
+            if (Math.random() < 0.20) {
+                createdZombie.setDropsReward(true);
+            }
         }
 
         return createdZombie;
@@ -159,14 +170,16 @@ public class ZombieFactory {
                     if (ad.getArmorFlags().contains("metallic")) {
                         magnetic = true;
                     }
+                } else {
+                    logger.warning("Armor properties not found for alias: " + alias + " (used in " + data.getClass().getName() + ")");
                 }
             }
             ArmoredZombie zombie = new ArmoredZombie(health, speed, eatDPS, totalArmorHealth, magnetic);
             zombie.getArmorTypes().addAll(currentArmorTypes);
-
+//            logger.info("Created armored zombie with total armor health: " + totalArmorHealth);
             return zombie;
         }
-        // زامبی معمولی (بدون زره)
+        // زامبی معمولی بدون زره
         return new Zombie(Zombies.ZOMBIE, health, speed, eatDPS) {};
     }
 
@@ -182,7 +195,6 @@ public class ZombieFactory {
         return ref;
     }
 
-    // متد برای enum
     public Zombie createZombie(Zombies type) {
         String alias = enumToAlias.get(type);
         if (alias == null) return null;
@@ -191,7 +203,7 @@ public class ZombieFactory {
 
     private Zombie createZombotanyZombie(String alias) {
         return switch (alias) {
-            case "ZombiePeashooter"->new PeashooterZombie(Zombies.PEASHOOTER_ZOMBIE, 200,1.0, 20);
+            case "ZombiePeashooter" -> new PeashooterZombie(Zombies.PEASHOOTER_ZOMBIE, 200, 1.0, 20);
             case "ZombieWallnut" -> new WallnutZombie(Zombies.WALLNUT_ZOMBIE, 4000, 0.3, 100);
             case "ZombieJalapeno" -> new JalapenoZombie(Zombies.JALAPENO_ZOMBIE, 200, 1.0, 100);
             case "ZombieSquash" -> new SquashZombie(Zombies.SQUASH_ZOMBIE, 200, 3.0, 500);

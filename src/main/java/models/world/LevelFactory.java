@@ -15,6 +15,7 @@ import models.world.winCondition.TimedWarWin;
 import models.world.winCondition.WinCondition;
 import models.zombie.wave.Wave;
 import models.zombie.wave.WaveSpawnEntry;
+import models.world.levelsSpecial.DeadLineLevel;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -57,10 +58,59 @@ public class LevelFactory {
         int cols = 9;
 
         List<WaveSpawnEntry> availableZombies = List.of(
-                new WaveSpawnEntry("ZombieDefault", 100)   // کاراکتر اضافی حذف شد
+//                        new WaveSpawnEntry("ZombieArmor1", 200),   // مخروطی
+//                        new WaveSpawnEntry("ZombieArmor2", 300),   // سطلی
+//                        new WaveSpawnEntry("ZombieArmor4", 400),   // آجری
+//                        new WaveSpawnEntry("ZombieDarkArmor3", 550), // شوالیه
+
+                        // Pusher (هل‌دهنده)
+//                        new WaveSpawnEntry("ZombieArcade", 600),   // آرکید
+//                        new WaveSpawnEntry("ZombiePiano", 450),    // پیانیست
+//                        new WaveSpawnEntry("ZombieIceAgeTroglobite", 600) // تروگلوبایت
+
+//                         Ranged (مهاجم دوربرد)
+//                        new WaveSpawnEntry("ZombieIceAgeHunter", 500), // شکارچی
+//                        new WaveSpawnEntry("ZombieBeachOctopus", 800), // اختاپوس‌پرت‌کن
+//                      new WaveSpawnEntry("ZombieTombRaiser", 300) ,  // قبرساز
+
+//                        // SunStealer (دزد خورشید)
+//                        new WaveSpawnEntry("ZombieRa", 100),         // خورشید‌دزد
+//                        new WaveSpawnEntry("ZombieCrystalSkull", 500) // تورکویز
+
+                        // Deflector (دفع‌کننده)
+//                        new WaveSpawnEntry("ZombieDarkJuggler", 450), // ژانگولر
+//                        new WaveSpawnEntry("ZombieLostCityJane", 200) // چتردار
+////
+//                        // Spawner (تولیدکننده)
+//                        new WaveSpawnEntry("ZombieGargantuar", 1500), // غول‌پیکر
+//                        new WaveSpawnEntry("ZombieDarkKing", 750)    // پادشاه
+
+//                        // Imp
+//                        new WaveSpawnEntry("ZombieImp", 100),
+//                        new WaveSpawnEntry("ZombieDarkImpDragon", 150),
+//
+                        // Phasing (تغییر فاز)
+//                        new WaveSpawnEntry("ZombieNewspaper", 700),   // پیرمرد
+//                        new WaveSpawnEntry("ZombieModernAllStar", 1000) // آل‌استار
+//
+//                        // Elemental (حساس به المان)
+//                        new WaveSpawnEntry("ZombieExplorer", 250),    // مشعل‌دار
+//                        new WaveSpawnEntry("ZombieProspector", 200)  // اکتشافگر
+
+//                        // Snorkel
+//                        new WaveSpawnEntry("ZombieBeachSnorkel", 200)
+//
+//                        // Dodo Rider
+//                        new WaveSpawnEntry("ZombieIceAgeDodo", 600),
+//
+//                        // Fisherman
+//                        new WaveSpawnEntry("ZombieBeachFisherman", 700),
+//
+//                        // Wizard
+                        new WaveSpawnEntry("ZombieWizard", 800)
         );
 
-        List<Wave> waves = Wave.generateWaves(5, 200, availableZombies, 60);
+        List<Wave> waves = Wave.generateWaves(3, 2000, availableZombies, 60);
 
         LevelSetup levelSetup = new NormalLevelSetup(rows, cols, waves);
         LoseCondition loseCondition = new NormalLose();

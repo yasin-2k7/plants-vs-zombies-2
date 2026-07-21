@@ -2,6 +2,7 @@ package models.zombie;
 
 import controller.GameMenuController;
 import models.Damageable;
+import models.core.User;
 import models.enums.PlantType;
 import models.core.App;
 import models.enums.Zombies;
@@ -30,6 +31,8 @@ public abstract class Zombie implements Damageable {
     private int freezedTicksRemaining;
     protected List<String> armorTypes = new ArrayList<>();
     private int iceHealth = 0;
+    private boolean dropsReward;      // آیا این زامبی جایزه دارد؟
+    private boolean rewardClaimed;    // آیا جایزه قبلاً داده شده است؟
 
     private PlantType killerPlantType;
 
@@ -100,11 +103,17 @@ public abstract class Zombie implements Damageable {
     }
 
     public void die() {
-            if (isDead) return;
-            this.isDead = true;
-            // چاپ پیام مرگ
-            GameMenuController.updateState("Zombie of type " + name.name() + " is dead at (" + (int)x + ", " + (int)y + ")");
+        if (isDead) return;
+        this.isDead = true;
+
+        // پردازش جایزه
+        if (dropsReward && !rewardClaimed) {
+            rewardClaimed = true;
+            giveReward();
         }
+
+        GameMenuController.updateState("Zombie of type " + name.name() + " is dead at (" + (int)x + ", " + (int)y + ")");
+    }
 
     public void applySlow(int ticks, double factor, boolean canWorkInFrostbite) {
         if (!canWorkInFrostbite && App.getCurrentGame() instanceof FrostbiteCavesWorld){
@@ -121,6 +130,40 @@ public abstract class Zombie implements Damageable {
         if (ticks > slowTicksRemaining) {
             slowTicksRemaining = ticks;
         }
+    }
+
+
+    private void giveReward() {
+        User user = App.getCurrentUser();
+        if (user == null) return;
+
+        // ۵۰٪ شانس غذای گیاه، ۵۰٪ شانس بذر
+        if (Math.random() < 0.5) {
+            // جایزه: غذای گیاه
+            if (user.getPlantFoods() < 3) {
+                user.addPlantFood(1);
+                System.out.println("🎁 Zombie dropped a Plant Food! (+1)");
+            } else {
+                // اگر ظرفیت پر بود، به‌جای آن بذر بده
+                giveSeedPacket(user);
+            }
+        } else {
+            // جایزه: بذر
+            giveSeedPacket(user);
+        }
+    }
+
+    private void giveSeedPacket(User user) {
+        // لیست گیاهان آنلاک شده (به جز MARIGOLD و گیاهان خاص)
+        List<PlantType> unlockedPlants = user.getUnlockedPlantsLevels().keySet().stream()
+                .filter(p -> p != PlantType.MARIGOLD && p != PlantType.GRAVE_BUSTER && p != PlantType.LILY_PAD)
+                .toList();
+
+        if (unlockedPlants.isEmpty()) return;
+
+        PlantType randomPlant = unlockedPlants.get((int)(Math.random() * unlockedPlants.size()));
+        user.addSeedPackets(randomPlant, 1);
+        System.out.println("🌱 Zombie dropped a seed packet for " + randomPlant.name() + "! (+1)");
     }
 
     public void disableFor(int ticks) {
@@ -200,4 +243,11 @@ public abstract class Zombie implements Damageable {
     public List<String> getArmorTypes() {
         return armorTypes;
     }
+
+    public boolean isPusher() {return false;}
+
+    public void setDropsReward(boolean dropsReward) {this.dropsReward = dropsReward;}
+
+    public boolean isDropsReward() {return dropsReward;}
+
 }

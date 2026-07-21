@@ -25,7 +25,7 @@ public class WaveManager {
         if (!waves.isEmpty()) {
             this.currentWave = waves.get(0);
             this.totalZombiesInCurrentWave = currentWave.getTotalZombieCount();
-            printWaveStartMessage(currentWave); // چاپ پیام شروع موج
+            printWaveStartMessage(currentWave);
             this.firstWaveStarted = true;
         } else {
             this.levelCompleted = true;
@@ -66,7 +66,7 @@ public class WaveManager {
         }
     }
 
-    // متد اسپاون زامبی
+    // متد اسپاون زامبی (اصلاح‌شده)
     public void spawnNextZombie(int lane, GameWorld game) {
         if (levelCompleted || currentWave == null) return;
         WaveSpawnEntry entry = currentWave.getNextSpawn();
@@ -75,15 +75,19 @@ public class WaveManager {
         Zombie zombie = new ZombieFactory().createZombie(entry.getZombie());
         if (zombie == null) return;
 
-        if (App.getCurrentUser().getShowedZombies().containsKey(entry.getZombieAlias())) {
+        String alias = entry.getZombieAlias();
 
-        if (!App.getCurrentUser().getShowedZombies().get(App.getArmoredZombieName(zombie.getSpecificName()))){
-            App.getCurrentUser().getShowedZombies().put(App.getArmoredZombieName(zombie.getSpecificName()), true);
-            App.getCurrentUser().notifyZombieUnlock(App.getArmoredZombieName(zombie.getSpecificName()));
+        // اگر زامبی جدید است، آن را به لیست دیده‌شده‌ها اضافه کن و اطلاع‌رسانی کن
+        User user = App.getCurrentUser();
+        if (user != null) {
+            if (!user.getShowedZombies().containsKey(alias)) {
+                user.getShowedZombies().put(alias, true);
+                user.notifyZombieUnlock(alias);
+            }
         }
 
+        // محاسبه موقعیت اسپاون
         int spawnCol = game.getCols();
-
         if (currentWave.isFlagWave() && game.isSandstormActive()) {
             int columnsForward = 1 + new Random().nextInt(4);
             spawnCol = Math.max(0, spawnCol - columnsForward);
@@ -91,7 +95,7 @@ public class WaveManager {
         }
 
         float x = spawnCol * App.getCellWidth();
-        float y = lane * App.getCellHeight() + App.getCellHeight()/2;
+        float y = lane * App.getCellHeight() + App.getCellHeight() / 2;
         zombie.setX(x);
         zombie.setY(y);
 
@@ -101,8 +105,8 @@ public class WaveManager {
         int waveNum = currentWave.getWaveNumber();
         int cost = entry.getWavePointCost();
         System.out.println("Zombie " + typeName + " spawned at wave " + waveNum +
-                " in lane " + (lane+1) + " which costed " + cost + ".");
-    }
+                " in lane " + (lane + 1) + " which costed " + cost + ".");
+
     }
 
     // تقلب: تمام زامبی‌های فعال را نابود می‌کند
@@ -114,11 +118,10 @@ public class WaveManager {
                 onZombieKilled(z);
             }
         }
-        //zombies.clear();
         System.out.println("All zombies eliminated by nuke!");
     }
 
-    // هر بار که یک زامبی کشته می‌شود این متد صدا میزنیم
+    // هر بار که یک زامبی کشته می‌شود این متد صدا زده می‌شود
     public void onZombieKilled(Zombie zombie) {
         if (levelCompleted) return;
         killedZombiesInCurrentWave++;

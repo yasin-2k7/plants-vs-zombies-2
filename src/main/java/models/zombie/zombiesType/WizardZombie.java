@@ -11,7 +11,7 @@ import java.util.List;
 public class WizardZombie extends Zombie {
     private List<Plant> transformedPlants;
     private int cooldown;
-    private final int COOLDOWN_MAX = 20; // 1.3 ثانیه
+    private final int COOLDOWN_MAX = 20;
 
     public WizardZombie(int health, double speed, int damage) {
         super(Zombies.WIZARD, health, speed, damage);
@@ -22,7 +22,7 @@ public class WizardZombie extends Zombie {
     @Override
     public void update() {
         if (isDead) return;
-        super.update();
+        super.update(); // حرکت عادی
         if (cooldown <= 0) {
             castSpell();
             cooldown = COOLDOWN_MAX;
@@ -34,10 +34,13 @@ public class WizardZombie extends Zombie {
     private void castSpell() {
         GameWorld game = App.getCurrentGame();
         if (game == null) return;
-        Plant target = game.getNearestPlantInRow((int)this.y, this.x + 10);
-        if (target != null && !target.isDead()) {
-            target.setSheep(true);
+
+        // پیدا کردن نزدیک‌ترین گیاه در همان سطر، سمت راست جادوگر
+        Plant target = game.getNearestPlantInRow((int) (this.y / App.getCellHeight()), this.x + 10);
+        if (target != null && !target.isDead() && !target.isCat()) {
+            target.setCat(true);
             transformedPlants.add(target);
+            System.out.println("Wizard turned a " + target.getType().name() + " into a sheep!");
         }
     }
 
@@ -46,7 +49,7 @@ public class WizardZombie extends Zombie {
         // رفع طلسم از تمام گیاهان تبدیل‌شده
         for (Plant p : transformedPlants) {
             if (p != null && !p.isDead()) {
-                p.setSheep(false);
+                p.setCat(false);
             }
         }
         transformedPlants.clear();

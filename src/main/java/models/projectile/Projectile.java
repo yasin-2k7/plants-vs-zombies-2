@@ -12,6 +12,7 @@ import models.projectile.movementStrategies.MovementStrategy;
 import models.projectile.strikeStrategies.CheckStrike;
 import models.world.Cell;
 import models.zombie.Zombie;
+import models.zombie.zombiesType.DeflectorZombie;
 
 public class Projectile implements Resettable{
     private float x, y;
@@ -67,7 +68,26 @@ public class Projectile implements Resettable{
         } else if (type.movement.equals("LOBBED")) {
             zombie = strikeStrategy.strike(x, y, target);
         }
+
         if (zombie != null) {
+            // بررسی دافع‌ها
+            if (zombie instanceof DeflectorZombie deflector) {
+                // چتردار: پرتابه‌های lobber را دفع می‌کند
+                if (!deflector.isJuggler() && type.movement.equals("LOBBED")) {
+                    dead = true;
+                    App.getCurrentGame().getProjectilesPool().release(this);
+                    System.out.println("Parasol deflected a lobbed projectile!");
+                    return;
+                }
+                // ژانگولر: پرتابه‌های مستقیم را بازتاب می‌دهد
+                if (deflector.isJuggler() && deflector.tryDeflect(this)) {
+                    dead = true;
+                    App.getCurrentGame().getProjectilesPool().release(this);
+                    return;
+                }
+            }
+
+            // در غیر این صورت، آسیب عادی اعمال می‌شود
             hitStrategy.applyDamage(zombie, App.getCurrentGame().getActiveTargets(), this);
             pierce--;
             if (pierce == 0) {
@@ -76,13 +96,6 @@ public class Projectile implements Resettable{
                 return;
             }
         }
-
-        if (movementStrategy.isDead(this)){
-            dead = true;
-            App.getCurrentGame().getProjectilesPool().release(this);
-        }
-
-
     }
 
     @Override
@@ -178,4 +191,5 @@ public class Projectile implements Resettable{
 
     public void setPlantType(PlantType plantType) {this.plantType = plantType;}
     public PlantType getPlantType() {return plantType;}
+    public HitStrategy getHitStrategy() { return hitStrategy; }
 }

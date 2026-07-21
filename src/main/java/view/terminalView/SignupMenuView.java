@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 
 public class SignupMenuView implements View{
+
     private static SignupMenuView instance;
     public static SignupMenuView getInstance(){
         if (instance == null){
@@ -110,5 +111,7 @@ public class SignupMenuView implements View{
         }
     }
 
-
+    public SignupMenuController getController() {
+        return controller;
+    }
 }

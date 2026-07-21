@@ -7,6 +7,7 @@ import models.core.UserDataManager;
 import view.terminalView.AppView;
 import view.terminalView.GameMenuView;
 import view.terminalView.MainMenuView;
+import view.terminalView.SignupMenuView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,13 +31,7 @@ public class ProfileMenuController implements MenuController{
             return "new username and your username are similar.";
         }
 
-        List<String> errors;
-        errors = signupMenuController.getUsernameErrors(newUsername);
-        if(!errors.isEmpty()){
-            for(String error : errors){
-                return error;
-            }
-        }
+
 
         user.setUsername(newUsername);
         return "your username changed";
@@ -49,13 +44,6 @@ public class ProfileMenuController implements MenuController{
             return "new nickname and your nickname are similar.";
         }
 
-        List<String> errors;
-        errors = signupMenuController.getNicknameErrors(newNickname);
-        if(!errors.isEmpty()){
-            for(String error : errors){
-                return error;
-            }
-        }
 
         user.setNickname(newNickname);
         return "your nickname changed";
@@ -68,13 +56,7 @@ public class ProfileMenuController implements MenuController{
             return "new email and your email are similar.";
         }
 
-        List<String> errors;
-        errors = signupMenuController.getEmailErrors(newEmail);
-        if(!errors.isEmpty()){
-            for(String error : errors){
-                return error;
-            }
-        }
+
 
         user.setEmail(newEmail);
         return "your email changed";
@@ -95,13 +77,7 @@ public class ProfileMenuController implements MenuController{
             return "new pass and your pass are similar.";
         }
 
-        List<String> errors;
-        errors = signupMenuController.getPasswordErrors(newPassword, newPassword);
-        if(!errors.isEmpty()){
-            for(String error : errors){
-                return error;
-            }
-        }
+
 
         user.setHashPassword(hashPassword);
         return "your pass changed.";

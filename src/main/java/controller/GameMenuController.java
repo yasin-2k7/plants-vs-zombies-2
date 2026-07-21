@@ -4,7 +4,6 @@ import models.core.App;
 import models.core.User;
 import models.enums.PlantLayer;
 import models.enums.PlantType;
-import models.enums.Zombies;
 import models.miniGame.IZombie.IZombieLevel;
 import models.miniGame.beghouled.BeghouledMechanics;
 import models.miniGame.bowling.BowlingBallType;
@@ -15,6 +14,9 @@ import models.plant.card.PlantCard;
 import models.world.*;
 import models.world.mechanics.NormalMechanic;
 import models.world.obstacles.Grave;
+import models.world.obstacles.IceBlock;
+import models.world.obstacles.Obstacle;
+import models.world.obstacles.OctopusObstacle;
 import models.zombie.Zombie;
 import models.zombie.ZombieFactory;
 import models.zombie.wave.WaveManager;
@@ -270,27 +272,40 @@ public class GameMenuController implements MenuController {
             for (int x = 0; x < App.getCurrentGame().getGrid()[0].length; x++) {
                 Cell cell = App.getCurrentGame().getGrid()[y][x];
 
-                String terrainSymbol = cell.getTerrain().getTerminalSymbol(); // '.' , '~' , 'I' , 'O'
-                if (cell.hasObstacle() && cell.getObstacle() instanceof Grave) {
-                    Grave grave = (Grave) cell.getObstacle();
-                    switch (grave.getType()) {
-                        case SUN:
-                            terrainSymbol = "🪦☀";
-                            break;
-                        case PLANT_FOOD:
-                            terrainSymbol = "🪦⚡";
-                            break;
-                        default:
-                            terrainSymbol = "🪦";
-                            break;
+                String terrainSymbol = cell.getTerrain().getTerminalSymbol(); // مقدار پیش‌فرض
+
+                if (cell.hasObstacle()) {
+                    Obstacle obs = cell.getObstacle();
+                    if (obs instanceof Grave) {
+                        Grave grave = (Grave) obs;
+                        switch (grave.getType()) {
+                            case SUN:
+                                terrainSymbol = "🪦☀";
+                                break;
+                            case PLANT_FOOD:
+                                terrainSymbol = "🪦⚡";
+                                break;
+                            default:
+                                terrainSymbol = "🪦";
+                                break;
+                        }
+                    } else if (obs instanceof OctopusObstacle) {
+                        terrainSymbol = "🐙";
+                    } else if (obs instanceof IceBlock) {
+                        terrainSymbol = "🧊";
+                    } else {
+                        terrainSymbol = "🪨";
                     }
-                } else if (cell.hasObstacle()) {
-                    terrainSymbol = "🪦";
                 }
 
                 String plantSymbol = "    ";
                 if (!cell.isEmpty()) {
-                    plantSymbol = (cell.getPlant().getType().getSymbol());
+                    Plant plant = cell.getPlant();
+                    if (plant.isCat()) {
+                        plantSymbol = "🐱 ";
+                    } else {
+                        plantSymbol = plant.getType().getSymbol();
+                    }
                 }
 
 
@@ -345,32 +360,41 @@ public class GameMenuController implements MenuController {
         }
     }
 
-    public void zombieInfo(){
-        for (Zombie zombie : App.getCurrentGame().getActiveZombies()){
+    public void zombieInfo() {
+        for (Zombie zombie : App.getCurrentGame().getActiveZombies()) {
             GameMenuView.getInstance().showResult(App.getArmoredZombieName(zombie.getSpecificName()) + ":");
             GameMenuView.getInstance().showResult("    position: (" + zombie.getX() + ", " + zombie.getY() + ")");
             GameMenuView.getInstance().showResult("    health: " + zombie.getHealth());
-            GameMenuView.getInstance().showResult("    armor health: " + "\n        " + (zombie instanceof ArmoredZombie armoredZombie? handleArmor(armoredZombie) : ""));
+            if (zombie instanceof ArmoredZombie armoredZombie) {
+                GameMenuView.getInstance().showResult("    armor health: " + handleArmor(armoredZombie));
+            } else {
+                GameMenuView.getInstance().showResult("    armor health: none");
+            }
             GameMenuView.getInstance().showResult("    effects:");
-            if (zombie.getDisabledTicksRemaining() > 0) GameMenuView.getInstance().showResult("        stunned " + zombie.getDisabledTicksRemaining());
-            if (zombie.getFreezedTicksRemaining() > 0) GameMenuView.getInstance().showResult("         frozen " + zombie.getFreezedTicksRemaining());
-            if (zombie.getSlowTicksRemaining() > 0) GameMenuView.getInstance().showResult("        slowed " + zombie.getSlowTicksRemaining());
+            if (zombie.getDisabledTicksRemaining() > 0)
+                GameMenuView.getInstance().showResult("        stunned " + zombie.getDisabledTicksRemaining());
+            if (zombie.getFreezedTicksRemaining() > 0)
+                GameMenuView.getInstance().showResult("        frozen " + zombie.getFreezedTicksRemaining());
+            if (zombie.getSlowTicksRemaining() > 0)
+                GameMenuView.getInstance().showResult("        slowed " + zombie.getSlowTicksRemaining());
             GameMenuView.getInstance().showResult("");
         }
     }
 
-    private String handleArmor(ArmoredZombie armoredZombie){
-        if (armoredZombie.getArmorHealth() <= 0) return "";
-        if (armoredZombie.getSpecificName().equalsIgnoreCase("ZombieDarkArmor3")){
-            if (armoredZombie.getArmorHealth() > 1600){
-                return ("crown: " + (armoredZombie.getArmorHealth()-1600) + "\n"
-                + "shoulderArmor: 1600");
-            }
-            else {
-                return ("shoulderArmor: " + (armoredZombie.getArmorHealth()));
+    private String handleArmor(ArmoredZombie armoredZombie) {
+        if (armoredZombie.getArmorHealth() <= 0) {
+            return "0 (broken)";
+        }
+        if (armoredZombie.getSpecificName().equalsIgnoreCase("ZombieDarkArmor3")) {
+            if (armoredZombie.getArmorHealth() > 1600) {
+                return "crown: " + (armoredZombie.getArmorHealth() - 1600) + ", shoulderArmor: 1600";
+            } else {
+                return "shoulderArmor: " + armoredZombie.getArmorHealth();
             }
         }
-        return (armoredZombie.getArmorTypes().getFirst() + ": " + armoredZombie.getArmorHealth());
+        // برای سایر زامبی‌های زره‌دار
+        String type = armoredZombie.getArmorTypes().isEmpty() ? "unknown" : armoredZombie.getArmorTypes().get(0);
+        return type + ": " + armoredZombie.getArmorHealth();
     }
 
     public void cheatSpawnZombie(String type, float x, float y){
@@ -394,7 +418,12 @@ public class GameMenuController implements MenuController {
             return;
         }
 
+        // تنظیم موقعیت زامبی
+        zombie.setX(x);
+        zombie.setY(newY);
+
         App.getCurrentGame().getActiveZombies().add(zombie);
+        GameMenuView.getInstance().showResult("Spawned " + type + " at (" + x + ", " + newY + ")");
     }
 
     public void startZombieWaves(){
