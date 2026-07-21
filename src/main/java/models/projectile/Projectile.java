@@ -193,5 +193,4 @@ public class Projectile implements Resettable{
 
     public void setPlantType(PlantType plantType) {this.plantType = plantType;}
     public PlantType getPlantType() {return plantType;}
-    public HitStrategy getHitStrategy() { return hitStrategy; }
 }
