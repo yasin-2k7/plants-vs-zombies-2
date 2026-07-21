@@ -382,8 +382,14 @@ public class User {
         notifyLevelUnlock(newChapter + "-" + newLevel);
     }
 
+
+
     public void setCoins(int coins) {
         this.coins = coins;
+    }
+
+    public HashMap<PlantType, Boolean> getPlantBoosts() {
+        return plantBoosts;
     }
 
     public void setGems(int gems) {

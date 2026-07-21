@@ -15,6 +15,7 @@ public class PlantMenuController implements MenuController {
     private int maxSlots = 8;
     private int numberOfLockedPlantsInList = 0;
     private Map<PlantType, Boolean> boosts = new HashMap<>();
+    private PlantType imitatorTarget = null;
 
     @Override
     public void changeMenu() {
@@ -23,6 +24,7 @@ public class PlantMenuController implements MenuController {
     public void reset(){
         maxSlots = 8-App.getCurrentGame().getPlantLists().size();
         numberOfLockedPlantsInList = App.getCurrentGame().getPlantLists().size();
+        this.imitatorTarget = null;
     }
 
     public String showAllPlants() {
@@ -55,6 +57,10 @@ public class PlantMenuController implements MenuController {
             return "Error: Invalid plant type.";
         }
 
+        if (type == PlantType.IMITATOR) {
+            return "Error: Please specify target plant for Imitator (e.g., add plant imitator peashooter).";
+        }
+
         if (!user.getUnlockedPlantsLevels().containsKey(type)) {
             return "Error: Plant is locked.";
         }
@@ -76,6 +82,42 @@ public class PlantMenuController implements MenuController {
 
         selectedPlants.add(type);
         return "Plant " + type.name() + " added to selection.";
+    }
+
+    public String addPlant(String typeName, String targetTypeName) {
+        User user = App.getCurrentUser();
+        if (user == null) return "Error: No user logged in.";
+
+        PlantType type;
+        PlantType targetType;
+        try {
+            type = PlantType.valueOf(typeName.toUpperCase());
+            targetType = PlantType.valueOf(targetTypeName.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            return "Error: Invalid plant type.";
+        }
+
+        if (type != PlantType.IMITATOR) {
+            return "Error: Target plant can only be specified for IMITATOR.";
+        }
+        if (targetType == PlantType.IMITATOR) {
+            return "Error: Imitator cannot imitate itself!";
+        }
+        if (!user.getUnlockedPlantsLevels().containsKey(targetType)) {
+            return "Error: Target plant is locked.";
+        }
+        if (selectedPlants.size() >= maxSlots) {
+            return "Error: Selection is full (max " + maxSlots + " plants).";
+        }
+
+        if (selectedPlants.contains(type)) {
+            return "Error: Imitator is already selected.";
+        }
+
+        selectedPlants.add(type);
+        this.imitatorTarget = targetType;
+
+        return "Plant IMITATOR added to selection as " + targetType.name() + ".";
     }
 
     public String removePlant(String typeName) {
@@ -104,6 +146,10 @@ public class PlantMenuController implements MenuController {
 
         selectedPlants.remove(type);
         boosts.remove(type);
+
+        if (type == PlantType.IMITATOR) {
+            this.imitatorTarget = null;
+        }
         return "Plant " + type.name() + " removed from selection.";
     }
 
@@ -152,8 +198,20 @@ public class PlantMenuController implements MenuController {
             return "Error: Please select " + (maxSlots-selectedPlants.size()) + " more plants";
         }
 
-        for (PlantType type : selectedPlants){
-            App.getCurrentGame().getPlantLists().add(PlantCardFactory.createCard(type, user.getUserLevel()));
+        for (PlantType type : selectedPlants) {
+            if (type == PlantType.IMITATOR) {
+                int targetLevel = user.getUnlockedPlantsLevels().getOrDefault(imitatorTarget, 1);
+                int imitatorLevel = user.getUnlockedPlantsLevels().getOrDefault(PlantType.IMITATOR, 1);
+
+                App.getCurrentGame().getPlantLists().add(
+                        PlantCardFactory.createImitatorCard(imitatorTarget, targetLevel, imitatorLevel)
+                );
+            } else {
+                int plantLevel = user.getUnlockedPlantsLevels().getOrDefault(type, 1);
+                App.getCurrentGame().getPlantLists().add(
+                        PlantCardFactory.createCard(type, plantLevel)
+                );
+            }
         }
 
         AppView.setCurrentScreen(GameMenuView.getInstance());

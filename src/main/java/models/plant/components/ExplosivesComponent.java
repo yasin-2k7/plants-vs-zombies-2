@@ -101,11 +101,19 @@ public class ExplosivesComponent implements GameComponent {
         this.plantFoodBehavior = plantFoodBehavior;
     }
 
+    public void setPostTriggerDelay(int postTriggerDelay) {
+        this.postTriggerDelay = postTriggerDelay;
+    }
+
     public Cell getTarget() {
         return target;
     }
 
     public void setTarget(Cell target) {
         this.target = target;
+    }
+
+    public void instantArm() {
+        isArmed = true;
     }
 }

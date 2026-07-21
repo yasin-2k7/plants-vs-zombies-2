@@ -8,6 +8,7 @@ import models.enums.PlantType;
 import models.plant.Plant;
 import models.plant.components.PlacementBehaviorComponent;
 import models.plant.components.ShooterComponent;
+import models.plant.factory.PlantFactory;
 import models.quest.QuestStats;
 import models.world.cellTerrains.CellTerrain;
 import models.world.obstacles.Grave;
@@ -94,14 +95,15 @@ public class Cell {
         return basePlant == null && mainPlant == null && shieldPlant == null;
     }
 
-    public String handlePlanting(PlantType type) {
+    public String handlePlanting(PlantType type, boolean boost){
         if (!this.isPlantable()) {
             if (!(this.obstacle instanceof Grave && type == PlantType.GRAVE_BUSTER)){
                 return "you cannot plant in that place!";
             }
         }
 
-        Plant newPlant = App.getFactory().createPlant(type, (int)x, (int)y, this);
+        Plant newPlant = PlantFactory.createPlant(type, (int)x, (int)y, this);
+        if (boost) newPlant.setPlantFoodInStart(true);
 
         if ((!(this.obstacle instanceof Grave && type == PlantType.GRAVE_BUSTER)) && (!this.terrain.canPlant(newPlant, this))) {
             return "you cannot plant in that place!";
@@ -153,6 +155,10 @@ public class Cell {
             return null;
         }
         return "that place isn't empty!";
+    }
+
+    public String handlePlanting(PlantType type) {
+        return handlePlanting(type, false);
     }
 
     public static Cell findCell(float x, float y, Cell[][] grid){

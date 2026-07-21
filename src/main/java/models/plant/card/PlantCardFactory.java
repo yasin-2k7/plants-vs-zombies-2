@@ -35,4 +35,25 @@ public class PlantCardFactory {
 
         return card;
     }
+
+    public static ImitatorCard createImitatorCard(PlantType targetType, int targetLevel, int imitatorLevel) {
+        PlantCard baseTargetCard = createCard(targetType, targetLevel);
+
+        int finalSunCost = baseTargetCard.getSunCost();
+        int finalMaxCooldownTicks = baseTargetCard.getMaxCooldownTicks();
+
+        if (upgradeRules != null && upgradeRules.containsKey(PlantType.IMITATOR.name())) {
+            UpgradeConfig imitatorConfig = upgradeRules.get(PlantType.IMITATOR.name()).get(imitatorLevel);
+
+            if (imitatorConfig != null) {
+                finalSunCost += imitatorConfig.getSunCostModifier();
+                finalMaxCooldownTicks -= imitatorConfig.getCooldownReductionTicks();
+            }
+        }
+
+        finalSunCost = Math.max(0, finalSunCost);
+        finalMaxCooldownTicks = Math.max(1, finalMaxCooldownTicks);
+
+        return new ImitatorCard(targetType, finalSunCost, finalMaxCooldownTicks);
+    }
 }
