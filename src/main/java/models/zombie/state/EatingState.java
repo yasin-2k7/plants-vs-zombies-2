@@ -13,7 +13,7 @@ public class EatingState implements ZombieState {
     @Override
     public void handleAction(Zombie zombie) {
         if (targetPlant != null && !targetPlant.isDead()) {
-             targetPlant.takeDamage(zombie.getDamage());
+             targetPlant.takeDamage(zombie.getDamage(), zombie);
 
              if (targetPlant.isDead()) {
                  zombie.setState(new WalkingState());

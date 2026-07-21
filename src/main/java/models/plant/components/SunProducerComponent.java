@@ -47,10 +47,6 @@ public class SunProducerComponent implements GameComponent {
     public void update(Plant owner) {
 
         tick();
-        if (owner.getType().equals(PlantType.SUN_BEAN)){
-            componentSuns.add(produceSun(owner));
-            return;
-        }
 
         if (shroom && checkShroomSize){
             if (plantationTime > 10*(72-growTimeToReduce)){

@@ -50,9 +50,6 @@ public class CombinedDamageStrategy implements HitStrategy{
         this.projectileType = projectileType;
     }
 
-    public void setElement(String element){
-        this.element = element;
-    }
 
     @Override
     public int getDamage() {
@@ -128,6 +125,16 @@ public class CombinedDamageStrategy implements HitStrategy{
                 }
                 break;
         }
+    }
+
+    @Override
+    public void increaseDamage(int factor){
+        damage *= factor;
+    }
+
+    @Override
+    public void setElement(String element) {
+        this.element = element;
     }
 
     @Override

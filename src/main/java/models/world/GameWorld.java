@@ -29,10 +29,13 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
+import java.util.*;
 
 public abstract class GameWorld {
     private long startTime;
     private long currentTime;
+
+    Random random = new Random();
 
     private GameState state;
 
@@ -571,6 +574,23 @@ public abstract class GameWorld {
             return grid[row][col];
         }
         return null;
+    }
+
+    public List<Cell> findTwoEmptyCell(boolean water){
+        List<Cell> emptyCells = new ArrayList<>();
+        for (Cell[] cells : grid){
+            for (Cell cell : cells){
+                if (cell.isEmpty() && cell.isPlantable() && !cell.hasObstacle()){
+                    if (water==cell.getTerrain().isWater()) emptyCells.add(cell);
+                }
+            }
+        }
+        if (emptyCells.size() <= 2){
+            return emptyCells;
+        }
+        Collections.shuffle(emptyCells);
+
+        return new ArrayList<>(emptyCells.subList(0, 2));
     }
 
     public boolean isSandstormActive() {

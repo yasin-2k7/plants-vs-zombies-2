@@ -10,6 +10,7 @@ import models.miniGame.bowling.BowlingBallType;
 import models.miniGame.bowling.BowlingMechanics;
 import models.miniGame.vaseBreaker.VaseBreakerLevel;
 import models.plant.Plant;
+import models.plant.card.ImitatorCard;
 import models.plant.card.PlantCard;
 import models.world.*;
 import models.world.mechanics.NormalMechanic;
@@ -32,11 +33,15 @@ public class GameMenuController implements MenuController {
             App.getCurrentUser().unlockLevel();
         }
         AppView.setCurrentScreen(MainMenuView.getInstance());
+        App.setCurrentGame(null);
+        App.getCurrentUser().getPlantBoosts().clear();
     }
 
     public static void handleLosing(GameWorld gameWorld) {
         GameMenuView.getInstance().showResult(("The zombie ate your brain; LOSER!!!"));
         AppView.setCurrentScreen(MainMenuView.getInstance());
+        App.setCurrentGame(null);
+        App.getCurrentUser().getPlantBoosts().clear();
     }
 
     @Override
@@ -49,19 +54,22 @@ public class GameMenuController implements MenuController {
     }
 
     public String enterMenu(String menuName) {
-        if (menuName.equalsIgnoreCase("collection")) {
-            AppView.setCurrentScreen(CollectionMenuView.getInstance());
-            return "Entering collection menu...";
-        } else if (menuName.equalsIgnoreCase("travel log")) {
-            AppView.setCurrentScreen(TravelLogMenuView.getInstance());
-            TravelLogMenuView.getInstance().showCurrentPage();
-            return "Entering Travel Log...";
-        }
-        return "Invalid menu name!";
+//        if (menuName.equalsIgnoreCase("collection")) {
+//            AppView.setCurrentScreen(CollectionMenuView.getInstance());
+//            return "Entering collection menu...";
+//        } else if (menuName.equalsIgnoreCase("travel log")) {
+//            AppView.setCurrentScreen(TravelLogMenuView.getInstance());
+//            TravelLogMenuView.getInstance().showCurrentPage();
+//            return "Entering Travel Log...";
+//        }
+//        return "Invalid menu name!";
+        return "";
     }
 
     @Override
     public void exitMenu() {
+        App.setCurrentGame(null);
+        App.getCurrentUser().getPlantBoosts().clear();
         AppView.setCurrentScreen(MainMenuView.getInstance());
     }
 
@@ -182,8 +190,18 @@ public class GameMenuController implements MenuController {
             GameMenuView.getInstance().showResult("you cannot plant in that place!");
             return;
         }
+        String error;
+        PlantType type;
+        if (card instanceof ImitatorCard imitatorCard){
+            type = imitatorCard.getTargetType();
+            error = selectedCell.handlePlanting(type, true);
+        }
+        else{
+            type = card.getType();
+            error = selectedCell.handlePlanting(type, App.getCurrentUser().hasBoost(type));
+        }
 
-        String error = selectedCell.handlePlanting(card.getType());
+
         if (error != null) GameMenuView.getInstance().showResult(error);
         else {
             if (App.getCurrentGame().isConveyorMode()){

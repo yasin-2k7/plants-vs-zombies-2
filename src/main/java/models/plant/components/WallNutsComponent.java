@@ -2,23 +2,15 @@ package models.plant.components;
 
 import models.plant.GameComponent;
 import models.plant.Plant;
+import models.zombie.Zombie;
 
-public class WallNutsComponent implements GameComponent {
-    private String nutType;
-    private int damage;
+public abstract class WallNutsComponent implements GameComponent {
 
-    public WallNutsComponent(String nutType, int damage) {
-        this.nutType = nutType;
-        this.damage = damage;
-    }
 
     @Override
-    public void update(Plant owner) {
-        //بررسی انواع دانه ها و مدت زمان مقاومت انها
-    }
+    public void update(Plant owner){}
 
     @Override
-    public void activatePlantFood(Plant owner) {
+    public abstract void activatePlantFood(Plant owner);
 
-    }
 }

@@ -58,7 +58,7 @@ public enum PlantType {
     MAGNET_SHROOM(PlantFamily.HOMING, 100, 15),
     HYPNO_SHROOM(PlantFamily.MODIFIER, 125, 20),
     CAT_TAIL(PlantFamily.HOMING, 175, 20),
-    IMITATER(PlantFamily.MODIFIER, 0, 0),
+    IMITATOR(PlantFamily.MODIFIER, 0, 0),
     ICE_SHROOM(EXPLOSIVE, 75, 50),
     LILY_PAD(PlantFamily.MODIFIER, 25, 5),
     HOT_POTATO(EXPLOSIVE, 0, 5),

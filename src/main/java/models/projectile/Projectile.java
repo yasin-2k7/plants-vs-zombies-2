@@ -179,7 +179,9 @@ public class Projectile implements Resettable{
         return dead;
     }
 
-
+    public HitStrategy getHitStrategy() {
+        return hitStrategy;
+    }
 
     public float getTargetX() {
         return targetX;

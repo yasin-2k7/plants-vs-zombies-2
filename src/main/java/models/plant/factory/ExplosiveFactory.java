@@ -2,7 +2,9 @@ package models.plant.factory;
 
 import controller.LevelMenuController;
 import models.core.App;
+import models.enums.PlantLayer;
 import models.enums.PlantType;
+import models.plant.GameComponent;
 import models.plant.Plant;
 import models.plant.components.ExplosivesComponent;
 import models.plant.components.explosionRanges.CircularRange;
@@ -43,7 +45,20 @@ public class ExplosiveFactory {
         int armTime = level >= 2 ? 120 : 150;
         int damage = level >= 4 ? 2400 : 1800;
         Plant p = new Plant(PlantType.POTATO_MINE, 1000, damage);
-        p.addComponent(new ExplosivesComponent(new ProximityTrigger(App.getCellWidth()), new AreaDamageBehavior(damage, new CircularRange(0)), armTime));
+        ExplosivesComponent component = new ExplosivesComponent(new ProximityTrigger(App.getCellWidth()), new AreaDamageBehavior(damage, new CircularRange(0)), armTime);
+        component.setPlantFoodBehavior((owner, comp) -> {
+            comp.instantArm();
+
+            List<Cell> emptyCells = App.getCurrentGame().findTwoEmptyCell(false);
+
+            for (Cell cell : emptyCells) {
+                Plant cloneMine = buildPotatoMine();
+                cloneMine.getComponent(ExplosivesComponent.class).instantArm();
+                cloneMine.getComponent(ExplosivesComponent.class).setPlantFoodBehavior(null);
+                cell.setPlant(cloneMine, PlantLayer.MAIN);
+            }
+        });
+        p.addComponent(component);
         return p;
     }
 
@@ -52,7 +67,20 @@ public class ExplosiveFactory {
         int armTime = level >= 2 ? 40 : 50;
         int damage = level >= 4 ? 2800 : 2400;
         Plant p = new Plant(PlantType.PRIMAL_POTATO_MINE, 1000, damage);
-        p.addComponent(new ExplosivesComponent(new ProximityTrigger(App.getCellWidth()), new AreaDamageBehavior(damage, new CircularRange(1)), armTime));
+        ExplosivesComponent component = new ExplosivesComponent(new ProximityTrigger(App.getCellWidth()), new AreaDamageBehavior(damage, new CircularRange(1)), armTime);
+        component.setPlantFoodBehavior((owner, comp) -> {
+            comp.instantArm();
+
+            List<Cell> emptyCells = App.getCurrentGame().findTwoEmptyCell(false);
+
+            for (Cell cell : emptyCells) {
+                Plant cloneMine = buildPotatoMine();
+                cloneMine.getComponent(ExplosivesComponent.class).instantArm();
+                cloneMine.getComponent(ExplosivesComponent.class).setPlantFoodBehavior(null);
+                cell.setPlant(cloneMine, PlantLayer.MAIN);
+            }
+        });
+        p.addComponent(component);
         return p;
     }
 
@@ -133,8 +161,8 @@ public class ExplosiveFactory {
         Plant p = new Plant(PlantType.ICEBERG_LETTUCE, 1000, 0);
         ExplosivesComponent component = new ExplosivesComponent(new ProximityTrigger(App.getCellWidth()), new FreezeZombieBehavior(new CircularRange(0), freezeTime), 0);
         component.setPlantFoodBehavior((owner, comp) -> {
-            //   App.getCurrentGame().getActiveZombies()
-            //     .forEach(zombie -> zombie.freeze(40));
+               App.getCurrentGame().getActiveZombies()
+                 .forEach(zombie -> zombie.freeze(40));
         });
         p.addComponent(component);
         return p;
