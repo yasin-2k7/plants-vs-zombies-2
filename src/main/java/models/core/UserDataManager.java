@@ -7,6 +7,8 @@ import com.google.gson.GsonBuilder;
 
 import java.io.*;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 public class UserDataManager {
     private static final String USERS_DIR = "pvz2/src/main/java/models/users/";
@@ -67,6 +69,29 @@ public class UserDataManager {
                 System.err.println("read error: " + e.getMessage());
                 return null;
             }
+    }
+
+    public static List<User> loadAllUsers() {
+        List<User> users = new ArrayList<>();
+        File dir = new File(USERS_DIR);
+
+        if (!dir.exists() || !dir.isDirectory()) {
+            return users;
+        }
+        File[] userFiles = dir.listFiles((directory, name) -> name.toLowerCase().endsWith(".json"));
+
+        if (userFiles != null) {
+            for (File file : userFiles) {
+                String fileName = file.getName();
+                String username = fileName.substring(0, fileName.lastIndexOf(".json"));
+
+                User user = loadUser(username);
+                if (user != null) {
+                    users.add(user);
+                }
+            }
+        }
+        return users;
     }
 
     public static boolean userExists(String username){

@@ -49,6 +49,11 @@ public class PlantCard {
         this.ready = ready;
     }
 
+    public void reset(){
+        ready = true;
+        currentCooldownTicks = 0;
+    }
+
     public int getSunCost() {
         return sunCost;
     }

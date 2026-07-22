@@ -16,11 +16,12 @@ import java.util.List;
 public class Plant {
     private PlantType type;
     private int health;
+    private int initHealth;
     private int x, y;
     private int damage;
     private transient ArrayList<GameComponent> components = new ArrayList<>();
     private boolean dead = false;
-    private boolean sheep = false;
+    private boolean cat = false;
     private boolean disabled = false;
     private int slowTicks = 0;
     private transient Cell cell = null;
@@ -28,6 +29,7 @@ public class Plant {
     private boolean freeze = false;
     private int iceHealth = 0;
     private boolean isFire = false;
+    private boolean plantFoodInStart = false;
 
     public void addComponent(GameComponent comp) {
         components.add(comp);
@@ -40,7 +42,11 @@ public class Plant {
     }
 
     public void update() {
-        if (disabled || freeze) return;
+        if (disabled || freeze || cat) return;
+        if (plantFoodInStart){
+            activatePlantFood();
+            plantFoodInStart = false;
+        }
         for (GameComponent comp : components) {
             if (type == PlantType.SUN_BEAN && comp instanceof SunProducerComponent){
                 continue;
@@ -48,27 +54,35 @@ public class Plant {
             comp.update(this);
         }
         if (isFire){
-            List<Cell> neighborCells = Cell.getNeighborCells(cell, App.getCurrentGame().getGrid(), 1);
-            for (Cell cell1 : neighborCells){
-                if (cell1.getPlant().freeze){
-                    cell1.getPlant().iceHealth -= 6;
-                    if (cell1.getPlant().iceHealth <= 0){
-                        cell1.getPlant().unfreeze();
-                    }
+            checkFire();
+        }
+    }
+
+    private void checkFire(){
+        List<Cell> neighborCells = Cell.getNeighborCells(cell, App.getCurrentGame().getGrid(), 1);
+        for (Cell cell1 : neighborCells){
+            if (cell1.getPlant().freeze){
+                cell1.getPlant().iceHealth -= 6;
+                if (cell1.getPlant().iceHealth <= 0){
+                    cell1.getPlant().unfreeze();
                 }
-                if (cell1.hasObstacle() && cell1.getObstacle() instanceof IceBlock iceBlock){
-                    iceBlock.takeDamage(6, "NORMAL");
-                }
-                for (Zombie zombie : Cell.getZombiesInCell(cell)){
-                    if (zombie.getIceHealth() > 0){
-                        zombie.setIceHealth(zombie.getIceHealth()-6);
-                    }
+            }
+            if (cell1.hasObstacle() && cell1.getObstacle() instanceof IceBlock iceBlock){
+                iceBlock.takeDamage(6, "NORMAL");
+            }
+            for (Zombie zombie : Cell.getZombiesInCell(cell)){
+                if (zombie.getIceHealth() > 0){
+                    zombie.setIceHealth(zombie.getIceHealth()-6);
                 }
             }
         }
     }
 
     public void takeDamage(int damage){
+        takeDamage(damage, null);
+    }
+
+    public void takeDamage(int damage, Zombie zombie){
         if (iceHealth > 0){
             iceHealth -= damage;
             if (iceHealth <= 0){
@@ -76,7 +90,17 @@ public class Plant {
             }
             return;
         }
-        health -= damage;
+
+        int remainingDamage = damage;
+        for (GameComponent comp : components) {
+            remainingDamage = comp.onTakeDamage(this, remainingDamage, zombie);
+            if (remainingDamage <= 0) {
+                break;
+            }
+        }
+
+        this.health -= remainingDamage;
+
         if (health <= 0){
             User user = App.getCurrentUser();
             if (user != null) {
@@ -92,6 +116,7 @@ public class Plant {
         this.type = type;
         this.health = health;
         this.damage = damage;
+        initHealth = health;
     }
 
     public void setY(int y) {
@@ -106,6 +131,9 @@ public class Plant {
         if (this.dead) return;
 
         this.dead = true;
+        for (GameComponent component : components){
+            component.onDeath(this);
+        }
 
         if (this.cell != null) {
             this.cell.findAndRemovePlant();
@@ -114,7 +142,7 @@ public class Plant {
         GameMenuController.updateState("Plant " + this.getType().name() + " at (" + this.x + ", " + this.y + ") is destroyed.");
     }
     public boolean isDead() { return dead; }
-    public void setSheep(boolean sheep) { this.sheep = sheep; }
+    public void setCat(boolean cat) { this.cat = cat; }
     public void setDisabled(boolean disabled) { this.disabled = disabled; }
     public int getX() { return x; }
     public int getY() { return y; }
@@ -186,5 +214,24 @@ public class Plant {
                  ICE_SHROOM, DOOM_SHROOM, MAGNET_SHROOM, HYPNO_SHROOM -> true;
             default -> false;
         };
+    }
+
+    public void setHealth(int health) {
+        this.health = health;
+    }
+
+    public int getInitHealth() {
+        return initHealth;
+    }
+
+    public void setDamage(int damage) {
+        this.damage = damage;
+    }
+
+    public void setPlantFoodInStart(boolean plantFoodInStart) {
+        this.plantFoodInStart = plantFoodInStart;
+    }
+    public boolean isCat() {
+        return cat;
     }
 }

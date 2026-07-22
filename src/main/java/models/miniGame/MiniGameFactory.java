@@ -78,6 +78,7 @@ public class MiniGameFactory {
         LevelSetup levelSetup = new VaseBreakerSetup(rows, cols, normalVaseZombies, giantVaseZombies, possiblePlants);
         LoseCondition loseCondition = new NormalLose();
         WinCondition winCondition = new NormalWin();
+        winCondition.setCurrentLevel(MiniGameLevels.VASE_BREAKER_1);
 
 
         return new VaseBreakerLevel(
@@ -99,6 +100,7 @@ public class MiniGameFactory {
         LevelSetup levelSetup = new VaseBreakerSetup(rows, cols, normalVaseZombies, giantVaseZombies, possiblePlants);
         LoseCondition loseCondition = new NormalLose();
         WinCondition winCondition = new NormalWin();
+        winCondition.setCurrentLevel(MiniGameLevels.VASE_BREAKER_2);
 
 
         return new VaseBreakerLevel(
@@ -120,6 +122,7 @@ public class MiniGameFactory {
         LevelSetup levelSetup = new VaseBreakerSetup(rows, cols, normalVaseZombies, giantVaseZombies, possiblePlants);
         LoseCondition loseCondition = new NormalLose();
         WinCondition winCondition = new NormalWin();
+        winCondition.setCurrentLevel(MiniGameLevels.VASE_BREAKER_3);
 
 
         return new VaseBreakerLevel(
@@ -142,6 +145,7 @@ public class MiniGameFactory {
         LevelSetup levelSetup = new BowlingSetup(rows, cols, redLineCol, zombies, 3, 150);
         LoseCondition loseCondition = new NormalLose();
         WinCondition winCondition = new NormalWin();
+        winCondition.setCurrentLevel(MiniGameLevels.BOWLING_1);
 
         return new MiniGameWorld(
                 levelSetup,
@@ -163,6 +167,7 @@ public class MiniGameFactory {
         LevelSetup levelSetup = new BowlingSetup(rows, cols, redLineCol, zombies, 4, 250);
         LoseCondition loseCondition = new NormalLose();
         WinCondition winCondition = new NormalWin();
+        winCondition.setCurrentLevel(MiniGameLevels.BOWLING_2);
 
         return new MiniGameWorld(
                 levelSetup,
@@ -184,6 +189,7 @@ public class MiniGameFactory {
         LevelSetup levelSetup = new BowlingSetup(rows, cols, redLineCol, zombies, 5, 350);
         LoseCondition loseCondition = new NormalLose();
         WinCondition winCondition = new NormalWin();
+        winCondition.setCurrentLevel(MiniGameLevels.BOWLING_3);
 
         return new MiniGameWorld(
                 levelSetup,
@@ -201,6 +207,7 @@ public class MiniGameFactory {
         LevelSetup levelSetup = new IZombieSetup(5, 9, availableZombies);
         LoseCondition loseCondition = new NormalLose();
         WinCondition winCondition = new NormalWin();
+        winCondition.setCurrentLevel(MiniGameLevels.I_ZOMBIE_1);
 
         return new IZombieLevel(
                 levelSetup,
@@ -219,6 +226,7 @@ public class MiniGameFactory {
         LevelSetup levelSetup = new IZombieSetup(5, 9, availableZombies);
         LoseCondition loseCondition = new NormalLose();
         WinCondition winCondition = new NormalWin();
+        winCondition.setCurrentLevel(MiniGameLevels.I_ZOMBIE_2);
 
         return new IZombieLevel(
                 levelSetup,
@@ -237,6 +245,7 @@ public class MiniGameFactory {
         LevelSetup levelSetup = new IZombieSetup(5, 9, availableZombies);
         LoseCondition loseCondition = new NormalLose();
         WinCondition winCondition = new NormalWin();
+        winCondition.setCurrentLevel(MiniGameLevels.I_ZOMBIE_3);
 
         return new IZombieLevel(
                 levelSetup,
@@ -268,6 +277,7 @@ public class MiniGameFactory {
         LevelSetup levelSetup = new BeghouledSetup(5, 9, plants, upgrades, 5, zombies);
         LoseCondition loseCondition = new NormalLose();
         WinCondition winCondition = new BeghouledWinCondition();
+        winCondition.setCurrentLevel(MiniGameLevels.BEGHOULED_1);
 
         return new MiniGameWorld(
                 levelSetup,
@@ -295,6 +305,7 @@ public class MiniGameFactory {
         LevelSetup levelSetup = new BeghouledSetup(5, 9, plants, upgrades, 8, zombies);
         LoseCondition loseCondition = new NormalLose();
         WinCondition winCondition = new BeghouledWinCondition();
+        winCondition.setCurrentLevel(MiniGameLevels.BEGHOULED_2);
 
         return new MiniGameWorld(
                 levelSetup,
@@ -324,6 +335,7 @@ public class MiniGameFactory {
         LevelSetup levelSetup = new BeghouledSetup(5, 9, plants, upgrades, 12, zombies);
         LoseCondition loseCondition = new NormalLose();
         WinCondition winCondition = new BeghouledWinCondition();
+        winCondition.setCurrentLevel(MiniGameLevels.BEGHOULED_3);
 
         return new MiniGameWorld(
                 levelSetup,
@@ -342,6 +354,7 @@ public class MiniGameFactory {
         LevelSetup levelSetup = new models.world.levelSetup.NormalLevelSetup(5, 9, models.zombie.wave.Wave.generateWaves(3, 200, zombies, 40));
         LoseCondition loseCondition = new NormalLose();
         WinCondition winCondition = new NormalWin();
+        winCondition.setCurrentLevel(MiniGameLevels.ZOMBOTANY_1);
 
         return new MiniGameWorld(
                 levelSetup,
@@ -362,6 +375,7 @@ public class MiniGameFactory {
         LevelSetup levelSetup = new models.world.levelSetup.NormalLevelSetup(5, 9, models.zombie.wave.Wave.generateWaves(4, 300, zombies, 40));
         LoseCondition loseCondition = new NormalLose();
         WinCondition winCondition = new NormalWin();
+        winCondition.setCurrentLevel(MiniGameLevels.ZOMBOTANY_2);
 
         return new MiniGameWorld(
                 levelSetup,
@@ -382,6 +396,7 @@ public class MiniGameFactory {
         LevelSetup levelSetup = new models.world.levelSetup.NormalLevelSetup(5, 9, models.zombie.wave.Wave.generateWaves(5, 400, zombies, 40));
         LoseCondition loseCondition = new NormalLose();
         WinCondition winCondition = new NormalWin();
+        winCondition.setCurrentLevel(MiniGameLevels.ZOMBOTANY_3);
 
         return new MiniGameWorld(
                 levelSetup,

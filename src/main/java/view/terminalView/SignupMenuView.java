@@ -110,5 +110,7 @@ public class SignupMenuView implements View{
         }
     }
 
-
+    public SignupMenuController getController() {
+        return controller;
+    }
 }

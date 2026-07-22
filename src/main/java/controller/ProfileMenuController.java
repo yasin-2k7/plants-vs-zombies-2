@@ -1,12 +1,10 @@
 package controller;
 
-import models.core.App;
-import models.core.PasswordHasher;
-import models.core.User;
-import models.core.UserDataManager;
+import models.core.*;
 import view.terminalView.AppView;
 import view.terminalView.GameMenuView;
 import view.terminalView.MainMenuView;
+import view.terminalView.SignupMenuView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,11 +23,11 @@ public class ProfileMenuController implements MenuController{
 
     public String changeUsername(String newUsername){
         User user = App.getCurrentUser();
-        String oldUsername = user.getUsername();
 
         if(user.getUsername().equals(newUsername)){
             return "new username and your username are similar.";
         }
+
 
         List<String> errors = signupMenuController.getUsernameErrors(newUsername);
         if (!errors.isEmpty()) {
@@ -39,6 +37,7 @@ public class ProfileMenuController implements MenuController{
         user.setUsername(newUsername);
 
         UserDataManager.updateUsername(oldUsername, user);
+        UserDataManager.saveUser(user);
         return "your username changed";
     }
 
@@ -65,6 +64,7 @@ public class ProfileMenuController implements MenuController{
         if (user.getEmail().equals(newEmail)) {
             return "new email and your email are similar.";
         }
+
 
         List<String> errors = signupMenuController.getEmailErrors(newEmail);
         if (!errors.isEmpty()) {
@@ -95,14 +95,28 @@ public class ProfileMenuController implements MenuController{
             return String.join("\n", errors);
         }
 
+
         user.setHashPassword(hashNewPass);
         UserDataManager.saveUser(user);
+        user.setHashPassword(hashPassword);
+        UserDataManager.saveUser(user);
         return "your pass changed.";
+
+
     }
 
     public String showInfo() {
         User user = App.getCurrentUser();
 
+        String info = "Username: " + user.getUsername() + "\n" +
+                    "Nickname: " + user.getNickname() + "\n" +
+                    "Games played: " + user.getGamesPlayed() + "\n" +
+                    "Coins: " + user.getCoins() + "\n" +
+                    "Gems: " + user.getGems() + "\n" +
+                    "Levels completed: " + user.getCompletedLevels() + "\n" +
+                    "Mu point: ";
+
+        return info;
         return "Username: " + user.getUsername() + "\n" +
                 "Nickname: " + user.getNickname() + "\n" +
                 "Games number: "  + "\n" +
@@ -115,4 +129,5 @@ public class ProfileMenuController implements MenuController{
     public void showCurrentMenu() {
         GameMenuView.getInstance().showResult("Current menu: profile menu");
     }
+
 }

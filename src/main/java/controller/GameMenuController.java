@@ -2,6 +2,7 @@ package controller;
 
 import models.core.App;
 import models.core.User;
+import models.enums.CollectableType;
 import models.core.UserDataManager;
 import models.enums.PlantLayer;
 import models.enums.PlantType;
@@ -13,10 +14,14 @@ import models.miniGame.bowling.BowlingMechanics;
 import models.miniGame.vaseBreaker.VaseBreakerLevel;
 import models.mupoint.MupointManager;
 import models.plant.Plant;
+import models.plant.card.ImitatorCard;
 import models.plant.card.PlantCard;
 import models.world.*;
 import models.world.mechanics.NormalMechanic;
 import models.world.obstacles.Grave;
+import models.world.obstacles.IceBlock;
+import models.world.obstacles.Obstacle;
+import models.world.obstacles.OctopusObstacle;
 import models.zombie.Zombie;
 import models.zombie.ZombieFactory;
 import models.zombie.wave.WaveManager;
@@ -26,7 +31,7 @@ import view.terminalView.*;
 import java.util.List;
 
 public class GameMenuController implements MenuController {
-    public static void handleWinning(GameWorld gameWorld, MupointManager mupointManager) {
+    public static void handleWinning(GameWorld gameWorld) {
         GameMenuView.getInstance().showResult("Dear humanz, zis is not done yet; we will come back to eat your brainz, humanz.");
         if (gameWorld.isWillUnlockLevel()){
             App.getCurrentUser().unlockLevel();
@@ -39,6 +44,8 @@ public class GameMenuController implements MenuController {
             UserDataManager.saveUser(user);
         }
         AppView.setCurrentScreen(MainMenuView.getInstance());
+        App.setCurrentGame(null);
+        App.getCurrentUser().getPlantBoosts().clear();
     }
 
     public static void handleLosing(GameWorld gameWorld, MupointManager mupointManager) {
@@ -51,6 +58,8 @@ public class GameMenuController implements MenuController {
             UserDataManager.saveUser(user);
         }
         AppView.setCurrentScreen(MainMenuView.getInstance());
+        App.setCurrentGame(null);
+        App.getCurrentUser().getPlantBoosts().clear();
     }
 
     @Override
@@ -63,19 +72,22 @@ public class GameMenuController implements MenuController {
     }
 
     public String enterMenu(String menuName) {
-        if (menuName.equalsIgnoreCase("collection")) {
-            AppView.setCurrentScreen(CollectionMenuView.getInstance());
-            return "Entering collection menu...";
-        } else if (menuName.equalsIgnoreCase("travel log")) {
-            AppView.setCurrentScreen(TravelLogMenuView.getInstance());
-            TravelLogMenuView.getInstance().showCurrentPage();
-            return "Entering Travel Log...";
-        }
-        return "Invalid menu name!";
+//        if (menuName.equalsIgnoreCase("collection")) {
+//            AppView.setCurrentScreen(CollectionMenuView.getInstance());
+//            return "Entering collection menu...";
+//        } else if (menuName.equalsIgnoreCase("travel log")) {
+//            AppView.setCurrentScreen(TravelLogMenuView.getInstance());
+//            TravelLogMenuView.getInstance().showCurrentPage();
+//            return "Entering Travel Log...";
+//        }
+//        return "Invalid menu name!";
+        return "";
     }
 
     @Override
     public void exitMenu() {
+        App.setCurrentGame(null);
+        App.getCurrentUser().getPlantBoosts().clear();
         AppView.setCurrentScreen(MainMenuView.getInstance());
     }
 
@@ -129,6 +141,53 @@ public class GameMenuController implements MenuController {
             }
         }
         GameMenuView.getInstance().showResult("there is no sun in that place!");
+    }
+
+    public void collectCollectable(float x, float y, String type){
+        CollectableType selectedType = null;
+        for (CollectableType collectableType : CollectableType.values()) {
+            if (collectableType.name().equalsIgnoreCase(type)) {
+                selectedType = collectableType;
+                break;
+            }
+        }
+        if (selectedType == null){
+            GameMenuView.getInstance().showResult("invalid collectable type");
+            return;
+        }
+
+
+        for (Collectable collectable : App.getCurrentGame().getActiveCollectables()){
+            if (collectable.isDead()) continue;
+            if (Math.abs(collectable.getX() - x) < 2 && Math.abs(collectable.getY() - y) < 2){
+                switch (collectable.getType()){
+                    case POT:
+                        App.getCurrentUser().setPot(App.getCurrentUser().getPot()+1);
+                        GameMenuView.getInstance().showResult("pot collected. now you have " + App.getCurrentUser().getPot() + " pots.");
+                        break;
+                    case COIN:
+                        App.getCurrentUser().setCoins(App.getCurrentUser().getCoins()+10);
+                        GameMenuView.getInstance().showResult("coin collected. now you have " + App.getCurrentUser().getCoins() + " coins.");
+                        break;
+                    case DIAMOND:
+                        App.getCurrentUser().setGems(App.getCurrentUser().getGems()+1);
+                        GameMenuView.getInstance().showResult("gem collected. now you have " + App.getCurrentUser().getGems() + " gems.");
+                        break;
+                    case PLANT_FOOD:
+                        if (App.getCurrentGame().getPlantFoods() < 3){
+                            App.getCurrentGame().setPlantFoods(App.getCurrentGame().getPlantFoods()+1);
+                            GameMenuView.getInstance().showResult("plant food collected. now you have " + App.getCurrentGame().getPlantFoods() + " plant foods.");
+                        }
+                        else {
+                            GameMenuView.getInstance().showResult("not enough space!");
+                        }
+                        break;
+                }
+                collectable.collect();
+                return;
+            }
+        }
+        GameMenuView.getInstance().showResult("there is no collectable in that place!");
     }
 
     public void showSunAmount(){
@@ -196,8 +255,18 @@ public class GameMenuController implements MenuController {
             GameMenuView.getInstance().showResult("you cannot plant in that place!");
             return;
         }
+        String error;
+        PlantType type;
+        if (card instanceof ImitatorCard imitatorCard){
+            type = imitatorCard.getTargetType();
+            error = selectedCell.handlePlanting(type, true);
+        }
+        else{
+            type = card.getType();
+            error = selectedCell.handlePlanting(type, App.getCurrentUser().hasBoost(type));
+        }
 
-        String error = selectedCell.handlePlanting(card.getType());
+
         if (error != null) GameMenuView.getInstance().showResult(error);
         else {
             if (App.getCurrentGame().isConveyorMode()){
@@ -229,6 +298,10 @@ public class GameMenuController implements MenuController {
         if (selectedCell == null || !selectedCell.findAndRemovePlant()) {
             GameMenuView.getInstance().showResult("there is no plant in that place!");
         }
+    }
+
+    public void showPlantFoodsCount(){
+        GameMenuView.getInstance().showResult("plant foods count: " + App.getCurrentUser().getPlantFoods());
     }
 
     public void feedPlant(float x, float y){
@@ -286,27 +359,40 @@ public class GameMenuController implements MenuController {
             for (int x = 0; x < App.getCurrentGame().getGrid()[0].length; x++) {
                 Cell cell = App.getCurrentGame().getGrid()[y][x];
 
-                String terrainSymbol = cell.getTerrain().getTerminalSymbol(); // '.' , '~' , 'I' , 'O'
-                if (cell.hasObstacle() && cell.getObstacle() instanceof Grave) {
-                    Grave grave = (Grave) cell.getObstacle();
-                    switch (grave.getType()) {
-                        case SUN:
-                            terrainSymbol = "🪦☀";
-                            break;
-                        case PLANT_FOOD:
-                            terrainSymbol = "🪦⚡";
-                            break;
-                        default:
-                            terrainSymbol = "🪦";
-                            break;
+                String terrainSymbol = cell.getTerrain().getTerminalSymbol(); // مقدار پیش‌فرض
+
+                if (cell.hasObstacle()) {
+                    Obstacle obs = cell.getObstacle();
+                    if (obs instanceof Grave) {
+                        Grave grave = (Grave) obs;
+                        switch (grave.getType()) {
+                            case SUN:
+                                terrainSymbol = "🪦☀";
+                                break;
+                            case PLANT_FOOD:
+                                terrainSymbol = "🪦⚡";
+                                break;
+                            default:
+                                terrainSymbol = "🪦";
+                                break;
+                        }
+                    } else if (obs instanceof OctopusObstacle) {
+                        terrainSymbol = "🐙";
+                    } else if (obs instanceof IceBlock) {
+                        terrainSymbol = "🧊";
+                    } else {
+                        terrainSymbol = "🪨";
                     }
-                } else if (cell.hasObstacle()) {
-                    terrainSymbol = "🪦";
                 }
 
                 String plantSymbol = "    ";
                 if (!cell.isEmpty()) {
-                    plantSymbol = (cell.getPlant().getType().getSymbol());
+                    Plant plant = cell.getPlant();
+                    if (plant.isCat()) {
+                        plantSymbol = "🐱 ";
+                    } else {
+                        plantSymbol = plant.getType().getSymbol();
+                    }
                 }
 
 
@@ -361,32 +447,41 @@ public class GameMenuController implements MenuController {
         }
     }
 
-    public void zombieInfo(){
-        for (Zombie zombie : App.getCurrentGame().getActiveZombies()){
+    public void zombieInfo() {
+        for (Zombie zombie : App.getCurrentGame().getActiveZombies()) {
             GameMenuView.getInstance().showResult(App.getArmoredZombieName(zombie.getSpecificName()) + ":");
             GameMenuView.getInstance().showResult("    position: (" + zombie.getX() + ", " + zombie.getY() + ")");
             GameMenuView.getInstance().showResult("    health: " + zombie.getHealth());
-            GameMenuView.getInstance().showResult("    armor health: " + "\n        " + (zombie instanceof ArmoredZombie armoredZombie? handleArmor(armoredZombie) : ""));
+            if (zombie instanceof ArmoredZombie armoredZombie) {
+                GameMenuView.getInstance().showResult("    armor health: " + handleArmor(armoredZombie));
+            } else {
+                GameMenuView.getInstance().showResult("    armor health: none");
+            }
             GameMenuView.getInstance().showResult("    effects:");
-            if (zombie.getDisabledTicksRemaining() > 0) GameMenuView.getInstance().showResult("        stunned " + zombie.getDisabledTicksRemaining());
-            if (zombie.getFreezedTicksRemaining() > 0) GameMenuView.getInstance().showResult("         frozen " + zombie.getFreezedTicksRemaining());
-            if (zombie.getSlowTicksRemaining() > 0) GameMenuView.getInstance().showResult("        slowed " + zombie.getSlowTicksRemaining());
+            if (zombie.getDisabledTicksRemaining() > 0)
+                GameMenuView.getInstance().showResult("        stunned " + zombie.getDisabledTicksRemaining());
+            if (zombie.getFreezedTicksRemaining() > 0)
+                GameMenuView.getInstance().showResult("        frozen " + zombie.getFreezedTicksRemaining());
+            if (zombie.getSlowTicksRemaining() > 0)
+                GameMenuView.getInstance().showResult("        slowed " + zombie.getSlowTicksRemaining());
             GameMenuView.getInstance().showResult("");
         }
     }
 
-    private String handleArmor(ArmoredZombie armoredZombie){
-        if (armoredZombie.getArmorHealth() <= 0) return "";
-        if (armoredZombie.getSpecificName().equalsIgnoreCase("ZombieDarkArmor3")){
-            if (armoredZombie.getArmorHealth() > 1600){
-                return ("crown: " + (armoredZombie.getArmorHealth()-1600) + "\n"
-                + "shoulderArmor: 1600");
-            }
-            else {
-                return ("shoulderArmor: " + (armoredZombie.getArmorHealth()));
+    private String handleArmor(ArmoredZombie armoredZombie) {
+        if (armoredZombie.getArmorHealth() <= 0) {
+            return "0 (broken)";
+        }
+        if (armoredZombie.getSpecificName().equalsIgnoreCase("ZombieDarkArmor3")) {
+            if (armoredZombie.getArmorHealth() > 1600) {
+                return "crown: " + (armoredZombie.getArmorHealth() - 1600) + ", shoulderArmor: 1600";
+            } else {
+                return "shoulderArmor: " + armoredZombie.getArmorHealth();
             }
         }
-        return (armoredZombie.getArmorTypes().getFirst() + ": " + armoredZombie.getArmorHealth());
+        // برای سایر زامبی‌های زره‌دار
+        String type = armoredZombie.getArmorTypes().isEmpty() ? "unknown" : armoredZombie.getArmorTypes().get(0);
+        return type + ": " + armoredZombie.getArmorHealth();
     }
 
     public void cheatSpawnZombie(String type, float x, float y){
@@ -410,12 +505,18 @@ public class GameMenuController implements MenuController {
             return;
         }
 
+        // تنظیم موقعیت زامبی
+        zombie.setX(x);
+        zombie.setY(newY);
+
         App.getCurrentGame().getActiveZombies().add(zombie);
+        GameMenuView.getInstance().showResult("Spawned " + type + " at (" + x + ", " + newY + ")");
     }
 
     public void startZombieWaves(){
 
     }
+
     //miniGames
     public void breakVase(int row, int col){
         GameWorld game = App.getCurrentGame();

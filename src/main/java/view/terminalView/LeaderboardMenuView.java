@@ -37,12 +37,25 @@ public class LeaderboardMenuView implements View {
                     case MENU_EXIT:
                         controller.exitMenu();
                         return;
+                    case SORT_LEADERBOARD:
+                        String field = matcher.group("field");
+                        boolean ascending = matcher.group("order").equals("ascending");
+                        controller.showList(field, ascending);
+                        return;
                     default:
                         break;
                 }
             }
         }
         System.out.println("Unknown command in Leaderboard menu.");
+    }
+
+    public void showLeaderboard(){
+        controller.showList("LAST_STAGE", false);
+    }
+
+    public void showResult(String message){
+        System.out.println(message);
     }
 
 }

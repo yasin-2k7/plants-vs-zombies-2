@@ -8,6 +8,7 @@ import models.enums.PlantType;
 import models.plant.Plant;
 import models.plant.components.PlacementBehaviorComponent;
 import models.plant.components.ShooterComponent;
+import models.plant.factory.PlantFactory;
 import models.quest.QuestStats;
 import models.world.cellTerrains.CellTerrain;
 import models.world.obstacles.Grave;
@@ -94,14 +95,15 @@ public class Cell {
         return basePlant == null && mainPlant == null && shieldPlant == null;
     }
 
-    public String handlePlanting(PlantType type) {
+    public String handlePlanting(PlantType type, boolean boost){
         if (!this.isPlantable()) {
             if (!(this.obstacle instanceof Grave && type == PlantType.GRAVE_BUSTER)){
                 return "you cannot plant in that place!";
             }
         }
 
-        Plant newPlant = App.getFactory().createPlant(type, (int)x, (int)y, this);
+        Plant newPlant = PlantFactory.createPlant(type, (int)x, (int)y, this);
+        if (boost) newPlant.setPlantFoodInStart(true);
 
         if ((!(this.obstacle instanceof Grave && type == PlantType.GRAVE_BUSTER)) && (!this.terrain.canPlant(newPlant, this))) {
             return "you cannot plant in that place!";
@@ -153,6 +155,10 @@ public class Cell {
             return null;
         }
         return "that place isn't empty!";
+    }
+
+    public String handlePlanting(PlantType type) {
+        return handlePlanting(type, false);
     }
 
     public static Cell findCell(float x, float y, Cell[][] grid){
@@ -228,18 +234,18 @@ public class Cell {
 
     public static Cell nextCell(Cell origin, Cell[][] grid){
         int row = origin.getRow();
-        if (origin.getCol() > 8){
+        if (origin.getCol() >= grid[0].length - 1) {
             return null;
         }
-        return grid[row][origin.getCol()+1];
+        return grid[row][origin.getCol() + 1];
     }
 
     public static Cell previousCell(Cell origin, Cell[][] grid){
         int row = origin.getRow();
-        if (origin.getCol() < 2){
+        if (origin.getCol() <= 0) {
             return null;
         }
-        return grid[row][origin.getCol()-1];
+        return grid[row][origin.getCol() - 1];
     }
 
 
@@ -281,11 +287,11 @@ public class Cell {
     }
 
     public boolean containsX(float x){
-        return (x >= this.x - App.getCellWidth()/2 && x <= this.x + App.getCellWidth()/2);
+        return (x > this.x - App.getCellWidth()/2 && x <= this.x + App.getCellWidth()/2);
     }
 
     public boolean containsY(float y){
-        return (y >= this.y - App.getCellHeight()/2 && y <= this.y + App.getCellHeight()/2);
+        return (y > this.y - App.getCellHeight()/2 && y <= this.y + App.getCellHeight()/2);
     }
 
     public int getRow() {

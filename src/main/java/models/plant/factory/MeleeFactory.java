@@ -41,6 +41,7 @@ public class MeleeFactory {
 
         Plant plant = new Plant(PlantType.WASABI_WHIP, health, damage);
         plant.addComponent(new DirectionalMeleeComponent(damage, 20, rangeX));
+        plant.setFire(true);
         return plant;
     }
 

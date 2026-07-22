@@ -17,6 +17,9 @@ public class PlantFactory {
         ShooterFactory.register(registry);
         ExplosiveFactory.register(registry);
         MeleeFactory.register(registry);
+        WallNutFactory.register(registry);
+        ModifierAndHomingFactory.register(registry);
+        MintFactory.register(registry);
     }
 
     public static Plant createPlant(PlantType type, int x, int y, Cell cell) {
@@ -32,19 +35,6 @@ public class PlantFactory {
         newPlant.setX(x);
         newPlant.setY(y);
         return newPlant;
-    }
-
-
-// not completed...
-
-    private Plant buildSunBean(){
-        int level = App.getCurrentUser().getUnlockedPlantsLevels().get(PlantType.SUN_BEAN);
-        int health = level >= 3 ? 450 : 300;
-        int sunSize = level >= 2 ? 10 : 5;
-        Plant p = new Plant(PlantType.SUN_BEAN, health, 0);
-        p.addComponent(new SunProducerComponent(sunSize, 1, 0, false, false, 0, 0));
-        // next component
-        return p;
     }
 
     public static boolean isPlantSupported(PlantType type) {

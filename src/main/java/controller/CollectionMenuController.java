@@ -141,8 +141,9 @@ public class CollectionMenuController implements MenuController{
             return;
         }
         App.getCurrentUser().spendCoins(2000);
-        App.getCurrentUser().getUnlockedPlantsLevels().put(type, 1);
+        App.getCurrentUser().unlockPlant(type);
         CollectionMenuView.getInstance().showResult("plant " + type + " purchased.");
+
         App.getCurrentUser().notifyPlantUnlock(type.name());
     }
 }
