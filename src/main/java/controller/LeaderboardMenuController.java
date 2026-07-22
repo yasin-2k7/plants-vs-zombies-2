@@ -47,6 +47,7 @@ public class LeaderboardMenuController implements MenuController{
         for (LeaderboardSortField leaderboardSortField : LeaderboardSortField.values()){
             if (field.equalsIgnoreCase(leaderboardSortField.name())){
                 sortField = leaderboardSortField;
+                break;
             }
         }
         if (sortField == null){

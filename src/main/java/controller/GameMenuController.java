@@ -2,6 +2,7 @@ package controller;
 
 import models.core.App;
 import models.core.User;
+import models.enums.CollectableType;
 import models.enums.PlantLayer;
 import models.enums.PlantType;
 import models.enums.Zombies;
@@ -121,6 +122,53 @@ public class GameMenuController implements MenuController {
             }
         }
         GameMenuView.getInstance().showResult("there is no sun in that place!");
+    }
+
+    public void collectCollectable(float x, float y, String type){
+        CollectableType selectedType = null;
+        for (CollectableType collectableType : CollectableType.values()) {
+            if (collectableType.name().equalsIgnoreCase(type)) {
+                selectedType = collectableType;
+                break;
+            }
+        }
+        if (selectedType == null){
+            GameMenuView.getInstance().showResult("invalid collectable type");
+            return;
+        }
+
+
+        for (Collectable collectable : App.getCurrentGame().getActiveCollectables()){
+            if (collectable.isDead()) continue;
+            if (Math.abs(collectable.getX() - x) < 2 && Math.abs(collectable.getY() - y) < 2){
+                switch (collectable.getType()){
+                    case POT:
+                        App.getCurrentUser().setPot(App.getCurrentUser().getPot()+1);
+                        GameMenuView.getInstance().showResult("pot collected. now you have " + App.getCurrentUser().getPot() + " pots.");
+                        break;
+                    case COIN:
+                        App.getCurrentUser().setCoins(App.getCurrentUser().getCoins()+10);
+                        GameMenuView.getInstance().showResult("coin collected. now you have " + App.getCurrentUser().getCoins() + " coins.");
+                        break;
+                    case DIAMOND:
+                        App.getCurrentUser().setGems(App.getCurrentUser().getGems()+1);
+                        GameMenuView.getInstance().showResult("gem collected. now you have " + App.getCurrentUser().getGems() + " gems.");
+                        break;
+                    case PLANT_FOOD:
+                        if (App.getCurrentGame().getPlantFoods() < 3){
+                            App.getCurrentGame().setPlantFoods(App.getCurrentGame().getPlantFoods()+1);
+                            GameMenuView.getInstance().showResult("plant food collected. now you have " + App.getCurrentGame().getPlantFoods() + " plant foods.");
+                        }
+                        else {
+                            GameMenuView.getInstance().showResult("not enough space!");
+                        }
+                        break;
+                }
+                collectable.collect();
+                return;
+            }
+        }
+        GameMenuView.getInstance().showResult("there is no collectable in that place!");
     }
 
     public void showSunAmount(){

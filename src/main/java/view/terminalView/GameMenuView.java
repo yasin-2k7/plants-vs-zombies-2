@@ -54,8 +54,14 @@ public class GameMenuView implements View{
                         y = Float.parseFloat(matcher.group("y"));
                         controller.collectSun(x, y);
                         return;
-                    case PLANT_PLANT:
+                    case COLLECT_COLLECTABLE:
+                        x = Float.parseFloat(matcher.group("x"));
+                        y = Float.parseFloat(matcher.group("y"));
                         String type = matcher.group("type");
+                        controller.collectCollectable(x, y, type);
+                        return;
+                    case PLANT_PLANT:
+                        type = matcher.group("type");
                         x = Float.parseFloat(matcher.group("x"));
                         y = Float.parseFloat(matcher.group("y"));
                         PlantType selectedType = null;

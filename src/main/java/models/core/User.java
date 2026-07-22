@@ -439,4 +439,8 @@ public class User {
     public void setGamesPlayed(int gamesPlayed) {
         this.gamesPlayed = gamesPlayed;
     }
+
+    public void setPot(int pot) {
+        this.pot = pot;
+    }
 }

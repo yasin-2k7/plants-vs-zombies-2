@@ -57,6 +57,7 @@ public abstract class GameWorld {
     private List<PlantCard> plantLists;
     private boolean isConveyorMode;
 
+    protected List<Collectable> activeCollectables;
     protected List<Zombie> activeZombies;
     protected List<Plant> activePlants;
     protected List<Sun> activeSuns;
@@ -120,6 +121,7 @@ public abstract class GameWorld {
         this.activePlants = new ArrayList<>();
         this.activeSuns = new ArrayList<>();
         this.activeProjectiles = new ArrayList<>();
+        this.activeCollectables = new ArrayList<>();
         this.activeGrave = new ArrayList<>();
         this.activeTargets = new ArrayList<>();
         this.lawnMowerManager = new LawnMowerManager();
@@ -260,6 +262,7 @@ public abstract class GameWorld {
 
 
         activePlants.forEach(Plant::update);
+        activeCollectables.forEach(Collectable::update);
         activeZombies.forEach(Zombie::update);
         activeProjectiles.forEach(Projectile::update);
         if (!isConveyorMode) {
@@ -293,6 +296,7 @@ public abstract class GameWorld {
         });
         activePlants.removeIf(Plant::isDead);
         activeProjectiles.removeIf(Projectile::isDead);
+        activeCollectables.removeIf(Collectable::isDead);
 
         for (Cell[] row : grid) {
             for (Cell cell : row) {
@@ -567,6 +571,10 @@ public abstract class GameWorld {
 
     public boolean isSandstormActive() {
         return sandstormActive;
+    }
+
+    public List<Collectable> getActiveCollectables() {
+        return activeCollectables;
     }
 
     public void setSandstormActive(boolean sandstormActive) {
