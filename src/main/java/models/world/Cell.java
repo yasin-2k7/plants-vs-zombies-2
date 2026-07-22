@@ -234,18 +234,18 @@ public class Cell {
 
     public static Cell nextCell(Cell origin, Cell[][] grid){
         int row = origin.getRow();
-        if (origin.getCol() > 8){
+        if (origin.getCol() >= grid[0].length - 1) {
             return null;
         }
-        return grid[row][origin.getCol()+1];
+        return grid[row][origin.getCol() + 1];
     }
 
     public static Cell previousCell(Cell origin, Cell[][] grid){
         int row = origin.getRow();
-        if (origin.getCol() < 2){
+        if (origin.getCol() <= 0) {
             return null;
         }
-        return grid[row][origin.getCol()-1];
+        return grid[row][origin.getCol() - 1];
     }
 
 
@@ -287,11 +287,11 @@ public class Cell {
     }
 
     public boolean containsX(float x){
-        return (x >= this.x - App.getCellWidth()/2 && x <= this.x + App.getCellWidth()/2);
+        return (x > this.x - App.getCellWidth()/2 && x <= this.x + App.getCellWidth()/2);
     }
 
     public boolean containsY(float y){
-        return (y >= this.y - App.getCellHeight()/2 && y <= this.y + App.getCellHeight()/2);
+        return (y > this.y - App.getCellHeight()/2 && y <= this.y + App.getCellHeight()/2);
     }
 
     public int getRow() {

@@ -6,12 +6,19 @@ import models.zombie.Zombie;
 
 public class ImpZombie extends Zombie {
     private boolean isDragon;
-    private boolean isThrown;
+    private boolean isThrown; // true اگر توسط غول‌پیکر پرتاب شده باشد
 
-    public ImpZombie(int health, double speed, int damage, boolean isThrown) {
+    public ImpZombie(int health, double speed, int damage, boolean isDragon) {
         super(Zombies.IMP, health, speed, damage);
         this.isDragon = isDragon;
         this.isThrown = false;
+    }
+
+    // متد برای پرتاب کردن (تنظیم موقعیت و علامت‌گذاری)
+    public void throwImp(float targetX, float targetY) {
+        this.x = targetX;
+        this.y = targetY;
+        this.isThrown = true;
     }
 
     public void land(float targetX, float targetY) {

@@ -9,59 +9,69 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 
-    public class ZombieRegistry {
-        private static final Map<String, ZombieProperties> zombieMap = new HashMap<>();
-        private static final Map<String, ArmorProperties> armorMap = new HashMap<>();
+public class ZombieRegistry {
+    private static final Logger logger = Logger.getLogger(ZombieRegistry.class.getName());
+    private static final Map<String, ZombieProperties> zombieMap = new HashMap<>();
+    private static final Map<String, ArmorProperties> armorMap = new HashMap<>();
 
-        static {
-            loadZombies();
-            loadArmors();
-        }
+    static {
+        loadZombies();
+        loadArmors();
+    }
 
-        private static void loadZombies() {
-            ObjectMapper mapper = new ObjectMapper();
-            mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-            mapper.configure(com.fasterxml.jackson.databind.MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true);
-            mapper.enable(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES);
-            try (InputStream is = ZombieRegistry.class.getResourceAsStream("/zombies.json")) {
-                List<ZombieProperties> list = mapper.readValue(is,
-                        mapper.getTypeFactory().constructCollectionType(List.class, ZombieProperties.class));
-                for (ZombieProperties zp : list) {
-                    for (String alias : zp.getAliases()) {
-                        zombieMap.put(alias, zp);
-                    }
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
+    private static void loadZombies() {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        mapper.configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true);
+        try (InputStream is = ZombieRegistry.class.getResourceAsStream("/zombies.json")) {
+            if (is == null) {
+                logger.severe("zombies.json not found in resources!");
+                return;
             }
-        }
-
-        private static void loadArmors() {
-            ObjectMapper mapper = new ObjectMapper();
-            mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-            mapper.configure(com.fasterxml.jackson.databind.MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true);
-            mapper.enable(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES);
-            try (InputStream is = ZombieRegistry.class.getResourceAsStream("/ArmorTypeData.json")) {
-                List<ArmorProperties> list = mapper.readValue(is,
-                        mapper.getTypeFactory().constructCollectionType(List.class, ArmorProperties.class));
-                for (ArmorProperties ap : list) {
-                    for (String alias : ap.getAliases()) {
-                        armorMap.put(alias, ap);
-                    }
+            List<ZombieProperties> list = mapper.readValue(is,
+                    mapper.getTypeFactory().constructCollectionType(List.class, ZombieProperties.class));
+            for (ZombieProperties zp : list) {
+                for (String alias : zp.getAliases()) {
+                    zombieMap.put(alias, zp);
                 }
-            } catch (Exception e) {
-                e.printStackTrace();
             }
-        }
-
-        public static ZombieProperties getZombieProperties(String alias) {
-            return zombieMap.get(alias);
-        }
-
-        public static ArmorProperties getArmorProperties(String alias) {
-            return armorMap.get(alias);
+//            logger.info("Loaded " + zombieMap.size() + " zombie entries.");
+        } catch (Exception e) {
+            logger.severe("Failed to load zombies.json: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 
+    private static void loadArmors() {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        mapper.configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true);
+        try (InputStream is = ZombieRegistry.class.getResourceAsStream("/ArmorTypeData.json")) {
+            if (is == null) {
+                logger.severe("ArmorTypeData.json not found in resources!");
+                return;
+            }
+            List<ArmorProperties> list = mapper.readValue(is,
+                    mapper.getTypeFactory().constructCollectionType(List.class, ArmorProperties.class));
+            for (ArmorProperties ap : list) {
+                for (String alias : ap.getAliases()) {
+                    armorMap.put(alias, ap);
+                }
+            }
+//            logger.info("Loaded " + armorMap.size() + " armor entries.");
+        } catch (Exception e) {
+            logger.severe("Failed to load ArmorTypeData.json: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
 
+    public static ZombieProperties getZombieProperties(String alias) {
+        return zombieMap.get(alias);
+    }
+
+    public static ArmorProperties getArmorProperties(String alias) {
+        return armorMap.get(alias);
+    }
+}

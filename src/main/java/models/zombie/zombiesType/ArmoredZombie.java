@@ -12,13 +12,19 @@ public class ArmoredZombie extends Zombie {
         this.armorHealth = armorHealth;
         this.isMagnetic = isMagnetic;
     }
+
     @Override
     public void takeDamage(int amount, String damageType) {
         if (isDead) return;
         if (armorHealth > 0) {
-            armorHealth -= amount;
-            if (armorHealth < 0) armorHealth = 0;
-        }else {
+            int excess = amount - armorHealth;
+            if (excess > 0) {
+                armorHealth = 0;
+                super.takeDamage(excess, damageType); // مازاد به زامبی می‌رسد
+            } else {
+                armorHealth -= amount;
+            }
+        } else {
             super.takeDamage(amount, damageType);
         }
     }
@@ -31,5 +37,5 @@ public class ArmoredZombie extends Zombie {
     public int getArmorHealth() { return armorHealth; }
     public boolean isMagnetic() { return isMagnetic; }
 
-
+    public void setArmorHealth(int armorHealth) {this.armorHealth = armorHealth;}
 }

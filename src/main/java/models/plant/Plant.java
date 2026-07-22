@@ -21,7 +21,7 @@ public class Plant {
     private int damage;
     private transient ArrayList<GameComponent> components = new ArrayList<>();
     private boolean dead = false;
-    private boolean sheep = false;
+    private boolean cat = false;
     private boolean disabled = false;
     private int slowTicks = 0;
     private transient Cell cell = null;
@@ -42,7 +42,7 @@ public class Plant {
     }
 
     public void update() {
-        if (disabled || freeze || sheep) return;
+        if (disabled || freeze || cat) return;
         if (plantFoodInStart){
             activatePlantFood();
             plantFoodInStart = false;
@@ -142,7 +142,7 @@ public class Plant {
         GameMenuController.updateState("Plant " + this.getType().name() + " at (" + this.x + ", " + this.y + ") is destroyed.");
     }
     public boolean isDead() { return dead; }
-    public void setSheep(boolean sheep) { this.sheep = sheep; }
+    public void setCat(boolean cat) { this.cat = cat; }
     public void setDisabled(boolean disabled) { this.disabled = disabled; }
     public int getX() { return x; }
     public int getY() { return y; }
@@ -230,5 +230,8 @@ public class Plant {
 
     public void setPlantFoodInStart(boolean plantFoodInStart) {
         this.plantFoodInStart = plantFoodInStart;
+    }
+    public boolean isCat() {
+        return cat;
     }
 }
