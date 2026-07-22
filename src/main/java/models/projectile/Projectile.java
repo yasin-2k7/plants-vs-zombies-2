@@ -34,15 +34,6 @@ public class Projectile implements Resettable{
 
         if (type.movement.equals("STRAIGHT")) {
             Cell currentCell = App.getCurrentGame().getCellAt(x, y);
-            if (currentCell != null && currentCell.blocksProjectile()) {
-                hitStrategy.applyDamage(currentCell.getObstacle(), App.getCurrentGame().getActiveTargets(), this);
-                pierce--;
-                if (pierce == 0) {
-                    dead = true;
-                    App.getCurrentGame().getProjectilesPool().release(this);
-                    return;
-                }
-            }
 
             if (currentCell != null && currentCell.getPlant() != null){
                 if (currentCell.getPlant().isFreeze()){

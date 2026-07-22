@@ -2,6 +2,7 @@ package models.projectile.strikeStrategies;
 
 import models.Damageable;
 import models.core.App;
+import models.world.obstacles.Obstacle;
 import models.zombie.Zombie;
 
 public class CheckStraightStrike implements CheckStrike{
@@ -12,6 +13,13 @@ public class CheckStraightStrike implements CheckStrike{
             boolean yBetween = (zombie.getY() <= oldY && zombie.getY() >= y) || (zombie.getY() >= oldY && zombie.getY() <= y);
             if (xBetween && yBetween){
                 return zombie;
+            }
+        }
+        for (Obstacle obstacle : App.getCurrentGame().getActiveObstacles()){
+            boolean xBetween = (obstacle.getX() <= oldX && obstacle.getX() >= x) || (obstacle.getX() >= oldX && obstacle.getX() <= x);
+            boolean yBetween = (obstacle.getY() <= oldY && obstacle.getY() >= y) || (obstacle.getY() >= oldY && obstacle.getY() <= y);
+            if (xBetween && yBetween){
+                return obstacle;
             }
         }
         return null;

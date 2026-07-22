@@ -13,6 +13,7 @@ import models.world.Collectable;
 import models.world.GameWorld;
 import models.zombie.state.WalkingState;
 import models.zombie.state.ZombieState;
+import view.terminalView.GameMenuView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,7 +50,7 @@ public abstract class Zombie implements Damageable {
         this.health = health;
         this.maxHealth = health;
         this.speed = speed*15;
-        this.damage = damage;
+        this.damage = damage/10;
         this.currentState = new WalkingState();
     }
 
@@ -60,8 +61,8 @@ public abstract class Zombie implements Damageable {
         this.name = name;
         this.health = health;
         this.maxHealth = health;
-        this.speed = speed*15;
-        this.damage = damage;
+        this.speed = speed*10;
+        this.damage = damage/10;
         this.currentState = new WalkingState();
     }
 
@@ -131,23 +132,21 @@ public abstract class Zombie implements Damageable {
         if (glowing) {
             Collectable plantFood = new Collectable(this.x, this.y, CollectableType.PLANT_FOOD);
             world.getActiveCollectables().add(plantFood);
-            System.out.println("\uD83C\uDFC6The glowing zombie dropped a plant food; you have " +
-                    (App.getCurrentUser().getPlantFoods() + 1) + " plant foods now.");
+            GameMenuController.updateState("\uD83C\uDFC6The glowing zombie dropped a plant food at (" + (int)x + ", " + (int)y + ")");
         }
 
         if (Math.random() < 0.10) {
             CollectableType type;
-            if (Math.random() < 0.5) {
+            if (Math.random() < 0.33) {
                 type = CollectableType.COIN;
-            } else {
+            } else if (Math.random() < 0.5){
                 type = CollectableType.POT;
+            } else {
+                type = CollectableType.DIAMOND;
             }
             Collectable drop = new Collectable(this.x, this.y, type);
             world.getActiveCollectables().add(drop);
-            System.out.println("\uD83C\uDFC6A zombie dropped a " + type.name().toLowerCase() + "; you have " +
-                    (type == CollectableType.COIN ? App.getCurrentUser().getCoins()+10 :
-                            type == CollectableType.POT ? App.getCurrentUser().getPot()+1 : "") +
-                    " " + type.name().toLowerCase() + "s now.");
+            GameMenuController.updateState("\uD83C\uDFC6A zombie dropped a " + type.name().toLowerCase() + " at (" + (int)x + ", " + (int)y + ")");
         }
 
         GameMenuController.updateState("\uD83D\uDC80Zombie of type " + name.name() + " is dead at (" + (int)x + ", " + (int)y + ")");

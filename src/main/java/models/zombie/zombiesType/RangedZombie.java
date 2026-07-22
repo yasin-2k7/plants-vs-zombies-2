@@ -5,6 +5,7 @@ import models.enums.Zombies;
 import models.plant.Plant;
 import models.world.Cell;
 import models.world.GameWorld;
+import models.world.obstacles.Grave;
 import models.world.obstacles.OctopusObstacle;
 import models.zombie.Zombie;
 
@@ -39,6 +40,7 @@ public class RangedZombie extends Zombie {
                     if (cell != null && !cell.hasObstacle()) {
                         OctopusObstacle octopus = new OctopusObstacle(target.getX(), target.getY(), target, cell);
                         cell.setObstacle(octopus);
+                        game.getActiveObstacles().add(octopus);
                         System.out.println("Octopus thrown at plant at (" + target.getX() + ", " + target.getY() + ")");
                     } else {
 //                        System.out.println("Cell already has an obstacle or cannot place octopus.");
@@ -49,8 +51,8 @@ public class RangedZombie extends Zombie {
 
             case "BONE": {
                 int row = (int) (this.y / App.getCellHeight());
-                long graveCountInRow = game.getActiveGrave().stream()
-                        .filter(g -> g.getRow() == row)
+                long graveCountInRow = game.getActiveObstacles().stream()
+                        .filter(g -> g instanceof Grave grave && grave.getRow() == row)
                         .count();
                 if (graveCountInRow >= 3) {
                     System.out.println("Row " + row + " already has 3 graves, skipping.");

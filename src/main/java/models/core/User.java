@@ -24,7 +24,6 @@ public class User {
     private String securityA;
 
     private int gamesPlayed;
-    private int highScore;
 
     private Set<MiniGameLevels> completedMiniGames = EnumSet.noneOf(MiniGameLevels.class);
 
@@ -63,7 +62,7 @@ public class User {
         this.unlockedLevel = 1;
         this.questStats = new QuestStats();
         gamesPlayed = 0;
-        highScore = 0;
+        maxMupoint = 0;
         putInitialPlants();
         putZombies();
     }
@@ -442,9 +441,7 @@ public class User {
         return quests.size();
     }
 
-    public int getHighScore() {
-        return highScore;
-    }
+
 
     public int getCompletedMainLevels() {return (unlockedChapter-1)*4 + unlockedLevel-1;}
 

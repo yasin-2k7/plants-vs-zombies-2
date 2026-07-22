@@ -8,7 +8,6 @@ import models.core.UserDataManager;
 import models.enums.Chapter;
 import models.enums.PlantFamily;
 import models.enums.PlantType;
-import models.lawnMower.LawnMower;
 import models.lawnMower.LawnMowerManager;
 //import models.miniGame.MechanicsStrategy;
 import models.mupoint.KillEvent;
@@ -24,6 +23,7 @@ import models.world.loseCondition.LoseCondition;
 import models.world.mechanics.Mechanic;
 import models.world.mechanics.NormalMechanic;
 import models.world.obstacles.Grave;
+import models.world.obstacles.Obstacle;
 import models.world.winCondition.WinCondition;
 import models.zombie.Zombie;
 import models.zombie.wave.WaveManager;
@@ -68,7 +68,7 @@ public abstract class GameWorld {
     protected List<Plant> activePlants;
     protected List<Sun> activeSuns;
     protected List<Projectile> activeProjectiles;
-    protected List<Grave> activeGrave;
+    protected List<Obstacle> activeObstacles;
     protected List<Damageable> activeTargets;
     protected LawnMowerManager lawnMowerManager;
 
@@ -138,7 +138,7 @@ public abstract class GameWorld {
         this.activeSuns = new ArrayList<>();
         this.activeProjectiles = new ArrayList<>();
         this.activeCollectables = new ArrayList<>();
-        this.activeGrave = new ArrayList<>();
+        this.activeObstacles = new ArrayList<>();
         this.activeTargets = new ArrayList<>();
         this.lawnMowerManager = new LawnMowerManager();
         this.sunsPool = new GenericObjectPool<>(Sun::new);
@@ -213,7 +213,7 @@ public abstract class GameWorld {
         Grave grave = new Grave(graveX, graveY, row, col, Grave.GraveType.NORMAL);
         cell.setObstacle(grave);
         cell.setPlantable(false);
-        activeGrave.add(grave);
+        activeObstacles.add(grave);
         System.out.println("A grave has been created at (" + col + ", " + row + ")");
     }
 
@@ -392,6 +392,7 @@ public abstract class GameWorld {
         activePlants.removeIf(Plant::isDead);
         activeProjectiles.removeIf(Projectile::isDead);
         activeCollectables.removeIf(Collectable::isDead);
+        activeObstacles.removeIf(Obstacle::isDestroyed);
 
         for (Cell[] row : grid) {
             for (Cell cell : row) {
@@ -563,10 +564,10 @@ public abstract class GameWorld {
     }
 
     public void addZombie(Zombie zombie) { activeZombies.add(zombie); }
-    public void addGrave(Grave grave) { activeGrave.add(grave); }
+    public void addGrave(Grave grave) { activeObstacles.add(grave); }
     public void addTarget() {
         activeTargets.addAll(activeZombies);
-        activeTargets.addAll(activeGrave);
+        activeTargets.addAll(activeObstacles);
     }
 
     public GenericObjectPool<Projectile> getProjectilesPool() {
@@ -671,5 +672,5 @@ public abstract class GameWorld {
     public boolean isWillUnlockLevel() {
         return willUnlockLevel;
     }
-    public List<Grave> getActiveGrave() {return activeGrave;}
+    public List<Obstacle> getActiveObstacles() {return activeObstacles;}
 }

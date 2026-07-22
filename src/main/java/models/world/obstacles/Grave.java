@@ -1,7 +1,10 @@
 package models.world.obstacles;
 
+import controller.GameMenuController;
 import models.core.App;
 import models.core.User;
+import models.enums.CollectableType;
+import models.world.Collectable;
 import models.world.GameWorld;
 
 public class Grave extends Obstacle{
@@ -38,7 +41,7 @@ public class Grave extends Obstacle{
     public void takeDamage(int amount, String type) {
         if (isDestroyed) return;
         super.takeDamage(amount, type);
-        System.out.println("grave health: " + health);
+        GameMenuController.updateState("grave in (" + x + ", " + y + ") health: " + health);
         if (isDestroyed) {
             releaseContent();
         }
@@ -52,13 +55,11 @@ public class Grave extends Obstacle{
 
         if (type == GraveType.SUN) {
             game.setSun(game.getSun() + 50);
-            System.out.println("A grave released 50 suns!");
+            GameMenuController.updateState("A grave released 50 suns!");
         } else if (type == GraveType.PLANT_FOOD) {
             if (game.getPlantFoods() < 3) {
-                game.setPlantFoods(game.getPlantFoods() + 1);
-                System.out.println("A grave released a plant food!");
-            } else {
-                System.out.println("A grave released a plant food but you already have 3.");
+                game.getActiveCollectables().add(new Collectable(x, y, CollectableType.PLANT_FOOD));
+                GameMenuController.updateState("A grave released a plant food!");
             }
         }
         isCollected = true;
