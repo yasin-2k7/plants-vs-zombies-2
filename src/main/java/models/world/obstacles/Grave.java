@@ -1,5 +1,6 @@
 package models.world.obstacles;
 
+import controller.GameMenuController;
 import models.core.App;
 import models.core.User;
 import models.world.GameWorld;
@@ -38,7 +39,7 @@ public class Grave extends Obstacle{
     public void takeDamage(int amount, String type) {
         if (isDestroyed) return;
         super.takeDamage(amount, type);
-        System.out.println("grave health: " + health);
+        GameMenuController.updateState("grave in (" + x + ", " + y + ") health: " + health);
         if (isDestroyed) {
             releaseContent();
         }

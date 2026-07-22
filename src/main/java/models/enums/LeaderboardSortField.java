@@ -9,7 +9,7 @@ public enum LeaderboardSortField {
     MINI_GAMES(Comparator.comparingInt(user -> user.getMiniGameLevels().size())),
     DAILY_QUESTS(Comparator.comparingInt(User::getDailyQuestsCount)),
     NORMAL_QUESTS(Comparator.comparingInt(User::getNormalQuestsCount)),
-    HIGH_SCORE(Comparator.comparingInt(User::getHighScore));
+    HIGH_SCORE(Comparator.comparingInt(User::getMaxMupoint));
 
     private final Comparator<User> comparator;
 

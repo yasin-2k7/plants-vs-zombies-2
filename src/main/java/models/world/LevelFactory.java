@@ -211,16 +211,18 @@ public class LevelFactory {
         int cols = 9;
 
         List<WaveSpawnEntry> availableZombies = List.of(
+                new WaveSpawnEntry("ZombieDefault", 100),
+
                 // Snorkel
-//                        new WaveSpawnEntry("ZombieBeachSnorkel", 200)
+                        new WaveSpawnEntry("ZombieBeachSnorkel", 250)
 
                         // Fisherman
 //                        new WaveSpawnEntry("ZombieBeachFisherman", 700)
         );
 
-        List<Wave> waves = Wave.generateWaves(5, 2000, availableZombies, 60);
+        List<Wave> waves = Wave.generateWaves(5, 150, availableZombies, 10);
 
-        LevelSetup levelSetup = new NormalLevelSetup(rows, cols, waves);
+        LevelSetup levelSetup = new BigWaveBeachLevelSetup(6, rows, cols, waves);
         LoseCondition loseCondition = new NormalLose();
         WinCondition winCondition = new NormalWin();
 

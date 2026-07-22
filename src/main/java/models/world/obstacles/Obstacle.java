@@ -29,7 +29,6 @@ public abstract class Obstacle implements Damageable {
         if (isDestroyed) return;
 
         this.health -= amount;
-        System.out.println("grave: " + health);
         if (this.health <= 0) {
             this.health = 0;
             this.isDestroyed = true;
