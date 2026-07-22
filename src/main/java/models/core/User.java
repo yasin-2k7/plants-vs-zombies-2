@@ -41,6 +41,7 @@ public class User {
     private int plantFoods = 0;
     private transient QuestManager questManager = new QuestManager();
     private Set<String> completedQuestIds = new HashSet<>();
+    private int maxMupoint = 0;
 
 
     public User(){
@@ -179,8 +180,6 @@ public class User {
         return true;
     }
 
-    public void unlockNewPlant(){}
-
     public void advanceLevel(){}
 
     public HashMap<PlantType, Integer> getUnlockedPlantsLevels() {
@@ -254,6 +253,11 @@ public class User {
 
     public String getSecurityA() {
         return securityA;
+    }
+
+    public boolean checkSeqA(String answer) {
+        String hashedInput = PasswordHasher.hashSHA256(answer);
+        return hashedInput.equals(this.securityA);
     }
 
     public String getSecurityQ() {
@@ -388,5 +392,19 @@ public class User {
 
     public void setGems(int gems) {
         this.gems = gems;
+    }
+
+    public int getMaxMupoint() {
+        return maxMupoint;
+    }
+
+    public void setMaxMupoint(int maxMupoint) {
+        this.maxMupoint = maxMupoint;
+    }
+
+    public void updateMupointRecord(int currentScore) {
+        if (currentScore > this.maxMupoint) {
+            this.maxMupoint = currentScore;
+        }
     }
 }

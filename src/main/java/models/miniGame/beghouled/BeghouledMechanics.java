@@ -6,7 +6,6 @@ import models.plant.Plant;
 import models.plant.factory.PlantFactory;
 import models.world.Cell;
 import models.world.GameWorld;
-import models.world.GridPosition;
 import models.world.mechanics.Mechanic;
 
 import java.util.*;
@@ -193,10 +192,39 @@ public class BeghouledMechanics implements Mechanic {
                     p.setX(r);
                     p.setY(c);
                 } else {
-                    placePlant(world, r, c, randomPlantType());
+                    PlantType safeType = randomPlantTypeAvoidingMatch(world, r, c);
+                    placePlant(world, r, c, safeType);
                 }
             }
         }
+    }
+
+    private PlantType randomPlantTypeAvoidingMatch(GameWorld world, int row, int col) {
+        List<PlantType> shuffled = new ArrayList<>(availablePlantTypes);
+        Collections.shuffle(shuffled);
+
+        for (PlantType candidate : shuffled) {
+            if (!wouldFormMatch(world, row, col, candidate)) {
+                return candidate;
+            }
+        }
+        return shuffled.get(0); // اگه هیچی امن نبود (خیلی نادره)، همون اولی
+    }
+
+    private boolean wouldFormMatch(GameWorld world, int row, int col, PlantType type) {
+        // چک افقی: دو تای قبلی هم‌ردیف
+        if (col >= 2) {
+            PlantType left1 = typeAt(world, row, col - 1);
+            PlantType left2 = typeAt(world, row, col - 2);
+            if (type == left1 && type == left2) return true;
+        }
+        // چک عمودی: دو تای پایینی (چون از پایین به بالا پر می‌کنیم)
+        if (row <= world.getRows() - 3) {
+            PlantType down1 = typeAt(world, row + 1, col);
+            PlantType down2 = typeAt(world, row + 2, col);
+            if (type == down1 && type == down2) return true;
+        }
+        return false;
     }
 
     private void resetBoard(GameWorld world) {

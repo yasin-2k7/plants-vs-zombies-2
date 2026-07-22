@@ -38,6 +38,7 @@ public class Grave extends Obstacle{
     public void takeDamage(int amount, String type) {
         if (isDestroyed) return;
         super.takeDamage(amount, type);
+        System.out.println("grave health: " + health);
         if (isDestroyed) {
             releaseContent();
         }

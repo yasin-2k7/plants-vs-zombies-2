@@ -10,6 +10,8 @@ import models.enums.PlantType;
 import models.lawnMower.LawnMower;
 import models.lawnMower.LawnMowerManager;
 //import models.miniGame.MechanicsStrategy;
+import models.mupoint.KillEvent;
+import models.mupoint.MupointManager;
 import models.plant.Plant;
 import models.plant.card.PlantCard;
 import models.plant.components.LifespanComponent;
@@ -97,6 +99,16 @@ public abstract class GameWorld {
         smallShrooms.remove(observer);
     }
 
+    private MupointManager mupointManager;
+
+    public MupointManager getMupointManager() {
+        return mupointManager;
+    }
+
+    public void setMupointManager(MupointManager mupointManager) {
+        this.mupointManager = mupointManager;
+    }
+
     public void triggerSmallShroomsPlantFood(PlantType type) {
         for (LifespanComponent observer : smallShrooms) {
             observer.onGlobalPlantFoodActivated(type);
@@ -132,9 +144,6 @@ public abstract class GameWorld {
         App.getCurrentUser().setPlantFoods(0);
     }
 
-    public GameWorld() {
-
-    }
 
     // متد پیدا کردن گیاه بر اساس مختصات حرکتی زامبی
         public Plant getPlantAtPosition(float x, float y) {
@@ -231,7 +240,34 @@ public abstract class GameWorld {
 
         // بررسی نهایی تمام کوئست‌ها
         user.getQuestManager().checkAllQuests(user);
+        processZombieDeathMu(zombie);
     }
+
+    public void processZombieDeathMu(Zombie zombie){
+        if (this.mupointManager != null) {
+            int simultaneousKills = (int) activeZombies.stream().filter(Zombie::isDead).count();
+
+            boolean isSplashDamage = false;
+            if (zombie.getKillerPlantType() != null) {
+                PlantType killer = zombie.getKillerPlantType();
+                isSplashDamage = (killer == PlantType.CHERRY_BOMB ||
+                        killer == PlantType.JALAPENO ||
+                        killer == PlantType.POTATO_MINE);
+            }
+
+            KillEvent event = new KillEvent(
+                    zombie,
+                    zombie.getSpawnTick(),
+                    this.currentTick,
+                    simultaneousKills,
+                    isSplashDamage,
+                    zombie.hasEatenPlant()
+            );
+
+            this.mupointManager.onZombieDeath(event);
+        }
+    }
+
 
     private void cleanupDeadZombies() {
         Iterator<Zombie> zombieIterator = activeZombies.iterator();
@@ -366,15 +402,15 @@ public abstract class GameWorld {
                 }
 
                 user.getQuestManager().checkAllQuests(user);
-                user.getQuestManager().getStats().setLevelWon(true);
-                GameMenuController.handleWinning(this);
+                user.getQuestStats().setLevelWon(true);
+                GameMenuController.handleWinning(this, mupointManager);
             }
         }
 
         for(LoseCondition lose : loseConditions){
             if(lose.checkLose(this)){
                 state = GameState.LOST;
-                GameMenuController.handleLosing(this);
+                GameMenuController.handleLosing(this, mupointManager);
             }
         }
 

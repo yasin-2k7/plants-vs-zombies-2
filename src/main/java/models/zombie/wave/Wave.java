@@ -16,7 +16,11 @@ public class Wave {
     private int ticksSinceLastSpawn;
     private boolean isFinalWave;
 
-    public Wave(int waveNumber, int totalCost, List<WaveSpawnEntry> spawnEntries, int spawnDelayTicks, boolean isFinalWave) {
+    public Wave(int waveNumber,
+                int totalCost,
+                List<WaveSpawnEntry> spawnEntries,
+                int spawnDelayTicks,
+                boolean isFinalWave) {
         this.waveNumber = waveNumber;
         this.totalCost = totalCost;
         this.spawnEntries = new ArrayList<>(spawnEntries);
@@ -27,9 +31,12 @@ public class Wave {
     }
 
     // متد کمکی برای تولید خودکار موج بر اساس هزینه کل و لیست ورودی‌های مجاز
-    public static Wave generateRandomWave(int waveNumber, int totalCost, List<WaveSpawnEntry> availableEntries, int spawnDelayTicks, boolean isFinalWave) {
+    public static Wave generateRandomWave(int waveNumber,
+                                          int totalCost,
+                                          List<WaveSpawnEntry> availableEntries,
+                                          int spawnDelayTicks, boolean isFinalWave,
+                                          Random random) {
         List<WaveSpawnEntry> generatedEntries = new ArrayList<>();
-        Random random = new Random();
         int currentCost = 0;
 
         // تا زمانی که بودجه داریم و زامبی‌های مجاز تعریف شده‌اند
@@ -55,7 +62,11 @@ public class Wave {
         return new Wave(waveNumber, totalCost, generatedEntries, spawnDelayTicks, isFinalWave);
     }
 
-    public static List<Wave> generateWaves(int totalWaves, int baseDifficulty, List<WaveSpawnEntry> availableEntries, int spawnDelayTicks) {
+    public static List<Wave> generateWaves(int totalWaves,
+                                           int baseDifficulty,
+                                           List<WaveSpawnEntry> availableEntries,
+                                           int spawnDelayTicks,
+                                           Random random) {
 
         int userDifficulty = App.getCurrentUser().getGameDifficulty();
         double decreaseFactor = DifficultyCalculator.decreaseFactor(userDifficulty);
@@ -63,17 +74,23 @@ public class Wave {
         List<Wave> waves = new ArrayList<>();
         for (int i = 1; i <= totalWaves; i++) {
             boolean isFinal = (i == totalWaves);
-            // محاسبه سختی: هر موج 25% سخت‌تر از موج قبل
             double difficulty = baseDifficulty * Math.pow(1.25, i - 1);
-            // موج آخر دو برابر می‌شود
             if (isFinal) {
                 difficulty *= 2;
             }
             int cost = (int) Math.round(difficulty * decreaseFactor);
-            Wave wave = generateRandomWave(i, cost, availableEntries, spawnDelayTicks, isFinal);
+
+            Wave wave = generateRandomWave(i, cost, availableEntries, spawnDelayTicks, isFinal, random);
             waves.add(wave);
         }
         return waves;
+    }
+
+    public static List<Wave> generateWaves(int totalWaves,
+                                           int baseDifficulty,
+                                           List<WaveSpawnEntry> availableEntries,
+                                           int spawnDelayTicks) {
+        return generateWaves(totalWaves, baseDifficulty, availableEntries, spawnDelayTicks, new Random());
     }
 
     public boolean isFinishedSpawning() {
@@ -88,6 +105,11 @@ public class Wave {
         }
         ticksSinceLastSpawn = 0;
         return spawnEntries.get(currentIndex++);
+    }
+
+    public void resetSpawning() {
+        this.currentIndex = 0;
+        this.ticksSinceLastSpawn = 0;
     }
 
     public int getTotalZombieCount() {

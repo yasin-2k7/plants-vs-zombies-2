@@ -4,7 +4,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public enum SignupMenuCommands {
-    MENU_ENTER("^menu\\s+enter\\s+login\\s+menu$"),
+    MENU_ENTER("^menu\\s+enter\\s+login\\s+menu\\s*"),
     MENU_SHOW_CURRENT("^menu\\s+show\\s+current$"),
     MENU_EXIT("^menu\\s+exit$"),
     REGISTER("^register\\s+-u\\s+(\\S+)\\s+-p\\s+(\\S+)\\s+(\\S+)\\s+-n\\s+(\\S+)\\s+-e\\s+(\\S+)\\s+-g\\s+(\\S+)$"),

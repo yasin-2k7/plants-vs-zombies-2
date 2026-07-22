@@ -1,5 +1,7 @@
 package models.miniGame;
 
+import models.core.App;
+import models.core.User;
 import models.enums.PlantType;
 import models.miniGame.IZombie.IZombieLevel;
 import models.miniGame.IZombie.IZombieSetup;
@@ -246,13 +248,19 @@ public class MiniGameFactory {
 
     private static GameWorld createBeghouledLevel1() {
         List<PlantType> plants = List.of(
-                PlantType.PEASHOOTER, PlantType.SUNFLOWER, PlantType.WALL_NUT,
-                PlantType.CABBAGE_PULT, PlantType.MELON_PULT
+                PlantType.PEASHOOTER, PlantType.SUNFLOWER//, PlantType.WALL_NUT,
+                //PlantType.CABBAGE_PULT, PlantType.MELON_PULT
         );
+
+
         List<PlantUpgrade> upgrades = List.of(
-                new PlantUpgrade(PlantType.PEASHOOTER, PlantType.REPEATER, 500),
-                new PlantUpgrade(PlantType.WALL_NUT, PlantType.TALL_NUT, 500)
+                new PlantUpgrade(PlantType.PEASHOOTER, PlantType.REPEATER, 500)
+                //new PlantUpgrade(PlantType.WALL_NUT, PlantType.TALL_NUT, 500)
         );
+
+        ensurePlantsUnlocked(plants);
+        ensurePlantsUnlocked(upgrades.stream().map(PlantUpgrade::getTo).toList());
+
         List<WaveSpawnEntry> zombies = List.of(
                 new WaveSpawnEntry("ZombieDefault", 100)
         );
@@ -381,6 +389,15 @@ public class MiniGameFactory {
                 winCondition,
                 new ArrayList<>()
         );
+    }
+
+    private static void ensurePlantsUnlocked(List<PlantType> plantTypes) {
+        User user = App.getCurrentUser();
+        for (PlantType type : plantTypes) {
+            if (!user.getUnlockedPlantsLevels().containsKey(type)) {
+                user.unlockPlant(type);
+            }
+        }
     }
 
 }

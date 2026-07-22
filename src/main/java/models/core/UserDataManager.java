@@ -60,7 +60,7 @@ public class UserDataManager {
             try (FileReader reader = new FileReader(userFile)) {
                 User user = gson.fromJson(reader, User.class);
                 if (user != null) {
-                    user.afterLoad(); // برای اطمینان از اینکه آبجکت‌های داخلی null نیستند
+                    user.afterLoad();
                 }
                 return user;
             } catch (IOException e) {
@@ -98,5 +98,23 @@ public class UserDataManager {
         if (file.exists()) {
             file.delete();
         }
+    }
+
+    public static boolean updateUsername(String oldUsername, User user) {
+        if (user == null || user.getUsername() == null) return false;
+
+        File oldFile = new File(USERS_DIR + oldUsername + ".json");
+        if (oldFile.exists()) {
+            oldFile.delete();
+        }
+
+        boolean saved = saveUser(user);
+
+        String loggedInUser = getLoggedInUsername();
+        if (loggedInUser != null && loggedInUser.equals(oldUsername)) {
+            saveLoggedInUser(user.getUsername());
+        }
+
+        return saved;
     }
 }

@@ -3,6 +3,8 @@ package models.zombie.wave;
 import controller.GameMenuController;
 import models.core.App;
 import models.core.User;
+import models.mupoint.KillEvent;
+import models.mupoint.MupointManager;
 import models.world.GameWorld;
 import models.zombie.Zombie;
 import models.zombie.ZombieFactory;
@@ -18,6 +20,12 @@ public class WaveManager {
     private int killedZombiesInCurrentWave;
     private boolean levelCompleted;
     private boolean firstWaveStarted;
+
+    private boolean repeatForever = false;
+
+    public void setRepeatForever(boolean repeatForever) {
+        this.repeatForever = repeatForever;
+    }
 
     public WaveManager(List<Wave> waves) {
         this.waves = waves;
@@ -60,6 +68,14 @@ public class WaveManager {
             currentWave = waves.get(currentWaveIndex);
             totalZombiesInCurrentWave = currentWave.getTotalZombieCount();
             killedZombiesInCurrentWave = 0;
+            printWaveStartMessage(currentWave);
+        }
+        else if (repeatForever) {
+            currentWaveIndex = 0;
+            currentWave = waves.get(0);
+            totalZombiesInCurrentWave = currentWave.getTotalZombieCount();
+            killedZombiesInCurrentWave = 0;
+            currentWave.resetSpawning();
             printWaveStartMessage(currentWave);
         } else {
             levelCompleted = true;
@@ -118,13 +134,12 @@ public class WaveManager {
         System.out.println("All zombies eliminated by nuke!");
     }
 
-    // هر بار که یک زامبی کشته می‌شود این متد صدا میزنیم
     public void onZombieKilled(Zombie zombie) {
         if (levelCompleted) return;
         killedZombiesInCurrentWave++;
+
     }
 
-    // دریافت زامبی بعدی برای اسپاون (از موج جاری)
     public WaveSpawnEntry getNextZombieToSpawn() {
         if (levelCompleted || currentWave == null) return null;
         return currentWave.getNextSpawn();
