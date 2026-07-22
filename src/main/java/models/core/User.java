@@ -59,7 +59,7 @@ public class User {
         this.greenhouse = new GreenHouse();
         this.coins = 10000;
         this.gems = 1000;
-        this.unlockedChapter = 1;
+        this.unlockedChapter = 3;
         this.unlockedLevel = 1;
         this.questStats = new QuestStats();
         gamesPlayed = 0;

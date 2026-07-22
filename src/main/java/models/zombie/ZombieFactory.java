@@ -146,8 +146,8 @@ public class ZombieFactory {
 
         if (createdZombie != null) {
             createdZombie.setSpecificName(alias);
-            if (Math.random() < 0.20) {
-                createdZombie.setDropsReward(true);
+            if (Math.random() < 0.05) {
+                createdZombie.setGlowing(true);
             }
         }
 
@@ -193,12 +193,6 @@ public class ZombieFactory {
             return inner;
         }
         return ref;
-    }
-
-    public Zombie createZombie(Zombies type) {
-        String alias = enumToAlias.get(type);
-        if (alias == null) return null;
-        return createZombie(alias);
     }
 
     private Zombie createZombotanyZombie(String alias) {

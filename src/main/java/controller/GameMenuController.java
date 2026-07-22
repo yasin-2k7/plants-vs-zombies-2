@@ -37,12 +37,12 @@ public class GameMenuController implements MenuController {
             App.getCurrentUser().unlockLevel();
         }
         User user = App.getCurrentUser();
-        if(user != null && mupointManager != null){
-            user.updateMupointRecord(mupointManager.getTotalMupoints());
-            GameMenuView.getInstance().showResult("your muPoint: " + mupointManager.getTotalMupoints());
-
-            UserDataManager.saveUser(user);
-        }
+//        if(user != null && mupointManager != null){
+//            user.updateMupointRecord(mupointManager.getTotalMupoints());
+//            GameMenuView.getInstance().showResult("your muPoint: " + mupointManager.getTotalMupoints());
+//
+//            UserDataManager.saveUser(user);
+//        }
         AppView.setCurrentScreen(MainMenuView.getInstance());
         App.setCurrentGame(null);
         App.getCurrentUser().getPlantBoosts().clear();

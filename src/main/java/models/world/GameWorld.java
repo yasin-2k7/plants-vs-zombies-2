@@ -38,7 +38,7 @@ public abstract class GameWorld {
     private long startTime;
     private long currentTime;
 
-    Random random = new Random();
+    protected Random random = new Random();
 
     private GameState state;
 

@@ -17,6 +17,7 @@ import models.zombie.ZombieFactory;
 
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class BigWaveBeachWorld extends GameWorld {
     private int tideLineCol;
@@ -25,10 +26,10 @@ public class BigWaveBeachWorld extends GameWorld {
     private final int tideCycleTicks = 300;
     private int lastLowLyingCoastSpawnTick = 0;
     private final int lowLyingCoastSpawnTicks = 250;
-    private Random random = new Random();
 
     public BigWaveBeachWorld(LevelSetup levelSetup, ArrayList<LoseCondition> loseConditions, WinCondition winCondition, ArrayList<Mechanic> mechanics) {
         super(levelSetup, loseConditions, winCondition, mechanics);
+        this.random = new Random();
     }
 
     @Override
@@ -37,7 +38,7 @@ public class BigWaveBeachWorld extends GameWorld {
             tideLineCol = beachSetup.getTideLineCol();
             this.currentTideCol = 9;
         }
-        int lowLyingCoastsCount = random.nextInt(4) + 1;
+        int lowLyingCoastsCount = ThreadLocalRandom.current().nextInt(4) + 1;
         for (int i = 0; i< lowLyingCoastsCount; i++){
             makeCellLowLyingCoast();
         }
@@ -45,8 +46,8 @@ public class BigWaveBeachWorld extends GameWorld {
     }
 
     private void makeCellLowLyingCoast(){
-        int cellRow = random.nextInt(getRows());
-        int cellCol = random.nextInt(3) + getCols()-2;
+        int cellRow = ThreadLocalRandom.current().nextInt(getRows());
+        int cellCol = getCols() - 1 - ThreadLocalRandom.current().nextInt(3);
         if (grid[cellRow][cellCol].isLowLyingCoast()){
             makeCellLowLyingCoast();
         }
@@ -72,8 +73,11 @@ public class BigWaveBeachWorld extends GameWorld {
             for (Cell[] cells : grid){
                 for (Cell cell : cells){
                     if (cell.isLowLyingCoast()){
-                        if (random.nextBoolean()){
-                            Zombie zombie = random.nextBoolean() ? new ZombieFactory().createZombie("ZombieDefault") : new ZombieFactory().createZombie("ZombieConehead");
+                        if (ThreadLocalRandom.current().nextBoolean()) {
+                            Zombie zombie = ThreadLocalRandom.current().nextBoolean() ?
+                                    new ZombieFactory().createZombie("ZombieDefault") :
+                                    new ZombieFactory().createZombie("ZombieArmor1");
+                                    new ZombieFactory().createZombie("ZombieArmor2");
                             if (zombie != null) {
                                 zombie.setX(cell.getX());
                                 zombie.setY(cell.getY());
@@ -95,8 +99,7 @@ public class BigWaveBeachWorld extends GameWorld {
 
             int minCol = tideLineCol;
             int maxCol = getCols();
-            int newTideCol = random.nextInt(maxCol - minCol + 1) + minCol;
-
+            int newTideCol = ThreadLocalRandom.current().nextInt(maxCol - minCol + 1) + minCol;
             if (newTideCol < currentTideCol) {
                 for (int c = newTideCol; c < currentTideCol; c++) {
                     changeColumnTerrain(c, true);
