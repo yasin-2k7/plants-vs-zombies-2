@@ -2,6 +2,7 @@ package view.terminalView;
 
 import controller.LoginMenuController;
 import controller.SignupMenuController;
+import models.core.App;
 import models.enums.commands.LoginMenuCommands;
 import view.View;
 
@@ -61,7 +62,11 @@ public class LoginMenuView implements View{
                         System.out.println(result);
                         break;
                     case MENU_ENTER:
-                        controller.changeMenu();
+                        if(App.getCurrentUser() != null){
+                            controller.changeMenu();
+                        } else{
+                            System.out.println("You should login first");
+                        }
                         break;
                     case MENU_EXIT:
                         controller.exitMenu();

@@ -39,8 +39,9 @@ public class BeghouledSetup implements LevelSetup {
         BeghouledMechanics mechanics = new BeghouledMechanics(availablePlantTypes, upgrades, targetScore);
         world.addMechanic(mechanics);
 
-        List<Wave> infiniteWaves = Wave.generateWaves(9999, 200, availableZombies, 40);
-        WaveManager waveManager = new WaveManager(infiniteWaves);
+        List<Wave> waves = Wave.generateWaves(20, 200, availableZombies, 40);
+        WaveManager waveManager = new WaveManager(waves);
+        waveManager.setRepeatForever(true);
         world.addMechanic(new NormalMechanic(waveManager));
 
 

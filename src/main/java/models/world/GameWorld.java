@@ -11,6 +11,8 @@ import models.enums.PlantType;
 import models.lawnMower.LawnMower;
 import models.lawnMower.LawnMowerManager;
 //import models.miniGame.MechanicsStrategy;
+import models.mupoint.KillEvent;
+import models.mupoint.MupointManager;
 import models.plant.Plant;
 import models.plant.card.PlantCard;
 import models.plant.components.LifespanComponent;
@@ -101,6 +103,16 @@ public abstract class GameWorld {
     }
     public void unregisterPuffShroom(LifespanComponent observer) {
         smallShrooms.remove(observer);
+    }
+
+    private MupointManager mupointManager;
+
+    public MupointManager getMupointManager() {
+        return mupointManager;
+    }
+
+    public void setMupointManager(MupointManager mupointManager) {
+        this.mupointManager = mupointManager;
     }
 
     public void triggerSmallShroomsPlantFood(PlantType type) {
@@ -295,7 +307,34 @@ public abstract class GameWorld {
 
         // بررسی نهایی تمام کوئست‌ها
         user.getQuestManager().checkAllQuests(user);
+        processZombieDeathMu(zombie);
     }
+
+    public void processZombieDeathMu(Zombie zombie){
+        if (this.mupointManager != null) {
+            int simultaneousKills = (int) activeZombies.stream().filter(Zombie::isDead).count();
+
+            boolean isSplashDamage = false;
+            if (zombie.getKillerPlantType() != null) {
+                PlantType killer = zombie.getKillerPlantType();
+                isSplashDamage = (killer == PlantType.CHERRY_BOMB ||
+                        killer == PlantType.JALAPENO ||
+                        killer == PlantType.POTATO_MINE);
+            }
+
+            KillEvent event = new KillEvent(
+                    zombie,
+                    zombie.getSpawnTick(),
+                    this.currentTick,
+                    simultaneousKills,
+                    isSplashDamage,
+                    zombie.hasEatenPlant()
+            );
+
+            this.mupointManager.onZombieDeath(event);
+        }
+    }
+
 
     private void cleanupDeadZombies() {
         Iterator<Zombie> zombieIterator = activeZombies.iterator();
@@ -419,7 +458,7 @@ public abstract class GameWorld {
         for(LoseCondition lose : loseConditions){
             if(lose.checkLose(this)){
                 state = GameState.LOST;
-                GameMenuController.handleLosing(this);
+                GameMenuController.handleLosing(this, mupointManager);
             }
         }
     }

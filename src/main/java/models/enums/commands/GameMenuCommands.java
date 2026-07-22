@@ -24,7 +24,17 @@ public enum GameMenuCommands {
     SHOW_TILE_STATUS("\\s*show\\s+tile\\s+status\\s+-l\\s+\\(\\s*(?<x>\\d+)\\s*,\\s*(?<y>\\d+)\\s*\\)\\s*"),
     ZOMBIE_INFO("\\s*zombies\\s+info\\s*"),
     CHEAT_SPAWN_ZOMBIE("\\s*cheat\\s+spawn-zombie\\s+-t\\s+(?<type>.+?)\\s+-l\\s+\\(\\s*(?<x>\\d+)\\s*,\\s*(?<y>\\d+)\\s*\\)\\s*"),
-    START_ZOMBIE_WAVES("\\s*start\\s+zombie\\s+waves\\s*");
+    START_ZOMBIE_WAVES("\\s*start\\s+zombie\\s+waves\\s*"),
+
+    BREAK_VASE("\\s*break\\s+vase\\s+-l\\s+\\(\\s*(?<row>\\d+)\\s*,\\s*(?<col>\\d+)\\s*\\)\\s*"),
+    PICK_UP_SEED("\\s*pick\\s+up\\s+seed\\s+-l\\s+\\(\\s*(?<row>\\d+)\\s*,\\s*(?<col>\\d+)\\s*\\)\\s*"),
+    PLANT_HELD_SEED("\\s*plant\\s+held\\s+seed\\s+-l\\s+\\(\\s*(?<x>\\d+)\\s*,\\s*(?<y>\\d+)\\s*\\)\\s*"),
+    SWAP_PLANTS("\\s*swap\\s+plants\\s+-l1\\s+\\(\\s*(?<row1>\\d+)\\s*,\\s*(?<col1>\\d+)\\s*\\)\\s+-l2\\s+\\(\\s*(?<row2>\\d+)\\s*,\\s*(?<col2>\\d+)\\s*\\)\\s*"),
+    UPGRADE_PLANT("\\s*upgrade\\s+plant\\s+-t\\s+(?<type>\\S+)\\s*"),
+    PLACE_ZOMBIE("\\s*place\\s+zombie\\s+-t\\s+(?<type>\\S+)\\s+-l\\s+\\(\\s*(?<x>\\d+)\\s*,\\s*(?<y>\\d+)\\s*\\)\\s*"),
+    THROW_BOWLING_BALL("\\s*throw\\s+bowling-ball\\s+-t\\s+(?<type>\\S+)\\s+-l\\s+\\(\\s*(?<x>\\d+)\\s*,\\s*(?<y>\\d+)\\s*\\)\\s*");
+
+
 
     private final String pattern;
     private final Pattern compiledPattern;

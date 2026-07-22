@@ -7,18 +7,29 @@ public class MupointManager {
     private List<ScoreStrategy> strategies = new ArrayList<>();
 
     public MupointManager() {
-        // ثبت الگوهای ۵ گانه در منیجر
         strategies.add(new FastKillStrategy());
-        strategies.add(new SimultaneousKillStrategy());
-        //TODO ... اضافه کردن سایر استراتژی‌ها
+        strategies.add(new SplashMultiKillStrategy());
+        strategies.add(new CleanKillStrategy());
+        strategies.add(new ToughZombieStrategy());
+        strategies.add(new ComboKillStrategy());
     }
 
-    // متدی که در زمان مرگ زامبی صدا زده می‌شود (الگوی Observer)
     public void onZombieDeath(KillEvent event) {
+        int pointsGained = 0;
         for (ScoreStrategy strategy : strategies) {
-            totalMupoints += strategy.calculatePoints(event);
+            int pts = strategy.calculatePoints(event);
+
+            if (pts > 0) {
+                String strategyName = strategy.getClass().getSimpleName();
+                System.out.println("   🎯 استراتژی فعال شد: " + strategyName + " -> +" + pts + " امتیاز");
+                pointsGained += pts;
+            }
         }
         System.out.println("Current Mupoints: " + totalMupoints);
+        totalMupoints += pointsGained;
     }
 
+    public int getTotalMupoints() {
+        return totalMupoints;
+    }
 }

@@ -5,6 +5,7 @@ import controller.SignupMenuController;
 import models.enums.PlantType;
 import models.enums.commands.GameMenuCommands;
 import models.enums.commands.SignupMenuCommands;
+import models.miniGame.bowling.BowlingBallType;
 import view.View;
 
 import java.util.regex.Matcher;
@@ -122,6 +123,71 @@ public class GameMenuView implements View{
                         controller.showPlantFoodsCount();
                         return;
                     case START_ZOMBIE_WAVES:
+                        return;
+
+                    case BREAK_VASE:
+                        int row = Integer.parseInt(matcher.group("row"));
+                        int col = Integer.parseInt(matcher.group("col"));
+                        controller.breakVase(row, col);
+                        return;
+
+                    case PICK_UP_SEED:
+                        row = Integer.parseInt(matcher.group("row"));
+                        col = Integer.parseInt(matcher.group("col"));
+                        controller.pickUpSeed(row, col);
+                        return;
+
+                    case PLANT_HELD_SEED:
+                        x = Float.parseFloat(matcher.group("x"));
+                        y = Float.parseFloat(matcher.group("y"));
+                        controller.plantHeldSeed(x, y);
+                        return;
+
+                    case SWAP_PLANTS:
+                        int row1 = Integer.parseInt(matcher.group("row1"));
+                        int col1 = Integer.parseInt(matcher.group("col1"));
+                        int row2 = Integer.parseInt(matcher.group("row2"));
+                        int col2 = Integer.parseInt(matcher.group("col2"));
+                        controller.swapPlants(row1, col1, row2, col2);
+                        return;
+                    case UPGRADE_PLANT:
+                        type = matcher.group("type");
+                        PlantType upgradeType = null;
+                        for (PlantType plantType : PlantType.values()){
+                            if (plantType.name().equalsIgnoreCase(type)){
+                                upgradeType = plantType;
+                                break;
+                            }
+                        }
+                        if (upgradeType == null){
+                            System.out.println("please select a valid plant");
+                            return;
+                        }
+                        controller.upgradePlant(upgradeType);
+                        return;
+
+                    case PLACE_ZOMBIE:
+                        type = matcher.group("type");
+                        x = Float.parseFloat(matcher.group("x"));
+                        y = Float.parseFloat(matcher.group("y"));
+                        controller.placeZombie(type, x, y);
+                        return;
+                    case THROW_BOWLING_BALL:
+                        type = matcher.group("type");
+                        x = Float.parseFloat(matcher.group("x"));
+                        y = Float.parseFloat(matcher.group("y"));
+                        BowlingBallType ballType = null;
+                        for (BowlingBallType bt : BowlingBallType.values()){
+                            if (bt.name().equalsIgnoreCase(type)){
+                                ballType = bt;
+                                break;
+                            }
+                        }
+                        if (ballType == null){
+                            System.out.println("please select a valid bowling ball type");
+                            return;
+                        }
+                        controller.throwBowlingBall(ballType, x, y);
                         return;
                     default:
                         break;

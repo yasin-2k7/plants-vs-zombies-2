@@ -3,13 +3,16 @@ package controller;
 import models.core.App;
 import models.core.User;
 import models.enums.CollectableType;
+import models.core.UserDataManager;
 import models.enums.PlantLayer;
 import models.enums.PlantType;
+import models.miniGame.beghouled.GridPosition;
 import models.miniGame.IZombie.IZombieLevel;
 import models.miniGame.beghouled.BeghouledMechanics;
 import models.miniGame.bowling.BowlingBallType;
 import models.miniGame.bowling.BowlingMechanics;
 import models.miniGame.vaseBreaker.VaseBreakerLevel;
+import models.mupoint.MupointManager;
 import models.plant.Plant;
 import models.plant.card.ImitatorCard;
 import models.plant.card.PlantCard;
@@ -33,13 +36,27 @@ public class GameMenuController implements MenuController {
         if (gameWorld.isWillUnlockLevel()){
             App.getCurrentUser().unlockLevel();
         }
+        User user = App.getCurrentUser();
+        if(user != null && mupointManager != null){
+            user.updateMupointRecord(mupointManager.getTotalMupoints());
+            GameMenuView.getInstance().showResult("your muPoint: " + mupointManager.getTotalMupoints());
+
+            UserDataManager.saveUser(user);
+        }
         AppView.setCurrentScreen(MainMenuView.getInstance());
         App.setCurrentGame(null);
         App.getCurrentUser().getPlantBoosts().clear();
     }
 
-    public static void handleLosing(GameWorld gameWorld) {
+    public static void handleLosing(GameWorld gameWorld, MupointManager mupointManager) {
         GameMenuView.getInstance().showResult(("The zombie ate your brain; LOSER!!!"));
+        User user = App.getCurrentUser();
+        if(user != null && mupointManager != null){
+            user.updateMupointRecord(mupointManager.getTotalMupoints());
+            GameMenuView.getInstance().showResult("your muPoint: " + mupointManager.getTotalMupoints());
+
+            UserDataManager.saveUser(user);
+        }
         AppView.setCurrentScreen(MainMenuView.getInstance());
         App.setCurrentGame(null);
         App.getCurrentUser().getPlantBoosts().clear();

@@ -51,7 +51,7 @@ public class LoginMenuController implements MenuController{
             return "Please enter your username and email first.";
         }
 
-        if(!recoveringUser.getSecurityA().equals(answer)){
+        if(!recoveringUser.checkSeqA(answer)){
             isSQPassed = false;
             return "your answer is incorrect";
         } else {

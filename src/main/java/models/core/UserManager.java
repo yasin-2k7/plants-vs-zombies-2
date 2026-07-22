@@ -3,14 +3,13 @@ package models.core;
 import java.util.HashMap;
 
 public class UserManager {
-    private static HashMap<String, User> users;
     private static User currentUser;
 
-    public UserManager(){
-        loadInitialUser();// **جدید**: در ابتدای برنامه، آخرین کاربر لاگین‌کرده را بارگذاری می‌کند
+    public static void init() {
+        loadInitialUser();
     }
 
-    private void loadInitialUser() {
+    private static void loadInitialUser() {
         String loggedInUsername = UserDataManager.getLoggedInUsername();
         if (loggedInUsername != null) {
             User user = UserDataManager.loadUser(loggedInUsername);
@@ -58,7 +57,7 @@ public class UserManager {
             currentUser = user;
             App.setCurrentUser(user);
             user.initQuests();
-            if(stayLoggedIn == true){
+            if(stayLoggedIn){
                 UserDataManager.saveLoggedInUser(username);
             }
             return "Login successful! Welcome " + user.getNickname();

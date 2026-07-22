@@ -8,6 +8,7 @@ import models.core.App;
 import models.enums.Zombies;
 import models.world.Cell;
 import models.world.ChapterWorld.FrostbiteCavesWorld;
+import models.world.GameWorld;
 import models.zombie.state.WalkingState;
 import models.zombie.state.ZombieState;
 
@@ -36,8 +37,24 @@ public abstract class Zombie implements Damageable {
 
     private PlantType killerPlantType;
 
+    private long spawnTick;
+    private boolean hasEatenPlant = false;
+    private GameWorld world;
+
 
     public Zombie(Zombies name, int health, double speed, int damage) {
+        this.name = name;
+        this.health = health;
+        this.maxHealth = health;
+        this.speed = speed*15;
+        this.damage = damage;
+        this.currentState = new WalkingState();
+    }
+
+    public Zombie(Zombies name, int health, double speed, int damage, GameWorld world) {
+        this.world = world;
+        this.spawnTick = world.getCurrentTick();
+
         this.name = name;
         this.health = health;
         this.maxHealth = health;
@@ -250,4 +267,28 @@ public abstract class Zombie implements Damageable {
 
     public boolean isDropsReward() {return dropsReward;}
 
+
+    public long getSpawnTick() {
+        return spawnTick;
+    }
+
+    public void setSpawnTick(long spawnTick) {
+        this.spawnTick = spawnTick;
+    }
+
+    public boolean hasEatenPlant() {
+        return hasEatenPlant;
+    }
+
+    public void setHasEatenPlant(boolean hasEatenPlant) {
+        this.hasEatenPlant = hasEatenPlant;
+    }
+
+    public int getMaxHealth() {
+        return maxHealth;
+    }
+
+    public GameWorld getWorld() {
+        return world;
+    }
 }

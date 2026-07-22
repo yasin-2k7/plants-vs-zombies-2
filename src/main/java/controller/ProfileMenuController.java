@@ -29,56 +29,75 @@ public class ProfileMenuController implements MenuController{
         }
 
 
+        List<String> errors = signupMenuController.getUsernameErrors(newUsername);
+        if (!errors.isEmpty()) {
+            return String.join("\n", errors);
+        }
 
         user.setUsername(newUsername);
+
+        UserDataManager.updateUsername(oldUsername, user);
         UserDataManager.saveUser(user);
         return "your username changed";
     }
 
-    public String changeNickname(String newNickname){
+    public String changeNickname(String newNickname) {
         User user = App.getCurrentUser();
 
-        if(user.getNickname().equals(newNickname)){
+        if (user.getNickname().equals(newNickname)) {
             return "new nickname and your nickname are similar.";
         }
 
+        List<String> errors = signupMenuController.getNicknameErrors(newNickname);
+        if (!errors.isEmpty()) {
+            return String.join("\n", errors);
+        }
 
         user.setNickname(newNickname);
         UserDataManager.saveUser(user);
         return "your nickname changed";
     }
 
-    public String changeEmail(String newEmail){
+    public String changeEmail(String newEmail) {
         User user = App.getCurrentUser();
 
-        if(user.getEmail().equals(newEmail)){
+        if (user.getEmail().equals(newEmail)) {
             return "new email and your email are similar.";
         }
 
 
+        List<String> errors = signupMenuController.getEmailErrors(newEmail);
+        if (!errors.isEmpty()) {
+            return String.join("\n", errors);
+        }
 
         user.setEmail(newEmail);
         UserDataManager.saveUser(user);
         return "your email changed";
     }
 
-    public String changePassword(String password, String newPassword){
+    public String changePassword(String password, String newPassword) {
         User user = App.getCurrentUser();
 
         String hashPassword = PasswordHasher.hashSHA256(password);
         String hashNewPass = PasswordHasher.hashSHA256(newPassword);
 
-
-        if(!user.getHashPassword().equals(hashPassword)){
+        if (!user.getHashPassword().equals(hashPassword)) {
             return "your password is incorrect.";
         }
 
-        if(user.getHashPassword().equals(hashNewPass)){
+        if (user.getHashPassword().equals(hashNewPass)) {
             return "new pass and your pass are similar.";
         }
 
+        List<String> errors = signupMenuController.getPasswordErrors(newPassword, newPassword);
+        if (!errors.isEmpty()) {
+            return String.join("\n", errors);
+        }
 
 
+        user.setHashPassword(hashNewPass);
+        UserDataManager.saveUser(user);
         user.setHashPassword(hashPassword);
         UserDataManager.saveUser(user);
         return "your pass changed.";
@@ -86,7 +105,7 @@ public class ProfileMenuController implements MenuController{
 
     }
 
-    public String showInfo(){
+    public String showInfo() {
         User user = App.getCurrentUser();
 
         String info = "Username: " + user.getUsername() + "\n" +
@@ -98,9 +117,16 @@ public class ProfileMenuController implements MenuController{
                     "Mu point: ";
 
         return info;
+        return "Username: " + user.getUsername() + "\n" +
+                "Nickname: " + user.getNickname() + "\n" +
+                "Games number: "  + "\n" +
+                "Coins: " + user.getCoins() + "\n" +
+                "Gems: " + user.getGems() + "\n" +
+                "Levels number: " + (user.getUserLevel() - 1) + "\n" +
+                "Mu point: ";
     }
 
-    public void showCurrentMenu(){
+    public void showCurrentMenu() {
         GameMenuView.getInstance().showResult("Current menu: profile menu");
     }
 
