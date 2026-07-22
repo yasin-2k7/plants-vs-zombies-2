@@ -1,5 +1,6 @@
 package models.plant.components;
 
+import models.Damageable;
 import models.core.App;
 import models.enums.ProjectileType;
 import models.plant.GameComponent;
@@ -40,7 +41,7 @@ public class ShooterComponent implements GameComponent {
     private int giantPierce;
     private Plant owner;
 
-    Zombie target = null;
+    Damageable target = null;
 
     private Supplier<CombinedDamageStrategy> damageStrategy;
     private CheckStrike strikeStrategy;
