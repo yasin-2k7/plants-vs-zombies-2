@@ -4,9 +4,11 @@ import models.enums.Chapter;
 import models.enums.NewsType;
 import models.enums.PlantType;
 import models.greenhouse.GreenHouse;
+import models.miniGame.MiniGameLevels;
 import models.quest.Quest;
 import models.quest.QuestManager;
 import models.quest.QuestStats;
+import models.quest.types.DailyQuest;
 
 import java.util.*;
 
@@ -20,6 +22,11 @@ public class User {
     private String gender;
     private String securityQ;
     private String securityA;
+
+    private int gamesPlayed;
+    private int highScore;
+
+    private Set<MiniGameLevels> completedMiniGames = EnumSet.noneOf(MiniGameLevels.class);
 
     private int unlockedChapter;
     private transient Chapter currentChapter;
@@ -54,6 +61,8 @@ public class User {
         this.unlockedChapter = 1;
         this.unlockedLevel = 1;
         this.questStats = new QuestStats();
+        gamesPlayed = 0;
+        highScore = 0;
         putInitialPlants();
         putZombies();
     }
@@ -380,6 +389,7 @@ public class User {
         unlockedLevel = newLevel;
         unlockedChapter = newChapter;
         notifyLevelUnlock(newChapter + "-" + newLevel);
+        UserDataManager.saveUser(this);
     }
 
 
@@ -394,5 +404,39 @@ public class User {
 
     public void setGems(int gems) {
         this.gems = gems;
+    }
+
+    public int getGamesPlayed() {
+        return gamesPlayed;
+    }
+
+    public int getNormalQuestsCount(){
+        List<Quest> quests = questManager.getCompletedQuests()
+                .stream().filter(quest -> !(quest instanceof DailyQuest)).toList();
+        return quests.size();
+    }
+
+    public int getDailyQuestsCount(){
+        List<Quest> quests = questManager.getCompletedQuests()
+                .stream().filter(quest -> quest instanceof DailyQuest).toList();
+        return quests.size();
+    }
+
+    public int getHighScore() {
+        return highScore;
+    }
+
+    public int getCompletedMainLevels() {return (unlockedChapter-1)*4 + unlockedLevel-1;}
+
+    public int getCompletedLevels() {
+        return completedMiniGames.size() + (unlockedChapter-1)*4 + unlockedLevel-1;
+    }
+
+    public Set<MiniGameLevels> getMiniGameLevels() {
+        return completedMiniGames;
+    }
+
+    public void setGamesPlayed(int gamesPlayed) {
+        this.gamesPlayed = gamesPlayed;
     }
 }

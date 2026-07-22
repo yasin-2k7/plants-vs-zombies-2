@@ -43,6 +43,10 @@ public class Plant {
 
     public void update() {
         if (disabled || freeze || sheep) return;
+        if (plantFoodInStart){
+            activatePlantFood();
+            plantFoodInStart = false;
+        }
         for (GameComponent comp : components) {
             if (type == PlantType.SUN_BEAN && comp instanceof SunProducerComponent){
                 continue;

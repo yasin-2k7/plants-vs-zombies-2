@@ -3,6 +3,7 @@ package models.zombie.wave;
 import controller.GameMenuController;
 import models.core.App;
 import models.core.User;
+import models.core.UserDataManager;
 import models.world.GameWorld;
 import models.zombie.Zombie;
 import models.zombie.ZombieFactory;
@@ -80,6 +81,7 @@ public class WaveManager {
         if (!App.getCurrentUser().getShowedZombies().get(App.getArmoredZombieName(zombie.getSpecificName()))){
             App.getCurrentUser().getShowedZombies().put(App.getArmoredZombieName(zombie.getSpecificName()), true);
             App.getCurrentUser().notifyZombieUnlock(App.getArmoredZombieName(zombie.getSpecificName()));
+            UserDataManager.saveUser(App.getCurrentUser());
         }
 
         int spawnCol = game.getCols();

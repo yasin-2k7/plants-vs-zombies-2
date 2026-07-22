@@ -112,6 +112,9 @@ public class GameMenuView implements View{
                     case CHEAT_ADD_PLANT_FOOD:
                         controller.cheatAddPlantFood();
                         return;
+                    case SHOW_PLANT_FOODS:
+                        controller.showPlantFoodsCount();
+                        return;
                     case START_ZOMBIE_WAVES:
                         return;
                     default:

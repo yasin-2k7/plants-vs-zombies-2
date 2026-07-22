@@ -4,8 +4,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public enum LeaderboardMenuCommands {
-    MENU_ENTER(""),
     MENU_SHOW_CURRENT("^menu\\s+show\\s+current$"),
+    SORT_LEADERBOARD("\\s*leaderboard\\s*-field\\s+(?<field>\\S+)\\s+-order\\s+(?<order>ascending|descending)\\s*"),
     MENU_EXIT("\\s*menu\\s+exit\\s*");
 
     private final String pattern;

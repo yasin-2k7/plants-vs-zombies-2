@@ -17,6 +17,7 @@ public enum GameMenuCommands {
     PLUCK_PLANT("\\s*pluck\\s+plant\\s+-l\\s+\\(\\s*(?<x>\\d+)\\s*,\\s*(?<y>\\d+)\\s*\\)\\s*"),
     FEED_PLANT("\\s*feed\\s+plant\\s+-l\\s+\\(\\s*(?<x>\\d+)\\s*,\\s*(?<y>\\d+)\\s*\\)\\s*"),
     CHEAT_ADD_PLANT_FOOD("\\s*cheat\\s+add-plant-food\\s*"),
+    SHOW_PLANT_FOODS("\\s*show\\s+plant\\s+foods\\s*"),
     SHOW_MAP("\\s*show\\s+map\\s*"),
     SHOW_PLANTS_STATUS("\\s*show\\s+plants\\s+status\\s*"),
     SHOW_TILE_STATUS("\\s*show\\s+tile\\s+status\\s+-l\\s+\\(\\s*(?<x>\\d+)\\s*,\\s*(?<y>\\d+)\\s*\\)\\s*"),

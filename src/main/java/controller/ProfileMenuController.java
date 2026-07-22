@@ -1,9 +1,6 @@
 package controller;
 
-import models.core.App;
-import models.core.PasswordHasher;
-import models.core.User;
-import models.core.UserDataManager;
+import models.core.*;
 import view.terminalView.AppView;
 import view.terminalView.GameMenuView;
 import view.terminalView.MainMenuView;
@@ -12,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ProfileMenuController implements MenuController{
-    private SignupMenuController signupMenuController;
+    private SignupMenuController signupMenuController = new SignupMenuController();
     @Override
     public void changeMenu() {
 
@@ -39,6 +36,7 @@ public class ProfileMenuController implements MenuController{
         }
 
         user.setUsername(newUsername);
+        UserDataManager.saveUser(user);
         return "your username changed";
     }
 
@@ -58,6 +56,7 @@ public class ProfileMenuController implements MenuController{
         }
 
         user.setNickname(newNickname);
+        UserDataManager.saveUser(user);
         return "your nickname changed";
     }
 
@@ -77,6 +76,7 @@ public class ProfileMenuController implements MenuController{
         }
 
         user.setEmail(newEmail);
+        UserDataManager.saveUser(user);
         return "your email changed";
     }
 
@@ -104,6 +104,7 @@ public class ProfileMenuController implements MenuController{
         }
 
         user.setHashPassword(hashPassword);
+        UserDataManager.saveUser(user);
         return "your pass changed.";
 
 
@@ -114,10 +115,10 @@ public class ProfileMenuController implements MenuController{
 
         String info = "Username: " + user.getUsername() + "\n" +
                     "Nickname: " + user.getNickname() + "\n" +
-                    "Games number: "  + "\n" +
+                    "Games played: " + user.getGamesPlayed() + "\n" +
                     "Coins: " + user.getCoins() + "\n" +
                     "Gems: " + user.getGems() + "\n" +
-                    "Levels number: " + (user.getUserLevel() - 1) + "\n" +
+                    "Levels completed: " + user.getCompletedLevels() + "\n" +
                     "Mu point: ";
 
         return info;

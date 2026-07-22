@@ -233,6 +233,10 @@ public class GameMenuController implements MenuController {
         }
     }
 
+    public void showPlantFoodsCount(){
+        GameMenuView.getInstance().showResult("plant foods count: " + App.getCurrentUser().getPlantFoods());
+    }
+
     public void feedPlant(float x, float y){
         if (App.getCurrentGame().getPlantFoods() <= 0){
             GameMenuView.getInstance().showResult("you have not any plant foods!");

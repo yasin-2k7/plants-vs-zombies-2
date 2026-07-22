@@ -4,6 +4,7 @@ import controller.GameMenuController;
 import models.Damageable;
 import models.core.App;
 import models.core.User;
+import models.core.UserDataManager;
 import models.enums.Chapter;
 import models.enums.PlantFamily;
 import models.enums.PlantType;
@@ -107,6 +108,9 @@ public abstract class GameWorld {
                      ArrayList<LoseCondition> loseConditions,
                      WinCondition winCondition,
                      ArrayList<Mechanic> mechanics) {
+        App.getCurrentUser().setGamesPlayed(App.getCurrentUser().getGamesPlayed()+1);
+        UserDataManager.saveUser(App.getCurrentUser());
+
         this.levelSetup = levelSetup;
         this.loseConditions = loseConditions;
         this.winCondition = winCondition;

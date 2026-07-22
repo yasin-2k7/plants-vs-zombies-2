@@ -30,9 +30,24 @@ public class MainMenuController implements MenuController {
                 AppView.setCurrentScreen(TravelLogMenuView.getInstance());
                 TravelLogMenuView.getInstance().showCurrentPage();
                 return "Entering Travel Log...";
+            case "leaderboard":
+                AppView.setCurrentScreen(LeaderboardMenuView.getInstance());
+                LeaderboardMenuView.getInstance().showLeaderboard();
+                return "";
             default:
                 return "Invalid menu name.";
         }
+    }
+
+    public void showMenus(){
+        MainMenuView.getInstance().showResult("MENUS\n" +
+                "-play\n" +
+                "-setting\n" +
+                "-news\n" +
+                "-profile\n" +
+                "-green house\n" +
+                "-travel log\n" +
+                "-leaderboard");
     }
 
 

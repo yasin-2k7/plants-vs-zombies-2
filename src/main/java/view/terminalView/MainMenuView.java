@@ -38,12 +38,19 @@ public class MainMenuView implements View {
                     case MENU_LOGOUT:
                         System.out.println(controller.logout());
                         return;
+                    case SHOW_MENUS:
+                        controller.showMenus();
+                        return;
                     default:
                         break;
                 }
             }
         }
         System.out.println("Unknown command in Main menu.");
+    }
+
+    public void showResult(String message){
+        System.out.println(message);
     }
 
 
