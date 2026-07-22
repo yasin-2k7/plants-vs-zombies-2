@@ -22,7 +22,7 @@ public class Projectile implements Resettable{
     private MovementStrategy movementStrategy;
     private CheckStrike strikeStrategy;
     private ProjectileType type;
-    private Zombie target;
+    private Damageable target;
     private int pierce;
     private boolean dead = false;
     private PlantType plantType;
@@ -62,7 +62,7 @@ public class Projectile implements Resettable{
             }
         }
 
-        Zombie zombie = null;
+        Damageable zombie = null;
         if (type.movement.equals("STRAIGHT")) {
             zombie = strikeStrategy.strike(x, y, oldX, oldY);
         } else if (type.movement.equals("LOBBED")) {
@@ -169,7 +169,7 @@ public class Projectile implements Resettable{
         return strikeStrategy;
     }
 
-    public void setTarget(Zombie target) {
+    public void setTarget(Damageable target) {
         this.target = target;
         targetX = target.getX();
         targetY = target.getY();
