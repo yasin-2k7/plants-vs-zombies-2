@@ -12,7 +12,6 @@ import models.miniGame.IZombie.Brain;
 import models.miniGame.beghouled.GridPosition;
 import models.miniGame.IZombie.IZombieLevel;
 import models.miniGame.beghouled.BeghouledMechanics;
-import models.miniGame.bowling.BowlingBallType;
 import models.miniGame.bowling.BowlingMechanics;
 import models.miniGame.vaseBreaker.SeedPacket;
 import models.miniGame.vaseBreaker.Vase;
@@ -22,6 +21,7 @@ import models.plant.Plant;
 import models.plant.card.ImitatorCard;
 import models.plant.card.PlantCard;
 import models.world.*;
+import models.world.levelSetup.DeadLineLevelSetup;
 import models.world.mechanics.NormalMechanic;
 import models.world.obstacles.Grave;
 import models.world.obstacles.IceBlock;
@@ -60,6 +60,8 @@ public class GameMenuController implements MenuController {
     public static void handleLosing(GameWorld gameWorld, MupointManager mupointManager) {
         if (gameWorld instanceof IZombieLevel) {
             GameMenuView.getInstance().showResult("You ran out of zombies and failed to eat all the brains! LOSER!!!");
+        } else if (gameWorld.getLevelSetup() instanceof DeadLineLevelSetup) {
+            GameMenuView.getInstance().showResult("Zombie passed deadLine; Loser!!!");
         } else {
             GameMenuView.getInstance().showResult("The zombie ate your brain; LOSER!!!");
         }
@@ -379,7 +381,7 @@ public class GameMenuController implements MenuController {
 
             String mowerSymbol = App.getCurrentGame().getLawnMowerManager().getMowers().get(y).isAlive() ? "[🚜]" : "[❌]";
             rowBuilder.append(String.format("Row %d %s | ", y + 1, mowerSymbol));
-            String mowerSymbol = "    "; // پیش‌فرض خالی
+            mowerSymbol = "    "; // پیش‌فرض خالی
             if (isIZombie && izLevel != null) {
                 Brain brain = izLevel.getBrainAtRow(y);
                 if (brain != null && !brain.isEaten()) {

@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Random;
 
 public class AncientEgyptWorld extends GameWorld {
+    private int deadLineCol;
 
     private static final int MIN_GRAVES = 2;
     private static final int MAX_GRAVES = 5;
@@ -57,6 +58,10 @@ public class AncientEgyptWorld extends GameWorld {
             addGrave(grave);
             spawned++;
         }
+    }
+
+    public void setDeadLineCol(int deadLineCol) {
+        this.deadLineCol = deadLineCol;
     }
 
 }

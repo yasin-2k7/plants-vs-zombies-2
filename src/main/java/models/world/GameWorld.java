@@ -664,7 +664,6 @@ public abstract class GameWorld {
     public boolean isWillUnlockLevel() {
         return willUnlockLevel;
     }
-    public List<Grave> getActiveGrave() {return activeGrave;}
 
     public void addProjectile(Projectile projectile) {
         if (projectile != null) {

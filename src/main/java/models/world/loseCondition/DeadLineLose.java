@@ -11,7 +11,8 @@ public class DeadLineLose implements LoseCondition{
 
     @Override
     public boolean checkLose(GameWorld game) {
+        float deadLineX = deadLineCol * 100f;
         return game.getActiveZombies().stream()
-                .anyMatch(zombie -> zombie.getY() <= deadLineCol);
+                .anyMatch(zombie -> zombie.getX() <= deadLineX);
     }
 }

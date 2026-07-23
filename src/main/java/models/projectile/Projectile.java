@@ -5,6 +5,7 @@ import models.Damageable;
 import models.core.App;
 import models.enums.PlantType;
 import models.enums.ProjectileType;
+import models.plant.Plant;
 import models.plant.components.SunProducerComponent;
 import models.plant.visions.VisionStrategy;
 import models.pool.Resettable;
@@ -37,20 +38,25 @@ public class Projectile implements Resettable{
         if (type.movement.equals("STRAIGHT")) {
             Cell currentCell = App.getCurrentGame().getCellAt(x, y);
 
-            if (currentCell != null && currentCell.getPlant() != null){
-                if (currentCell.getPlant().isFreeze()){
-                    if (hitStrategy.getElement().equalsIgnoreCase("FIRE")){
-                        currentCell.getPlant().unfreeze();
+            if (currentCell != null && currentCell.getPlant() != null) {
+                Plant plant = currentCell.getPlant();
+                System.out.println("💥 Zombie Pea hit " + plant.getClass().getSimpleName() + " for "
+                        + hitStrategy.getDamage() + " damage!");
+
+                if (plant.isFreeze()) {
+                    if (hitStrategy.getElement().equalsIgnoreCase("FIRE")) {
+                        plant.unfreeze();
+                    } else {
+                        plant.takeDamage(hitStrategy.getDamage());
                     }
-                    else{
-                        currentCell.getPlant().takeDamage(hitStrategy.getDamage());
-                    }
-                    pierce--;
-                    if (pierce == 0) {
-                        dead = true;
-                        App.getCurrentGame().getProjectilesPool().release(this);
-                        return;
-                    }
+                } else {
+                    plant.takeDamage(hitStrategy.getDamage());
+                }
+                pierce--;
+                if (pierce == 0) {
+                    dead = true;
+                    App.getCurrentGame().getProjectilesPool().release(this);
+                    return;
                 }
             }
         }

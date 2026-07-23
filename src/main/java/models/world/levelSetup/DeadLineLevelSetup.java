@@ -1,8 +1,8 @@
 package models.world.levelSetup;
 
 import models.world.Cell;
+import models.world.ChapterWorld.AncientEgyptWorld;
 import models.world.GameWorld;
-import models.world.levelsSpecial.DeadLineLevel;
 import models.world.mechanics.NormalMechanic;
 import models.world.mechanics.SunSpawnMechanic;
 import models.zombie.wave.Wave;
@@ -28,7 +28,7 @@ public class DeadLineLevelSetup implements LevelSetup{
         world.setConveyorMode(false);
         buildGrid(world, rows, cols);
 
-        ((DeadLineLevel) world).setDeadLineCol(deadLineCol);
+        ((AncientEgyptWorld) world).setDeadLineCol(deadLineCol);
 
         WaveManager waveManager = new WaveManager(waves);
         world.addMechanic(new NormalMechanic(waveManager));

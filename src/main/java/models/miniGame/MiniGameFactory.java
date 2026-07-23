@@ -374,7 +374,8 @@ public class MiniGameFactory {
                 new WaveSpawnEntry("ZombieSquash", 150)
         );
 
-        LevelSetup levelSetup = new models.world.levelSetup.NormalLevelSetup(5, 9, models.zombie.wave.Wave.generateWaves(4, 300, zombies, 40));
+        LevelSetup levelSetup = new NormalLevelSetup(5, 9,
+                Wave.generateWaves(4, 300, zombies, 40));
         LoseCondition loseCondition = new NormalLose();
         WinCondition winCondition = new NormalWin();
         winCondition.setCurrentLevel(MiniGameLevels.ZOMBOTANY_2);
@@ -395,7 +396,8 @@ public class MiniGameFactory {
                 new WaveSpawnEntry("ZombieSquash", 150)
         );
 
-        LevelSetup levelSetup = new models.world.levelSetup.NormalLevelSetup(5, 9, models.zombie.wave.Wave.generateWaves(5, 400, zombies, 40));
+        LevelSetup levelSetup = new NormalLevelSetup(5, 9,
+                Wave.generateWaves(5, 400, zombies, 40));
         LoseCondition loseCondition = new NormalLose();
         WinCondition winCondition = new NormalWin();
         winCondition.setCurrentLevel(MiniGameLevels.ZOMBOTANY_3);

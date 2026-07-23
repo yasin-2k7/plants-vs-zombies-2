@@ -197,10 +197,10 @@ public class ZombieFactory {
 
     private Zombie createZombotanyZombie(String alias) {
         return switch (alias) {
-            case "ZombiePeashooter" -> new PeashooterZombie(Zombies.PEASHOOTER_ZOMBIE, 200, 1.0, 20);
-            case "ZombieWallnut" -> new WallnutZombie(Zombies.WALLNUT_ZOMBIE, 4000, 0.3, 100);
-            case "ZombieJalapeno" -> new JalapenoZombie(Zombies.JALAPENO_ZOMBIE, 200, 1.0, 100);
-            case "ZombieSquash" -> new SquashZombie(Zombies.SQUASH_ZOMBIE, 200, 3.0, 500);
+            case "ZombiePeashooter" -> new PeashooterZombie(Zombies.PEASHOOTER_ZOMBIE, 20, 0.7, 20);
+            case "ZombieWallnut" -> new WallnutZombie(Zombies.WALLNUT_ZOMBIE, 100, 0.3, 100);
+            case "ZombieJalapeno" -> new JalapenoZombie(Zombies.JALAPENO_ZOMBIE, 20, 0.7, 100);
+            case "ZombieSquash" -> new SquashZombie(Zombies.SQUASH_ZOMBIE, 20, 1.5, 500);
             default -> null;
         };
     }

@@ -21,7 +21,10 @@ public class FrostbiteCavesWorld extends GameWorld {
     private final int icyWindTicks = 250;
     private Random random = new Random();
 
-    public FrostbiteCavesWorld(LevelSetup levelSetup, ArrayList<LoseCondition> loseConditions, WinCondition winCondition, ArrayList<Mechanic> mechanics) {
+    public FrostbiteCavesWorld(LevelSetup levelSetup,
+                               ArrayList<LoseCondition> loseConditions,
+                               WinCondition winCondition,
+                               ArrayList<Mechanic> mechanics) {
         super(levelSetup, loseConditions, winCondition, mechanics);
     }
 
@@ -55,8 +58,7 @@ public class FrostbiteCavesWorld extends GameWorld {
 
         }
     }
-
-            private void makeCellSlippy(){
+    private void makeCellSlippy(){
         int cellRow = random.nextInt(getRows());
         int cellCol = random.nextInt(3) + getCols()-2;
         if (grid[cellRow][cellCol].isLowLyingCoast()){
@@ -79,7 +81,9 @@ public class FrostbiteCavesWorld extends GameWorld {
         }
         else{
             Cell cell = grid[cellRow][cellCol];
-            Zombie zombie = random.nextBoolean() ? new ZombieFactory().createZombie("ZombieDefault") : new ZombieFactory().createZombie("ZombieConehead");
+            Zombie zombie = random.nextBoolean() ? new ZombieFactory().createZombie("ZombieDefault") :
+                    new ZombieFactory().createZombie("ZombieConehead");
+
             if (zombie != null) {
                 zombie.setX(cell.getX());
                 zombie.setY(cell.getY());

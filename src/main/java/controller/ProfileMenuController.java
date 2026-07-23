@@ -32,7 +32,7 @@ public class ProfileMenuController implements MenuController {
         if (!errors.isEmpty()) {
             return String.join("\n", errors);
         }
-        String oldUsername = user.getUsername();
+
         user.setUsername(newUsername);
 
 
