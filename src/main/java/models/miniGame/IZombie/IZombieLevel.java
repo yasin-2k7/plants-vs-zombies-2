@@ -15,15 +15,13 @@ public class IZombieLevel extends GameWorld {
     private List<Brain> brains;
     private List<SunProducer> sunProducers;
     private int redLineCol;
+    private long currentTick = 0;
 
     public IZombieLevel(LevelSetup levelSetup,
                         ArrayList<LoseCondition> loseConditions,
                         WinCondition winCondition,
                         ArrayList<Mechanic> mechanics) {
         super(levelSetup, loseConditions, winCondition, mechanics);
-        this.brains = new ArrayList<>();
-        this.sunProducers = new ArrayList<>();
-        this.availableZombies = new ArrayList<>();
         this.redLineCol = 5;
         setSun(150);
     }
@@ -35,9 +33,10 @@ public class IZombieLevel extends GameWorld {
 
     @Override
     public void tick(){
+        currentTick++;
         super.tick();
 
-        for (SunProducer sp : sunProducers) {
+        for (SunProducer sp : getSunProducers()) {
             if (!sp.isDead() && getActiveZombies().contains(sp)) {
                 sp.updateSunGeneration(this);
             }
@@ -51,7 +50,7 @@ public class IZombieLevel extends GameWorld {
             if (brain != null && !brain.isEaten()) {
                 if (zombie.getX() <= brain.getX() + 20) {
                     brain.eat();
-                    zombie.die();
+                    zombie.eatBrainAndLeave();
                 }
             }
         }
@@ -86,7 +85,7 @@ public class IZombieLevel extends GameWorld {
     }
 
     public Brain getBrainAtRow(int row) {
-        for (Brain brain : brains) {
+        for (Brain brain : getBrains()) {
             if (brain.getRow() == row) return brain;
         }
         return null;
@@ -94,7 +93,7 @@ public class IZombieLevel extends GameWorld {
 
     public int getMinZombieCost() {
         int minCost = Integer.MAX_VALUE;
-        for (Zombie z : availableZombies) {
+        for (Zombie z : getAvailableZombies()) {
             int cost = getZombieCost(z);
             if (cost < minCost) minCost = cost;
         }
@@ -106,10 +105,31 @@ public class IZombieLevel extends GameWorld {
         setSun(getSun() + amount);
     }
 
-    public List<Brain> getBrains() { return brains; }
-    public List<SunProducer> getSunProducers() { return sunProducers; }
-    public List<Zombie> getAvailableZombies() { return availableZombies; }
-    public void setAvailableZombies(List<Zombie> availableZombies) { this.availableZombies = availableZombies; }
+    public List<Brain> getBrains() {
+        if (brains == null) brains = new ArrayList<>();
+        return brains;
+    }
 
+    public List<SunProducer> getSunProducers() {
+        if (sunProducers == null) sunProducers = new ArrayList<>();
+        return sunProducers;
+    }
 
+    public List<Zombie> getAvailableZombies() {
+        if (availableZombies == null) availableZombies = new ArrayList<>();
+        return availableZombies;
+    }
+
+    public void setAvailableZombies(List<Zombie> availableZombies) {
+        this.availableZombies = availableZombies;
+    }
+
+    @Override
+    public int getCurrentTick() {
+        return Math.toIntExact(currentTick);
+    }
+
+    public void setCurrentTick(long currentTick) {
+        this.currentTick = currentTick;
+    }
 }

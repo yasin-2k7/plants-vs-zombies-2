@@ -31,6 +31,7 @@ public enum GameMenuCommands {
     PLANT_HELD_SEED("\\s*plant\\s+held\\s+seed\\s+-l\\s+\\(\\s*(?<x>\\d+)\\s*,\\s*(?<y>\\d+)\\s*\\)\\s*"),
     SWAP_PLANTS("\\s*swap\\s+plants\\s+-l1\\s+\\(\\s*(?<row1>\\d+)\\s*,\\s*(?<col1>\\d+)\\s*\\)\\s+-l2\\s+\\(\\s*(?<row2>\\d+)\\s*,\\s*(?<col2>\\d+)\\s*\\)\\s*"),
     UPGRADE_PLANT("\\s*upgrade\\s+plant\\s+-t\\s+(?<type>\\S+)\\s*"),
+    RESIT_MAP("\\s*reset\\s+map\\s*"),
     PLACE_ZOMBIE("\\s*place\\s+zombie\\s+-t\\s+(?<type>\\S+)\\s+-l\\s+\\(\\s*(?<x>\\d+)\\s*,\\s*(?<y>\\d+)\\s*\\)\\s*"),
     THROW_BOWLING_BALL("\\s*throw\\s+bowling-ball\\s+-t\\s+(?<type>\\S+)\\s+-l\\s+\\(\\s*(?<x>\\d+)\\s*,\\s*(?<y>\\d+)\\s*\\)\\s*");
 

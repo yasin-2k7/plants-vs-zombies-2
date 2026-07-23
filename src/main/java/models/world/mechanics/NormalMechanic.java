@@ -6,6 +6,7 @@ import models.world.GameWorld;
 import models.zombie.Zombie;
 import models.zombie.wave.WaveManager;
 
+import java.util.List;
 import java.util.Random;
 
 public class NormalMechanic implements Mechanic{
@@ -20,15 +21,6 @@ public class NormalMechanic implements Mechanic{
 
     @Override
     public void applyMechanic(GameWorld world) {
-//        long now = System.currentTimeMillis();
-//
-//        if(now - lastZombieSpawnTime >= zombieSpawnInterval){
-//            if(!waveManager.isLevelCompleted()){
-//                int lane = random.nextInt(world.getRows());
-//                waveManager.spawnNextZombie(lane, world);
-//                lastZombieSpawnTime = now;
-//            }
-//        }
 
 
         int difficulty = App.getCurrentUser().getGameDifficulty();
@@ -42,12 +34,16 @@ public class NormalMechanic implements Mechanic{
         }
 
 
-        world.getActiveZombies().stream()
+        List<Zombie> deadZombies = world.getActiveZombies().stream()
                 .filter(Zombie::isDead)
-                .forEach(zombie -> {
-                    waveManager.onZombieKilled(zombie);
-                    world.notifyZombieKilled();
-                });
+                .toList();
+
+        for (Zombie zombie : deadZombies) {
+            waveManager.onZombieKilled(zombie);
+            world.notifyZombieKilled();
+        }
+
+        world.getActiveZombies().removeAll(deadZombies);
 
     }
 

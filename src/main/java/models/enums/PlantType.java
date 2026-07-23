@@ -52,6 +52,7 @@ public enum PlantType {
     GARLIC(PlantFamily.WALL_NUT, 50, 20),
     SWEET_POTATO(PlantFamily.WALL_NUT, 150, 20),
     EXPLODE_O_NUT(PlantFamily.WALL_NUT, 50, 20),
+    GIANT_WALLNUT(PlantFamily.WALL_NUT, 0, 0),
     PUMPKIN(PlantFamily.WALL_NUT, 150, 20),
     SUN_BEAN(PlantFamily.WALL_NUT, 50, 20),
     TORCHWOOD(PlantFamily.MODIFIER, 175, 5),

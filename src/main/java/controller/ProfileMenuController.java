@@ -33,8 +33,9 @@ public class ProfileMenuController implements MenuController{
         if (!errors.isEmpty()) {
             return String.join("\n", errors);
         }
-
+        String oldUsername = user.getUsername();
         user.setUsername(newUsername);
+
 
         UserDataManager.updateUsername(oldUsername, user);
         UserDataManager.saveUser(user);
@@ -114,16 +115,9 @@ public class ProfileMenuController implements MenuController{
                     "Coins: " + user.getCoins() + "\n" +
                     "Gems: " + user.getGems() + "\n" +
                     "Levels completed: " + user.getCompletedLevels() + "\n" +
-                    "Mu point: ";
+                    "Mu point: " + user.getMaxMupoint();
 
         return info;
-        return "Username: " + user.getUsername() + "\n" +
-                "Nickname: " + user.getNickname() + "\n" +
-                "Games number: "  + "\n" +
-                "Coins: " + user.getCoins() + "\n" +
-                "Gems: " + user.getGems() + "\n" +
-                "Levels number: " + (user.getUserLevel() - 1) + "\n" +
-                "Mu point: ";
     }
 
     public void showCurrentMenu() {

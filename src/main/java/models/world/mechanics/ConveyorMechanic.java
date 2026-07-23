@@ -8,7 +8,7 @@ import java.util.Random;
 
 public class ConveyorMechanic implements Mechanic{
     private long lastSpawnTick = 0;
-    private int spawnInterval = 12000;
+    private int spawnInterval = 50;
     private Random random = new Random();
     private List<PlantCard> availablePlants;
 
@@ -26,9 +26,13 @@ public class ConveyorMechanic implements Mechanic{
 
         if(now - lastSpawnTick >= spawnInterval){
             List<PlantCard> conveyor = world.getConveyorBelt();
-            PlantCard random = getRandomUnlokedPlant();
-            conveyor.add(random);
-            lastSpawnTick = now;
+            if (conveyor != null) {
+                PlantCard newCard = getRandomUnlokedPlant();
+                conveyor.add(newCard);
+                lastSpawnTick = now;
+
+                System.out.println(" 🛒 [Conveyor Belt] New card added: " + newCard.getType());
+            }
         }
 
 

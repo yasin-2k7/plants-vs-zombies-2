@@ -291,4 +291,10 @@ public abstract class Zombie implements Damageable {
     public GameWorld getWorld() {
         return world;
     }
+
+
+    public void eatBrainAndLeave() {
+        this.isDead = true;
+        System.out.println("Zombie ate the brain and successfully left the board!");
+    }
 }

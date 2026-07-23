@@ -110,6 +110,9 @@ public class User {
         unlockedPlantsLevels.put(PlantType.REPEATER, 1);
         unlockedPlantsLevels.put(PlantType.SNOW_PEA, 1);
         unlockedPlantsLevels.put(PlantType.LILY_PAD, 1);
+        unlockedPlantsLevels.put(PlantType.GIANT_WALLNUT, 1);
+        unlockedPlantsLevels.put(PlantType.EXPLODE_O_NUT, 1);
+
     }
 
     public void afterLoad() {
@@ -138,7 +141,6 @@ public class User {
     }
 
     private void save() {
-        // فقط اگر کاربر از فایل لود شده باشد یا جدیداً ثبت‌نام کرده باشد، ذخیره کن
         if (isLoaded || !username.isEmpty()) {
             UserDataManager.saveUser(this);
         }

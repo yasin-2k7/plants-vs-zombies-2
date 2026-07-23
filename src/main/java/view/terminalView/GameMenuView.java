@@ -1,11 +1,8 @@
 package view.terminalView;
 
 import controller.GameMenuController;
-import controller.SignupMenuController;
 import models.enums.PlantType;
 import models.enums.commands.GameMenuCommands;
-import models.enums.commands.SignupMenuCommands;
-import models.miniGame.bowling.BowlingBallType;
 import view.View;
 
 import java.util.regex.Matcher;
@@ -165,6 +162,10 @@ public class GameMenuView implements View{
                         }
                         controller.upgradePlant(upgradeType);
                         return;
+                    case RESIT_MAP:
+                        controller.resetMap();
+                        System.out.println("your map reset");
+                        break;
 
                     case PLACE_ZOMBIE:
                         type = matcher.group("type");
@@ -176,8 +177,8 @@ public class GameMenuView implements View{
                         type = matcher.group("type");
                         x = Float.parseFloat(matcher.group("x"));
                         y = Float.parseFloat(matcher.group("y"));
-                        BowlingBallType ballType = null;
-                        for (BowlingBallType bt : BowlingBallType.values()){
+                        PlantType ballType = null;
+                        for (PlantType bt : PlantType.values()){
                             if (bt.name().equalsIgnoreCase(type)){
                                 ballType = bt;
                                 break;

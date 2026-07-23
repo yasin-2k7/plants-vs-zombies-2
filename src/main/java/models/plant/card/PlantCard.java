@@ -73,4 +73,6 @@ public class PlantCard {
     public int getCurrentCooldownTicks() {
         return currentCooldownTicks;
     }
+
+
 }

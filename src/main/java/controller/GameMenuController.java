@@ -6,11 +6,15 @@ import models.enums.CollectableType;
 import models.core.UserDataManager;
 import models.enums.PlantLayer;
 import models.enums.PlantType;
+import models.lawnMower.LawnMower;
+import models.lawnMower.LawnMowerManager;
+import models.miniGame.IZombie.Brain;
 import models.miniGame.beghouled.GridPosition;
 import models.miniGame.IZombie.IZombieLevel;
 import models.miniGame.beghouled.BeghouledMechanics;
-import models.miniGame.bowling.BowlingBallType;
 import models.miniGame.bowling.BowlingMechanics;
+import models.miniGame.vaseBreaker.SeedPacket;
+import models.miniGame.vaseBreaker.Vase;
 import models.miniGame.vaseBreaker.VaseBreakerLevel;
 import models.mupoint.MupointManager;
 import models.plant.Plant;
@@ -31,8 +35,12 @@ import view.terminalView.*;
 import java.util.List;
 
 public class GameMenuController implements MenuController {
-    public static void handleWinning(GameWorld gameWorld) {
-        GameMenuView.getInstance().showResult("Dear humanz, zis is not done yet; we will come back to eat your brainz, humanz.");
+    public static void handleWinning(GameWorld gameWorld, MupointManager mupointManager) {
+        if (gameWorld instanceof IZombieLevel) {
+            GameMenuView.getInstance().showResult("Delicious! You ate all the brains and WON the level! 🧠😋");
+        } else {
+            GameMenuView.getInstance().showResult("Dear humanz, zis is not done yet; we will come back to eat your brainz, humanz.");
+        }
         if (gameWorld.isWillUnlockLevel()){
             App.getCurrentUser().unlockLevel();
         }
@@ -49,7 +57,11 @@ public class GameMenuController implements MenuController {
     }
 
     public static void handleLosing(GameWorld gameWorld, MupointManager mupointManager) {
-        GameMenuView.getInstance().showResult(("The zombie ate your brain; LOSER!!!"));
+        if (gameWorld instanceof IZombieLevel) {
+            GameMenuView.getInstance().showResult("You ran out of zombies and failed to eat all the brains! LOSER!!!");
+        } else {
+            GameMenuView.getInstance().showResult("The zombie ate your brain; LOSER!!!");
+        }
         User user = App.getCurrentUser();
         if(user != null && mupointManager != null){
             user.updateMupointRecord(mupointManager.getTotalMupoints());
@@ -352,14 +364,42 @@ public class GameMenuController implements MenuController {
         System.out.printf(" WAVE: %d/%d  |  SUN: %d ☀️  |  PLANT FOOD: %d ⚡  |  STATUS: %s 🎮%n",
                 currentWaveNum, totalWaves, App.getCurrentGame().getSun(), App.getCurrentGame().getPlantFoods(), App.getCurrentGame().getState());
         System.out.println("==================================================================================================");
+
+        boolean isVaseBreaker = App.getCurrentGame() instanceof VaseBreakerLevel;
+        VaseBreakerLevel vbLevel = isVaseBreaker ? (VaseBreakerLevel) App.getCurrentGame() : null;
+        boolean isIZombie = App.getCurrentGame() instanceof IZombieLevel;
+        IZombieLevel izLevel = isIZombie ? (IZombieLevel) App.getCurrentGame() : null;
+
         for (int y = 0; y < App.getCurrentGame().getGrid().length; y++) {
-            String mowerSymbol = App.getCurrentGame().getLawnMowerManager().getMowers().get(y).isAlive() ? "[🚜]" : "[❌]";
-            System.out.printf("Row %d %s | ", y+1, mowerSymbol);
+            String mowerSymbol = "    "; // پیش‌فرض خالی
+            if (isIZombie && izLevel != null) {
+                Brain brain = izLevel.getBrainAtRow(y);
+                if (brain != null && !brain.isEaten()) {
+                    mowerSymbol = "[🧠]"; // اگر مغز موجود بود
+                }
+            } else {
+                LawnMowerManager lmManager = App.getCurrentGame().getLawnMowerManager();
+                if (lmManager != null && lmManager.isEnabled() && y < lmManager.getMowers().size()) {
+                    LawnMower mower = lmManager.getMowers().get(y);
+                    mowerSymbol = mower.isAlive() ? "[🚜]" : "[❌]";
+                }
+            }            System.out.printf("Row %d %s | ", y+1, mowerSymbol);
 
             for (int x = 0; x < App.getCurrentGame().getGrid()[0].length; x++) {
                 Cell cell = App.getCurrentGame().getGrid()[y][x];
 
                 String terrainSymbol = cell.getTerrain().getTerminalSymbol(); // مقدار پیش‌فرض
+
+                if (isVaseBreaker && vbLevel != null) {
+                    Vase vase = vbLevel.getVaseAt(y, x);
+                    SeedPacket seed = vbLevel.getSeedPacketAt(y, x);
+
+                    if (vase != null && !vase.isBroken()) {
+                        terrainSymbol = vase.getType().getSymbol();
+                    } else if (seed != null) {
+                        terrainSymbol = "🌱📦";
+                    }
+                }
 
                 if (cell.hasObstacle()) {
                     Obstacle obs = cell.getObstacle();
@@ -578,7 +618,8 @@ public class GameMenuController implements MenuController {
             return;
         }
         boolean allowed = level.getAvailableZombies().stream()
-                .anyMatch(z -> z.getName().name().equalsIgnoreCase(type));
+                .anyMatch(z -> z.getName() == zombie.getName()
+                        || (z.getSpecificName() != null && z.getSpecificName().equalsIgnoreCase(type)));
         if (!allowed) {
             GameMenuView.getInstance().showResult("u dont have this zombie");
             return;
@@ -621,14 +662,24 @@ public class GameMenuController implements MenuController {
         }
     }
 
-    public void throwBowlingBall(BowlingBallType type, float x, float y) {
+    public void resetMap(){
+        GameWorld world = App.getCurrentGame();
+        BeghouledMechanics mechanics = world.getMechanic(BeghouledMechanics.class);
+        if (mechanics == null){
+            GameMenuView.getInstance().showResult("this command is only available in Beghouled!");
+            return;
+        }
+        mechanics.resetBoard(world);
+    }
+
+    public void throwBowlingBall(PlantType plantType, float x, float y) {
         GameWorld game = App.getCurrentGame();
         BowlingMechanics mechanics = game.getMechanic(BowlingMechanics.class);
         if (mechanics == null) {
             GameMenuView.getInstance().showResult("this command is only available in Bowling!");
             return;
         }
-        GameMenuView.getInstance().showResult(mechanics.throwBall(game, type, x, y));
+        GameMenuView.getInstance().showResult(mechanics.throwBall(game, plantType, x, y));
     }
 
 

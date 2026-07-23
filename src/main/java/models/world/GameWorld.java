@@ -59,7 +59,7 @@ public abstract class GameWorld {
     private WinCondition winCondition;
     private ArrayList<Mechanic> mechanics;
 
-    private List<PlantCard> conveyorBelt;
+    private List<PlantCard> conveyorBelt = new ArrayList<>();
     private List<PlantCard> plantLists;
     private boolean isConveyorMode;
 
@@ -452,7 +452,7 @@ public abstract class GameWorld {
                 }
                 user.getQuestManager().checkAllQuests(user);
                 user.getQuestStats().setLevelWon(true);
-                GameMenuController.handleWinning(this);
+                GameMenuController.handleWinning(this, mupointManager);
             }
         }
         for(LoseCondition lose : loseConditions){
@@ -545,7 +545,9 @@ public abstract class GameWorld {
     public GameState getState() { return state; }
     public void setState(GameState state) { this.state = state; }
 
-    public List<Zombie> getActiveZombies() { return activeZombies; }
+    public List<Zombie> getActiveZombies() {
+        return activeZombies;
+    }
 
     public List<Damageable> getActiveTargets() {
         return activeTargets;
@@ -672,4 +674,10 @@ public abstract class GameWorld {
         return willUnlockLevel;
     }
     public List<Grave> getActiveGrave() {return activeGrave;}
+
+    public void addProjectile(Projectile projectile) {
+        if (projectile != null) {
+            this.activeProjectiles.add(projectile);
+        }
+    }
 }

@@ -29,6 +29,10 @@ public class IZombieSetup implements LevelSetup {
     public void groundSetup(GameWorld world) {
         world.setConveyorMode(false);
 
+        if (world.getLawnMowerManager() != null) {
+            world.getLawnMowerManager().setEnabled(false);
+        }
+
         world.setRows(rows);
         world.setCols(cols);
 
