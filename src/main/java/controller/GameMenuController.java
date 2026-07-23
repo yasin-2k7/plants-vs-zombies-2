@@ -63,25 +63,10 @@ public class GameMenuController implements MenuController {
     }
 
     @Override
-    public void changeMenu() {
-
-    }
+    public void changeMenu() {}
 
     public static void updateState(String state){
         GameMenuView.getInstance().showResult(state);
-    }
-
-    public String enterMenu(String menuName) {
-//        if (menuName.equalsIgnoreCase("collection")) {
-//            AppView.setCurrentScreen(CollectionMenuView.getInstance());
-//            return "Entering collection menu...";
-//        } else if (menuName.equalsIgnoreCase("travel log")) {
-//            AppView.setCurrentScreen(TravelLogMenuView.getInstance());
-//            TravelLogMenuView.getInstance().showCurrentPage();
-//            return "Entering Travel Log...";
-//        }
-//        return "Invalid menu name!";
-        return "";
     }
 
     @Override
@@ -124,7 +109,6 @@ public class GameMenuController implements MenuController {
                             if (cell.getPlant(PlantLayer.SHIELD) != null) cell.getPlant(PlantLayer.SHIELD).takeDamage(80);
                         }
                     }
-
                 }
                 else{
                     GameWorld game = App.getCurrentGame();
@@ -155,8 +139,6 @@ public class GameMenuController implements MenuController {
             GameMenuView.getInstance().showResult("invalid collectable type");
             return;
         }
-
-
         for (Collectable collectable : App.getCurrentGame().getActiveCollectables()){
             if (collectable.isDead()) continue;
             if (Math.abs(collectable.getX() - x) < 2 && Math.abs(collectable.getY() - y) < 2){
@@ -208,9 +190,38 @@ public class GameMenuController implements MenuController {
             for (Zombie zombie : game.getActiveZombies()) {
                 zombie.die();
             }
-//            game.getActiveZombies().clear();
             GameMenuView.getInstance().showResult("All zombies eliminated by nuke (fallback)!");
         }
+    }
+
+    public void selectPlant(PlantType type){
+        PlantCard selectedCard = null;
+        for (PlantCard card : App.getCurrentGame().getPlantLists()){
+            if (card.getType().equals(type)){
+                selectedCard = card;
+                break;
+            }
+        }
+        if (selectedCard == null){
+            GameMenuView.getInstance().showResult(type + " is not in your plants!");
+            return;
+        }
+        App.getCurrentGame().setPlantSelected(true);
+        App.getCurrentGame().setSelectedPlant(selectedCard.getType());
+    }
+
+    public void unselectPlant(){
+        App.getCurrentGame().setSelectedPlant(null);
+        App.getCurrentGame().setPlantSelected(false);
+    }
+
+    public void plantSelectedPlant(float x, float y){
+        if (App.getCurrentGame().getSelectedPlant() == null){
+            GameMenuView.getInstance().showResult("select a plant first!");
+            return;
+        }
+        plantPlant(App.getCurrentGame().getSelectedPlant(), x, y);
+        unselectPlant();
     }
 
     public void plantPlant(PlantType type, float x, float y){
@@ -286,13 +297,6 @@ public class GameMenuController implements MenuController {
         }
     }
 
-    public void activateCooldown(){
-        if (App.getCurrentGame().isConveyorMode()) return;
-        for (PlantCard card : App.getCurrentGame().getPlantLists()){
-            card.setActiveCooldown();
-        }
-    }
-
     public void pluckPlant(float x, float y){
         Cell selectedCell = findCellAt(App.getCurrentGame(), x, y);
         if (selectedCell == null || !selectedCell.findAndRemovePlant()) {
@@ -347,24 +351,23 @@ public class GameMenuController implements MenuController {
             }
             totalWaves = wm.getTotalWavesCount();
         }
-
         GameMenuView.getInstance().showResult("==================================================================================================");
         String title = String.format(" WAVE: %d/%d  |  SUN: %d ☀️  |  PLANT FOOD: %d ⚡  |  STATUS: %s 🎮",
                 currentWaveNum, totalWaves, App.getCurrentGame().getSun(), App.getCurrentGame().getPlantFoods(), App.getCurrentGame().getState());
         GameMenuView.getInstance().showResult(title);
         GameMenuView.getInstance().showResult("==================================================================================================");
-
         for (int y = 0; y < App.getCurrentGame().getGrid().length; y++) {
             StringBuilder rowBuilder = new StringBuilder();
-
             String mowerSymbol = App.getCurrentGame().getLawnMowerManager().getMowers().get(y).isAlive() ? "[🚜]" : "[❌]";
             rowBuilder.append(String.format("Row %d %s | ", y + 1, mowerSymbol));
-
             for (int x = 0; x < App.getCurrentGame().getGrid()[0].length; x++) {
                 Cell cell = App.getCurrentGame().getGrid()[y][x];
-
                 String terrainSymbol = cell.getTerrain().getTerminalSymbol();
-
+                if (cell.getSlippingDir() == 1) {
+                    terrainSymbol = "🧊👇";
+                } else if (cell.getSlippingDir() == -1) {
+                    terrainSymbol = "🧊👆";
+                }
                 if (cell.hasObstacle()) {
                     Obstacle obs = cell.getObstacle();
                     if (obs instanceof Grave grave) {
@@ -381,7 +384,6 @@ public class GameMenuController implements MenuController {
                         terrainSymbol = "🪨";
                     }
                 }
-
                 String plantSymbol = "    ";
                 if (!cell.isEmpty()) {
                     Plant plant = cell.getPlant();
@@ -391,22 +393,17 @@ public class GameMenuController implements MenuController {
                         plantSymbol = plant.getType().getSymbol();
                     }
                 }
-
                 String zombieString = "       ";
                 List<Zombie> zombiesInCell = Cell.getZombiesInCell(cell);
                 if (!zombiesInCell.isEmpty()) {
                     Zombie firstZombie = zombiesInCell.getFirst();
                     zombieString = String.format("Z(%.1f)", firstZombie.getX());
                 }
-
                 String terrain = String.format("[ %s | %-4s | %-7s ] | ", terrainSymbol, plantSymbol.trim(), zombieString.trim());
-
                 rowBuilder.append(terrain);
             }
-
             GameMenuView.getInstance().showResult(rowBuilder.toString());
         }
-
         GameMenuView.getInstance().showResult("==================================================================================================");
     }
 
@@ -463,6 +460,8 @@ public class GameMenuController implements MenuController {
                 GameMenuView.getInstance().showResult("        frozen " + zombie.getFreezedTicksRemaining());
             if (zombie.getSlowTicksRemaining() > 0)
                 GameMenuView.getInstance().showResult("        slowed " + zombie.getSlowTicksRemaining());
+            if (zombie.getIceHealth() > 0)
+                GameMenuView.getInstance().showResult("        ice health " + zombie.getIceHealth());
             GameMenuView.getInstance().showResult("");
         }
     }
@@ -492,7 +491,6 @@ public class GameMenuController implements MenuController {
             GameMenuView.getInstance().showResult("invalid zombie type!");
             return;
         }
-
         float newY = -1;
         for (Cell[] cells : App.getCurrentGame().getGrid()){
             if (cells[0].getY() + App.getCellHeight()/2 >= y && cells[0].getY() - App.getCellHeight()/2 <= y){
@@ -503,17 +501,11 @@ public class GameMenuController implements MenuController {
             GameMenuView.getInstance().showResult("you cannot spawn zombie in that place!");
             return;
         }
-
-        // تنظیم موقعیت زامبی
         zombie.setX(x);
         zombie.setY(newY);
 
         App.getCurrentGame().getActiveZombies().add(zombie);
         GameMenuView.getInstance().showResult("Spawned " + type + " at (" + x + ", " + newY + ")");
-    }
-
-    public void startZombieWaves(){
-
     }
 
     //miniGames

@@ -1,6 +1,7 @@
 package models.world.ChapterWorld;
 
 import controller.GameMenuController;
+import models.core.App;
 import models.plant.Plant;
 import models.world.Cell;
 import models.world.GameWorld;
@@ -56,30 +57,32 @@ public class FrostbiteCavesWorld extends GameWorld {
         }
     }
 
-            private void makeCellSlippy(){
+    private void makeCellSlippy(){
+        Random random = new Random();
         int cellRow = random.nextInt(getRows());
-        int cellCol = random.nextInt(3) + getCols()-2;
-        if (grid[cellRow][cellCol].isLowLyingCoast()){
+        int cellCol = random.nextInt(3) + getCols()-3;
+        if (grid[cellRow][cellCol].getSlippingDir() != 0){
             makeCellSlippy();
         }
         else{
             int dir;
             if (cellRow == 0) dir = 1;
-            else if (cellRow == getRows()) dir = -1;
+            else if (cellRow == getRows()-1) dir = -1;
             else dir = random.nextBoolean() ? 1 : -1;
             grid[cellRow][cellCol].setSlippingDir(dir);
         }
     }
 
     private void createIcyZombie(){
+        Random random = new Random();
         int cellRow = random.nextInt(getRows());
-        int cellCol = random.nextInt(3) + getCols()-2;
+        int cellCol = random.nextInt(3) + getCols()-3;
         if (!Cell.getZombiesInCell(grid[cellRow][cellCol]).isEmpty()){
             createIcyZombie();
         }
         else{
             Cell cell = grid[cellRow][cellCol];
-            Zombie zombie = random.nextBoolean() ? new ZombieFactory().createZombie("ZombieDefault") : new ZombieFactory().createZombie("ZombieConehead");
+            Zombie zombie = random.nextBoolean() ? new ZombieFactory().createZombie("ZombieDefault") : new ZombieFactory().createZombie(App.getZombieId("ZombieConehead"));
             if (zombie != null) {
                 zombie.setX(cell.getX());
                 zombie.setY(cell.getY());

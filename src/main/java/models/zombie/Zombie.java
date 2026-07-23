@@ -67,7 +67,7 @@ public abstract class Zombie implements Damageable {
     }
 
     public void update() {
-        if (isDead || health <= 0) return;
+        if (isDead || health <= 0 || iceHealth > 0) return;
         if (slowTicksRemaining > 0) {
             slowTicksRemaining--;
             if (slowTicksRemaining == 0) {
@@ -99,21 +99,21 @@ public abstract class Zombie implements Damageable {
         this.x -= this.speed; // حرکت به چپ
     }
 
-        @Override
-        public void takeDamage(int amount, String damageType) {
-            if (isDead) return;
-            if (iceHealth > 0){
-                iceHealth -= damage;
-                if (iceHealth <= 0){
-                    unfreeze();
-                }
-                return;
+    @Override
+    public void takeDamage(int amount, String damageType) {
+        if (isDead) return;
+        if (iceHealth > 0){
+            iceHealth -= damage;
+            if (iceHealth <= 0){
+                unfreeze();
             }
-            this.health -= amount;
-            if (this.health <= 0) {
-                die();
-            }
+            return;
         }
+        this.health -= amount;
+        if (this.health <= 0) {
+                die();
+        }
+    }
 
     public void unfreeze() {
         iceHealth = 0;

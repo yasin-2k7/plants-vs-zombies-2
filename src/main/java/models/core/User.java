@@ -388,6 +388,7 @@ public class User {
     }
 
     public void unlockLevel() {
+        if (unlockedLevel == 4 && unlockedChapter == 4) return;
         int newLevel = unlockedLevel == 4 ? 1 : unlockedLevel+1;
         int newChapter = newLevel == 1 ? unlockedChapter+1 : unlockedChapter;
         unlockedLevel = newLevel;

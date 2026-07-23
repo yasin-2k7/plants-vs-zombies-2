@@ -84,10 +84,16 @@ public class Projectile implements Resettable{
             pierce--;
             if (pierce == 0) {
                 dead = true;
-                App.getCurrentGame().getProjectilesPool().release(this);
                 return;
             }
         }
+
+        if (movementStrategy.isDead(this)){
+            dead = true;
+            App.getCurrentGame().getProjectilesPool().release(this);
+        }
+
+
     }
 
     @Override
