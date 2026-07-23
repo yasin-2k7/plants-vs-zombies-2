@@ -10,10 +10,7 @@ import models.quest.types.DailyQuest;
 import models.quest.types.MainQuest;
 import models.quest.types.EpicChallengeQuest;
 import models.world.GameWorld;
-import view.terminalView.AppView;
-import view.terminalView.GameMenuView;
-import view.terminalView.MainMenuView;
-import view.terminalView.TravelLogMenuView;
+import view.terminalView.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -129,8 +126,14 @@ public class TravelLogMenuController implements MenuController {
         try {
             GameWorld world = MiniGameFactory.createMiniGameLevel(selected, level);
             App.setCurrentGame(world);
-            AppView.setCurrentScreen(GameMenuView.getInstance());
-            GameMenuView.getInstance().showResult("Starting " + selected.name() + " - Level " + level + "!");
+
+            if (world.getLevelSetup().requirePlantSelection()) {
+                AppView.setCurrentScreen(PlantMenuView.getInstance());
+                GameMenuView.getInstance().showResult("Select your plants for " + selected.name() + " - Level " + level + "!");
+            } else {
+                AppView.setCurrentScreen(GameMenuView.getInstance());
+                GameMenuView.getInstance().showResult("Starting " + selected.name() + " - Level " + level + "!");
+            }
         } catch (IllegalArgumentException e) {
             GameMenuView.getInstance().showResult(e.getMessage());
         }

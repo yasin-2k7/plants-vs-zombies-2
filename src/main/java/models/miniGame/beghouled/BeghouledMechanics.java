@@ -1,6 +1,5 @@
 package models.miniGame.beghouled;
 
-import controller.GameMenuController;
 import models.enums.PlantLayer;
 import models.enums.PlantType;
 import models.plant.Plant;
@@ -169,6 +168,7 @@ public class BeghouledMechanics implements Mechanic {
         if (!cascadeMatches.isEmpty()) {
             processMatches(world, cascadeMatches, true);
         } else if (!hasAnyPossibleMove(world)) {
+            System.out.println("No more moves possible — board reset!");
             resetBoard(world);
         }
     }
@@ -209,17 +209,15 @@ public class BeghouledMechanics implements Mechanic {
                 return candidate;
             }
         }
-        return shuffled.get(0); // اگه هیچی امن نبود (خیلی نادره)، همون اولی
+        return shuffled.get(0);
     }
 
     private boolean wouldFormMatch(GameWorld world, int row, int col, PlantType type) {
-        // چک افقی: دو تای قبلی هم‌ردیف
         if (col >= 2) {
             PlantType left1 = typeAt(world, row, col - 1);
             PlantType left2 = typeAt(world, row, col - 2);
             if (type == left1 && type == left2) return true;
         }
-        // چک عمودی: دو تای پایینی (چون از پایین به بالا پر می‌کنیم)
         if (row <= world.getRows() - 3) {
             PlantType down1 = typeAt(world, row + 1, col);
             PlantType down2 = typeAt(world, row + 2, col);
@@ -228,7 +226,7 @@ public class BeghouledMechanics implements Mechanic {
         return false;
     }
 
-    private void resetBoard(GameWorld world) {
+    public void resetBoard(GameWorld world) {
         for (int r = 0; r < world.getRows(); r++) {
             for (int c = 0; c < world.getCols(); c++) {
                 if (craters.contains(new GridPosition(r, c))) continue;
@@ -236,7 +234,6 @@ public class BeghouledMechanics implements Mechanic {
             }
         }
         fillRandomPlants(world);
-        GameMenuController.updateState("No more moves possible — board reset!");
     }
 
     private boolean hasAnyPossibleMove(GameWorld world) {

@@ -21,8 +21,7 @@ public class VaseBreakerLevel extends GameWorld {
                             WinCondition winCondition,
                             ArrayList<Mechanic> mechanics){
         super(levelSetup, loseConditions, winCondition, mechanics);
-        this.vases = new ArrayList<>();
-        this.droppedSeeds = new ArrayList<>();
+
     }
 
     @Override
@@ -49,7 +48,7 @@ public class VaseBreakerLevel extends GameWorld {
     }
 
     public Vase getVaseAt(int row, int col) {
-        for (Vase vase : vases) {
+        for (Vase vase : getVases()) {
             if (vase.getRow() == row && vase.getCol() == col) {
                 return vase;
             }
@@ -58,7 +57,7 @@ public class VaseBreakerLevel extends GameWorld {
     }
 
     public SeedPacket getSeedPacketAt(int row, int col) {
-        for (SeedPacket seed : droppedSeeds) {
+        for (SeedPacket seed : getDroppedSeeds()) {
             int seedRow = (int) (seed.getY() / 100);
             int seedCol = (int) (seed.getX() / 100);
             if (seedRow == row && seedCol == col) {
@@ -91,7 +90,14 @@ public class VaseBreakerLevel extends GameWorld {
         heldSeed = null;
     }
 
-    public List<Vase> getVases() { return vases; }
-    public List<SeedPacket> getDroppedSeeds() { return droppedSeeds; }
-    public void addVase(Vase vase) { this.vases.add(vase); }
+    public List<Vase> getVases() {
+        if (vases == null) vases = new ArrayList<>();
+        return vases;
+    }
+
+    public List<SeedPacket> getDroppedSeeds() {
+        if (droppedSeeds == null) droppedSeeds = new ArrayList<>();
+        return droppedSeeds;
+    }
+    public void addVase(Vase vase) { getVases().add(vase); }
 }

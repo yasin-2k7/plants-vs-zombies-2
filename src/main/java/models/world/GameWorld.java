@@ -415,7 +415,7 @@ public abstract class GameWorld {
                 }
                 user.getQuestManager().checkAllQuests(user);
                 user.getQuestStats().setLevelWon(true);
-                GameMenuController.handleWinning(this);
+                GameMenuController.handleWinning(this, mupointManager);
             }
         }
         for(LoseCondition lose : loseConditions){
@@ -593,5 +593,12 @@ public abstract class GameWorld {
 
     public PlantType getSelectedPlant() {return selectedPlant;}
 
+    public List<Grave> getActiveGrave() {return activeGrave;}
+
+    public void addProjectile(Projectile projectile) {
+        if (projectile != null) {
+            this.activeProjectiles.add(projectile);
+        }
+    }
     public List<Obstacle> getActiveObstacles() {return activeObstacles;}
 }

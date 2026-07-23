@@ -118,7 +118,7 @@ public class SignupMenuController implements MenuController{
                             String securityQ,
                             String securityA){
         String result = UserManager.register(username, password, nickname, email, gender, securityQ, securityA);
-
+        AppView.currentScreen = LoginMenuView.getInstance(new LoginMenuController());
         return result;
 
     }

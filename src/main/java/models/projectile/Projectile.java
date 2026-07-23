@@ -33,6 +33,7 @@ public class Projectile implements Resettable{
         double oldY = y;
         movementStrategy.move(this);
 
+
         if (type.movement.equals("STRAIGHT")) {
             Cell currentCell = App.getCurrentGame().getCellAt(x, y);
 
@@ -103,7 +104,11 @@ public class Projectile implements Resettable{
     public void reset(float x, float y) {}
 
     @Override
-    public void reset(float x, float y, HitStrategy hitStrategy, MovementStrategy movementStrategy, CheckStrike checkStrike, ProjectileType type) {
+    public void reset(float x, float y,
+                      HitStrategy hitStrategy,
+                      MovementStrategy movementStrategy,
+                      CheckStrike checkStrike,
+                      ProjectileType type) {
         this.x = x;
         this.y = y;
         originX = x;

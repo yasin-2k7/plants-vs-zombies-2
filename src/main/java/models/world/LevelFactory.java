@@ -135,7 +135,7 @@ public class LevelFactory {
                 new WaveSpawnEntry("ZombieDefault", 100)
         );
 
-        List<Wave> waves = Wave.generateWaves(5, 200, availableZombies, 60);
+        List<Wave> waves = Wave.generateWaves(5, 500, availableZombies, 60);
 
         LevelSetup levelSetup = new DeadLineLevelSetup(rows, cols, 4, waves);
         LoseCondition loseCondition = new DeadLineLose(4);

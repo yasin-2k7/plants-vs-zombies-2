@@ -4,13 +4,16 @@ import models.core.App;
 import models.core.User;
 import models.enums.PlantType;
 import models.miniGame.IZombie.IZombieLevel;
+import models.miniGame.IZombie.IZombieLose;
 import models.miniGame.IZombie.IZombieSetup;
+import models.miniGame.IZombie.IZombieWin;
 import models.miniGame.beghouled.BeghouledSetup;
 import models.miniGame.beghouled.BeghouledWinCondition;
 import models.miniGame.beghouled.PlantUpgrade;
 import models.miniGame.bowling.BowlingSetup;
 import models.miniGame.vaseBreaker.VaseBreakerLevel;
 import models.miniGame.vaseBreaker.VaseBreakerSetup;
+import models.miniGame.vaseBreaker.VaseBreakerWinCondition;
 import models.world.GameWorld;
 import models.world.levelSetup.LevelSetup;
 import models.world.levelSetup.NormalLevelSetup;
@@ -72,12 +75,12 @@ public class MiniGameFactory {
         int rows = 5, cols = 9;
 
         List<String> normalVaseZombies = List.of("ZombieDefault");
-        List<String> giantVaseZombies = List.of();
+        List<String> giantVaseZombies = List.of("ZombieGargantuar");
         List<PlantType> possiblePlants = List.of(PlantType.PEASHOOTER, PlantType.WALL_NUT);
 
         LevelSetup levelSetup = new VaseBreakerSetup(rows, cols, normalVaseZombies, giantVaseZombies, possiblePlants);
         LoseCondition loseCondition = new NormalLose();
-        WinCondition winCondition = new NormalWin();
+        WinCondition winCondition = new VaseBreakerWinCondition();
         winCondition.setCurrentLevel(MiniGameLevels.VASE_BREAKER_1);
 
 
@@ -99,7 +102,7 @@ public class MiniGameFactory {
 
         LevelSetup levelSetup = new VaseBreakerSetup(rows, cols, normalVaseZombies, giantVaseZombies, possiblePlants);
         LoseCondition loseCondition = new NormalLose();
-        WinCondition winCondition = new NormalWin();
+        WinCondition winCondition = new VaseBreakerWinCondition();
         winCondition.setCurrentLevel(MiniGameLevels.VASE_BREAKER_2);
 
 
@@ -121,7 +124,7 @@ public class MiniGameFactory {
 
         LevelSetup levelSetup = new VaseBreakerSetup(rows, cols, normalVaseZombies, giantVaseZombies, possiblePlants);
         LoseCondition loseCondition = new NormalLose();
-        WinCondition winCondition = new NormalWin();
+        WinCondition winCondition = new VaseBreakerWinCondition();
         winCondition.setCurrentLevel(MiniGameLevels.VASE_BREAKER_3);
 
 
@@ -142,7 +145,7 @@ public class MiniGameFactory {
 
         );
 
-        LevelSetup levelSetup = new BowlingSetup(rows, cols, redLineCol, zombies, 3, 150);
+        LevelSetup levelSetup = new BowlingSetup(rows, cols, redLineCol, zombies, 1, 500);
         LoseCondition loseCondition = new NormalLose();
         WinCondition winCondition = new NormalWin();
         winCondition.setCurrentLevel(MiniGameLevels.BOWLING_1);
@@ -205,8 +208,8 @@ public class MiniGameFactory {
         );
 
         LevelSetup levelSetup = new IZombieSetup(5, 9, availableZombies);
-        LoseCondition loseCondition = new NormalLose();
-        WinCondition winCondition = new NormalWin();
+        LoseCondition loseCondition = new IZombieLose();
+        WinCondition winCondition = new IZombieWin();
         winCondition.setCurrentLevel(MiniGameLevels.I_ZOMBIE_1);
 
         return new IZombieLevel(
@@ -224,8 +227,8 @@ public class MiniGameFactory {
         );
 
         LevelSetup levelSetup = new IZombieSetup(5, 9, availableZombies);
-        LoseCondition loseCondition = new NormalLose();
-        WinCondition winCondition = new NormalWin();
+        LoseCondition loseCondition = new IZombieLose();
+        WinCondition winCondition = new IZombieWin();
         winCondition.setCurrentLevel(MiniGameLevels.I_ZOMBIE_2);
 
         return new IZombieLevel(
@@ -243,8 +246,8 @@ public class MiniGameFactory {
         );
 
         LevelSetup levelSetup = new IZombieSetup(5, 9, availableZombies);
-        LoseCondition loseCondition = new NormalLose();
-        WinCondition winCondition = new NormalWin();
+        LoseCondition loseCondition = new IZombieLose();
+        WinCondition winCondition = new IZombieWin();
         winCondition.setCurrentLevel(MiniGameLevels.I_ZOMBIE_3);
 
         return new IZombieLevel(
@@ -257,14 +260,14 @@ public class MiniGameFactory {
 
     private static GameWorld createBeghouledLevel1() {
         List<PlantType> plants = List.of(
-                PlantType.PEASHOOTER, PlantType.SUNFLOWER//, PlantType.WALL_NUT,
-                //PlantType.CABBAGE_PULT, PlantType.MELON_PULT
+                PlantType.PEASHOOTER, PlantType.SUNFLOWER, PlantType.WALL_NUT,
+                PlantType.CABBAGE_PULT, PlantType.MELON_PULT
         );
 
 
         List<PlantUpgrade> upgrades = List.of(
-                new PlantUpgrade(PlantType.PEASHOOTER, PlantType.REPEATER, 500)
-                //new PlantUpgrade(PlantType.WALL_NUT, PlantType.TALL_NUT, 500)
+                new PlantUpgrade(PlantType.PEASHOOTER, PlantType.REPEATER, 500),
+                new PlantUpgrade(PlantType.WALL_NUT, PlantType.TALL_NUT, 500)
         );
 
         ensurePlantsUnlocked(plants);
@@ -347,8 +350,8 @@ public class MiniGameFactory {
 
     private static GameWorld createZombotanyLevel1() {
         List<WaveSpawnEntry> zombies = List.of(
-                new WaveSpawnEntry("ZombieDefault", 100),
-                new WaveSpawnEntry("ZombiePeashooter", 150)
+                new WaveSpawnEntry("ZombiePeashooter", 150),
+                new WaveSpawnEntry("ZombieWallnut", 200)
         );
 
         LevelSetup levelSetup = new models.world.levelSetup.NormalLevelSetup(5, 9, models.zombie.wave.Wave.generateWaves(3, 200, zombies, 40));
@@ -366,7 +369,6 @@ public class MiniGameFactory {
 
     private static GameWorld createZombotanyLevel2() {
         List<WaveSpawnEntry> zombies = List.of(
-                new WaveSpawnEntry("ZombieDefault", 100),
                 new WaveSpawnEntry("ZombiePeashooter", 150),
                 new WaveSpawnEntry("ZombieWallnut", 200),
                 new WaveSpawnEntry("ZombieSquash", 150)

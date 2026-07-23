@@ -32,8 +32,10 @@ public class ProfileMenuController implements MenuController {
         if (!errors.isEmpty()) {
             return String.join("\n", errors);
         }
-
+        String oldUsername = user.getUsername();
         user.setUsername(newUsername);
+
+
         UserDataManager.updateUsername(oldUsername, user);
         UserDataManager.saveUser(user);
         return "your username changed";
@@ -111,4 +113,5 @@ public class ProfileMenuController implements MenuController {
     public void showCurrentMenu() {
         GameMenuView.getInstance().showResult("Current menu: profile menu");
     }
+
 }
