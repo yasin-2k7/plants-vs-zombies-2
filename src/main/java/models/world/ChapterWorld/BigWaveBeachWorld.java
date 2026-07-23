@@ -42,7 +42,6 @@ public class BigWaveBeachWorld extends GameWorld {
         for (int i = 0; i< lowLyingCoastsCount; i++){
             makeCellLowLyingCoast();
         }
-
     }
 
     private void makeCellLowLyingCoast(){
@@ -60,7 +59,6 @@ public class BigWaveBeachWorld extends GameWorld {
     @Override
     public void tick() {
         super.tick();
-
         updateLowLyingCoasts();
         updateTide();
     }

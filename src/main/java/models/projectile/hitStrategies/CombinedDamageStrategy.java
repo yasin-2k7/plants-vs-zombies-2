@@ -94,7 +94,13 @@ public class CombinedDamageStrategy implements HitStrategy{
         switch (element) {
             case "POISON":
                 if (target instanceof Zombie zombie) {
-                    zombie.setHealth(zombie.getHealth() - poisonDamageOnTick);
+                    if (projectileType == ProjectileType.GOO){
+                        zombie.makePoisoned(poisonDamageOnTick);
+                    }
+                    else{
+                        zombie.makePoisoned(poisonDamageOnTick*100);
+                    }
+
                 }
                 break;
             case "MOVE":
