@@ -69,60 +69,40 @@ public class CombinedDamageStrategy implements HitStrategy{
 
     @Override
     public void applyDamage(Damageable target, List<Damageable> allTargets, Projectile projectile) {
-        target.takeDamage(damage, "NORMAL");
+        String type = element != null ? element : "NORMAL";
+        target.takeDamage(damage, type);
         applySpecialDamage(target, projectile);
+
         if (target instanceof Zombie && projectile.getPlantType() != null) {
             ((Zombie) target).setKiller(projectile.getPlantType());
         }
+
         if (radius > 0) {
-            for (Damageable extraTarget : allTargets){
-                if (extraTarget != target){
-                    if (projectile.distanceTo(extraTarget) <= radius){
-                        extraTarget.takeDamage(neighborDamage, "NORMAL");
-                        applySpecialDamage(extraTarget, projectile);
-                        if (extraTarget instanceof Zombie && projectile.getPlantType() != null) {
-                            ((Zombie) extraTarget).setKiller(projectile.getPlantType());
-                        }
+            for (Damageable extraTarget : allTargets) {
+                if (extraTarget != target && projectile.distanceTo(extraTarget) <= radius) {
+                    extraTarget.takeDamage(neighborDamage, type);
+                    applySpecialDamage(extraTarget, projectile);
+                    if (extraTarget instanceof Zombie && projectile.getPlantType() != null) {
+                        ((Zombie) extraTarget).setKiller(projectile.getPlantType());
                     }
                 }
             }
         }
     }
 
-    private void applySpecialDamage(Damageable target, Projectile projectile){
-        switch (element){
-            case "NORMAL":
-                break;
-            case "ICE":
-                if (target instanceof Zombie zombie){
-                    zombie.applySlow(chillTime, 0.5, false);
-                }
-                break;
-            case "FIRE":
-                if (target instanceof Zombie zombie){
-                    if (zombie.getIceHealth() > 0){
-                        zombie.setIceHealth(0);
-                    }
-                    zombie.unfreeze();
-                }
-                else if (target instanceof IceBlock){
-                    target.takeDamage(600, "FIRE");
-                }
-                break;
-            case "STUN":
-                if (target instanceof Zombie zombie) {
-                    zombie.disableFor(20);
-                }
-                break;
+    private void applySpecialDamage(Damageable target, Projectile projectile) {
+        switch (element) {
             case "POISON":
-                if (target instanceof Zombie zombie){
-                    zombie.setHealth(zombie.getHealth()-poisonDamageOnTick);
+                if (target instanceof Zombie zombie) {
+                    zombie.setHealth(zombie.getHealth() - poisonDamageOnTick);
                 }
                 break;
             case "MOVE":
-                if (target instanceof Zombie zombie){
+                if (target instanceof Zombie zombie) {
                     zombie.setX(zombie.getX() + 100);
                 }
+                break;
+            default:
                 break;
         }
     }

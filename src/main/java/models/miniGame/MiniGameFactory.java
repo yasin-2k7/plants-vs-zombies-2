@@ -16,14 +16,12 @@ import models.miniGame.vaseBreaker.VaseBreakerSetup;
 import models.miniGame.vaseBreaker.VaseBreakerWinCondition;
 import models.world.GameWorld;
 import models.world.levelSetup.LevelSetup;
-import models.world.levelSetup.NormalLevelSetup;
 import models.world.loseCondition.LoseCondition;
 import models.world.loseCondition.NormalLose;
 import models.world.winCondition.NormalWin;
 import models.world.winCondition.WinCondition;
 import models.zombie.Zombie;
 import models.zombie.ZombieFactory;
-import models.zombie.wave.Wave;
 import models.zombie.wave.WaveSpawnEntry;
 
 import java.util.ArrayList;

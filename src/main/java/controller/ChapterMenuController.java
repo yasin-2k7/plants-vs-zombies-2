@@ -3,7 +3,6 @@ package controller;
 import models.core.App;
 import models.core.User;
 import models.enums.Chapter;
-import view.View;
 import view.terminalView.*;
 
 public class ChapterMenuController implements MenuController{

@@ -1,10 +1,8 @@
 package models.plant.components.explosionRanges;
 
 import controller.LevelMenuController;
-import models.core.App;
 import models.plant.Plant;
 import models.world.Cell;
-import models.zombie.Zombie;
 
 import java.util.List;
 

@@ -1,12 +1,8 @@
 package view.terminalView;
 
 import controller.CollectionMenuController;
-import controller.LevelMenuController;
-import controller.LoginMenuController;
 import models.enums.PlantType;
 import models.enums.commands.CollectionMenuCommands;
-import models.enums.commands.GameMenuCommands;
-import models.enums.commands.PlantMenuCommands;
 import view.View;
 
 import java.util.regex.Matcher;

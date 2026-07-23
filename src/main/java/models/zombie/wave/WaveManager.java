@@ -4,8 +4,6 @@ import controller.GameMenuController;
 import models.core.App;
 import models.core.User;
 import models.core.UserDataManager;
-import models.mupoint.KillEvent;
-import models.mupoint.MupointManager;
 import models.world.GameWorld;
 import models.zombie.Zombie;
 import models.zombie.ZombieFactory;

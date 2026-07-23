@@ -43,6 +43,34 @@ public class ZombieFactory {
         ENUM_TO_ALIAS.put(Zombies.SQUASH_ZOMBIE, "ZombieSquash");
     }
 
+    private Zombie selectZombie(String objClass, int health, int eatDPS, double speed, ZombieData data){
+        return switch (objClass) {
+            case "ZombieGargantuarProps" -> new SpawnerZombie(health, speed, eatDPS, true);
+            case "ZombieRaProps" -> new SunStealerZombie(health, speed, eatDPS, true);
+            case "ZombieCrystalSkullProps" -> new SunStealerZombie(health, speed, eatDPS, false);
+            case "ZombieExplorerProps" -> new ElementalZombie(health, speed, eatDPS, true);
+            case "ZombieProspectorProps" -> new ElementalZombie(health, speed, eatDPS, false); // false = Prospector
+            case "ZombieIceAgeHunterProps" -> new RangedZombie(health, speed, eatDPS, "SNOWBALL");
+            case "ZombieBeachOctopusProps" -> new RangedZombie(health, speed, eatDPS, "OCTOPUS");
+            case "ZombieTombRaiserProps" -> new RangedZombie(health, speed, eatDPS, "BONE");
+            case "ZombieDarkJugglerProps" -> new DeflectorZombie(health, speed, eatDPS, true);
+            case "ZombieLostCityJaneProps" -> new DeflectorZombie(health, speed, eatDPS, false);
+            case "ZombieDarkWizardProps" -> new WizardZombie(health, speed, eatDPS);
+            case "ZombieDarkKingProps" -> new SpawnerZombie(health, speed, eatDPS, false);
+            case "ZombieBeachFishermanProps" -> new FishermanZombie(health, eatDPS);
+            case "ZombieIceAgeDodoProps" -> new DodoRiderZombie(health, speed, eatDPS);
+            case "ZombieModernAllStarProps" -> new PhasingZombie(health, speed, eatDPS, 0, false);
+            case "ZombieNewspaperProps" -> new PhasingZombie(health, speed, eatDPS, 800, true);
+            case "ZombiePianoProps" -> new PusherZombie(health, speed, eatDPS, "PIANO", 1100);
+            case "ZombieArcadeProps" -> new PusherZombie(health, speed, eatDPS, "ARCADE", 1100);
+            case "ZombieIceAgeTroglobiteProps" -> new PusherZombie(health, speed, eatDPS, "ICEBLOCK", 600);
+            case "ZombieBeachSnorkelProps" -> new SnorkelZombie(health, speed, eatDPS);
+            case "ZombieImpProps" -> new ImpZombie(health, speed, eatDPS, false);
+            case "ZombieDarkImpDragonProps" -> new ImpZombie(health, speed, eatDPS, true);
+            default -> buildBasicZombie(health, eatDPS, speed, data);
+        };
+    }
+
     public Zombie createZombie(String alias) {
         Zombie zombotanyZombie = createZombotanyZombie(alias);
         if (zombotanyZombie != null) {
@@ -56,6 +84,8 @@ public class ZombieFactory {
             if (props == null) {
                 throw new IllegalArgumentException("Cannot find even default zombie: " + alias);
             }
+            LOGGER.warning("Unknown zombie alias: " + alias + " — using default ZombieDefault.");
+            return null;
         }
         String objclass = props.getObjclass();
         ZombieData data = props.getObjdata();
@@ -67,88 +97,96 @@ public class ZombieFactory {
         int eatDPS = (int) Math.round(data.getEatDPS() * increaseFactor);
         double speed = data.getSpeed();
 
-        Zombie createdZombie = null;
+        Zombie createdZombie = selectZombie(objclass, health, eatDPS, speed, data);
 
-        switch (objclass) {
-            case "ZombiePropertySheet":
-                createdZombie = buildBasicZombie(health, eatDPS, speed, data);
-                break;
-            case "ZombieGargantuarProps":
-                createdZombie = new SpawnerZombie(health, speed, eatDPS, true);
-                break;
-            case "ZombieRaProps":
-                createdZombie = new SunStealerZombie(health, speed, eatDPS, true);
-                break;
-            case "ZombieCrystalSkullProps":
-                createdZombie = new SunStealerZombie(health, speed, eatDPS, false);
-                break;
-            case "ZombieExplorerProps":
-                createdZombie = new ElementalZombie(health, speed, eatDPS, true);
-                break;
-            case "ZombieProspectorProps":
-                createdZombie = new ElementalZombie(health, speed, eatDPS, false); // false = Prospector
-                break;
-            case "ZombieIceAgeHunterProps":
-                createdZombie = new RangedZombie(health, speed, eatDPS, "SNOWBALL");
-                break;
-            case "ZombieBeachOctopusProps":
-                createdZombie = new RangedZombie(health, speed, eatDPS, "OCTOPUS");
-                break;
-            case "ZombieTombRaiserProps":
-                createdZombie = new RangedZombie(health, speed, eatDPS, "BONE");
-                break;
-            case "ZombieDarkJugglerProps":
-                createdZombie = new DeflectorZombie(health, speed, eatDPS, true);
-                break;
-            case "ZombieLostCityJaneProps":
-                createdZombie = new DeflectorZombie(health, speed, eatDPS, false);
-                break;
-            case "ZombieDarkWizardProps":
-                createdZombie = new WizardZombie(health, speed, eatDPS);
-                break;
-            case "ZombieDarkKingProps":
-                createdZombie = new SpawnerZombie(health, speed, eatDPS, false);
-                break;
-            case "ZombieBeachFishermanProps":
-                createdZombie = new FishermanZombie(health, eatDPS);
-                break;
-            case "ZombieIceAgeDodoProps":
-                createdZombie = new DodoRiderZombie(health, speed, eatDPS);
-                break;
-            case "ZombieModernAllStarProps":
-                createdZombie = new PhasingZombie(health, speed, eatDPS, 0, false);
-                break;
-            case "ZombieNewspaperProps":
-                createdZombie = new PhasingZombie(health, speed, eatDPS, 800, true);
-                break;
-            case "ZombiePianoProps":
-                createdZombie = new PusherZombie(health, speed, eatDPS, "PIANO", 1100);
-                break;
-            case "ZombieArcadeProps":
-                createdZombie = new PusherZombie(health, speed, eatDPS, "ARCADE", 1100);
-                break;
-            case "ZombieIceAgeTroglobiteProps":
-                createdZombie = new PusherZombie(health, speed, eatDPS, "ICEBLOCK", 600);
-                break;
-            case "ZombieBeachSnorkelProps":
-                createdZombie = new SnorkelZombie(health, speed, eatDPS);
-                break;
-            case "ZombieImpProps":
-                createdZombie = new ImpZombie(health, speed, eatDPS, false);
-                break;
-            case "ZombieDarkImpDragonProps":
-                createdZombie = new ImpZombie(health, speed, eatDPS, true);
-                break;
-            default:
-                createdZombie = buildBasicZombie(health, eatDPS, speed, data);
-                break;
+        if ("ZombieDarkImpDragon".equalsIgnoreCase(alias)) {
+            createdZombie = new ImpZombie(health, speed, eatDPS, true);
+        } else if ("ZombieImp".equalsIgnoreCase(alias)) {
+            createdZombie = new ImpZombie(health, speed, eatDPS, false);
+        } else {
+
+            switch (objclass) {
+                case "ZombiePropertySheet":
+                    createdZombie = buildBasicZombie(health, eatDPS, speed, data);
+                    break;
+                case "ZombieGargantuarProps":
+                    createdZombie = new SpawnerZombie(health, speed, eatDPS, true);
+                    break;
+                case "ZombieRaProps":
+                    createdZombie = new SunStealerZombie(health, speed, eatDPS, true);
+                    break;
+                case "ZombieCrystalSkullProps":
+                    createdZombie = new SunStealerZombie(health, speed, eatDPS, false);
+                    break;
+                case "ZombieExplorerProps":
+                    createdZombie = new ElementalZombie(health, speed, eatDPS, true);
+                    break;
+                case "ZombieProspectorProps":
+                    createdZombie = new ElementalZombie(health, speed, eatDPS, false); // false = Prospector
+                    break;
+                case "ZombieIceAgeHunterProps":
+                    createdZombie = new RangedZombie(health, speed, eatDPS, "SNOWBALL");
+                    break;
+                case "ZombieBeachOctopusProps":
+                    createdZombie = new RangedZombie(health, speed, eatDPS, "OCTOPUS");
+                    break;
+                case "ZombieTombRaiserProps":
+                    createdZombie = new RangedZombie(health, speed, eatDPS, "BONE");
+                    break;
+                case "ZombieDarkJugglerProps":
+                    createdZombie = new DeflectorZombie(health, speed, eatDPS, true);
+                    break;
+                case "ZombieLostCityJaneProps":
+                    createdZombie = new DeflectorZombie(health, speed, eatDPS, false);
+                    break;
+                case "ZombieDarkWizardProps":
+                    createdZombie = new WizardZombie(health, speed, eatDPS);
+                    break;
+                case "ZombieDarkKingProps":
+                    createdZombie = new SpawnerZombie(health, speed, eatDPS, false);
+                    break;
+                case "ZombieBeachFishermanProps":
+                    createdZombie = new FishermanZombie(health, eatDPS);
+                    break;
+                case "ZombieIceAgeDodoProps":
+                    createdZombie = new DodoRiderZombie(health, speed, eatDPS);
+                    break;
+                case "ZombieModernAllStarProps":
+                    createdZombie = new PhasingZombie(health, speed, eatDPS, 0, false);
+                    break;
+                case "ZombieNewspaperProps":
+                    createdZombie = new PhasingZombie(health, speed, eatDPS, 800, true);
+                    break;
+                case "ZombiePianoProps":
+                    createdZombie = new PusherZombie(health, speed, eatDPS, "PIANO", 1100);
+                    break;
+                case "ZombieArcadeProps":
+                    createdZombie = new PusherZombie(health, speed, eatDPS, "ARCADE", 1100);
+                    break;
+                case "ZombieIceAgeTroglobiteProps":
+                    createdZombie = new PusherZombie(health, speed, eatDPS, "ICEBLOCK", 600);
+                    break;
+                case "ZombieBeachSnorkelProps":
+                    createdZombie = new SnorkelZombie(health, speed, eatDPS);
+                    break;
+                case "ZombieImpProps":
+                    createdZombie = new ImpZombie(health, speed, eatDPS, false);
+                    break;
+                case "ZombieDarkImpDragonProps":
+                    createdZombie = new ImpZombie(health, speed, eatDPS, true);
+                    break;
+                case "ZombieBarrelRollerProps": // توی جیسون نبود
+                    createdZombie = new BarrelRollerZombie(health, speed, eatDPS, 600);
+                    break;
+                default:
+                    createdZombie = buildBasicZombie(health, eatDPS, speed, data);
+                    break;
+            }
         }
 
-        if (createdZombie != null) {
-            createdZombie.setSpecificName(alias);
-            if (Math.random() < 0.05) {
-                createdZombie.setGlowing(true);
-            }
+        createdZombie.setSpecificName(alias);
+        if (Math.random() < 0.05) {
+            createdZombie.setGlowing(true);
         }
 
         return createdZombie;

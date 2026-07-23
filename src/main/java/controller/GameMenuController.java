@@ -12,6 +12,7 @@ import models.miniGame.IZombie.Brain;
 import models.miniGame.beghouled.GridPosition;
 import models.miniGame.IZombie.IZombieLevel;
 import models.miniGame.beghouled.BeghouledMechanics;
+import models.miniGame.bowling.BowlingBallType;
 import models.miniGame.bowling.BowlingMechanics;
 import models.miniGame.vaseBreaker.SeedPacket;
 import models.miniGame.vaseBreaker.Vase;
@@ -23,14 +24,10 @@ import models.plant.card.PlantCard;
 import models.world.*;
 import models.world.levelSetup.DeadLineLevelSetup;
 import models.world.mechanics.NormalMechanic;
-import models.world.obstacles.Grave;
-import models.world.obstacles.IceBlock;
-import models.world.obstacles.Obstacle;
-import models.world.obstacles.OctopusObstacle;
+import models.world.obstacles.*;
 import models.zombie.Zombie;
 import models.zombie.ZombieFactory;
 import models.zombie.wave.WaveManager;
-import models.zombie.zombiesType.ArmoredZombie;
 import view.terminalView.*;
 
 import java.util.List;
@@ -45,13 +42,6 @@ public class GameMenuController implements MenuController {
         if (gameWorld.isWillUnlockLevel()){
             App.getCurrentUser().unlockLevel();
         }
-//        User user = App.getCurrentUser();
-//        if(user != null && mupointManager != null){
-//            user.updateMupointRecord(mupointManager.getTotalMupoints());
-//            GameMenuView.getInstance().showResult("your muPoint: " + mupointManager.getTotalMupoints());
-//
-//            UserDataManager.saveUser(user);
-//        }
         AppView.setCurrentScreen(MainMenuView.getInstance());
         App.setCurrentGame(null);
         App.getCurrentUser().getPlantBoosts().clear();
@@ -78,25 +68,10 @@ public class GameMenuController implements MenuController {
     }
 
     @Override
-    public void changeMenu() {
-
-    }
+    public void changeMenu() {}
 
     public static void updateState(String state){
         GameMenuView.getInstance().showResult(state);
-    }
-
-    public String enterMenu(String menuName) {
-//        if (menuName.equalsIgnoreCase("collection")) {
-//            AppView.setCurrentScreen(CollectionMenuView.getInstance());
-//            return "Entering collection menu...";
-//        } else if (menuName.equalsIgnoreCase("travel log")) {
-//            AppView.setCurrentScreen(TravelLogMenuView.getInstance());
-//            TravelLogMenuView.getInstance().showCurrentPage();
-//            return "Entering Travel Log...";
-//        }
-//        return "Invalid menu name!";
-        return "";
     }
 
     @Override
@@ -111,10 +86,17 @@ public class GameMenuController implements MenuController {
     }
 
     public void advanceTime(int count){
+        if (count <= 0){
+            GameMenuView.getInstance().showResult("Count must be an integer bigger than 0!");
+            return;
+        }
         GameMenuView.getInstance().showResult(count + " ticks later...");
         GameWorld game = App.getCurrentGame();
         for (int i = 0; i < count; i++){
-            game.tick();
+            if (game.getState() == GameState.PLAYING){
+                game.tick();
+            }
+            else return;
         }
     }
 
@@ -139,7 +121,6 @@ public class GameMenuController implements MenuController {
                             if (cell.getPlant(PlantLayer.SHIELD) != null) cell.getPlant(PlantLayer.SHIELD).takeDamage(80);
                         }
                     }
-
                 }
                 else{
                     GameWorld game = App.getCurrentGame();
@@ -170,8 +151,6 @@ public class GameMenuController implements MenuController {
             GameMenuView.getInstance().showResult("invalid collectable type");
             return;
         }
-
-
         for (Collectable collectable : App.getCurrentGame().getActiveCollectables()){
             if (collectable.isDead()) continue;
             if (Math.abs(collectable.getX() - x) < 2 && Math.abs(collectable.getY() - y) < 2){
@@ -205,9 +184,7 @@ public class GameMenuController implements MenuController {
         GameMenuView.getInstance().showResult("there is no collectable in that place!");
     }
 
-    public void showSunAmount(){
-        GameMenuView.getInstance().showResult("current sun amount: " + App.getCurrentGame().getSun());
-    }
+    public void showSunAmount(){ GameDetailsDisplayController.showSunAmount();}
 
     public void cheatAddSun(int count){
         App.getCurrentGame().setSun(25*count+App.getCurrentGame().getSun());
@@ -223,9 +200,38 @@ public class GameMenuController implements MenuController {
             for (Zombie zombie : game.getActiveZombies()) {
                 zombie.die();
             }
-//            game.getActiveZombies().clear();
             GameMenuView.getInstance().showResult("All zombies eliminated by nuke (fallback)!");
         }
+    }
+
+    public void selectPlant(PlantType type){
+        PlantCard selectedCard = null;
+        for (PlantCard card : App.getCurrentGame().getPlantLists()){
+            if (card.getType().equals(type)){
+                selectedCard = card;
+                break;
+            }
+        }
+        if (selectedCard == null){
+            GameMenuView.getInstance().showResult(type + " is not in your plants!");
+            return;
+        }
+        App.getCurrentGame().setPlantSelected(true);
+        App.getCurrentGame().setSelectedPlant(selectedCard.getType());
+    }
+
+    public void unselectPlant(){
+        App.getCurrentGame().setSelectedPlant(null);
+        App.getCurrentGame().setPlantSelected(false);
+    }
+
+    public void plantSelectedPlant(float x, float y){
+        if (App.getCurrentGame().getSelectedPlant() == null){
+            GameMenuView.getInstance().showResult("select a plant first!");
+            return;
+        }
+        plantPlant(App.getCurrentGame().getSelectedPlant(), x, y);
+        unselectPlant();
     }
 
     public void plantPlant(PlantType type, float x, float y){
@@ -243,20 +249,9 @@ public class GameMenuController implements MenuController {
         plantPlant(selectedCard, x, y);
     }
 
-    private Cell findCellAt(GameWorld game, float x, float y) {
-        for (Cell[] cells : game.getGrid()) {
-            if (!(cells[0].getY() + App.getCellHeight() / 2 > y && cells[0].getY() - App.getCellHeight() / 2 < y)) continue;
-            for (Cell cell : cells) {
-                if (cell.getX() + App.getCellWidth() / 2 > x && cell.getX() - App.getCellWidth() / 2 < x) {
-                    return cell;
-                }
-            }
-        }
-        return null;
-    }
+    private Cell findCellAt(GameWorld game, float x, float y) {return Cell.findCell(x,y, game.getGrid());}
 
     public void plantPlant(PlantCard card, float x, float y){
-
         if (App.getCurrentGame().getSun() < card.getSunCost()){
             GameMenuView.getInstance().showResult("you haven't enough suns!");
             return;
@@ -280,8 +275,6 @@ public class GameMenuController implements MenuController {
             type = card.getType();
             error = selectedCell.handlePlanting(type, App.getCurrentUser().hasBoost(type));
         }
-
-
         if (error != null) GameMenuView.getInstance().showResult(error);
         else {
             if (App.getCurrentGame().isConveyorMode()){
@@ -301,13 +294,6 @@ public class GameMenuController implements MenuController {
         }
     }
 
-    public void activateCooldown(){
-        if (App.getCurrentGame().isConveyorMode()) return;
-        for (PlantCard card : App.getCurrentGame().getPlantLists()){
-            card.setActiveCooldown();
-        }
-    }
-
     public void pluckPlant(float x, float y){
         Cell selectedCell = findCellAt(App.getCurrentGame(), x, y);
         if (selectedCell == null || !selectedCell.findAndRemovePlant()) {
@@ -315,9 +301,7 @@ public class GameMenuController implements MenuController {
         }
     }
 
-    public void showPlantFoodsCount(){
-        GameMenuView.getInstance().showResult("plant foods count: " + App.getCurrentUser().getPlantFoods());
-    }
+    public void showPlantFoodsCount(){ GameDetailsDisplayController.showPlantFoodsCount();}
 
     public void feedPlant(float x, float y){
         if (App.getCurrentGame().getPlantFoods() <= 0){
@@ -340,7 +324,6 @@ public class GameMenuController implements MenuController {
         }
         selectedCell.findPlant().activatePlantFood();
         App.getCurrentGame().setPlantFoods(App.getCurrentGame().getPlantFoods()-1);
-
     }
 
     public void cheatAddPlantFood(){
@@ -362,7 +345,6 @@ public class GameMenuController implements MenuController {
             }
             totalWaves = wm.getTotalWavesCount();
         }
-
         GameMenuView.getInstance().showResult("==================================================================================================");
         String title = String.format(" WAVE: %d/%d  |  SUN: %d ☀️  |  PLANT FOOD: %d ⚡  |  STATUS: %s 🎮",
                 currentWaveNum, totalWaves, App.getCurrentGame().getSun(), App.getCurrentGame().getPlantFoods(), App.getCurrentGame().getState());
@@ -378,14 +360,11 @@ public class GameMenuController implements MenuController {
 
         for (int y = 0; y < App.getCurrentGame().getGrid().length; y++) {
             StringBuilder rowBuilder = new StringBuilder();
-
-            String mowerSymbol = App.getCurrentGame().getLawnMowerManager().getMowers().get(y).isAlive() ? "[🚜]" : "[❌]";
-            rowBuilder.append(String.format("Row %d %s | ", y + 1, mowerSymbol));
-            mowerSymbol = "    "; // پیش‌فرض خالی
+            String mowerSymbol = "    "; // تعریف یکتا و درست برای نماد ماشین چمن‌زن / مغز
             if (isIZombie && izLevel != null) {
                 Brain brain = izLevel.getBrainAtRow(y);
                 if (brain != null && !brain.isEaten()) {
-                    mowerSymbol = "[🧠]"; // اگر مغز موجود بود
+                    mowerSymbol = "[🧠]";
                 }
             } else {
                 LawnMowerManager lmManager = App.getCurrentGame().getLawnMowerManager();
@@ -393,12 +372,17 @@ public class GameMenuController implements MenuController {
                     LawnMower mower = lmManager.getMowers().get(y);
                     mowerSymbol = mower.isAlive() ? "[🚜]" : "[❌]";
                 }
-            }            System.out.printf("Row %d %s | ", y+1, mowerSymbol);
+            }
+            rowBuilder.append(String.format("Row %d %s | ", y + 1, mowerSymbol));
 
             for (int x = 0; x < App.getCurrentGame().getGrid()[0].length; x++) {
                 Cell cell = App.getCurrentGame().getGrid()[y][x];
-
                 String terrainSymbol = cell.getTerrain().getTerminalSymbol();
+                if (cell.getSlippingDir() == 1) {
+                    terrainSymbol = "🧊👇";
+                } else if (cell.getSlippingDir() == -1) {
+                    terrainSymbol = "🧊👆";
+                }
 
                 if (isVaseBreaker && vbLevel != null) {
                     Vase vase = vbLevel.getVaseAt(y, x);
@@ -423,11 +407,12 @@ public class GameMenuController implements MenuController {
                         terrainSymbol = "🐙";
                     } else if (obs instanceof IceBlock) {
                         terrainSymbol = "🧊";
+                    } else if (obs instanceof BarrelObstacle) {
+                        terrainSymbol = "🛢️";
                     } else {
                         terrainSymbol = "🪨";
                     }
                 }
-
                 String plantSymbol = "    ";
                 if (!cell.isEmpty()) {
                     Plant plant = cell.getPlant();
@@ -437,108 +422,38 @@ public class GameMenuController implements MenuController {
                         plantSymbol = plant.getType().getSymbol();
                     }
                 }
-
                 String zombieString = "       ";
                 List<Zombie> zombiesInCell = Cell.getZombiesInCell(cell);
                 if (!zombiesInCell.isEmpty()) {
                     Zombie firstZombie = zombiesInCell.getFirst();
                     zombieString = String.format("Z(%.1f)", firstZombie.getX());
                 }
-
                 String terrain = String.format("[ %s | %-4s | %-7s ] | ", terrainSymbol, plantSymbol.trim(), zombieString.trim());
-
                 rowBuilder.append(terrain);
             }
-
             GameMenuView.getInstance().showResult(rowBuilder.toString());
         }
-
         GameMenuView.getInstance().showResult("==================================================================================================");
+        GameDetailsDisplayController.showMap();
     }
 
-    public void showPlantsStatus(){
-        if (App.getCurrentGame().isConveyorMode()) return;
-        for (PlantCard card : App.getCurrentGame().getPlantLists()){
-            String ticksRemaining = card.isReady() ? "" : " | ticks remaining: " + (card.getMaxCooldownTicks() - card.getCurrentCooldownTicks());
-            GameMenuView.getInstance().showResult(card.getType().name() + " | Cost: " + card.getSunCost() + " | is ready: " + card.isReady() + ticksRemaining);
-        }
-    }
+    public void showPlantsStatus(){ GameDetailsDisplayController.showPlantsStatus();}
 
+    // متد showTileStatus فقط یک بار و به شکل درست تعریف شد
     public void showTileStatus(float x, float y){
-        Cell selectedCell = null;
-        for (Cell[] cells : App.getCurrentGame().getGrid()){
-            if (!(cells[0].getY() + App.getCellHeight()/2 > y && cells[0].getY() - App.getCellHeight()/2 < y)) continue;
-            for (Cell cell : cells){
-                if ((cell.getX() + App.getCellWidth()/2 > x && cell.getX() - App.getCellWidth()/2 < x)){
-                    selectedCell = cell;
-                    break;
-                }
-            }
-        }
-        if (selectedCell == null) {
-            GameMenuView.getInstance().showResult("there is no tile in that place!");
-            return;
-        }
-        GameMenuView.getInstance().showResult("plants in this tile:");
-        for (PlantLayer layer : PlantLayer.values()){
-            Plant p = selectedCell.getPlant(layer);
-            if (p != null){
-                GameMenuView.getInstance().showResult(p.getType().name() + " | health: " + p.getHealth() + " | damage: " + p.getDamage());
-            }
-        }
-        GameMenuView.getInstance().showResult("zombies in this tile:");
-        for (Zombie zombie : Cell.getZombiesInCells(List.of(selectedCell))){
-            GameMenuView.getInstance().showResult(App.getArmoredZombieName(zombie.getSpecificName()) + " | health: " + zombie.getHealth() + " | damage: "+ zombie.getDamage());
-        }
+        GameDetailsDisplayController.showTileStatus(x, y);
     }
 
     public void zombieInfo() {
-        for (Zombie zombie : App.getCurrentGame().getActiveZombies()) {
-            GameMenuView.getInstance().showResult(App.getArmoredZombieName(zombie.getSpecificName()) + ":");
-            GameMenuView.getInstance().showResult("    position: (" + zombie.getX() + ", " + zombie.getY() + ")");
-            GameMenuView.getInstance().showResult("    health: " + zombie.getHealth());
-            if (zombie instanceof ArmoredZombie armoredZombie) {
-                GameMenuView.getInstance().showResult("    armor health: " + handleArmor(armoredZombie));
-            } else {
-                GameMenuView.getInstance().showResult("    armor health: none");
-            }
-            GameMenuView.getInstance().showResult("    effects:");
-            if (zombie.getDisabledTicksRemaining() > 0)
-                GameMenuView.getInstance().showResult("        stunned " + zombie.getDisabledTicksRemaining());
-            if (zombie.getFreezedTicksRemaining() > 0)
-                GameMenuView.getInstance().showResult("        frozen " + zombie.getFreezedTicksRemaining());
-            if (zombie.getSlowTicksRemaining() > 0)
-                GameMenuView.getInstance().showResult("        slowed " + zombie.getSlowTicksRemaining());
-            GameMenuView.getInstance().showResult("");
-        }
-    }
-
-    private String handleArmor(ArmoredZombie armoredZombie) {
-        if (armoredZombie.getArmorHealth() <= 0) {
-            return "0 (broken)";
-        }
-        if (armoredZombie.getSpecificName().equalsIgnoreCase("ZombieDarkArmor3")) {
-            if (armoredZombie.getArmorHealth() > 1600) {
-                return "crown: " + (armoredZombie.getArmorHealth() - 1600) + ", shoulderArmor: 1600";
-            } else {
-                return "shoulderArmor: " + armoredZombie.getArmorHealth();
-            }
-        }
-        // برای سایر زامبی‌های زره‌دار
-        String type = armoredZombie.getArmorTypes().isEmpty() ? "unknown" : armoredZombie.getArmorTypes().get(0);
-        return type + ": " + armoredZombie.getArmorHealth();
+        GameDetailsDisplayController.zombieInfo();
     }
 
     public void cheatSpawnZombie(String type, float x, float y){
-        Zombie zombie;
-        try{
-            zombie = new ZombieFactory().createZombie(type);
-        }
-        catch (Exception e){
-            GameMenuView.getInstance().showResult("invalid zombie type!");
+        Zombie zombie = new ZombieFactory().createZombie(type);
+        if (zombie == null) {
+            GameMenuView.getInstance().showResult("❌invalid zombie type!: " + type);
             return;
         }
-
         float newY = -1;
         for (Cell[] cells : App.getCurrentGame().getGrid()){
             if (cells[0].getY() + App.getCellHeight()/2 >= y && cells[0].getY() - App.getCellHeight()/2 <= y){
@@ -549,17 +464,11 @@ public class GameMenuController implements MenuController {
             GameMenuView.getInstance().showResult("you cannot spawn zombie in that place!");
             return;
         }
-
-        // تنظیم موقعیت زامبی
         zombie.setX(x);
         zombie.setY(newY);
 
         App.getCurrentGame().getActiveZombies().add(zombie);
         GameMenuView.getInstance().showResult("Spawned " + type + " at (" + x + ", " + newY + ")");
-    }
-
-    public void startZombieWaves(){
-
     }
 
     //miniGames
@@ -686,6 +595,4 @@ public class GameMenuController implements MenuController {
         }
         GameMenuView.getInstance().showResult(mechanics.throwBall(game, plantType, x, y));
     }
-
-
 }

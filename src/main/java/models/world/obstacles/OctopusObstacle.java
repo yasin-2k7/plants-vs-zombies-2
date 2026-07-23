@@ -8,11 +8,11 @@ public class OctopusObstacle extends Obstacle {
     private Cell cell;
 
     public OctopusObstacle(float x, float y, Plant targetPlant, Cell cell) {
-        super(x, y, 200);
+        super(x, y, 200); // جان اختاپوس ۲۰۰ است
         this.targetPlant = targetPlant;
         this.cell = cell;
         if (targetPlant != null) {
-            targetPlant.setDisabled(true);
+            targetPlant.setDisabled(true); // متوقف کردن کامل گیاه
         }
     }
 
@@ -22,9 +22,19 @@ public class OctopusObstacle extends Obstacle {
     }
 
     @Override
+    public void takeDamage(int amount, String type) {
+        if (isDestroyed) return;
+        this.health -= amount;
+        if (this.health <= 0) {
+            this.health = 0;
+            die();
+        }
+    }
+
+    @Override
     public void die() {
         if (targetPlant != null && !targetPlant.isDead()) {
-            targetPlant.setDisabled(false);
+            targetPlant.setDisabled(false); // آزاد شدن گیاه پس از نابودی اختاپوس
         }
         if (cell != null) {
             cell.removeObstacle();

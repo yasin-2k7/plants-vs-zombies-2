@@ -36,9 +36,6 @@ public class GameMenuView implements View{
                     case MENU_EXIT:
                         controller.exitMenu();
                         return;
-                    case MENU_ENTER:
-                        controller.enterMenu(matcher.group("name"));
-                        return;
                     case SHOW_MAP:
                         controller.showMap();
                         return;
@@ -58,11 +55,34 @@ public class GameMenuView implements View{
                         String type = matcher.group("type");
                         controller.collectCollectable(x, y, type);
                         return;
+                    case UNSELECT_PLANT:
+                        controller.unselectPlant();
+                        return;
+                    case SELECT_PLANT:
+                        type = matcher.group("type");
+                        PlantType selectedType = null;
+                        for (PlantType plantType : PlantType.values()){
+                            if (plantType.name().equalsIgnoreCase(type)){
+                                selectedType = plantType;
+                                break;
+                            }
+                        }
+                        if (selectedType == null){
+                            System.out.println("please select a valid plant");
+                            return;
+                        }
+                        controller.selectPlant(selectedType);
+                        return;
+                    case PLANT_SELECTED_PLANT:
+                        x = Float.parseFloat(matcher.group("x"));
+                        y = Float.parseFloat(matcher.group("y"));
+                        controller.plantSelectedPlant(x,y);
+                        return;
                     case PLANT_PLANT:
                         type = matcher.group("type");
                         x = Float.parseFloat(matcher.group("x"));
                         y = Float.parseFloat(matcher.group("y"));
-                        PlantType selectedType = null;
+                        selectedType = null;
                         for (PlantType plantType : PlantType.values()){
                             if (plantType.name().equalsIgnoreCase(type)){
                                 selectedType = plantType;

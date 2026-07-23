@@ -1,7 +1,5 @@
 package models.world.mechanics;
 
-import models.core.App;
-import models.core.DifficultyCalculator;
 import models.world.GameWorld;
 import models.zombie.Zombie;
 import models.zombie.wave.WaveManager;

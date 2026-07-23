@@ -10,10 +10,13 @@ import models.world.obstacles.Grave;
 import models.world.obstacles.OctopusObstacle;
 import models.zombie.Zombie;
 
+import java.util.List;
+
 public class RangedZombie extends Zombie {
     private String projectileType;
     private int cooldown;
-    private static final int COOLDOWN_MAX = 10;
+    // تنها یک متغیر COOLDOWN_MAX را نگه داشتیم
+    private final int COOLDOWN_MAX = 120;
 
     public RangedZombie(int health, double speed, int damage, String projectileType) {
         super(Zombies.RANGED, health, speed, damage);
@@ -27,9 +30,14 @@ public class RangedZombie extends Zombie {
 
         switch (projectileType) {
             case "SNOWBALL": {
-                Plant target = game.getNearestPlantInRow((int) this.y, this.x - 10);
+                int row = (int)(this.y / App.getCellHeight());  // تبدیل مختصات به شماره ردیف
+                Plant target = game.getNearestPlantInRow(row, this.x - 10);
                 if (target != null) {
                     target.increaseFrozenAmount();
+                    System.out.println("❄️ Hunter Zombie threw a snowball at " + target.getType() +
+                            " at (" + target.getX() + ", " + target.getY() + ")");
+                } else {
+                    System.out.println("❄️ Hunter Zombie threw a snowball but no target found in row " + row);
                 }
                 break;
             }
@@ -44,7 +52,7 @@ public class RangedZombie extends Zombie {
                         game.getActiveObstacles().add(octopus);
                         GameMenuController.updateState("Octopus thrown at plant at (" + target.getX() + ", " + target.getY() + ")");
                     } else {
-//                        System.out.println("Cell already has an obstacle or cannot place octopus.");
+                        // System.out.println("Cell already has an obstacle or cannot place octopus.");
                     }
                 }
                 break;
@@ -55,10 +63,13 @@ public class RangedZombie extends Zombie {
                 long graveCountInRow = game.getActiveObstacles().stream()
                         .filter(g -> g instanceof Grave grave && grave.getRow() == row)
                         .count();
+
                 if (graveCountInRow >= 3) {
                     GameMenuController.updateState("Row " + row + " already has 3 graves, skipping.");
                     break;
                 }
+
+                // پیدا کردن یک سلول خالی جلوی زامبی برای انداختن استخوان
                 Cell randomEmptyCell = game.getRandomEmptyCellInRowAfterColumn(row, this.x);
                 if (randomEmptyCell != null) {
                     game.createGrave((int) randomEmptyCell.getX(), (int) randomEmptyCell.getY());

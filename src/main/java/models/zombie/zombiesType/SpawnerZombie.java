@@ -17,7 +17,7 @@ public class SpawnerZombie extends Zombie {
         super(Zombies.SPAWNER, health, speed, damage);
         this.isGargantuar = isGargantuar;
         this.spawnCooldown = 50; // هر ۵۰ تیک یک بار (برای پادشاه)
-        this.currentCooldown = 0;
+        this.currentCooldown = spawnCooldown;
         this.hasThrownImp = false;
 
         if (!isGargantuar) {
@@ -68,19 +68,26 @@ public class SpawnerZombie extends Zombie {
         if (game == null) return;
 
         for (Zombie z : game.getActiveZombies()) {
-            // فقط زامبی‌های ساده (بدون زره) در همان سطر
-            if (!(z instanceof ArmoredZombie) && Math.abs(z.getY() - this.y) < 10) {
+            // ۱. خود پادشاه را نادیده بگیر
+            if (z == this) continue;
+
+            // ۲. فقط زامبی‌های ساده (بدون زره و با نام ZombieDefault) را بپذیر
+            boolean isBasic = z.getName() == Zombies.ZOMBIE &&
+                    !(z instanceof ArmoredZombie) &&
+                    Math.abs(z.getY() - this.y) < 10;
+
+            if (isBasic) {
                 // تبدیل به شوالیه
                 ArmoredZombie knight = new ArmoredZombie(
                         z.getHealth(),
                         z.getSpeed(),
                         z.getDamage(),
-                        1600, // armorHealth (کلاه خود + شانه‌بند)
-                        true  // isMagnetic (فلزی)
+                        1600, // armorHealth
+                        true  // isMagnetic
                 );
                 knight.setX(z.getX());
                 knight.setY(z.getY());
-                knight.setSpecificName("ZombieDarkArmor3"); // برای نمایش در کلکسیون
+                knight.setSpecificName("ZombieDarkArmor3");
 
                 // جایگزینی در لیست
                 game.getActiveZombies().remove(z);

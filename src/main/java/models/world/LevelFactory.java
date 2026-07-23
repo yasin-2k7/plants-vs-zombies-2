@@ -57,6 +57,8 @@ public class LevelFactory {
         int cols = 9;
 
         List<WaveSpawnEntry> availableZombies = List.of(
+                        new WaveSpawnEntry("ZombieBarrelRoller", 200)
+
 //                        new WaveSpawnEntry("ZombieArmor1", 200),   // مخروطی
 //                        new WaveSpawnEntry("ZombieArmor2", 300),   // سطلی
 //                        new WaveSpawnEntry("ZombieArmor4", 400),   // آجری
@@ -68,9 +70,9 @@ public class LevelFactory {
 //                        new WaveSpawnEntry("ZombieIceAgeTroglobite", 600) // تروگلوبایت
 
 //                         Ranged (مهاجم دوربرد)
-//                        new WaveSpawnEntry("ZombieIceAgeHunter", 500), // شکارچی
-//                        new WaveSpawnEntry("ZombieBeachOctopus", 800), // اختاپوس‌پرت‌کن
-//                      new WaveSpawnEntry("ZombieTombRaiser", 300) ,  // قبرساز
+//                        new WaveSpawnEntry("ZombieIceAgeHunter", 500) // شکارچی
+//                        new WaveSpawnEntry("ZombieBeachOctopus", 800) // اختاپوس‌پرت‌کن
+//                      new WaveSpawnEntry("ZombieTombRaiser", 300)  // قبرساز
 
 //                        // SunStealer (دزد خورشید)
 //                        new WaveSpawnEntry("ZombieRa", 100),         // خورشید‌دزد
@@ -106,7 +108,7 @@ public class LevelFactory {
 //                        new WaveSpawnEntry("ZombieBeachFisherman", 700),
 //
 //                        // Wizard
-                        new WaveSpawnEntry("ZombieWizard", 800)
+//                        new WaveSpawnEntry("ZombieWizard", 800)
         );
 
         List<Wave> waves = Wave.generateWaves(3, 2000, availableZombies, 60);

@@ -2,7 +2,6 @@ package models.projectile.hitStrategies;
 
 import models.Damageable;
 import models.projectile.Projectile;
-import models.zombie.Zombie;
 
 import java.util.List;
 

@@ -28,14 +28,11 @@ public class IZombieSetup implements LevelSetup {
     @Override
     public void groundSetup(GameWorld world) {
         world.setConveyorMode(false);
-
         if (world.getLawnMowerManager() != null) {
             world.getLawnMowerManager().setEnabled(false);
         }
-
         world.setRows(rows);
         world.setCols(cols);
-
         Cell[][] grid = new Cell[rows][cols];
         for (int r = 0; r < rows; r++) {
             for (int c = 0; c < cols; c++) {
@@ -43,18 +40,13 @@ public class IZombieSetup implements LevelSetup {
             }
         }
         world.setGrid(grid);
-
         if (world instanceof IZombieLevel level) {
             Random random = new Random();
             level.setAvailableZombies(stageZombies);
-
-
             for (int r = 0; r < rows; r++) {
                 Brain brain = new Brain(r, 10, r * 100 + 50);
                 level.getBrains().add(brain);
             }
-
-
             PlantType[] possiblePlants = {PlantType.PEASHOOTER, PlantType.SNOW_PEA, PlantType.WALL_NUT, PlantType.SUNFLOWER};
             for (int r = 0; r < rows; r++) {
                 int plantCount = 2 + random.nextInt(2);
@@ -70,19 +62,15 @@ public class IZombieSetup implements LevelSetup {
                     }
                 }
             }
-
             for (int r = 0; r < rows; r++) {
                 SunProducer sp = new SunProducer(Zombies.ARMORED, 1100, 0.4, 20);
                 sp.setX(8 * 100 + 50);
                 sp.setY(r * 100 + 50);
                 sp.initSpawnTick(level.getCurrentTick());
-
                 level.getSunProducers().add(sp);
                 level.addZombie(sp);
             }
-
         }
-
     }
 
     private Plant createPlantInstance(PlantType type, int row, int col) {

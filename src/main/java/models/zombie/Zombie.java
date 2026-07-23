@@ -2,7 +2,6 @@ package models.zombie;
 
 import controller.GameMenuController;
 import models.Damageable;
-import models.core.User;
 import models.enums.CollectableType;
 import models.enums.PlantType;
 import models.core.App;
@@ -13,7 +12,6 @@ import models.world.Collectable;
 import models.world.GameWorld;
 import models.zombie.state.WalkingState;
 import models.zombie.state.ZombieState;
-import view.terminalView.GameMenuView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -67,7 +65,7 @@ public abstract class Zombie implements Damageable {
     }
 
     public void update() {
-        if (isDead || health <= 0) return;
+        if (isDead || health <= 0 || iceHealth > 0) return;
         if (slowTicksRemaining > 0) {
             slowTicksRemaining--;
             if (slowTicksRemaining == 0) {
@@ -99,21 +97,21 @@ public abstract class Zombie implements Damageable {
         this.x -= this.speed; // حرکت به چپ
     }
 
-        @Override
-        public void takeDamage(int amount, String damageType) {
-            if (isDead) return;
-            if (iceHealth > 0){
-                iceHealth -= damage;
-                if (iceHealth <= 0){
-                    unfreeze();
-                }
-                return;
+    @Override
+    public void takeDamage(int amount, String damageType) {
+        if (isDead) return;
+        if (iceHealth > 0){
+            iceHealth -= damage;
+            if (iceHealth <= 0){
+                unfreeze();
             }
-            this.health -= amount;
-            if (this.health <= 0) {
-                die();
-            }
+            return;
         }
+        this.health -= amount;
+        if (this.health <= 0) {
+                die();
+        }
+    }
 
     public void unfreeze() {
         iceHealth = 0;
@@ -149,8 +147,8 @@ public abstract class Zombie implements Damageable {
             GameMenuController.updateState("\uD83C\uDFC6A zombie dropped a " + type.name().toLowerCase() + " at (" + (int)x + ", " + (int)y + ")");
         }
 
-        GameMenuController.updateState("\uD83D\uDC80Zombie of type " + name.name() + " is dead at (" + (int)x + ", " + (int)y + ")");
-    }
+        String displayName = (specificName != null) ? specificName : name.name();
+        GameMenuController.updateState("\uD83D\uDC80Zombie of type " + displayName + " is dead at (" + (int)x + ", " + (int)y + ")");    }
 
     public void applySlow(int ticks, double factor, boolean canWorkInFrostbite) {
         if (!canWorkInFrostbite && App.getCurrentGame() instanceof FrostbiteCavesWorld){

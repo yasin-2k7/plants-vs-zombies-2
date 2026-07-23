@@ -82,13 +82,13 @@ public class App {
 
     public static String getZombieId(String name){
         switch (name){
-            case "ZombieConeHead":
+            case "ZombieConehead":
                 return "ZombieArmor1";
-            case "ZombieBucketHead":
+            case "ZombieBuckethead":
                 return "ZombieArmor2";
             case "ZombieKnight":
                 return "ZombieDarkArmor3";
-            case "ZombieBrickHead":
+            case "ZombieBrickhead":
                 return "ZombieArmor4";
             default:
                 return name;

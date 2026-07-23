@@ -2,7 +2,6 @@ package models.mupoint;
 
 import models.enums.Chapter;
 import models.miniGame.MiniGameWorld;
-import models.world.ChapterWorld.AncientEgyptWorld;
 import models.world.GameWorld;
 import models.world.levelSetup.LevelSetup;
 import models.world.levelSetup.NormalLevelSetup;

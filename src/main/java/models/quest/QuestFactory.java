@@ -1,7 +1,6 @@
 package models.quest;
 
 import models.core.App;
-import models.enums.Chapter;
 import models.enums.PlantFamily;
 import models.enums.PlantType;
 import models.quest.reward.*;

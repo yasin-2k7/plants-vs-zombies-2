@@ -4,7 +4,6 @@ import models.core.*;
 import view.terminalView.AppView;
 import view.terminalView.GameMenuView;
 import view.terminalView.MainMenuView;
-import view.terminalView.SignupMenuView;
 
 import java.util.List;
 
@@ -22,7 +21,6 @@ public class ProfileMenuController implements MenuController {
 
     public String changeUsername(String newUsername) {
         User user = App.getCurrentUser();
-        String oldUsername = user.getUsername();
 
         if (user.getUsername().equals(newUsername)) {
             return "new username and your username are similar.";

@@ -4,7 +4,6 @@ import models.core.App;
 import models.core.User;
 import models.mupoint.MuPointLevel;
 import models.world.GameWorld;
-import models.world.LevelFactory;
 import view.terminalView.*;
 
 public class MainMenuController implements MenuController {

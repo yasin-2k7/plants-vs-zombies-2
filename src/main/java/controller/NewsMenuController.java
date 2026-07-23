@@ -3,7 +3,6 @@ package controller;
 import models.core.App;
 import models.core.News;
 import models.core.User;
-import models.core.UserDataManager;
 import view.terminalView.AppView;
 import view.terminalView.GameMenuView;
 import view.terminalView.MainMenuView;

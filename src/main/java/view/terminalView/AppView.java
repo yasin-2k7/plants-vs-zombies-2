@@ -1,7 +1,5 @@
 package view.terminalView;
 
-import controller.SignupMenuController;
-import models.core.App;
 import view.View;
 
 import java.util.Scanner;

@@ -13,13 +13,13 @@ import models.quest.QuestStats;
 import models.world.cellTerrains.CellTerrain;
 import models.world.obstacles.Grave;
 import models.world.obstacles.Obstacle;
+import models.world.obstacles.OctopusObstacle;
 import models.zombie.Zombie;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static java.util.stream.Collectors.toList;
 
 
 public class Cell {
@@ -96,26 +96,25 @@ public class Cell {
     }
 
     public String handlePlanting(PlantType type, boolean boost){
-        if (!this.isPlantable()) {
-            if (!(this.obstacle instanceof Grave && type == PlantType.GRAVE_BUSTER)){
-                return "you cannot plant in that place!";
-            }
+        if (this.obstacle instanceof Grave grave && type == PlantType.GRAVE_BUSTER) {
+            grave.takeDamage(grave.getHealth(), "NORMAL");
+            this.obstacle = null;
+            this.plantable = true;
+            return null;
         }
-
+        if (!this.isPlantable()) {
+            if (!(this.obstacle instanceof Grave && type == PlantType.GRAVE_BUSTER))
+                return "you cannot plant in that place!";
+        }
         Plant newPlant = PlantFactory.createPlant(type, (int)x, (int)y, this);
         if (boost) newPlant.setPlantFoodInStart(true);
-
         if (((this.obstacle instanceof Grave) != (type == PlantType.GRAVE_BUSTER))
            || !(this.terrain.canPlant(newPlant, this))
            || (this.hasIcyZombie())){
             return "you cannot plant in that place!";
         }
-
         PlacementBehaviorComponent behavior = newPlant.getComponent(PlacementBehaviorComponent.class);
         PlantLayer layer = (behavior != null) ? behavior.getTargetLayer() : PlantLayer.MAIN;
-
-
-
         if (behavior != null && behavior.isStackable() && !isLayerEmpty(layer)) {
             Plant existingPlant = getPlant(layer);
             if (existingPlant.getType() == type) {
@@ -125,34 +124,28 @@ public class Cell {
                     shooterComp.setBurstProjectileNumber(existingBehavior.getCurrentStack());
                     shooterComp.setBurstProjectileNumberOnPlantFood(existingBehavior.getCurrentStack());
                     shooterComp.setGiantCount(existingBehavior.getCurrentStack());
-                    // update visuals...
                     return null;
                 }
             }
         }
-
         if (isLayerEmpty(layer)) {
             setPlant(newPlant, layer);
             App.getCurrentGame().getActivePlants().add(newPlant);
-
             User user = App.getCurrentUser();
             if (user != null) {
                 QuestStats stats = user.getQuestStats();
-                // برای کوئست ۱۱
                 stats.addFamilyUsedInLevel(newPlant.getType().family);
-                // برای کوئست ۱۲
                 stats.incrementTotalPlantsUsed();
                 if (Plant.isMushroom(newPlant.getType())) {
                     stats.incrementMushroomPlantsUsed();
                 }
-                // برای کوئست ۸ (انفجاری)
                 if (newPlant.getType().family == PlantFamily.EXPLOSIVE) {
                     stats.incrementExplosivePlantsUsed();
                 }
                 if (newPlant.getType().family == PlantFamily.SUN_PRODUCER) {
                     stats.incrementSunProducerPlantsInLevel();
                 }
-                user.getQuestManager().checkAllQuests(user);
+//                user.getQuestManager().checkAllQuests(user);
             }
             return null;
         }
@@ -342,7 +335,13 @@ public class Cell {
     }
 
     public boolean blocksProjectile() {
-        return hasObstacle() && obstacle.isDestroyed();
+        if (hasObstacle() && obstacle.blocksProjectiles()) {
+            if (obstacle instanceof OctopusObstacle) {
+                return true;
+            }
+            return true;
+        }
+        return false;
     }
 
     public boolean isNecromancyPotential() { return necromancyPotential; }

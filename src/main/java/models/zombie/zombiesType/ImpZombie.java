@@ -14,30 +14,18 @@ public class ImpZombie extends Zombie {
         this.isThrown = false;
     }
 
-    // متد برای پرتاب کردن (تنظیم موقعیت و علامت‌گذاری)
     public void throwImp(float targetX, float targetY) {
         this.x = targetX;
         this.y = targetY;
         this.isThrown = true;
     }
 
-    public void land(float targetX, float targetY) {
-        this.x = targetX;
-        this.y = targetY;
-        this.isThrown = false;
-    }
-
-    public void bite(Plant plant) {
-        if (plant != null) {
-            plant.takeDamage(this.damage);
-        }
-    }
-
     @Override
     public void takeDamage(int amount, String damageType) {
+        System.out.println("🔍 ImpZombie.takeDamage: amount=" + amount + ", damageType='" + damageType + "'");
         if (isDead) return;
-        // ایمپ اژدها در برابر آتش آسیب نمی‌بیند
-        if (isDragon && "FIRE".equals(damageType)) {
+        if (isDragon && damageType != null && damageType.toUpperCase().contains("FIRE")) {
+            System.out.println("🛡️ ImpDragon ignored " + amount + " fire damage.");
             return;
         }
         super.takeDamage(amount, damageType);

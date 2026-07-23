@@ -8,13 +8,10 @@ import models.plant.visions.StraightVisionStrategy;
 import models.plant.visions.VisionStrategy;
 import models.projectile.Projectile;
 import models.projectile.hitStrategies.CombinedDamageStrategy;
-import models.projectile.movementStrategies.BowlingMovementStrategy;
 import models.projectile.movementStrategies.MovementStrategy;
 import models.projectile.strikeStrategies.CheckStraightStrike;
 import models.projectile.strikeStrategies.CheckStrike;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.function.Supplier;
 
 public class BowlingChargeComponent implements GameComponent {
@@ -123,7 +120,6 @@ public class BowlingChargeComponent implements GameComponent {
             Projectile p = App.getCurrentGame().getProjectilesPool().acquire();
             p.reset(owner.getX(), owner.getY(), plantFoodDamageStrategy, movementStrategy.get(), strikeStrategy, ProjectileType.SPECIAL_BULB);
             App.getCurrentGame().getActiveProjectiles().add(p);
-            int i = 0;
             if (plantFoodProjectileCount == 0){
                     activePlantFood = false;
             }

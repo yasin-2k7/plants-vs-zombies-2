@@ -1,8 +1,6 @@
 package view.terminalView;
 
-import controller.LevelMenuController;
 import controller.SettingMenuController;
-import models.enums.commands.LoginMenuCommands;
 import models.enums.commands.SettingMenuCommands;
 import view.View;
 
