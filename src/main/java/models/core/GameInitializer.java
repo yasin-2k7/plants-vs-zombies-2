@@ -14,8 +14,7 @@ public class GameInitializer {
                 .getResourceAsStream("upgradeRules.json")) {
 
             if (inputStream == null) {
-                System.err.println("Error: upgrades.json file not found in resources folder!");
-                return;
+                throw new IllegalStateException("Upgrades file not found in resources!");
             }
 
             try (Reader reader = new InputStreamReader(inputStream, StandardCharsets.UTF_8)) {
@@ -23,8 +22,7 @@ public class GameInitializer {
             }
 
         } catch (Exception e) {
-            System.err.println("Failed to load or parse upgrades.json:");
-            e.printStackTrace();
+            return;
         }
     }
 }

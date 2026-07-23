@@ -10,11 +10,9 @@ public enum TravelLogCommands {
     TRAVEL_LOG_PAGE("^travel\\s+log\\s+page\\s+(\\S+)$"),  // page name: daily, main, epic, minigame
     PLAY_MINIGAME("\\s*play\\s+(\\S+)\\s+([1-3])\\s*");
 
-    private final String pattern;
     private final Pattern compiledPattern;
 
     TravelLogCommands(String pattern) {
-        this.pattern = pattern;
         this.compiledPattern = Pattern.compile(pattern);
     }
 

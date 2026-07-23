@@ -1,9 +1,12 @@
 package models.miniGame.bowling;
 
+import models.enums.PlantType;
+import models.plant.card.PlantCard;
 import models.world.Cell;
 import models.world.GameWorld;
 import models.world.cellTerrains.LandTerrain;
 import models.world.levelSetup.LevelSetup;
+import models.world.mechanics.ConveyorMechanic;
 import models.zombie.wave.Wave;
 import models.zombie.wave.WaveManager;
 import models.zombie.wave.WaveSpawnEntry;
@@ -48,6 +51,14 @@ public class BowlingSetup implements LevelSetup {
         world.setGrid(grid);
 
         world.addMechanic(new BowlingMechanics());
+
+        List<PlantCard> bowlingCards = List.of(
+                new PlantCard(PlantType.WALL_NUT, 0, 0),
+                new PlantCard(PlantType.EXPLODE_O_NUT, 0, 0),
+                new PlantCard(PlantType.GIANT_WALLNUT, 0, 0)
+        );
+
+        world.addMechanic(new ConveyorMechanic(bowlingCards));
 
         List<Wave> waves = Wave.generateWaves(waveCount, baseDifficulty, availableZombies, 40);
         WaveManager waveManager = new WaveManager(waves);

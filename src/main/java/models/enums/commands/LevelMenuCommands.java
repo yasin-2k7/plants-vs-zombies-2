@@ -10,11 +10,9 @@ public enum LevelMenuCommands {
     CHOOSE_LEVEL("^choose\\s+level\\s+([1-4])$"),
     SHOW_LEVELS("^show\\s+levels$");
 
-    private final String pattern;
     private final Pattern compiledPattern;
 
     LevelMenuCommands(String pattern) {
-        this.pattern = pattern;
         this.compiledPattern = Pattern.compile(pattern);
     }
 

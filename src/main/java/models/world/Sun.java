@@ -77,7 +77,6 @@ public class Sun implements Resettable {
         this.game = App.getCurrentGame();
         this.type = SunType.NORMAL;
         this.isCollected = false;
-        System.out.println(this);
     }
 
     @Override

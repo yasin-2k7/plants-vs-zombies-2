@@ -12,7 +12,6 @@ import java.util.ArrayList;
 public class SunProducerComponent implements GameComponent {
     private int sunSize; //مقدار خورشید تولیدی
     private int sunNumber;
-    private long lastProductionTime = System.currentTimeMillis();
     private int lastProductionTicks;
     private int productionTime;
     private boolean doubleSunChance;
@@ -62,6 +61,7 @@ public class SunProducerComponent implements GameComponent {
             enable = false;
             lastProductionTicks = 0;
             for (int i = 0; i < sunNumber; i++){
+                if (doubleSunChance && Math.random() < 0.2) componentSuns.add(produceSun(owner));
                 componentSuns.add(produceSun(owner));
             }
             if (isInstant) {

@@ -11,7 +11,7 @@ public class App {
     private static MenuController currentMenu;
     private static View currentScreen;
     private static GameWorld currentGame;
-    private static final PlantFactory factory = new PlantFactory();
+    private static final PlantFactory FACTORY = new PlantFactory();
 
     private static final float CELL_HEIGHT = 100;
     private static final float CELL_WIDTH = 100;
@@ -53,7 +53,7 @@ public class App {
     }
 
     public static PlantFactory getFactory() {
-        return factory;
+        return FACTORY;
     }
 
     public static GreenHouse getGreenhouse() {
@@ -82,13 +82,13 @@ public class App {
 
     public static String getZombieId(String name){
         switch (name){
-            case "ZombieConeHead":
+            case "ZombieConehead":
                 return "ZombieArmor1";
-            case "ZombieBucketHead":
+            case "ZombieBuckethead":
                 return "ZombieArmor2";
             case "ZombieKnight":
                 return "ZombieDarkArmor3";
-            case "ZombieBrickHead":
+            case "ZombieBrickhead":
                 return "ZombieArmor4";
             default:
                 return name;

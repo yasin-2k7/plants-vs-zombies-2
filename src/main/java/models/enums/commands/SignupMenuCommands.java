@@ -10,11 +10,9 @@ public enum SignupMenuCommands {
     REGISTER("^register\\s+-u\\s+(\\S+)\\s+-p\\s+(\\S+)\\s+(\\S+)\\s+-n\\s+(\\S+)\\s+-e\\s+(\\S+)\\s+-g\\s+(\\S+)$"),
     PICK_QUESTION("^pick question\\s+-q\\s+(\\d+)\\s+-a\\s+(\\S+)\\s+-c\\s+(\\S+)$");
 
-    private final String pattern;
     private final Pattern compiledPattern;
 
     SignupMenuCommands(String pattern) {
-        this.pattern = pattern;
         this.compiledPattern = Pattern.compile(pattern);
     }
 

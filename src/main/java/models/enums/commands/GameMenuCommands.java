@@ -4,7 +4,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public enum GameMenuCommands {
-    MENU_ENTER("\\s*menu\\s+enter\\s+(?<name>.+)"),
     MENU_SHOW_CURRENT("\\s*menu\\s+show\\s+current\\s*"),
     MENU_EXIT("\\s*menu\\s+exit\\s*"),
     ADVANCE_TIME("\\s*advance\\s+time\\s+-t\\s+(?<count>\\d+)\\s+tick\\s*"),
@@ -14,6 +13,9 @@ public enum GameMenuCommands {
     CHEAT_ADD_SUNS("\\s*cheat\\s+add\\s+-n\\s+(?<count>\\d+)\\s+suns\\s*"),
     RELEASE_THE_NUKE("\\s*release\\s+the\\s+nuke\\s*"),
     PLANT_PLANT("\\s*plant\\s+plant\\s+-t\\s+(?<type>\\S+)\\s+-l\\s+\\(\\s*(?<x>\\d+)\\s*,\\s*(?<y>\\d+)\\s*\\)\\s*"),
+    PLANT_SELECTED_PLANT("\\s*plant\\s+selected\\s+plant\\s+-l\\s+\\(\\s*(?<x>\\d+)\\s*,\\s*(?<y>\\d+)\\s*\\)\\s*"),
+    SELECT_PLANT("\\s*select\\s+plant\\s+-t\\s+(?<type>\\S+)\\s*"),
+    UNSELECT_PLANT("\\s*unselect\\s+plant\\s*"),
     CHEAT_REMOVE_COOLDOWN("(?i)\\s*cheat\\s+remove-cooldown\\s*"),
     PLUCK_PLANT("\\s*pluck\\s+plant\\s+-l\\s+\\(\\s*(?<x>\\d+)\\s*,\\s*(?<y>\\d+)\\s*\\)\\s*"),
     FEED_PLANT("\\s*feed\\s+plant\\s+-l\\s+\\(\\s*(?<x>\\d+)\\s*,\\s*(?<y>\\d+)\\s*\\)\\s*"),
@@ -31,16 +33,14 @@ public enum GameMenuCommands {
     PLANT_HELD_SEED("\\s*plant\\s+held\\s+seed\\s+-l\\s+\\(\\s*(?<x>\\d+)\\s*,\\s*(?<y>\\d+)\\s*\\)\\s*"),
     SWAP_PLANTS("\\s*swap\\s+plants\\s+-l1\\s+\\(\\s*(?<row1>\\d+)\\s*,\\s*(?<col1>\\d+)\\s*\\)\\s+-l2\\s+\\(\\s*(?<row2>\\d+)\\s*,\\s*(?<col2>\\d+)\\s*\\)\\s*"),
     UPGRADE_PLANT("\\s*upgrade\\s+plant\\s+-t\\s+(?<type>\\S+)\\s*"),
+    RESIT_MAP("\\s*reset\\s+map\\s*"),
     PLACE_ZOMBIE("\\s*place\\s+zombie\\s+-t\\s+(?<type>\\S+)\\s+-l\\s+\\(\\s*(?<x>\\d+)\\s*,\\s*(?<y>\\d+)\\s*\\)\\s*"),
     THROW_BOWLING_BALL("\\s*throw\\s+bowling-ball\\s+-t\\s+(?<type>\\S+)\\s+-l\\s+\\(\\s*(?<x>\\d+)\\s*,\\s*(?<y>\\d+)\\s*\\)\\s*");
 
 
-
-    private final String pattern;
     private final Pattern compiledPattern;
 
     GameMenuCommands(String pattern) {
-        this.pattern = pattern;
         this.compiledPattern = Pattern.compile(pattern);
     }
 

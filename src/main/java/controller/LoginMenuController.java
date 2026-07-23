@@ -36,13 +36,11 @@ public class LoginMenuController implements MenuController{
         }
         if(!user.getEmail().equals(email)){
             return "Email is not correct.";
-        } else{
-            this.recoveringUser = user;
-            this.isSQPassed = false;
-            return "Please answer security question: " + "\n"
-                    + user.getSecurityQ();
-
         }
+        this.recoveringUser = user;
+        this.isSQPassed = false;
+        return "Please answer security question: " + "\n"
+                + user.getSecurityQ();
 
     }
 
@@ -54,10 +52,10 @@ public class LoginMenuController implements MenuController{
         if(!recoveringUser.checkSeqA(answer)){
             isSQPassed = false;
             return "your answer is incorrect";
-        } else {
-            isSQPassed = true;
-            return "Enter your new password:";
         }
+        isSQPassed = true;
+        return "Enter your new password:";
+
     }
 
     public String newPassword(String password){

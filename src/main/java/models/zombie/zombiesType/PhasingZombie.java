@@ -1,5 +1,6 @@
 package models.zombie.zombiesType;
 
+import controller.GameMenuController;
 import models.enums.Zombies;
 import models.zombie.Zombie;
 import models.zombie.state.EatingState;
@@ -51,7 +52,7 @@ public class PhasingZombie extends Zombie {
             // نیوزپیپر عصبانی می‌شود
             this.speed = this.originalSpeed * 3.0;
             this.damage = (int)(this.damage * 2);
-            System.out.println("Newspaper is angry! Speed and damage increased.");
+            GameMenuController.updateState("Newspaper is angry! Speed and damage increased.");
         }
     }
 
@@ -71,7 +72,7 @@ public class PhasingZombie extends Zombie {
                 // کند شدن
                 this.speed = this.originalSpeed * 0.3;
                 this.damage = 20; //برگشت به آسیب عادی
-                System.out.println("All-Star killed a plant and slowed down.");
+                GameMenuController.updateState("All-Star killed a plant and slowed down.");
             }
         }
     }

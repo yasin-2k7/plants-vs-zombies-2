@@ -1,5 +1,7 @@
 package models.core;
 
+import controller.GameMenuController;
+
 import java.util.HashMap;
 
 public class UserManager {
@@ -72,7 +74,7 @@ public class UserManager {
             currentUser = null;
             App.setCurrentUser(null);
             UserDataManager.clearLoggedInUser();
-            System.out.println("You have been logged out.");
+            GameMenuController.updateState("You have been logged out.");
         }
     }
 

@@ -1,5 +1,6 @@
 package models.zombie.zombiesType;
 
+import controller.GameMenuController;
 import models.core.App;
 import models.enums.Zombies;
 import models.projectile.Projectile;
@@ -64,7 +65,6 @@ public class DeflectorZombie extends Zombie {
                 return true;
             }
         }
-
         return false;
     }
 
@@ -72,6 +72,8 @@ public class DeflectorZombie extends Zombie {
         isSpinning = true;
         spinTicks = 30;
         System.out.println("Juggler starts spinning!");
+        spinTicks = 30;  // حداقل ۳۰ تیک می‌چرخد، با هر پرتابه جدید دوباره reset می‌شود
+        GameMenuController.updateState("Juggler starts spinning!");
     }
 
     private void stopSpinning() {
@@ -80,6 +82,8 @@ public class DeflectorZombie extends Zombie {
             this.speed = originalSpeed;
         }
         System.out.println("Juggler stops spinning.");
+        this.speed = originalSpeed;
+        GameMenuController.updateState("Juggler stops spinning.");
     }
 
     private void deflectProjectile(Projectile original) {
@@ -95,6 +99,6 @@ public class DeflectorZombie extends Zombie {
         deflected.reset(original.getX(), original.getY(), hitStrategy, movement, strike, original.getType());
         deflected.setPlantType(original.getPlantType());
         game.getActiveProjectiles().add(deflected);
-        System.out.println("Juggler deflected a projectile back to plants!");
+        GameMenuController.updateState("Juggler deflected a projectile back to plants!");
     }
 }

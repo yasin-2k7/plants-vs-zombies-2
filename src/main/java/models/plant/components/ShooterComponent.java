@@ -22,24 +22,24 @@ public class ShooterComponent implements GameComponent {
     private ProjectileType bulletType;
     private ProjectileType giantType;
 
+    private List<Supplier<MovementStrategy>> defaultMovementStrategies = new ArrayList<>();
+
     private final int shootingTime;
     private int burstProjectileNumber;
     private int burstProjectileNumberOnPlantFood;
-    private final int BURST_DELAY_MAX = 3;
+    private static final int BURST_DELAY_MAX = 3;
 
     private int burstDelayMax = BURST_DELAY_MAX;
     private int projectilesLeftForShoot;
     private int shootingTimer = 0;
     private int burstDelayTimer;
 
-    private int giantDamageFactor;
     private boolean hasGiant;
     private int giantCount;
     private boolean activePlantFood;
 
     private int normalPierce;
     private int giantPierce;
-    private Plant owner;
 
     Damageable target = null;
 
@@ -76,7 +76,6 @@ public class ShooterComponent implements GameComponent {
         this.giantCount = giantCount;
         this.normalPierce = normalPierce;
         this.giantPierce = giantPierce;
-        this.giantDamageFactor = giantDamageFactor;
         this.plantFoodBehavior = BurstPlantFood.INSTANCE;
         plantFoodStrategy = damageStrategy.get().changeDamage(damageStrategy.get().getDamage()*giantDamageFactor);
     }
@@ -86,8 +85,9 @@ public class ShooterComponent implements GameComponent {
 
 
     @Override
-    public void activatePlantFood(Plant owner){
-        if (plantFoodBehavior != null){
+    public void activatePlantFood(Plant owner) {
+        if (plantFoodBehavior != null) {
+            this.defaultMovementStrategies = new ArrayList<>(this.movementStrategies);
             plantFoodBehavior.activate(owner, this);
         }
     }
@@ -95,7 +95,6 @@ public class ShooterComponent implements GameComponent {
 
     @Override
     public void update(Plant owner) {
-        this.owner = owner;
         if (projectilesLeftForShoot > 0){
             burstHandler(owner);
             return;
@@ -150,7 +149,13 @@ public class ShooterComponent implements GameComponent {
 
             if (projectilesLeftForShoot <= 0){
                 projectilesLeftForShoot = 0;
-                activePlantFood = false;
+                if (activePlantFood) {
+                    activePlantFood = false;
+                    if (!defaultMovementStrategies.isEmpty()) {
+                        this.movementStrategies = new ArrayList<>(defaultMovementStrategies);
+                        this.defaultMovementStrategies.clear();
+                    }
+                }
             }
         }
     }
@@ -217,6 +222,10 @@ public class ShooterComponent implements GameComponent {
 
     public void setBulletType(ProjectileType bulletType) {
         this.bulletType = bulletType;
+    }
+
+    public int getProjectilesLeftForShoot() {
+        return projectilesLeftForShoot;
     }
 
     public ProjectileType getBulletType() {

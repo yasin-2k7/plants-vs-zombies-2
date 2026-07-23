@@ -1,9 +1,11 @@
 package models.plant.visions;
 
+import models.Damageable;
 import models.core.App;
 import models.plant.Plant;
 import models.projectile.Projectile;
 import models.world.GameWorld;
+import models.world.obstacles.Obstacle;
 import models.zombie.Zombie;
 
 public class StraightVisionStrategy implements VisionStrategy {
@@ -18,7 +20,7 @@ public class StraightVisionStrategy implements VisionStrategy {
     }
 
     @Override
-    public Zombie findZombie(Plant owner) {
+    public Damageable findZombie(Plant owner) {
         GameWorld gameWorld = App.getCurrentGame();
         if (!needZombie){
             for (Zombie zombie : gameWorld.getActiveZombies()){
@@ -26,11 +28,17 @@ public class StraightVisionStrategy implements VisionStrategy {
                     return zombie;
                 }
             }
+            for (Obstacle obstacle : gameWorld.getActiveObstacles()){
+                if (VisionStrategy.isBetween(obstacle.getX(), owner.getX(), owner.getX() + range) && VisionStrategy.isBetween(obstacle.getY(), owner.getY() - width/2, owner.getY() + width/2)){
+                    return obstacle;
+                }
+            }
             return null;
         }
         else{
             float x = 1000f;
             Zombie firstZombie = null;
+            Obstacle firstObstacle = null;
             for (Zombie zombie : gameWorld.getActiveZombies()){
                 if (VisionStrategy.isBetween(zombie.getX(), owner.getX(), owner.getX() + range) && VisionStrategy.isBetween(zombie.getY(), owner.getY() - width/2, owner.getY() + width/2)){
                     if (zombie.getX() < x){
@@ -39,7 +47,16 @@ public class StraightVisionStrategy implements VisionStrategy {
                     }
                 }
             }
-            return firstZombie;
+            if (firstZombie != null) return firstZombie;
+            for (Obstacle obstacle : gameWorld.getActiveObstacles()){
+                if (VisionStrategy.isBetween(obstacle.getX(), owner.getX(), owner.getX() + range) && VisionStrategy.isBetween(obstacle.getY(), owner.getY() - width/2, owner.getY() + width/2)){
+                    if (obstacle.getX() < x){
+                        x = obstacle.getX();
+                        firstObstacle = obstacle;
+                    }
+                }
+            }
+            return firstObstacle;
         }
     }
 

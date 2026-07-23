@@ -1,5 +1,6 @@
 package models.zombie.zombiesType;
 
+import controller.GameMenuController;
 import models.core.App;
 import models.enums.ProjectileType;
 import models.enums.Zombies;
@@ -66,6 +67,7 @@ public class ElementalZombie extends Zombie {
                         if (plant != null && !plant.isDead()) {
                             plant.die();
                             System.out.println("🔥Explorer burned plant at (" + plant.getX() + ", " + plant.getY() + ")");
+                            GameMenuController.updateState("Explorer burned plant at (" + plant.getX() + ", " + plant.getY() + ")");
                         }
                     }
                 }
@@ -93,12 +95,24 @@ public class ElementalZombie extends Zombie {
         this.originalSpeed = -Math.abs(this.originalSpeed);
 
         System.out.println("🧨Prospector exploded and teleported to the left end of the row.");
+        // انتقال به انتهای سطر (راست‌ترین ستون)
+        int cols = game.getCols();
+        float newX = cols * App.getCellWidth() - App.getCellWidth() / 2;
+        this.x = newX;
+        // حرکت به چپ (سرعت مثبت)
+        this.speed = Math.abs(this.speed);
+        GameMenuController.updateState("Prospector exploded and teleported to the right end of the row.");
     }
 
     public void extinguish() {
         if (!isIgnited) return;
         this.isIgnited = false;
         System.out.println(isExplorer ? "Explorer's torch extinguished." : "Prospector's dynamite extinguished.");
+        if (!isExplorer) {
+            GameMenuController.updateState("Prospector's dynamite extinguished.");
+        } else {
+            GameMenuController.updateState("Explorer's torch extinguished.");
+        }
     }
 
     public void ignite() {
@@ -106,6 +120,10 @@ public class ElementalZombie extends Zombie {
         if (isIgnited) return;
         this.isIgnited = true;
         System.out.println("🔥Explorer's torch ignited.");
+        if (isExplorer) {
+            this.isIgnited = true;
+            GameMenuController.updateState("Explorer's torch ignited.");
+        }
     }
 
     @Override

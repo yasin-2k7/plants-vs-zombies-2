@@ -1,12 +1,15 @@
 package models.miniGame.IZombie;
 
+import models.core.App;
 import models.enums.Zombies;
+import models.world.GameWorld;
 import models.zombie.Zombie;
 
 public class SunProducer extends Zombie {
     private int baseSunRate;
     private long spawnTick;
     private long lastSunProduceTick;
+    private boolean initialized = false;
 
     public SunProducer(Zombies name, int health, double speed, int damage) {
         super(name, health, speed, damage);
@@ -18,6 +21,7 @@ public class SunProducer extends Zombie {
     public void initSpawnTick(long currentTick){
         this.spawnTick = currentTick;
         this.lastSunProduceTick = currentTick;
+        this.initialized = true;
     }
 
     public int calculateSunAmount(long currentTick){
@@ -29,6 +33,7 @@ public class SunProducer extends Zombie {
         long currentTick = level.getCurrentTick();
         if (currentTick - lastSunProduceTick >= baseSunRate) {
             int sunAmount = calculateSunAmount(currentTick);
+            System.out.println("SunProducer generated " + sunAmount + " suns! ☀️");
             level.addSunToPlayer(sunAmount);
             lastSunProduceTick = currentTick;
         }
@@ -40,8 +45,22 @@ public class SunProducer extends Zombie {
         if (health > 0) {
             health -= amount;
             if (health < 0) health = 0;
+            this.isDead = true;
         }else {
             super.takeDamage(amount, damageType);
+        }
+    }
+
+    @Override
+    public void update() {
+        super.update();
+        GameWorld currentGame = App.getCurrentGame();
+        if (currentGame instanceof IZombieLevel level) {
+            if (!initialized) {
+                initSpawnTick(level.getCurrentTick());
+            }
+
+            updateSunGeneration(level);
         }
     }
 }

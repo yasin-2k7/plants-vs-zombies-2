@@ -1,5 +1,6 @@
 package models.zombie.zombiesType;
 
+import controller.GameMenuController;
 import models.core.App;
 import models.enums.PlantType;
 import models.enums.Zombies;
@@ -91,7 +92,7 @@ public class DodoRiderZombie extends Zombie {
                     Cell nextCell = game.getGrid()[row][col];
                     this.x = nextCell.getX();
                     this.y = nextCell.getY();
-                    System.out.println("Dodo Rider flew over a " + type.name() + " at (" + cell.getX() + ", " + cell.getY() + ")");
+                    GameMenuController.updateState("Dodo Rider flew over a " + type.name() + " at (" + cell.getX() + ", " + cell.getY() + ")");
                 } else {
                     // اگر سلول سمت چپ وجود نداشت، یک سلول کامل به چپ بپر
                     this.x -= App.getCellWidth();
@@ -110,7 +111,7 @@ public class DodoRiderZombie extends Zombie {
         if (!isDead && isRiding && this.health <= this.maxHealth / 2) {
             isRiding = false;
             this.speed = this.originalSpeed * 0.6; // کندتر می‌شود
-            System.out.println("Dodo Rider lost its mount!");
+            GameMenuController.updateState("Dodo Rider lost its mount!");
         }
     }
 

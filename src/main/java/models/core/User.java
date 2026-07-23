@@ -24,14 +24,12 @@ public class User {
     private String securityA;
 
     private int gamesPlayed;
-    private int highScore;
 
     private Set<MiniGameLevels> completedMiniGames = EnumSet.noneOf(MiniGameLevels.class);
 
     private int unlockedChapter;
     private transient Chapter currentChapter;
     private int unlockedLevel;
-    private int currentLevel;
     private int userLevel;
     private int coins;
     private int gems;
@@ -63,7 +61,7 @@ public class User {
         this.unlockedLevel = 1;
         this.questStats = new QuestStats();
         gamesPlayed = 0;
-        highScore = 0;
+        maxMupoint = 0;
         putInitialPlants();
         putZombies();
     }
@@ -110,6 +108,9 @@ public class User {
         unlockedPlantsLevels.put(PlantType.REPEATER, 1);
         unlockedPlantsLevels.put(PlantType.SNOW_PEA, 1);
         unlockedPlantsLevels.put(PlantType.LILY_PAD, 1);
+        unlockedPlantsLevels.put(PlantType.GIANT_WALLNUT, 1);
+        unlockedPlantsLevels.put(PlantType.EXPLODE_O_NUT, 1);
+
     }
 
     public void afterLoad() {
@@ -141,7 +142,6 @@ public class User {
     }
 
     private void save() {
-        // فقط اگر کاربر از فایل لود شده باشد یا جدیداً ثبت‌نام کرده باشد، ذخیره کن
         if (isLoaded || !username.isEmpty()) {
             UserDataManager.saveUser(this);
         }
@@ -281,8 +281,8 @@ public class User {
         return newsList;
     }
 
-    public ArrayList<News> getUnreadNews() {
-        return (ArrayList<News>) newsList.stream()
+    public List<News> getUnreadNews() {
+        return newsList.stream()
                 .filter(n -> !n.isRead())
                 .toList();
     }
@@ -392,6 +392,7 @@ public class User {
     }
 
     public void unlockLevel() {
+        if (unlockedLevel == 4 && unlockedChapter == 4) return;
         int newLevel = unlockedLevel == 4 ? 1 : unlockedLevel+1;
         int newChapter = newLevel == 1 ? unlockedChapter+1 : unlockedChapter;
         unlockedLevel = newLevel;
@@ -446,9 +447,7 @@ public class User {
                 .count();
     }
 
-    public int getHighScore() {
-        return highScore;
-    }
+
 
     public int getCompletedMainLevels() {return (unlockedChapter-1)*4 + unlockedLevel-1;}
 

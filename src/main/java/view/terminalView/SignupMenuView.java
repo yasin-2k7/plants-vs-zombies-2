@@ -81,8 +81,11 @@ public class SignupMenuView implements View{
                         errors.addAll(controller.getPickQErrors(questionNum, answer, answerConfirm));
 
                         if (errors.isEmpty()) {
-                            controller.createUser(username, password, nickname, email, gender, question, answer);
-                            System.out.println("User registered successfully!");
+                            String result = controller.createUser(username,
+                                    password,
+                                    nickname,
+                                    email, gender, question, answer);
+                            System.out.println(result);
                             isSigningUp = false;
                         } else {
                             for (String error : errors) {

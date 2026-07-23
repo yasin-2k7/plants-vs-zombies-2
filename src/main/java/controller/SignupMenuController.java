@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SignupMenuController implements MenuController{
-    private UserDataManager userDataManager;
     private List<String> questions = new ArrayList<>();
 
     public SignupMenuController() {
@@ -119,7 +118,7 @@ public class SignupMenuController implements MenuController{
                             String securityQ,
                             String securityA){
         String result = UserManager.register(username, password, nickname, email, gender, securityQ, securityA);
-
+        AppView.currentScreen = LoginMenuView.getInstance(new LoginMenuController());
         return result;
 
     }

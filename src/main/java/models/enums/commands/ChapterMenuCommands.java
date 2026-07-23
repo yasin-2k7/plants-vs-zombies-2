@@ -16,11 +16,9 @@ public enum ChapterMenuCommands {
     CHOOSE_CHAPTER("^choose\\s+adventure\\s+(\\S+)$");
 
 
-    private final String pattern;
     private final Pattern compiledPattern;
 
     ChapterMenuCommands(String pattern) {
-        this.pattern = pattern;
         this.compiledPattern = Pattern.compile(pattern);
     }
 

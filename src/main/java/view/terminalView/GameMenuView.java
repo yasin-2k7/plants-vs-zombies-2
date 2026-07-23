@@ -1,11 +1,8 @@
 package view.terminalView;
 
 import controller.GameMenuController;
-import controller.SignupMenuController;
 import models.enums.PlantType;
 import models.enums.commands.GameMenuCommands;
-import models.enums.commands.SignupMenuCommands;
-import models.miniGame.bowling.BowlingBallType;
 import view.View;
 
 import java.util.regex.Matcher;
@@ -39,9 +36,6 @@ public class GameMenuView implements View{
                     case MENU_EXIT:
                         controller.exitMenu();
                         return;
-                    case MENU_ENTER:
-                        controller.enterMenu(matcher.group("name"));
-                        return;
                     case SHOW_MAP:
                         controller.showMap();
                         return;
@@ -61,11 +55,34 @@ public class GameMenuView implements View{
                         String type = matcher.group("type");
                         controller.collectCollectable(x, y, type);
                         return;
+                    case UNSELECT_PLANT:
+                        controller.unselectPlant();
+                        return;
+                    case SELECT_PLANT:
+                        type = matcher.group("type");
+                        PlantType selectedType = null;
+                        for (PlantType plantType : PlantType.values()){
+                            if (plantType.name().equalsIgnoreCase(type)){
+                                selectedType = plantType;
+                                break;
+                            }
+                        }
+                        if (selectedType == null){
+                            System.out.println("please select a valid plant");
+                            return;
+                        }
+                        controller.selectPlant(selectedType);
+                        return;
+                    case PLANT_SELECTED_PLANT:
+                        x = Float.parseFloat(matcher.group("x"));
+                        y = Float.parseFloat(matcher.group("y"));
+                        controller.plantSelectedPlant(x,y);
+                        return;
                     case PLANT_PLANT:
                         type = matcher.group("type");
                         x = Float.parseFloat(matcher.group("x"));
                         y = Float.parseFloat(matcher.group("y"));
-                        PlantType selectedType = null;
+                        selectedType = null;
                         for (PlantType plantType : PlantType.values()){
                             if (plantType.name().equalsIgnoreCase(type)){
                                 selectedType = plantType;
@@ -165,6 +182,10 @@ public class GameMenuView implements View{
                         }
                         controller.upgradePlant(upgradeType);
                         return;
+                    case RESIT_MAP:
+                        controller.resetMap();
+                        System.out.println("your map reset");
+                        break;
 
                     case PLACE_ZOMBIE:
                         type = matcher.group("type");
@@ -176,8 +197,8 @@ public class GameMenuView implements View{
                         type = matcher.group("type");
                         x = Float.parseFloat(matcher.group("x"));
                         y = Float.parseFloat(matcher.group("y"));
-                        BowlingBallType ballType = null;
-                        for (BowlingBallType bt : BowlingBallType.values()){
+                        PlantType ballType = null;
+                        for (PlantType bt : PlantType.values()){
                             if (bt.name().equalsIgnoreCase(type)){
                                 ballType = bt;
                                 break;

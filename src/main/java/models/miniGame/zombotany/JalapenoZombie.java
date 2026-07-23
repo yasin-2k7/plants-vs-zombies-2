@@ -1,5 +1,6 @@
 package models.miniGame.zombotany;
 
+import controller.GameMenuController;
 import models.core.App;
 import models.enums.Zombies;
 import models.plant.Plant;
@@ -39,7 +40,7 @@ public class JalapenoZombie extends Zombie {
                 plant.takeDamage(9999);
             }
         }
-        System.out.println("Jalapeno zombie sets the row on fire!");
+        GameMenuController.updateState("Jalapeno zombie sets the row on fire!");
         die();
     }
 }

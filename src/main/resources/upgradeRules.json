@@ -462,93 +462,129 @@
     }
   },
   "ENLIGHTEN_MINT": {
+    "2": {
+      "sunCostModifier": 0,
+      "cooldownReductionTicks": 20
+    },
     "3": {
       "sunCostModifier": 0,
-      "cooldownReductionTicks": 50
+      "cooldownReductionTicks": 70
     },
     "4": {
       "sunCostModifier": 0,
-      "cooldownReductionTicks": 50
+      "cooldownReductionTicks": 70
     }
   },
   "APPEASE_MINT": {
+    "2": {
+      "sunCostModifier": 0,
+      "cooldownReductionTicks": 20
+    },
     "3": {
       "sunCostModifier": 0,
-      "cooldownReductionTicks": 50
+      "cooldownReductionTicks": 70
     },
     "4": {
       "sunCostModifier": 0,
-      "cooldownReductionTicks": 50
+      "cooldownReductionTicks": 70
     }
   },
   "ARMA_MINT": {
+    "2": {
+      "sunCostModifier": 0,
+      "cooldownReductionTicks": 20
+    },
     "3": {
       "sunCostModifier": 0,
-      "cooldownReductionTicks": 50
+      "cooldownReductionTicks": 70
     },
     "4": {
       "sunCostModifier": 0,
-      "cooldownReductionTicks": 50
+      "cooldownReductionTicks": 70
     }
   },
   "BOMBARD_MINT": {
+    "2": {
+      "sunCostModifier": 0,
+      "cooldownReductionTicks": 20
+    },
     "3": {
       "sunCostModifier": 0,
-      "cooldownReductionTicks": 50
+      "cooldownReductionTicks": 70
     },
     "4": {
       "sunCostModifier": 0,
-      "cooldownReductionTicks": 50
+      "cooldownReductionTicks": 70
     }
   },
   "ENFORCE_MINT": {
+    "2": {
+      "sunCostModifier": 0,
+      "cooldownReductionTicks": 20
+    },
     "3": {
       "sunCostModifier": 0,
-      "cooldownReductionTicks": 50
+      "cooldownReductionTicks": 70
     },
     "4": {
       "sunCostModifier": 0,
-      "cooldownReductionTicks": 50
+      "cooldownReductionTicks": 70
     }
   },
   "REINFORCE_MINT": {
+    "2": {
+      "sunCostModifier": 0,
+      "cooldownReductionTicks": 20
+    },
     "3": {
       "sunCostModifier": 0,
-      "cooldownReductionTicks": 50
+      "cooldownReductionTicks": 70
     },
     "4": {
       "sunCostModifier": 0,
-      "cooldownReductionTicks": 50
+      "cooldownReductionTicks": 70
     }
   },
   "ENCHANT_MINT": {
+    "2": {
+      "sunCostModifier": 0,
+      "cooldownReductionTicks": 20
+    },
     "3": {
       "sunCostModifier": 0,
-      "cooldownReductionTicks": 50
+      "cooldownReductionTicks": 70
     },
     "4": {
       "sunCostModifier": 0,
-      "cooldownReductionTicks": 50
+      "cooldownReductionTicks": 70
     }
   },
   "PIERCE_MINT": {
+    "2": {
+      "sunCostModifier": 0,
+      "cooldownReductionTicks": 20
+    },
     "3": {
       "sunCostModifier": 0,
-      "cooldownReductionTicks": 50
+      "cooldownReductionTicks": 70
     },
     "4": {
       "sunCostModifier": 0,
-      "cooldownReductionTicks": 50
+      "cooldownReductionTicks": 70
     }
   },
   "CATTAIL_MINT": {
+    "2": {
+      "sunCostModifier": 0,
+      "cooldownReductionTicks": 20
+    },
     "3": {
       "sunCostModifier": 0,
-      "cooldownReductionTicks": 50
+      "cooldownReductionTicks": 70
     },
     "4": {
       "sunCostModifier": 0,
-      "cooldownReductionTicks": 50
+      "cooldownReductionTicks": 70
     }
   }
 }

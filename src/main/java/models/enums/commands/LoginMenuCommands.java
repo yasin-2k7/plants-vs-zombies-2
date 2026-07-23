@@ -12,11 +12,9 @@ public enum LoginMenuCommands {
     ANSWER("^answer\\s+-a\\s+(\\S+)\\s*"),
     NEW_PASSWORD("^(\\S+)\\s*");
 
-    private final String pattern;
     private final Pattern compiledPattern;
 
     LoginMenuCommands(String pattern) {
-        this.pattern = pattern;
         this.compiledPattern = Pattern.compile(pattern);
     }
 

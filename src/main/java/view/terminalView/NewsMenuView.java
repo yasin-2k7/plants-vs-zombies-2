@@ -52,6 +52,11 @@ public class NewsMenuView implements View{
         System.out.println("Unknown command in Leaderboard menu.");
     }
 
+    public void showResult(String message){
+        System.out.println(message);
+    }
+
+
 
 
 }

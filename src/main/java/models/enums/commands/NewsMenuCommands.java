@@ -10,11 +10,9 @@ public enum NewsMenuCommands {
     MENU_NEWS_SHOW_UNREAD("\\s*menu\\s+news\\s+show\\s+unread\\s*"),
     MENU_NEWS_SHOW_ALL("\\s*menu\\s+news\\s+show\\s+all\\s*");
 
-    private final String pattern;
     private final Pattern compiledPattern;
 
     NewsMenuCommands(String pattern) {
-        this.pattern = pattern;
         this.compiledPattern = Pattern.compile(pattern);
     }
 

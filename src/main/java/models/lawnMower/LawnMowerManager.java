@@ -11,6 +11,8 @@ import java.util.ArrayList;
 public class LawnMowerManager {
     private List<LawnMower> mowers;
     private final int TOTAL_ROWS = 5;
+    private boolean enabled = true;
+    private static final int TOTAL_ROWS = 5;
 
     public LawnMowerManager() {
         this.mowers = new ArrayList<>();
@@ -20,6 +22,9 @@ public class LawnMowerManager {
     }
 
     public void updateMowers(List<Zombie> allZombies) {
+        if(!enabled) {
+            return;
+        }
 
         checkActivations(allZombies);
 
@@ -83,5 +88,16 @@ public class LawnMowerManager {
 
     public List<LawnMower> getMowers() {
         return mowers;
+    }
+
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+        if (!enabled) {
+            this.mowers.clear();
+        }
     }
 }

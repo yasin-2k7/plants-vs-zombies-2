@@ -14,11 +14,9 @@ public enum PlantMenuCommands {
     BOOST_PLANT("^boost\\s+plant\\s+-t\\s+(\\w+)$"),
     START_GAME("^start\\s+game$");
 
-    private final String pattern;
     private final Pattern compiledPattern;
 
     PlantMenuCommands(String pattern) {
-        this.pattern = pattern;
         this.compiledPattern = Pattern.compile(pattern);
     }
 

@@ -109,7 +109,7 @@ public class WaveManager {
         if (currentWave.isFlagWave() && game.isSandstormActive()) {
             int columnsForward = 1 + new Random().nextInt(4);
             spawnCol = Math.max(0, spawnCol - columnsForward);
-            System.out.println("A zombie rides a sandstorm and enters " + columnsForward + " columns ahead!");
+            GameMenuController.updateState("A zombie rides a sandstorm and enters " + columnsForward + " columns ahead!");
         }
 
         float x = spawnCol * App.getCellWidth();
@@ -122,7 +122,7 @@ public class WaveManager {
         String typeName = entry.getZombieAlias();
         int waveNum = currentWave.getWaveNumber();
         int cost = entry.getWavePointCost();
-        System.out.println("Zombie " + typeName + " spawned at wave " + waveNum +
+        GameMenuController.updateState("Zombie " + typeName + " spawned at wave " + waveNum +
                 " in lane " + (lane + 1) + " which costed " + cost + ".");
 
     }
@@ -136,7 +136,7 @@ public class WaveManager {
                 onZombieKilled(z);
             }
         }
-        System.out.println("All zombies eliminated by nuke!");
+        GameMenuController.updateState("All zombies eliminated by nuke!");
     }
 
     // هر بار که یک زامبی کشته می‌شود این متد صدا زده می‌شود

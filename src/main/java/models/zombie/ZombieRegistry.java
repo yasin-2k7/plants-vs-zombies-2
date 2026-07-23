@@ -12,9 +12,9 @@ import java.util.Map;
 import java.util.logging.Logger;
 
 public class ZombieRegistry {
-    private static final Logger logger = Logger.getLogger(ZombieRegistry.class.getName());
-    private static final Map<String, ZombieProperties> zombieMap = new HashMap<>();
-    private static final Map<String, ArmorProperties> armorMap = new HashMap<>();
+    private static final Logger LOGGER = Logger.getLogger(ZombieRegistry.class.getName());
+    private static final Map<String, ZombieProperties> ZOMBIE_MAP = new HashMap<>();
+    private static final Map<String, ArmorProperties> ARMOR_MAP = new HashMap<>();
 
     static {
         loadZombies();
@@ -27,19 +27,19 @@ public class ZombieRegistry {
         mapper.configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true);
         try (InputStream is = ZombieRegistry.class.getResourceAsStream("/zombies.json")) {
             if (is == null) {
-                logger.severe("zombies.json not found in resources!");
+                LOGGER.severe("zombies.json not found in resources!");
                 return;
             }
             List<ZombieProperties> list = mapper.readValue(is,
                     mapper.getTypeFactory().constructCollectionType(List.class, ZombieProperties.class));
             for (ZombieProperties zp : list) {
                 for (String alias : zp.getAliases()) {
-                    zombieMap.put(alias, zp);
+                    ZOMBIE_MAP.put(alias, zp);
                 }
             }
 //            logger.info("Loaded " + zombieMap.size() + " zombie entries.");
         } catch (Exception e) {
-            logger.severe("Failed to load zombies.json: " + e.getMessage());
+            LOGGER.severe("Failed to load zombies.json: " + e.getMessage());
             e.printStackTrace();
         }
     }
@@ -50,28 +50,28 @@ public class ZombieRegistry {
         mapper.configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true);
         try (InputStream is = ZombieRegistry.class.getResourceAsStream("/ArmorTypeData.json")) {
             if (is == null) {
-                logger.severe("ArmorTypeData.json not found in resources!");
+                LOGGER.severe("ArmorTypeData.json not found in resources!");
                 return;
             }
             List<ArmorProperties> list = mapper.readValue(is,
                     mapper.getTypeFactory().constructCollectionType(List.class, ArmorProperties.class));
             for (ArmorProperties ap : list) {
                 for (String alias : ap.getAliases()) {
-                    armorMap.put(alias, ap);
+                    ARMOR_MAP.put(alias, ap);
                 }
             }
 //            logger.info("Loaded " + armorMap.size() + " armor entries.");
         } catch (Exception e) {
-            logger.severe("Failed to load ArmorTypeData.json: " + e.getMessage());
+            LOGGER.severe("Failed to load ArmorTypeData.json: " + e.getMessage());
             e.printStackTrace();
         }
     }
 
     public static ZombieProperties getZombieProperties(String alias) {
-        return zombieMap.get(alias);
+        return ZOMBIE_MAP.get(alias);
     }
 
     public static ArmorProperties getArmorProperties(String alias) {
-        return armorMap.get(alias);
+        return ARMOR_MAP.get(alias);
     }
 }

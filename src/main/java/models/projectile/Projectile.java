@@ -1,5 +1,6 @@
 package models.projectile;
 
+import controller.GameMenuController;
 import models.Damageable;
 import models.core.App;
 import models.enums.PlantType;
@@ -32,17 +33,9 @@ public class Projectile implements Resettable{
         double oldY = y;
         movementStrategy.move(this);
 
+
         if (type.movement.equals("STRAIGHT")) {
             Cell currentCell = App.getCurrentGame().getCellAt(x, y);
-            if (currentCell != null && currentCell.blocksProjectile()) {
-                hitStrategy.applyDamage(currentCell.getObstacle(), App.getCurrentGame().getActiveTargets(), this);
-                pierce--;
-                if (pierce == 0) {
-                    dead = true;
-                    App.getCurrentGame().getProjectilesPool().release(this);
-                    return;
-                }
-            }
 
             if (currentCell != null && currentCell.getPlant() != null){
                 if (currentCell.getPlant().isFreeze()){
@@ -76,7 +69,7 @@ public class Projectile implements Resettable{
                 if (!deflector.isJuggler() && type.movement.equals("LOBBED")) {
                     dead = true;
                     App.getCurrentGame().getProjectilesPool().release(this);
-                    System.out.println("Parasol deflected a lobbed projectile!");
+                    GameMenuController.updateState("Parasol deflected a lobbed projectile!");
                     return;
                 }
                 // ژانگولر: پرتابه‌های مستقیم را بازتاب می‌دهد
@@ -92,10 +85,16 @@ public class Projectile implements Resettable{
             pierce--;
             if (pierce == 0) {
                 dead = true;
-                App.getCurrentGame().getProjectilesPool().release(this);
                 return;
             }
         }
+
+        if (movementStrategy.isDead(this)){
+            dead = true;
+            App.getCurrentGame().getProjectilesPool().release(this);
+        }
+
+
     }
 
     @Override
@@ -105,7 +104,11 @@ public class Projectile implements Resettable{
     public void reset(float x, float y) {}
 
     @Override
-    public void reset(float x, float y, HitStrategy hitStrategy, MovementStrategy movementStrategy, CheckStrike checkStrike, ProjectileType type) {
+    public void reset(float x, float y,
+                      HitStrategy hitStrategy,
+                      MovementStrategy movementStrategy,
+                      CheckStrike checkStrike,
+                      ProjectileType type) {
         this.x = x;
         this.y = y;
         originX = x;

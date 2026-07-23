@@ -1,11 +1,13 @@
 package models.zombie.zombiesType;
 
+import controller.GameMenuController;
 import models.core.App;
 import models.enums.Zombies;
 import models.plant.Plant;
 import models.world.Cell;
 import models.world.GameWorld;
 import models.zombie.Zombie;
+import view.terminalView.GameMenuView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,7 +15,7 @@ import java.util.List;
 public class WizardZombie extends Zombie {
     private List<Plant> transformedPlants;
     private int cooldown;
-    private final int COOLDOWN_MAX = 20;
+    private static final int COOLDOWN_MAX = 20;
 
     public WizardZombie(int health, double speed, int damage) {
         super(Zombies.WIZARD, health, speed, damage);
@@ -77,7 +79,7 @@ public class WizardZombie extends Zombie {
         if (target != null && !target.isDead() && !target.isCat()) {
             target.setCat(true);
             transformedPlants.add(target);
-            System.out.println("Wizard turned a " + target.getType().name() + " into a cat!");
+            GameMenuController.updateState("Wizard turned a " + target.getType().name() + " into a cat!");
         }
     }
 
