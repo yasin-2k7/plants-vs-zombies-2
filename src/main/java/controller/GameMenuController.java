@@ -36,7 +36,7 @@ public class GameMenuController implements MenuController {
         if (gameWorld.isWillUnlockLevel()){
             App.getCurrentUser().unlockLevel();
         }
-        User user = App.getCurrentUser();
+//        User user = App.getCurrentUser();
 //        if(user != null && mupointManager != null){
 //            user.updateMupointRecord(mupointManager.getTotalMupoints());
 //            GameMenuView.getInstance().showResult("your muPoint: " + mupointManager.getTotalMupoints());
@@ -96,7 +96,7 @@ public class GameMenuController implements MenuController {
     }
 
     public void advanceTime(int count){
-        System.out.println("okay");
+        GameMenuView.getInstance().showResult(count + " ticks later...");
         GameWorld game = App.getCurrentGame();
         for (int i = 0; i < count; i++){
             game.tick();
@@ -209,7 +209,7 @@ public class GameMenuController implements MenuController {
                 zombie.die();
             }
 //            game.getActiveZombies().clear();
-            System.out.println("All zombies eliminated by nuke (fallback)!");
+            GameMenuView.getInstance().showResult("All zombies eliminated by nuke (fallback)!");
         }
     }
 
@@ -348,13 +348,15 @@ public class GameMenuController implements MenuController {
             totalWaves = wm.getTotalWavesCount();
         }
 
-        System.out.println("==================================================================================================");
-        System.out.printf(" WAVE: %d/%d  |  SUN: %d ☀️  |  PLANT FOOD: %d ⚡  |  STATUS: %s 🎮%n",
+        GameMenuView.getInstance().showResult("==================================================================================================");
+        String title = String.format(" WAVE: %d/%d  |  SUN: %d ☀️  |  PLANT FOOD: %d ⚡  |  STATUS: %s 🎮%n",
                 currentWaveNum, totalWaves, App.getCurrentGame().getSun(), App.getCurrentGame().getPlantFoods(), App.getCurrentGame().getState());
-        System.out.println("==================================================================================================");
+        GameMenuView.getInstance().showResult(title);
+        GameMenuView.getInstance().showResult("==================================================================================================");
         for (int y = 0; y < App.getCurrentGame().getGrid().length; y++) {
             String mowerSymbol = App.getCurrentGame().getLawnMowerManager().getMowers().get(y).isAlive() ? "[🚜]" : "[❌]";
-            System.out.printf("Row %d %s | ", y+1, mowerSymbol);
+            String mower = String.format("Row %d %s | ", y+1, mowerSymbol);
+            GameMenuView.getInstance().showResult(mower);
 
             for (int x = 0; x < App.getCurrentGame().getGrid()[0].length; x++) {
                 Cell cell = App.getCurrentGame().getGrid()[y][x];
@@ -403,12 +405,13 @@ public class GameMenuController implements MenuController {
                     zombieString = String.format("Z(%.1f)", firstZombie.getX());
                 }
 
-                System.out.printf("[ %s | %-4s | %-7s ] | ", terrainSymbol, plantSymbol.trim(), zombieString.trim());
+                String terrain = String.format("[ %s | %-4s | %-7s ] | ", terrainSymbol, plantSymbol.trim(), zombieString.trim());
+                GameMenuView.getInstance().showResult(terrain);
             }
-            System.out.println();
+            GameMenuView.getInstance().showResult("");
         }
-        System.out.println();
-        System.out.println("==================================================================================================");
+        GameMenuView.getInstance().showResult("");
+        GameMenuView.getInstance().showResult("==================================================================================================");
     }
 
     public void showPlantsStatus(){

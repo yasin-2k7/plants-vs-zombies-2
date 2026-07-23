@@ -23,7 +23,6 @@ public class Plant {
     private boolean dead = false;
     private boolean cat = false;
     private boolean disabled = false;
-    private int slowTicks = 0;
     private transient Cell cell = null;
     private int frozenAmount = 0;
     private boolean freeze = false;
@@ -33,12 +32,6 @@ public class Plant {
 
     public void addComponent(GameComponent comp) {
         components.add(comp);
-    }
-
-    private void ensureComponentsInit() {
-        if (components == null) {
-            components = new ArrayList<>();
-        }
     }
 
     public void update() {

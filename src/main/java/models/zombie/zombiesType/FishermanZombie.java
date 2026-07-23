@@ -1,5 +1,6 @@
 package models.zombie.zombiesType;
 
+import controller.GameMenuController;
 import models.core.App;
 import models.enums.PlantLayer;
 import models.enums.Zombies;
@@ -53,7 +54,7 @@ public class FishermanZombie extends Zombie {
         if (distance < App.getCellWidth()) {
             // نابود کردن گیاه
             target.die();
-            System.out.println("Fisherman threw and destroyed plant at (" + targetX + ", " + targetY + ")");
+            GameMenuController.updateState("Fisherman threw and destroyed plant at (" + targetX + ", " + targetY + ")");
             return;
         }
 
@@ -92,7 +93,7 @@ public class FishermanZombie extends Zombie {
         target.setY((int) targetCell.getY());
         target.setCell(targetCell); // به‌روزرسانی مرجع سلول
 
-        System.out.println("Fisherman pulled plant from (" + currentCell.getX() + ", " + currentCell.getY() +
+        GameMenuController.updateState("Fisherman pulled plant from (" + currentCell.getX() + ", " + currentCell.getY() +
                 ") to (" + targetCell.getX() + ", " + targetCell.getY() + ")");
     }
 

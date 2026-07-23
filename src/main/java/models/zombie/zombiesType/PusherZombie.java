@@ -1,5 +1,6 @@
 package models.zombie.zombiesType;
 
+import controller.GameMenuController;
 import models.core.App;
 import models.enums.Zombies;
 import models.plant.Plant;
@@ -64,7 +65,7 @@ public class PusherZombie extends Zombie {
                 if ("ICEBLOCK".equals(objectName)) {
                     objectHealth = 0;
                 }
-                System.out.println(objectName + " crushed plant at (" + plantHere.getX() + ", " + plantHere.getY() + ")");
+                GameMenuController.updateState(objectName + " crushed plant at (" + plantHere.getX() + ", " + plantHere.getY() + ")");
             }
 
             // ۲. گیاه در سلول جلویی (اگر شیء جلوتر است)
@@ -77,7 +78,7 @@ public class PusherZombie extends Zombie {
                     if ("ICEBLOCK".equals(objectName)) {
                         objectHealth = 0;
                     }
-                    System.out.println(objectName + " crushed plant at (" + plantFront.getX() + ", " + plantFront.getY() + ")");
+                    GameMenuController.updateState(objectName + " crushed plant at (" + plantFront.getX() + ", " + plantFront.getY() + ")");
                 }
             }
         }
@@ -128,7 +129,7 @@ public class PusherZombie extends Zombie {
         // جابه‌جایی به ردیف هدف
         float newY = targetRow * App.getCellHeight() + App.getCellHeight() / 2;
         targetZombie.setY(newY);
-        System.out.println("Pianist switched a zombie to row " + (targetRow + 1));
+        GameMenuController.updateState("Pianist switched a zombie to row " + (targetRow + 1));
     }
 
     public int getObjectHealth() { return objectHealth; }

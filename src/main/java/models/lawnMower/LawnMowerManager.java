@@ -10,7 +10,7 @@ import java.util.ArrayList;
 
 public class LawnMowerManager {
     private List<LawnMower> mowers;
-    private final int TOTAL_ROWS = 5;
+    private static final int TOTAL_ROWS = 5;
 
     public LawnMowerManager() {
         this.mowers = new ArrayList<>();

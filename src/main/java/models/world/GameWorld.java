@@ -35,8 +35,6 @@ import java.util.Random;
 import java.util.*;
 
 public abstract class GameWorld {
-    private long startTime;
-    private long currentTime;
 
     protected Random random = new Random();
 
@@ -144,7 +142,6 @@ public abstract class GameWorld {
         this.sunsPool = new GenericObjectPool<>(Sun::new);
         currentSun = 50;
 
-        this.startTime = System.currentTimeMillis();
         this.state = GameState.PLAYING;
         this.plantLists = new ArrayList<>();
 
@@ -204,7 +201,7 @@ public abstract class GameWorld {
 
         Cell cell = grid[row][col];
         if (cell.hasObstacle() || !cell.isEmpty()) {
-            System.out.println("Cannot place grave at (" + col + ", " + row + ") - cell not empty.");
+            GameMenuController.updateState("Cannot place grave at (" + col + ", " + row + ") - cell not empty.");
             return;
         }
 
@@ -214,7 +211,7 @@ public abstract class GameWorld {
         cell.setObstacle(grave);
         cell.setPlantable(false);
         activeObstacles.add(grave);
-        System.out.println("A grave has been created at (" + col + ", " + row + ")");
+        GameMenuController.updateState("A grave has been created at (" + col + ", " + row + ")");
     }
 
     public Cell getRandomEmptyCellInRow(int row) {
@@ -244,9 +241,6 @@ public abstract class GameWorld {
         if (emptyCells.isEmpty()) return null;
         Random rand = new Random();
         return emptyCells.get(rand.nextInt(emptyCells.size()));
-    }
-    public void update(){
-
     }
 
     public int stealSunFromPlayer(int amount) {
@@ -463,20 +457,20 @@ public abstract class GameWorld {
             }
         }
     }
-    public boolean isGardenSymmetric() {
-        if (grid == null || rows == 0 || cols == 0) return false;
-        int middleRow = rows / 2;
-        for (int r = 0; r < rows; r++) {
-            for (int c = 0; c < cols / 2; c++) {
-                Plant left = grid[r][c].getPlant();
-                Plant right = grid[r][cols - 1 - c].getPlant();
-                if (left == null && right == null) continue;
-                if (left == null || right == null) return false;
-                if (left.getType() != right.getType()) return false;
-            }
-        }
-        return true;
-    }
+//    public boolean isGardenSymmetric() {
+//        if (grid == null || rows == 0 || cols == 0) return false;
+//        int middleRow = rows / 2;
+//        for (int r = 0; r < rows; r++) {
+//            for (int c = 0; c < cols / 2; c++) {
+//                Plant left = grid[r][c].getPlant();
+//                Plant right = grid[r][cols - 1 - c].getPlant();
+//                if (left == null && right == null) continue;
+//                if (left == null || right == null) return false;
+//                if (left.getType() != right.getType()) return false;
+//            }
+//        }
+//        return true;
+//    }
 
     public boolean isGardenSymmetricExceptMiddleRow() {
         if (grid == null || rows == 0 || cols == 0) return false;
@@ -557,10 +551,6 @@ public abstract class GameWorld {
 
     public int getCurrentTick() {
         return currentTick;
-    }
-
-    public long getElapsedTime() {
-        return System.currentTimeMillis() - startTime;
     }
 
     public void addZombie(Zombie zombie) { activeZombies.add(zombie); }

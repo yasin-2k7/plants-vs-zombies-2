@@ -1,36 +1,34 @@
 package models.plant.factory;
 
-import models.core.App;
+import controller.GameMenuController;
 import models.enums.PlantType;
 import models.plant.Plant;
-import models.plant.components.*;
-import models.plant.components.explosiveBehaviors.*;
 import models.world.Cell;
 import java.util.*;
 import java.util.function.Supplier;
 
 public class PlantFactory {
-    private static final Map<PlantType, Supplier<Plant>> registry = new HashMap<>();
+    private static final Map<PlantType, Supplier<Plant>> REGISTRY = new HashMap<>();
 
     public PlantFactory(){
-        SunProducerFactory.register(registry);
-        ShooterFactory.register(registry);
-        ExplosiveFactory.register(registry);
-        MeleeFactory.register(registry);
-        WallNutFactory.register(registry);
-        ModifierAndHomingFactory.register(registry);
-        MintFactory.register(registry);
+        SunProducerFactory.register(REGISTRY);
+        ShooterFactory.register(REGISTRY);
+        ExplosiveFactory.register(REGISTRY);
+        MeleeFactory.register(REGISTRY);
+        WallNutFactory.register(REGISTRY);
+        ModifierAndHomingFactory.register(REGISTRY);
+        MintFactory.register(REGISTRY);
     }
 
     public static Plant createPlant(PlantType type, int x, int y, Cell cell) {
-        java.util.function.Supplier<Plant> plantSupplier = registry.get(type);
+        java.util.function.Supplier<Plant> plantSupplier = REGISTRY.get(type);
 
         if (plantSupplier == null) {
-            System.out.println("Error: Plant type " + type.name() + " is not registered in PlantFactory!");
+            GameMenuController.updateState("Error: Plant type " + type.name() + " is not registered in PlantFactory!");
             return null;
         }
 
-        Plant newPlant = registry.get(type).get();
+        Plant newPlant = REGISTRY.get(type).get();
         newPlant.setCell(cell);
         newPlant.setX(x);
         newPlant.setY(y);
@@ -38,6 +36,6 @@ public class PlantFactory {
     }
 
     public static boolean isPlantSupported(PlantType type) {
-        return registry.containsKey(type);
+        return REGISTRY.containsKey(type);
     }
 }

@@ -4,6 +4,7 @@ import com.google.gson.ExclusionStrategy;
 import com.google.gson.FieldAttributes;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import controller.GameMenuController;
 
 import java.io.*;
 import java.time.LocalDate;
@@ -14,7 +15,7 @@ public class UserDataManager {
     private static final String USERS_DIR = "pvz2/src/main/java/models/users/";
     private static final String CURRENT_USER_FILE = "pvz2/src/main/java/models/users/current_user.txt";
 
-    private static final Gson gson = new GsonBuilder()
+    private static final Gson GSON = new GsonBuilder()
             .registerTypeAdapter(LocalDate.class, new LocalDateAdapter())
             .addSerializationExclusionStrategy(new ExclusionStrategy() {
                 @Override
@@ -44,10 +45,10 @@ public class UserDataManager {
         File userFile = new File(USERS_DIR + user.getUsername() + ".json");
 
         try (FileWriter writer = new FileWriter(userFile)) {
-            gson.toJson(user, writer);
+            GSON.toJson(user, writer);
             return true;
         } catch (IOException e) {
-            System.err.println("save error: " + e.getMessage());
+            GameMenuController.updateState("save error: " + e.getMessage());
             return false;
         }
     }
@@ -60,13 +61,13 @@ public class UserDataManager {
         }
 
             try (FileReader reader = new FileReader(userFile)) {
-                User user = gson.fromJson(reader, User.class);
+                User user = GSON.fromJson(reader, User.class);
                 if (user != null) {
                     user.afterLoad();
                 }
                 return user;
             } catch (IOException e) {
-                System.err.println("read error: " + e.getMessage());
+                GameMenuController.updateState("read error: " + e.getMessage());
                 return null;
             }
     }
@@ -102,7 +103,7 @@ public class UserDataManager {
         try (FileWriter writer = new FileWriter(CURRENT_USER_FILE)) {
             writer.write(username);
         } catch (IOException e) {
-            System.err.println("save logged in error: " + e.getMessage());
+            GameMenuController.updateState("save logged in error: " + e.getMessage());
         }
     }
 

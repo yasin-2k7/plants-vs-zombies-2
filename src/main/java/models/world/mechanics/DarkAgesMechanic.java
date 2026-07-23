@@ -1,5 +1,6 @@
 package models.world.mechanics;
 
+import controller.GameMenuController;
 import models.world.Cell;
 import models.world.GameWorld;
 import models.world.ChapterWorld.DarkAgesWorld;
@@ -50,7 +51,7 @@ public class DarkAgesMechanic implements Mechanic {
                         zombie.setX(x);
                         zombie.setY(y);
                         world.addZombie(zombie);
-                        System.out.println("A zombie emerged from a grave at (" + c + ", " + r + ")");
+                        GameMenuController.updateState("A zombie emerged from a grave at (" + c + ", " + r + ")");
                     }
                     cell.setNecromancyTriggered(false);
                 }

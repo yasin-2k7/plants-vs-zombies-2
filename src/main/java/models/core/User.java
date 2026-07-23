@@ -30,7 +30,6 @@ public class User {
     private int unlockedChapter;
     private transient Chapter currentChapter;
     private int unlockedLevel;
-    private int currentLevel;
     private int userLevel;
     private int coins;
     private int gems;

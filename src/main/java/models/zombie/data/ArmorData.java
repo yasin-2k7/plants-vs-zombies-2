@@ -6,15 +6,15 @@ import java.util.List;
 
 public class ArmorData {
     @JsonProperty("ArmorType")
-    private String ArmorType;
+    private String armorType;
 
     @JsonProperty("BaseHealth")
-    private int BaseHealth;
+    private int baseHealth;
 
     @JsonProperty("ArmorFlags")
-    private List<String> ArmorFlags = new ArrayList<>();
+    private List<String> armorFlags = new ArrayList<>();
 
-    public String getArmorType() { return ArmorType; }
-    public int getBaseHealth() { return BaseHealth; }
-    public List<String> getArmorFlags() { return ArmorFlags; }
+    public String getArmorType() { return armorType; }
+    public int getBaseHealth() { return baseHealth; }
+    public List<String> getArmorFlags() { return armorFlags; }
 }

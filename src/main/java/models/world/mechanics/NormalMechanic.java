@@ -31,9 +31,9 @@ public class NormalMechanic implements Mechanic{
 //        }
 
 
-        int difficulty = App.getCurrentUser().getGameDifficulty();
-        double decreaseFactor = DifficultyCalculator.decreaseFactor(difficulty);
-        int adjustedInterval = (int) Math.round(zombieSpawnInterval * decreaseFactor);
+//        int difficulty = App.getCurrentUser().getGameDifficulty();
+//        double decreaseFactor = DifficultyCalculator.decreaseFactor(difficulty);
+//        int adjustedInterval = (int) Math.round(zombieSpawnInterval * decreaseFactor);
 
 
 

@@ -1,5 +1,6 @@
 package models.zombie.zombiesType;
 
+import controller.GameMenuController;
 import models.core.App;
 import models.enums.Zombies;
 import models.plant.Plant;
@@ -12,7 +13,7 @@ import models.zombie.Zombie;
 public class RangedZombie extends Zombie {
     private String projectileType;
     private int cooldown;
-    private final int COOLDOWN_MAX = 10;
+    private static final int COOLDOWN_MAX = 10;
 
     public RangedZombie(int health, double speed, int damage, String projectileType) {
         super(Zombies.RANGED, health, speed, damage);
@@ -41,7 +42,7 @@ public class RangedZombie extends Zombie {
                         OctopusObstacle octopus = new OctopusObstacle(target.getX(), target.getY(), target, cell);
                         cell.setObstacle(octopus);
                         game.getActiveObstacles().add(octopus);
-                        System.out.println("Octopus thrown at plant at (" + target.getX() + ", " + target.getY() + ")");
+                        GameMenuController.updateState("Octopus thrown at plant at (" + target.getX() + ", " + target.getY() + ")");
                     } else {
 //                        System.out.println("Cell already has an obstacle or cannot place octopus.");
                     }
@@ -55,15 +56,15 @@ public class RangedZombie extends Zombie {
                         .filter(g -> g instanceof Grave grave && grave.getRow() == row)
                         .count();
                 if (graveCountInRow >= 3) {
-                    System.out.println("Row " + row + " already has 3 graves, skipping.");
+                    GameMenuController.updateState("Row " + row + " already has 3 graves, skipping.");
                     break;
                 }
                 Cell randomEmptyCell = game.getRandomEmptyCellInRowAfterColumn(row, this.x);
                 if (randomEmptyCell != null) {
                     game.createGrave((int) randomEmptyCell.getX(), (int) randomEmptyCell.getY());
-                    System.out.println("Tomb Raiser threw a bone at (" + randomEmptyCell.getCol() + ", " + randomEmptyCell.getRow() + ")");
+                    GameMenuController.updateState("Tomb Raiser threw a bone at (" + randomEmptyCell.getCol() + ", " + randomEmptyCell.getRow() + ")");
                 } else {
-                    System.out.println("No empty cell in front of Tomb Raiser in row " + row + " to place grave.");
+                    GameMenuController.updateState("No empty cell in front of Tomb Raiser in row " + row + " to place grave.");
                 }
                 break;
             }

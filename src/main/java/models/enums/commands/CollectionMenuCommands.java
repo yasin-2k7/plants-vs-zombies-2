@@ -16,11 +16,9 @@ public enum CollectionMenuCommands {
     MENU_COLLECTION_UPGRADE("\\s*menu\\s+collection\\s+upgrade-plant\\s+-p\\s+(?<plant>\\S+)\\s*"),
     MENU_COLLECTION_PURCHASE("\\s*menu\\s+collection\\s+purchase-plant\\s+-p\\s+(?<plant>\\S+)\\s*");
 
-    private final String pattern;
     private final Pattern compiledPattern;
 
     CollectionMenuCommands(String pattern) {
-        this.pattern = pattern;
         this.compiledPattern = Pattern.compile(pattern);
     }
 

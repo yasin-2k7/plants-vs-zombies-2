@@ -1,5 +1,6 @@
 package models.miniGame.beghouled;
 
+import controller.GameMenuController;
 import models.enums.PlantLayer;
 import models.enums.PlantType;
 import models.plant.Plant;
@@ -235,7 +236,7 @@ public class BeghouledMechanics implements Mechanic {
             }
         }
         fillRandomPlants(world);
-        System.out.println("No more moves possible — board reset!");
+        GameMenuController.updateState("No more moves possible — board reset!");
     }
 
     private boolean hasAnyPossibleMove(GameWorld world) {

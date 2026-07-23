@@ -13,7 +13,6 @@ import java.util.*;
 public class PlantMenuController implements MenuController {
     private Set<PlantType> selectedPlants = new HashSet<>();
     private int maxSlots = 8;
-    private int numberOfLockedPlantsInList = 0;
     private Map<PlantType, Boolean> boosts = new HashMap<>();
     private PlantType imitatorTarget = null;
 

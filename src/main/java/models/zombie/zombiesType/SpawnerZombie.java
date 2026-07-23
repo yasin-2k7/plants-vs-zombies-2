@@ -1,5 +1,6 @@
 package models.zombie.zombiesType;
 
+import controller.GameMenuController;
 import models.core.App;
 import models.enums.Zombies;
 import models.world.GameWorld;
@@ -59,7 +60,7 @@ public class SpawnerZombie extends Zombie {
         float targetY = this.y;
         imp.throwImp(targetX, targetY);
         game.getActiveZombies().add(imp);
-        System.out.println("Gargantuar threw an Imp to column 3 at (" + targetX + ", " + targetY + ")");
+        GameMenuController.updateState("Gargantuar threw an Imp to column 3 at (" + targetX + ", " + targetY + ")");
     }
 
     private void knightNearbyZombie() {
@@ -84,7 +85,7 @@ public class SpawnerZombie extends Zombie {
                 // جایگزینی در لیست
                 game.getActiveZombies().remove(z);
                 game.getActiveZombies().add(knight);
-                System.out.println("King turned a zombie into a knight at (" + knight.getX() + ", " + knight.getY() + ")");
+                GameMenuController.updateState("King turned a zombie into a knight at (" + knight.getX() + ", " + knight.getY() + ")");
                 break;
             }
         }

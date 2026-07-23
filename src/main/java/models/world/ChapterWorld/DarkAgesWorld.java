@@ -1,5 +1,6 @@
 package models.world.ChapterWorld;
 
+import controller.GameMenuController;
 import models.core.App;
 import models.enums.PlantType;
 import models.greenhouse.Pot;
@@ -53,7 +54,7 @@ public class DarkAgesWorld extends GameWorld {
 
     private void spawnInitialGraves() {
         int graveCount = MIN_GRAVES + random.nextInt(MAX_GRAVES - MIN_GRAVES + 1);
-        System.out.println(graveCount + " graves have risen from the dark ages!");
+        GameMenuController.updateState(graveCount + " graves have risen from the dark ages!");
 
         Cell[][] grid = getGrid();
         int spawned = 0;
@@ -120,7 +121,7 @@ public class DarkAgesWorld extends GameWorld {
                 cell.setObstacle(grave);
                 cell.setPlantable(false);
                 addGrave(grave);
-                System.out.println("A new grave has risen at (" + col + ", " + row + ")");
+                GameMenuController.updateState("A new grave has risen at (" + col + ", " + row + ")");
             }
         }
     }

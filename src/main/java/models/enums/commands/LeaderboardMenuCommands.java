@@ -8,11 +8,9 @@ public enum LeaderboardMenuCommands {
     SORT_LEADERBOARD("\\s*leaderboard\\s*-field\\s+(?<field>\\S+)\\s+-order\\s+(?<order>ascending|descending)\\s*"),
     MENU_EXIT("\\s*menu\\s+exit\\s*");
 
-    private final String pattern;
     private final Pattern compiledPattern;
 
     LeaderboardMenuCommands(String pattern) {
-        this.pattern = pattern;
         this.compiledPattern = Pattern.compile(pattern);
     }
 

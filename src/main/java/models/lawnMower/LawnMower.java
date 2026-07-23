@@ -1,6 +1,7 @@
 package models.lawnMower;
 import java.util.List;
 
+import controller.GameMenuController;
 import models.core.App;
 import models.core.User;
 import models.zombie.Zombie;
@@ -24,7 +25,7 @@ public class LawnMower {
         if (!isActive && !isSpent) {
             this.isActive = true;
             this.isAlive = true;
-            System.out.println("The lawn mower in the row " + row + "is triggered and killed these zombies:");
+            GameMenuController.updateState("The lawn mower in the row " + row + "is triggered and killed these zombies:");
         }
     }
 

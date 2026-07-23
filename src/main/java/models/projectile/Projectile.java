@@ -1,5 +1,6 @@
 package models.projectile;
 
+import controller.GameMenuController;
 import models.Damageable;
 import models.core.App;
 import models.enums.PlantType;
@@ -67,7 +68,7 @@ public class Projectile implements Resettable{
                 if (!deflector.isJuggler() && type.movement.equals("LOBBED")) {
                     dead = true;
                     App.getCurrentGame().getProjectilesPool().release(this);
-                    System.out.println("Parasol deflected a lobbed projectile!");
+                    GameMenuController.updateState("Parasol deflected a lobbed projectile!");
                     return;
                 }
                 // ژانگولر: پرتابه‌های مستقیم را بازتاب می‌دهد

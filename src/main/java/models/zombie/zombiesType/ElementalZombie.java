@@ -1,5 +1,6 @@
 package models.zombie.zombiesType;
 
+import controller.GameMenuController;
 import models.core.App;
 import models.enums.Zombies;
 import models.plant.Plant;
@@ -44,7 +45,7 @@ public class ElementalZombie extends Zombie {
                         Plant plant = frontCell.getPlant();
                         if (plant != null && !plant.isDead()) {
                             plant.die();
-                            System.out.println("Explorer burned plant at (" + plant.getX() + ", " + plant.getY() + ")");
+                            GameMenuController.updateState("Explorer burned plant at (" + plant.getX() + ", " + plant.getY() + ")");
                         }
                     }
                 }
@@ -64,16 +65,16 @@ public class ElementalZombie extends Zombie {
         this.x = newX;
         // حرکت به چپ (سرعت مثبت)
         this.speed = Math.abs(this.speed);
-        System.out.println("Prospector exploded and teleported to the right end of the row.");
+        GameMenuController.updateState("Prospector exploded and teleported to the right end of the row.");
     }
 
     // خاموش کردن آتش (تیر یخی)
     public void extinguish() {
         this.isIgnited = false;
         if (!isExplorer) {
-            System.out.println("Prospector's dynamite extinguished.");
+            GameMenuController.updateState("Prospector's dynamite extinguished.");
         } else {
-            System.out.println("Explorer's torch extinguished.");
+            GameMenuController.updateState("Explorer's torch extinguished.");
         }
     }
 
@@ -81,7 +82,7 @@ public class ElementalZombie extends Zombie {
     public void ignite() {
         if (isExplorer) {
             this.isIgnited = true;
-            System.out.println("Explorer's torch ignited.");
+            GameMenuController.updateState("Explorer's torch ignited.");
         }
     }
 

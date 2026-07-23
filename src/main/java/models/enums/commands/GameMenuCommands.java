@@ -35,12 +35,9 @@ public enum GameMenuCommands {
     THROW_BOWLING_BALL("\\s*throw\\s+bowling-ball\\s+-t\\s+(?<type>\\S+)\\s+-l\\s+\\(\\s*(?<x>\\d+)\\s*,\\s*(?<y>\\d+)\\s*\\)\\s*");
 
 
-
-    private final String pattern;
     private final Pattern compiledPattern;
 
     GameMenuCommands(String pattern) {
-        this.pattern = pattern;
         this.compiledPattern = Pattern.compile(pattern);
     }
 
