@@ -12,7 +12,6 @@ import models.projectile.Projectile;
 import models.projectile.hitStrategies.CombinedDamageStrategy;
 import models.projectile.movementStrategies.MovementStrategy;
 import models.projectile.strikeStrategies.CheckStrike;
-import models.zombie.Zombie;
 
 import java.util.ArrayList;
 import java.util.List;

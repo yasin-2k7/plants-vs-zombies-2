@@ -1,9 +1,7 @@
 package view.terminalView;
 
 import controller.LeaderboardMenuController;
-import controller.MainMenuController;
 import models.enums.commands.LeaderboardMenuCommands;
-import models.enums.commands.MainMenuCommands;
 import view.View;
 
 import java.util.regex.Matcher;

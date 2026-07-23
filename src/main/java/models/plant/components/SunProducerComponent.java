@@ -2,7 +2,6 @@ package models.plant.components;
 
 import controller.GameMenuController;
 import models.core.App;
-import models.enums.PlantType;
 import models.plant.GameComponent;
 import models.plant.Plant;
 import models.world.Sun;

@@ -2,7 +2,6 @@ package models.world.obstacles;
 
 import controller.GameMenuController;
 import models.core.App;
-import models.core.User;
 import models.enums.CollectableType;
 import models.world.Collectable;
 import models.world.GameWorld;

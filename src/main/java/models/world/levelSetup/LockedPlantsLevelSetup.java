@@ -1,7 +1,6 @@
 package models.world.levelSetup;
 
 import models.enums.PlantType;
-import models.world.Cell;
 import models.world.GameWorld;
 import models.world.levelsSpecial.LockedPlantLevel;
 import models.world.mechanics.NormalMechanic;

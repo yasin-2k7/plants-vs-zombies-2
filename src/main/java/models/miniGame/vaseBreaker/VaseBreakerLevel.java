@@ -1,7 +1,6 @@
 package models.miniGame.vaseBreaker;
 
 import models.enums.PlantType;
-import models.plant.card.PlantCard;
 import models.world.GameWorld;
 import models.world.levelSetup.LevelSetup;
 import models.world.loseCondition.LoseCondition;

@@ -31,12 +31,9 @@ public class SunStealerZombie extends Zombie {
     public void update() {
         if (isDead) return;
         super.update(); // حرکت و خوردن معمولی
-
         GameWorld game = App.getCurrentGame();
         if (game == null) return;
-
         if (isRa) {
-            // Ra: جذب خورشیدهای روی زمین در شعاع ۱۵۰
             List<Sun> suns = game.getActiveSuns();
             for (Sun sun : suns) {
                 if (sun.isCollected()) continue;
@@ -49,7 +46,6 @@ public class SunStealerZombie extends Zombie {
                 }
             }
         } else {
-            // Turquoise: بررسی وجود گیاه در شعاع ۴ خانه
             if (!isStealing) {
                 Cell zombieCell = Cell.findZombieCell(game.getGrid(), this);
                 if (zombieCell != null) {
@@ -65,14 +61,11 @@ public class SunStealerZombie extends Zombie {
 
             if (isStealing) {
                 stealTimer++;
-                // هر ثانیه یکبار دزدی
                 if (stealTimer % STEAL_INTERVAL == 0) {
                     int stolen = game.stealSunFromPlayer(25);
                     stolenSun += stolen;
                     GameMenuController.updateState("Turquoise stole 25 suns. Total stolen: " + stolenSun);
                 }
-
-                // بعد از ۵ ثانیه شلیک لیزر
                 if (stealTimer >= LASER_DELAY) {
                     fireLaser(game);
                     isStealing = false;

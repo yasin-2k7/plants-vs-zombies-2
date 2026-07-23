@@ -7,7 +7,6 @@ import models.plant.Plant;
 import models.world.Cell;
 import models.world.GameWorld;
 import models.zombie.Zombie;
-import view.terminalView.GameMenuView;
 
 import java.util.ArrayList;
 import java.util.List;

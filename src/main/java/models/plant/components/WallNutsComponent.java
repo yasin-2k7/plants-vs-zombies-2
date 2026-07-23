@@ -2,7 +2,6 @@ package models.plant.components;
 
 import models.plant.GameComponent;
 import models.plant.Plant;
-import models.zombie.Zombie;
 
 public abstract class WallNutsComponent implements GameComponent {
 

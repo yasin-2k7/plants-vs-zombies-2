@@ -15,7 +15,6 @@ import models.world.winCondition.TimedWarWin;
 import models.world.winCondition.WinCondition;
 import models.zombie.wave.Wave;
 import models.zombie.wave.WaveSpawnEntry;
-import models.world.levelsSpecial.DeadLineLevel;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -80,7 +79,6 @@ public class LevelFactory {
                         // Deflector (دفع‌کننده)
 //                        new WaveSpawnEntry("ZombieDarkJuggler", 450), // ژانگولر
 //                        new WaveSpawnEntry("ZombieLostCityJane", 200) // چتردار
-////
 //                        // Spawner (تولیدکننده)
 //                        new WaveSpawnEntry("ZombieGargantuar", 1500), // غول‌پیکر
 //                        new WaveSpawnEntry("ZombieDarkKing", 750)    // پادشاه

@@ -3,7 +3,7 @@ package models.projectile.movementStrategies;
 import models.Damageable;
 import models.core.App;
 import models.projectile.Projectile;
-import models.zombie.Zombie;
+
 
 import java.util.Random;
 

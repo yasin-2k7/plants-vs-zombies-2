@@ -5,7 +5,6 @@ import models.enums.PlantLayer;
 import models.enums.PlantType;
 import models.plant.GameComponent;
 import models.plant.Plant;
-import models.plant.components.ExplosivesComponent;
 import models.plant.components.MagnetShroomComponent;
 import models.plant.components.PlacementBehaviorComponent;
 import models.plant.components.TorchwoodComponent;

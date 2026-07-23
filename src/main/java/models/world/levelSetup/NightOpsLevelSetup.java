@@ -2,7 +2,6 @@ package models.world.levelSetup;
 
 import models.world.GameWorld;
 import models.world.mechanics.NormalMechanic;
-import models.world.mechanics.SunSpawnMechanic;
 import models.zombie.wave.Wave;
 import models.zombie.wave.WaveManager;
 

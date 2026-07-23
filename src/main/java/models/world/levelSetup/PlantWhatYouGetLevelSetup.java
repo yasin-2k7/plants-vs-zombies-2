@@ -1,7 +1,6 @@
 package models.world.levelSetup;
 
 import models.plant.card.PlantCard;
-import models.world.Cell;
 import models.world.GameWorld;
 import models.world.mechanics.ConveyorMechanic;
 import models.world.mechanics.NormalMechanic;

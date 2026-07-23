@@ -1,6 +1,5 @@
 package models.world.levelSetup;
 
-import models.world.Cell;
 import models.world.GameWorld;
 import models.world.levelsSpecial.DeadLineLevel;
 import models.world.mechanics.NormalMechanic;

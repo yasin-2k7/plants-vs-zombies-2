@@ -1,7 +1,6 @@
 package models.projectile.strikeStrategies;
 
 import models.Damageable;
-import models.zombie.Zombie;
 
 public class CheckLobbedStrike implements CheckStrike{
     @Override

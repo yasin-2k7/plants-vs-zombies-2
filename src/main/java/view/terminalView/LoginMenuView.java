@@ -1,7 +1,6 @@
 package view.terminalView;
 
 import controller.LoginMenuController;
-import controller.SignupMenuController;
 import models.core.App;
 import models.enums.commands.LoginMenuCommands;
 import view.View;
@@ -78,10 +77,7 @@ public class LoginMenuView implements View{
                 break;
             }
         }
-        if (!commandFound) {
-            System.out.println("Invalid command!");
-        }
+        if (!commandFound) System.out.println("Invalid command!");
     }
-
 
 }

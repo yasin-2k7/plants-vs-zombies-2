@@ -1,8 +1,8 @@
 package models.world.ChapterWorld;
 
 import controller.GameMenuController;
+import models.core.App;
 import models.enums.PlantLayer;
-import models.plant.Plant;
 import models.world.Cell;
 import models.world.GameWorld;
 import models.world.cellTerrains.LandTerrain;
@@ -17,7 +17,6 @@ import models.zombie.ZombieFactory;
 
 import java.util.ArrayList;
 import java.util.Random;
-import java.util.concurrent.ThreadLocalRandom;
 
 public class BigWaveBeachWorld extends GameWorld {
     private int tideLineCol;
@@ -76,7 +75,7 @@ public class BigWaveBeachWorld extends GameWorld {
                 for (Cell cell : cells){
                     if (cell.isLowLyingCoast()){
                         if (random.nextBoolean()){
-                            Zombie zombie = random.nextBoolean() ? new ZombieFactory().createZombie("ZombieDefault") : new ZombieFactory().createZombie("ZombieConehead");
+                            Zombie zombie = random.nextBoolean() ? new ZombieFactory().createZombie("ZombieDefault") : new ZombieFactory().createZombie(App.getZombieId("ZombieConehead"));
                             if (zombie != null) {
                                 zombie.setX(cell.getX());
                                 zombie.setY(cell.getY());

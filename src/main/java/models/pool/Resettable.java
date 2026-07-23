@@ -2,7 +2,6 @@ package models.pool;
 
 import models.enums.ProjectileType;
 import models.plant.components.SunProducerComponent;
-import models.plant.visions.VisionStrategy;
 import models.projectile.hitStrategies.HitStrategy;
 import models.projectile.movementStrategies.MovementStrategy;
 import models.projectile.strikeStrategies.CheckStrike;

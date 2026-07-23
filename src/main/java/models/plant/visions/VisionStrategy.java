@@ -3,7 +3,6 @@ package models.plant.visions;
 import models.Damageable;
 import models.plant.Plant;
 import models.projectile.Projectile;
-import models.zombie.Zombie;
 
 public interface VisionStrategy {
     Damageable findZombie(Plant owner);

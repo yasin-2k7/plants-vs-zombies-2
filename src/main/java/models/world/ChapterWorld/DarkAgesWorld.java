@@ -1,12 +1,8 @@
 package models.world.ChapterWorld;
 
 import controller.GameMenuController;
-import models.core.App;
-import models.enums.PlantType;
-import models.greenhouse.Pot;
 import models.world.Cell;
 import models.world.GameWorld;
-import models.world.Sun;
 import models.world.cellTerrains.LandTerrain;
 import models.world.levelSetup.LevelSetup;
 import models.world.loseCondition.LoseCondition;

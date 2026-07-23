@@ -4,7 +4,6 @@ import models.plant.card.PlantCard;
 import models.world.GameWorld;
 import models.world.mechanics.ConveyorMechanic;
 import models.world.mechanics.NormalMechanic;
-import models.world.mechanics.SunSpawnMechanic;
 import models.zombie.wave.Wave;
 import models.zombie.wave.WaveManager;
 
