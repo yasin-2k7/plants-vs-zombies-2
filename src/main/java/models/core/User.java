@@ -277,8 +277,8 @@ public class User {
         return newsList;
     }
 
-    public ArrayList<News> getUnreadNews() {
-        return (ArrayList<News>) newsList.stream()
+    public List<News> getUnreadNews() {
+        return newsList.stream()
                 .filter(n -> !n.isRead())
                 .toList();
     }

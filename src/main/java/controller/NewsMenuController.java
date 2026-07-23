@@ -7,6 +7,7 @@ import models.core.UserDataManager;
 import view.terminalView.AppView;
 import view.terminalView.GameMenuView;
 import view.terminalView.MainMenuView;
+import view.terminalView.NewsMenuView;
 
 import java.util.List;
 
@@ -21,14 +22,26 @@ public class NewsMenuController implements MenuController{
         AppView.setCurrentScreen(MainMenuView.getInstance());
     }
 
-    public List<News> showNewsUnread(){
+    public void showNewsUnread(){
         User user = App.getCurrentUser();
-        return user.getUnreadNews();
+        List<News> unreadNews = user.getUnreadNews();
+        for (News news : unreadNews){
+            NewsMenuView.getInstance().showResult(news.getTitle());
+            NewsMenuView.getInstance().showResult("------------------------------------------------\n");
+            NewsMenuView.getInstance().showResult(news.getMessage());
+            news.markAsRead();
+        }
     }
 
-    public List<News> showNews(){
+    public void showNews(){
         User user = App.getCurrentUser();
-        return user.getAllNews();
+        List<News> allNews = user.getAllNews();
+        for (News news : allNews){
+            NewsMenuView.getInstance().showResult(news.getTitle());
+            NewsMenuView.getInstance().showResult("------------------------------------------------\n");
+            NewsMenuView.getInstance().showResult(news.getMessage());
+            news.markAsRead();
+        }
     }
 
     public void showCurrentMenu(){
