@@ -2,7 +2,6 @@ package models.world.ChapterWorld;
 
 import controller.GameMenuController;
 import models.core.App;
-import models.plant.Plant;
 import models.world.Cell;
 import models.world.GameWorld;
 import models.world.levelSetup.LevelSetup;

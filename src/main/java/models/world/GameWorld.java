@@ -9,6 +9,7 @@ import models.enums.Chapter;
 import models.enums.PlantFamily;
 import models.enums.PlantType;
 import models.lawnMower.LawnMowerManager;
+//import models.miniGame.MechanicsStrategy;
 import models.mupoint.KillEvent;
 import models.mupoint.MupointManager;
 import models.plant.Plant;
@@ -292,14 +293,11 @@ public abstract class GameWorld {
                 card.update();
             }
         }
-
-        // مدیریت خورشیدهای منقضی‌شده
         for (Sun sun : activeSuns){
             if (sun.getProducer() == null && sun.isExpired()){
                 sun.collect();
             }
         }
-
         activeSuns.removeIf(sun -> {
             if(sun.isCollected()){
                 sunsPool.release(sun);
@@ -307,7 +305,6 @@ public abstract class GameWorld {
             }
             return false;
         });
-
         lawnMowerManager.updateMowers(activeZombies);
         activeZombies.removeIf(zombie -> {
             if (zombie.isDead()) {
@@ -316,11 +313,9 @@ public abstract class GameWorld {
             }
             return false;
         });
-
         activePlants.removeIf(Plant::isDead);
         activeCollectables.removeIf(Collectable::isDead);
         activeObstacles.removeIf(Obstacle::isDestroyed);
-
         activeProjectiles.removeIf(projectile -> {
             if(projectile.isDead()){
                 projectilesPool.release(projectile);
@@ -328,7 +323,6 @@ public abstract class GameWorld {
             }
             return false;
         });
-
         for (Cell[] row : grid) {
             for (Cell cell : row) {
                 if (cell.hasObstacle()) {

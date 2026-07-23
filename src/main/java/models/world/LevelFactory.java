@@ -15,7 +15,6 @@ import models.world.winCondition.TimedWarWin;
 import models.world.winCondition.WinCondition;
 import models.zombie.wave.Wave;
 import models.zombie.wave.WaveSpawnEntry;
-import models.world.levelsSpecial.DeadLineLevel;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -80,23 +79,23 @@ public class LevelFactory {
 //                        new WaveSpawnEntry("ZombieCrystalSkull", 500) // تورکویز
 
                         // Deflector (دفع‌کننده)
-//                        new WaveSpawnEntry("ZombieDarkJuggler", 450) // ژانگولر
+//                        new WaveSpawnEntry("ZombieDarkJuggler", 450), // ژانگولر
 //                        new WaveSpawnEntry("ZombieLostCityJane", 200) // چتردار
-//
+////
 //                        // Spawner (تولیدکننده)
-//                        new WaveSpawnEntry("ZombieGargantuar", 1500) // غول‌پیکر
-//                        new WaveSpawnEntry("ZombieDarkKing", 750),    // پادشاه
-//                        new WaveSpawnEntry("ZombieDefault", 100)
+//                        new WaveSpawnEntry("ZombieGargantuar", 1500), // غول‌پیکر
+//                        new WaveSpawnEntry("ZombieDarkKing", 750)    // پادشاه
+
 //                        // Imp
 //                        new WaveSpawnEntry("ZombieImp", 100),
-//                        new WaveSpawnEntry("ZombieDarkImpDragon", 150)
+//                        new WaveSpawnEntry("ZombieDarkImpDragon", 150),
 //
                         // Phasing (تغییر فاز)
-//                        new WaveSpawnEntry("ZombieNewspaper", 700)  // پیرمرد
-//                        new WaveSpawnEntry("ZombieModernAllStar", 250) // آل‌استار
+//                        new WaveSpawnEntry("ZombieNewspaper", 700),   // پیرمرد
+//                        new WaveSpawnEntry("ZombieModernAllStar", 1000) // آل‌استار
 //
 //                        // Elemental (حساس به المان)
-//                        new WaveSpawnEntry("ZombieExplorer", 250)    // مشعل‌دار
+//                        new WaveSpawnEntry("ZombieExplorer", 250),    // مشعل‌دار
 //                        new WaveSpawnEntry("ZombieProspector", 200)  // اکتشافگر
 
 //                        // Snorkel

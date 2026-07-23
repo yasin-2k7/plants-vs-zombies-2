@@ -4,7 +4,6 @@ import controller.GameMenuController;
 import models.core.App;
 import models.core.User;
 import models.enums.PlantType;
-import models.plant.components.PlacementBehaviorComponent;
 import models.plant.components.SunProducerComponent;
 import models.world.Cell;
 import models.world.obstacles.IceBlock;

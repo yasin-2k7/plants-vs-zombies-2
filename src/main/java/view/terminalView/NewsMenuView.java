@@ -1,9 +1,6 @@
 package view.terminalView;
 
-import controller.LevelMenuController;
-import controller.LoginMenuController;
 import controller.NewsMenuController;
-import models.enums.commands.LeaderboardMenuCommands;
 import models.enums.commands.NewsMenuCommands;
 import view.View;
 

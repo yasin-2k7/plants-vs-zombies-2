@@ -2,7 +2,6 @@ package models.zombie;
 
 import controller.GameMenuController;
 import models.Damageable;
-import models.core.User;
 import models.enums.CollectableType;
 import models.enums.PlantType;
 import models.core.App;
@@ -13,7 +12,6 @@ import models.world.Collectable;
 import models.world.GameWorld;
 import models.zombie.state.WalkingState;
 import models.zombie.state.ZombieState;
-import view.terminalView.GameMenuView;
 
 import java.util.ArrayList;
 import java.util.List;

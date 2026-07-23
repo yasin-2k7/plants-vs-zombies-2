@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static java.util.stream.Collectors.toList;
 
 
 public class Cell {
@@ -104,25 +103,18 @@ public class Cell {
             return null;
         }
         if (!this.isPlantable()) {
-            if (!(this.obstacle instanceof Grave && type == PlantType.GRAVE_BUSTER)){
+            if (!(this.obstacle instanceof Grave && type == PlantType.GRAVE_BUSTER))
                 return "you cannot plant in that place!";
-            }
         }
-
         Plant newPlant = PlantFactory.createPlant(type, (int)x, (int)y, this);
         if (boost) newPlant.setPlantFoodInStart(true);
-
         if (((this.obstacle instanceof Grave) != (type == PlantType.GRAVE_BUSTER))
            || !(this.terrain.canPlant(newPlant, this))
            || (this.hasIcyZombie())){
             return "you cannot plant in that place!";
         }
-
         PlacementBehaviorComponent behavior = newPlant.getComponent(PlacementBehaviorComponent.class);
         PlantLayer layer = (behavior != null) ? behavior.getTargetLayer() : PlantLayer.MAIN;
-
-
-
         if (behavior != null && behavior.isStackable() && !isLayerEmpty(layer)) {
             Plant existingPlant = getPlant(layer);
             if (existingPlant.getType() == type) {
@@ -132,27 +124,21 @@ public class Cell {
                     shooterComp.setBurstProjectileNumber(existingBehavior.getCurrentStack());
                     shooterComp.setBurstProjectileNumberOnPlantFood(existingBehavior.getCurrentStack());
                     shooterComp.setGiantCount(existingBehavior.getCurrentStack());
-                    // update visuals...
                     return null;
                 }
             }
         }
-
         if (isLayerEmpty(layer)) {
             setPlant(newPlant, layer);
             App.getCurrentGame().getActivePlants().add(newPlant);
-
             User user = App.getCurrentUser();
             if (user != null) {
                 QuestStats stats = user.getQuestStats();
-                // برای کوئست ۱۱
                 stats.addFamilyUsedInLevel(newPlant.getType().family);
-                // برای کوئست ۱۲
                 stats.incrementTotalPlantsUsed();
                 if (Plant.isMushroom(newPlant.getType())) {
                     stats.incrementMushroomPlantsUsed();
                 }
-                // برای کوئست ۸ (انفجاری)
                 if (newPlant.getType().family == PlantFamily.EXPLOSIVE) {
                     stats.incrementExplosivePlantsUsed();
                 }

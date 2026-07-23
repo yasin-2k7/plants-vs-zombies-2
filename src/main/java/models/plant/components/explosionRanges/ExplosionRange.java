@@ -2,7 +2,6 @@ package models.plant.components.explosionRanges;
 
 import models.plant.Plant;
 import models.world.Cell;
-import models.zombie.Zombie;
 
 import java.util.List;
 

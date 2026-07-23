@@ -1,6 +1,5 @@
 package models.zombie.wave;
 
-import models.enums.Zombies;
 
 public class WaveSpawnEntry {
     private String zombieAlias;

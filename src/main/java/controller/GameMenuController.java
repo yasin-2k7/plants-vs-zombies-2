@@ -6,19 +6,12 @@ import models.enums.CollectableType;
 import models.core.UserDataManager;
 import models.enums.PlantLayer;
 import models.enums.PlantType;
-import models.lawnMower.LawnMower;
-import models.lawnMower.LawnMowerManager;
-import models.miniGame.IZombie.Brain;
 import models.miniGame.beghouled.GridPosition;
 import models.miniGame.IZombie.IZombieLevel;
 import models.miniGame.beghouled.BeghouledMechanics;
-import models.miniGame.bowling.BowlingBallType;
 import models.miniGame.bowling.BowlingMechanics;
-import models.miniGame.vaseBreaker.SeedPacket;
-import models.miniGame.vaseBreaker.Vase;
 import models.miniGame.vaseBreaker.VaseBreakerLevel;
 import models.mupoint.MupointManager;
-import models.plant.Plant;
 import models.plant.card.ImitatorCard;
 import models.plant.card.PlantCard;
 import models.world.*;
@@ -26,8 +19,6 @@ import models.world.mechanics.NormalMechanic;
 import models.world.obstacles.*;
 import models.zombie.Zombie;
 import models.zombie.ZombieFactory;
-import models.zombie.wave.WaveManager;
-import models.zombie.zombiesType.ArmoredZombie;
 import view.terminalView.*;
 
 import java.util.List;
@@ -42,13 +33,6 @@ public class GameMenuController implements MenuController {
         if (gameWorld.isWillUnlockLevel()){
             App.getCurrentUser().unlockLevel();
         }
-//        User user = App.getCurrentUser();
-//        if(user != null && mupointManager != null){
-//            user.updateMupointRecord(mupointManager.getTotalMupoints());
-//            GameMenuView.getInstance().showResult("your muPoint: " + mupointManager.getTotalMupoints());
-//
-//            UserDataManager.saveUser(user);
-//        }
         AppView.setCurrentScreen(MainMenuView.getInstance());
         App.setCurrentGame(null);
         App.getCurrentUser().getPlantBoosts().clear();
@@ -91,10 +75,17 @@ public class GameMenuController implements MenuController {
     }
 
     public void advanceTime(int count){
+        if (count <= 0){
+            GameMenuView.getInstance().showResult("Count must be an integer bigger than 0!");
+            return;
+        }
         GameMenuView.getInstance().showResult(count + " ticks later...");
         GameWorld game = App.getCurrentGame();
         for (int i = 0; i < count; i++){
-            game.tick();
+            if (game.getState() == GameState.PLAYING){
+                game.tick();
+            }
+            else return;
         }
     }
 
@@ -182,9 +173,7 @@ public class GameMenuController implements MenuController {
         GameMenuView.getInstance().showResult("there is no collectable in that place!");
     }
 
-    public void showSunAmount(){
-        GameMenuView.getInstance().showResult("current sun amount: " + App.getCurrentGame().getSun());
-    }
+    public void showSunAmount(){ GameDetailsDisplayController.showSunAmount();}
 
     public void cheatAddSun(int count){
         App.getCurrentGame().setSun(25*count+App.getCurrentGame().getSun());
@@ -249,20 +238,9 @@ public class GameMenuController implements MenuController {
         plantPlant(selectedCard, x, y);
     }
 
-    private Cell findCellAt(GameWorld game, float x, float y) {
-        for (Cell[] cells : game.getGrid()) {
-            if (!(cells[0].getY() + App.getCellHeight() / 2 > y && cells[0].getY() - App.getCellHeight() / 2 < y)) continue;
-            for (Cell cell : cells) {
-                if (cell.getX() + App.getCellWidth() / 2 > x && cell.getX() - App.getCellWidth() / 2 < x) {
-                    return cell;
-                }
-            }
-        }
-        return null;
-    }
+    private Cell findCellAt(GameWorld game, float x, float y) {return Cell.findCell(x,y, game.getGrid());}
 
     public void plantPlant(PlantCard card, float x, float y){
-
         if (App.getCurrentGame().getSun() < card.getSunCost()){
             GameMenuView.getInstance().showResult("you haven't enough suns!");
             return;
@@ -286,8 +264,6 @@ public class GameMenuController implements MenuController {
             type = card.getType();
             error = selectedCell.handlePlanting(type, App.getCurrentUser().hasBoost(type));
         }
-
-
         if (error != null) GameMenuView.getInstance().showResult(error);
         else {
             if (App.getCurrentGame().isConveyorMode()){
@@ -314,9 +290,7 @@ public class GameMenuController implements MenuController {
         }
     }
 
-    public void showPlantFoodsCount(){
-        GameMenuView.getInstance().showResult("plant foods count: " + App.getCurrentUser().getPlantFoods());
-    }
+    public void showPlantFoodsCount(){ GameDetailsDisplayController.showPlantFoodsCount();}
 
     public void feedPlant(float x, float y){
         if (App.getCurrentGame().getPlantFoods() <= 0){
@@ -339,7 +313,6 @@ public class GameMenuController implements MenuController {
         }
         selectedCell.findPlant().activatePlantFood();
         App.getCurrentGame().setPlantFoods(App.getCurrentGame().getPlantFoods()-1);
-
     }
 
     public void cheatAddPlantFood(){
@@ -451,15 +424,10 @@ public class GameMenuController implements MenuController {
             GameMenuView.getInstance().showResult(rowBuilder.toString());
         }
         GameMenuView.getInstance().showResult("==================================================================================================");
+        GameDetailsDisplayController.showMap();
     }
 
-    public void showPlantsStatus(){
-        if (App.getCurrentGame().isConveyorMode()) return;
-        for (PlantCard card : App.getCurrentGame().getPlantLists()){
-            String ticksRemaining = card.isReady() ? "" : " | ticks remaining: " + (card.getMaxCooldownTicks() - card.getCurrentCooldownTicks());
-            GameMenuView.getInstance().showResult(card.getType().name() + " | Cost: " + card.getSunCost() + " | is ready: " + card.isReady() + ticksRemaining);
-        }
-    }
+    public void showPlantsStatus(){ GameDetailsDisplayController.showPlantsStatus();}
 
     public void showTileStatus(float x, float y){
         Cell selectedCell = null;
@@ -500,44 +468,10 @@ public class GameMenuController implements MenuController {
             }
         }
     }
+    public void showTileStatus(float x, float y){ GameDetailsDisplayController.showTileStatus(x,y);}
 
     public void zombieInfo() {
-        for (Zombie zombie : App.getCurrentGame().getActiveZombies()) {
-            GameMenuView.getInstance().showResult(App.getArmoredZombieName(zombie.getSpecificName()) + ":");
-            GameMenuView.getInstance().showResult("    position: (" + zombie.getX() + ", " + zombie.getY() + ")");
-            GameMenuView.getInstance().showResult("    health: " + zombie.getHealth());
-            if (zombie instanceof ArmoredZombie armoredZombie) {
-                GameMenuView.getInstance().showResult("    armor health: " + handleArmor(armoredZombie));
-            } else {
-                GameMenuView.getInstance().showResult("    armor health: none");
-            }
-            GameMenuView.getInstance().showResult("    effects:");
-            if (zombie.getDisabledTicksRemaining() > 0)
-                GameMenuView.getInstance().showResult("        stunned " + zombie.getDisabledTicksRemaining());
-            if (zombie.getFreezedTicksRemaining() > 0)
-                GameMenuView.getInstance().showResult("        frozen " + zombie.getFreezedTicksRemaining());
-            if (zombie.getSlowTicksRemaining() > 0)
-                GameMenuView.getInstance().showResult("        slowed " + zombie.getSlowTicksRemaining());
-            if (zombie.getIceHealth() > 0)
-                GameMenuView.getInstance().showResult("        ice health " + zombie.getIceHealth());
-            GameMenuView.getInstance().showResult("");
-        }
-    }
-
-    private String handleArmor(ArmoredZombie armoredZombie) {
-        if (armoredZombie.getArmorHealth() <= 0) {
-            return "0 (broken)";
-        }
-        if (armoredZombie.getSpecificName().equalsIgnoreCase("ZombieDarkArmor3")) {
-            if (armoredZombie.getArmorHealth() > 1600) {
-                return "crown: " + (armoredZombie.getArmorHealth() - 1600) + ", shoulderArmor: 1600";
-            } else {
-                return "shoulderArmor: " + armoredZombie.getArmorHealth();
-            }
-        }
-        // برای سایر زامبی‌های زره‌دار
-        String type = armoredZombie.getArmorTypes().isEmpty() ? "unknown" : armoredZombie.getArmorTypes().get(0);
-        return type + ": " + armoredZombie.getArmorHealth();
+        GameDetailsDisplayController.zombieInfo();
     }
 
     public void cheatSpawnZombie(String type, float x, float y){

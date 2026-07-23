@@ -43,6 +43,34 @@ public class ZombieFactory {
         ENUM_TO_ALIAS.put(Zombies.SQUASH_ZOMBIE, "ZombieSquash");
     }
 
+    private Zombie selectZombie(String objClass, int health, int eatDPS, double speed, ZombieData data){
+        return switch (objClass) {
+            case "ZombieGargantuarProps" -> new SpawnerZombie(health, speed, eatDPS, true);
+            case "ZombieRaProps" -> new SunStealerZombie(health, speed, eatDPS, true);
+            case "ZombieCrystalSkullProps" -> new SunStealerZombie(health, speed, eatDPS, false);
+            case "ZombieExplorerProps" -> new ElementalZombie(health, speed, eatDPS, true);
+            case "ZombieProspectorProps" -> new ElementalZombie(health, speed, eatDPS, false); // false = Prospector
+            case "ZombieIceAgeHunterProps" -> new RangedZombie(health, speed, eatDPS, "SNOWBALL");
+            case "ZombieBeachOctopusProps" -> new RangedZombie(health, speed, eatDPS, "OCTOPUS");
+            case "ZombieTombRaiserProps" -> new RangedZombie(health, speed, eatDPS, "BONE");
+            case "ZombieDarkJugglerProps" -> new DeflectorZombie(health, speed, eatDPS, true);
+            case "ZombieLostCityJaneProps" -> new DeflectorZombie(health, speed, eatDPS, false);
+            case "ZombieDarkWizardProps" -> new WizardZombie(health, speed, eatDPS);
+            case "ZombieDarkKingProps" -> new SpawnerZombie(health, speed, eatDPS, false);
+            case "ZombieBeachFishermanProps" -> new FishermanZombie(health, eatDPS);
+            case "ZombieIceAgeDodoProps" -> new DodoRiderZombie(health, speed, eatDPS);
+            case "ZombieModernAllStarProps" -> new PhasingZombie(health, speed, eatDPS, 0, false);
+            case "ZombieNewspaperProps" -> new PhasingZombie(health, speed, eatDPS, 800, true);
+            case "ZombiePianoProps" -> new PusherZombie(health, speed, eatDPS, "PIANO", 1100);
+            case "ZombieArcadeProps" -> new PusherZombie(health, speed, eatDPS, "ARCADE", 1100);
+            case "ZombieIceAgeTroglobiteProps" -> new PusherZombie(health, speed, eatDPS, "ICEBLOCK", 600);
+            case "ZombieBeachSnorkelProps" -> new SnorkelZombie(health, speed, eatDPS);
+            case "ZombieImpProps" -> new ImpZombie(health, speed, eatDPS, false);
+            case "ZombieDarkImpDragonProps" -> new ImpZombie(health, speed, eatDPS, true);
+            default -> buildBasicZombie(health, eatDPS, speed, data);
+        };
+    }
+
     public Zombie createZombie(String alias) {
         Zombie zombotanyZombie = createZombotanyZombie(alias);
         if (zombotanyZombie != null) {
@@ -56,7 +84,7 @@ public class ZombieFactory {
             if (props == null) {
                 throw new IllegalArgumentException("Cannot find even default zombie: " + alias);
             }
-            logger.warning("Unknown zombie alias: " + alias);
+            LOGGER.warning("Unknown zombie alias: " + alias + " — using default ZombieDefault.");
             return null;
         }
         String objclass = props.getObjclass();
@@ -69,7 +97,7 @@ public class ZombieFactory {
         int eatDPS = (int) Math.round(data.getEatDPS() * increaseFactor);
         double speed = data.getSpeed();
 
-        Zombie createdZombie = null;
+        Zombie createdZombie = selectZombie(objclass, health, eatDPS, speed, data);
 
         if ("ZombieDarkImpDragon".equalsIgnoreCase(alias)) {
             createdZombie = new ImpZombie(health, speed, eatDPS, true);
@@ -156,11 +184,9 @@ public class ZombieFactory {
             }
         }
 
-        if (createdZombie != null) {
-            createdZombie.setSpecificName(alias);
-            if (Math.random() < 0.05) {
-                createdZombie.setGlowing(true);
-            }
+        createdZombie.setSpecificName(alias);
+        if (Math.random() < 0.05) {
+            createdZombie.setGlowing(true);
         }
 
         return createdZombie;
@@ -183,7 +209,7 @@ public class ZombieFactory {
                         magnetic = true;
                     }
                 } else {
-                    logger.warning("Armor properties not found for alias: " + alias + " (used in " + data.getClass().getName() + ")");
+                    LOGGER.warning("Armor properties not found for alias: " + alias + " (used in " + data.getClass().getName() + ")");
                 }
             }
             ArmoredZombie zombie = new ArmoredZombie(health, speed, eatDPS, totalArmorHealth, magnetic);

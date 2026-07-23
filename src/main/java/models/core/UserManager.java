@@ -2,7 +2,6 @@ package models.core;
 
 import controller.GameMenuController;
 
-import java.util.HashMap;
 
 public class UserManager {
     private static User currentUser;

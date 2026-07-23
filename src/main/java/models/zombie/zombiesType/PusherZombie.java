@@ -44,31 +44,23 @@ public class PusherZombie extends Zombie {
     @Override
     public void update() {
         if (isDead) return;
-
         GameWorld game = App.getCurrentGame();
         if (game == null) {
             super.update();
             return;
         }
-
         Cell zombieCell = Cell.findZombieCell(game.getGrid(), this);
         boolean crushed = false;
-
-        // اگر شیء سالم است، گیاهان را له می‌کند
         if (objectHealth > 0 && zombieCell != null) {
-            // ۱. گیاه در سلول خود زامبی
             Plant plantHere = zombieCell.getPlant();
             if (plantHere != null && !plantHere.isDead()) {
                 plantHere.die();
                 crushed = true;
-                // اگر شیء یخ باشد، یخ می‌شکند
                 if ("ICEBLOCK".equals(objectName)) {
                     objectHealth = 0;
                 }
                 GameMenuController.updateState(objectName + " crushed plant at (" + plantHere.getX() + ", " + plantHere.getY() + ")");
             }
-
-            // ۲. گیاه در سلول جلویی (اگر شیء جلوتر است)
             Cell frontCell = Cell.nextCell(zombieCell, game.getGrid());
             if (frontCell != null) {
                 Plant plantFront = frontCell.getPlant();
@@ -82,8 +74,6 @@ public class PusherZombie extends Zombie {
                 }
             }
         }
-
-        // اگر شیء سالم است و پیانیست است، زامبی‌های همسایه را جابه‌جا کن
         if ("PIANO".equals(objectName) && objectHealth > 0) {
             if (rowSwitchCooldown <= 0) {
                 switchNearbyZombies(game);
@@ -92,12 +82,9 @@ public class PusherZombie extends Zombie {
                 rowSwitchCooldown--;
             }
         }
-
-        // حرکت یا خوردن (در صورت عدم له شدن)
         if (!crushed) {
             super.update(); // شامل حرکت و خوردن (اگر objectHealth <= 0 باشد)
         } else {
-            // فقط حرکت کن، نخور
             this.move();
         }
     }

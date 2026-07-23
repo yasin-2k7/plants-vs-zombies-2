@@ -1,6 +1,5 @@
 package view.terminalView;
 
-import controller.LoginMenuController;
 import controller.SignupMenuController;
 import models.enums.commands.SignupMenuCommands;
 import view.View;

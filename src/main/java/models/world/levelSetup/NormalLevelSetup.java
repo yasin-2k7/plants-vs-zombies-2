@@ -1,6 +1,5 @@
 package models.world.levelSetup;
 
-import models.world.Cell;
 import models.world.GameWorld;
 import models.world.mechanics.NormalMechanic;
 import models.world.mechanics.SunSpawnMechanic;

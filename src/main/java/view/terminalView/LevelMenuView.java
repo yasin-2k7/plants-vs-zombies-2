@@ -2,7 +2,6 @@ package view.terminalView;
 
 import controller.LevelMenuController;
 import models.enums.commands.LevelMenuCommands;
-import models.enums.commands.LoginMenuCommands;
 import view.View;
 
 import java.util.List;
