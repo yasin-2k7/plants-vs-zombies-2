@@ -1,5 +1,6 @@
 package models.zombie.zombiesType;
 
+import controller.GameMenuController;
 import models.core.App;
 import models.enums.PlantType;
 import models.enums.Zombies;
@@ -45,30 +46,39 @@ public class DodoRiderZombie extends Zombie {
             return;
         }
 
-        Cell currentCell = Cell.findZombieCell(game.getGrid(), this);
+        // محاسبه سلول فعلی از مختصات
+        int col = (int)(this.x / App.getCellWidth());
+        int row = (int)(this.y / App.getCellHeight());
+        if (row < 0 || row >= game.getRows() || col < 0 || col >= game.getCols()) {
+            super.update();
+            return;
+        }
 
-        if (isRiding && currentCell != null) {
-            // گیاه در سلول جلویی (سمت چپ زامبی)
-            Cell frontCell = Cell.nextCell(currentCell, game.getGrid());
-            if (frontCell != null) {
-                Plant obstacle = frontCell.getPlant();
-                if (obstacle != null && !obstacle.isDead()) {
-                    handleObstacle(obstacle, frontCell);
+        if (isRiding) {
+            // سلول جلویی (سمت چپ)
+            if (col > 0) {
+                Cell frontCell = game.getGrid()[row][col - 1];
+                if (frontCell != null) {
+                    Plant obstacle = frontCell.getPlant();
+                    if (obstacle != null && !obstacle.isDead()) {
+                        handleObstacle(obstacle, frontCell);
+                    }
                 }
             }
 
-            // بررسی جابه‌جایی سطر (slipping)
-            Cell prevCell = Cell.previousCell(currentCell, game.getGrid());
-            if (prevCell != null && prevCell.getSlippingDir() != 0) {
-                this.x -= App.getCellWidth(); // یک سلول کامل جلوتر
+            // بررسی slipping (جابه‌جایی سطر)
+            if (col > 0 && game.getGrid()[row][col - 1].getSlippingDir() != 0) {
+                this.x -= App.getCellWidth();
             }
         }
+
         super.update();
     }
 
     private void handleObstacle(Plant plant, Cell cell) {
         PlantType type = plant.getType();
 
+        // گردوی بلند را نمی‌توان پرید
         if (type == PlantType.TALL_NUT) {
             return;
         }
@@ -76,12 +86,15 @@ public class DodoRiderZombie extends Zombie {
         if (FLY_OVER_PLANTS.contains(type)) {
             GameWorld game = App.getCurrentGame();
             if (game != null) {
-                Cell nextCell = Cell.nextCell(cell, game.getGrid());
-                if (nextCell != null) {
+                int col = cell.getCol() - 1;
+                int row = cell.getRow();
+                if (col >= 0) {
+                    Cell nextCell = game.getGrid()[row][col];
                     this.x = nextCell.getX();
                     this.y = nextCell.getY();
-                    System.out.println("Dodo Rider flew over a " + type.name() + " at (" + cell.getX() + ", " + cell.getY() + ")");
+                    GameMenuController.updateState("Dodo Rider flew over a " + type.name() + " at (" + cell.getX() + ", " + cell.getY() + ")");
                 } else {
+                    // اگر سلول سمت چپ وجود نداشت، یک سلول کامل به چپ بپر
                     this.x -= App.getCellWidth();
                 }
             }
@@ -94,11 +107,11 @@ public class DodoRiderZombie extends Zombie {
 
         super.takeDamage(amount, damageType);
 
-        // اگر جان به نصف رسید و هنوز سوار است، پرنده از بین می‌رود
+        // اگر جان به نصف رسید و سوار است، پرنده از بین می‌رود
         if (!isDead && isRiding && this.health <= this.maxHealth / 2) {
             isRiding = false;
             this.speed = this.originalSpeed * 0.6; // کندتر می‌شود
-            System.out.println("Dodo Rider lost its mount!");
+            GameMenuController.updateState("Dodo Rider lost its mount!");
         }
     }
 

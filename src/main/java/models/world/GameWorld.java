@@ -8,7 +8,6 @@ import models.core.UserDataManager;
 import models.enums.Chapter;
 import models.enums.PlantFamily;
 import models.enums.PlantType;
-import models.lawnMower.LawnMower;
 import models.lawnMower.LawnMowerManager;
 //import models.miniGame.MechanicsStrategy;
 import models.mupoint.KillEvent;
@@ -24,6 +23,7 @@ import models.world.loseCondition.LoseCondition;
 import models.world.mechanics.Mechanic;
 import models.world.mechanics.NormalMechanic;
 import models.world.obstacles.Grave;
+import models.world.obstacles.Obstacle;
 import models.world.winCondition.WinCondition;
 import models.zombie.Zombie;
 import models.zombie.wave.WaveManager;
@@ -35,10 +35,8 @@ import java.util.Random;
 import java.util.*;
 
 public abstract class GameWorld {
-    private long startTime;
-    private long currentTime;
 
-    Random random = new Random();
+    protected Random random = new Random();
 
     private GameState state;
 
@@ -68,7 +66,7 @@ public abstract class GameWorld {
     protected List<Plant> activePlants;
     protected List<Sun> activeSuns;
     protected List<Projectile> activeProjectiles;
-    protected List<Grave> activeGrave;
+    protected List<Obstacle> activeObstacles;
     protected List<Damageable> activeTargets;
     protected LawnMowerManager lawnMowerManager;
 
@@ -138,13 +136,12 @@ public abstract class GameWorld {
         this.activeSuns = new ArrayList<>();
         this.activeProjectiles = new ArrayList<>();
         this.activeCollectables = new ArrayList<>();
-        this.activeGrave = new ArrayList<>();
+        this.activeObstacles = new ArrayList<>();
         this.activeTargets = new ArrayList<>();
         this.lawnMowerManager = new LawnMowerManager();
         this.sunsPool = new GenericObjectPool<>(Sun::new);
         currentSun = 50;
 
-        this.startTime = System.currentTimeMillis();
         this.state = GameState.PLAYING;
         this.plantLists = new ArrayList<>();
 
@@ -204,7 +201,7 @@ public abstract class GameWorld {
 
         Cell cell = grid[row][col];
         if (cell.hasObstacle() || !cell.isEmpty()) {
-            System.out.println("Cannot place grave at (" + col + ", " + row + ") - cell not empty.");
+            GameMenuController.updateState("Cannot place grave at (" + col + ", " + row + ") - cell not empty.");
             return;
         }
 
@@ -213,8 +210,8 @@ public abstract class GameWorld {
         Grave grave = new Grave(graveX, graveY, row, col, Grave.GraveType.NORMAL);
         cell.setObstacle(grave);
         cell.setPlantable(false);
-        activeGrave.add(grave);
-        System.out.println("A grave has been created at (" + col + ", " + row + ")");
+        activeObstacles.add(grave);
+        GameMenuController.updateState("A grave has been created at (" + col + ", " + row + ")");
     }
 
     public Cell getRandomEmptyCellInRow(int row) {
@@ -244,9 +241,6 @@ public abstract class GameWorld {
         if (emptyCells.isEmpty()) return null;
         Random rand = new Random();
         return emptyCells.get(rand.nextInt(emptyCells.size()));
-    }
-    public void update(){
-
     }
 
     public int stealSunFromPlayer(int amount) {
@@ -392,6 +386,7 @@ public abstract class GameWorld {
         activePlants.removeIf(Plant::isDead);
         activeProjectiles.removeIf(Projectile::isDead);
         activeCollectables.removeIf(Collectable::isDead);
+        activeObstacles.removeIf(Obstacle::isDestroyed);
 
         for (Cell[] row : grid) {
             for (Cell cell : row) {
@@ -462,20 +457,20 @@ public abstract class GameWorld {
             }
         }
     }
-    public boolean isGardenSymmetric() {
-        if (grid == null || rows == 0 || cols == 0) return false;
-        int middleRow = rows / 2;
-        for (int r = 0; r < rows; r++) {
-            for (int c = 0; c < cols / 2; c++) {
-                Plant left = grid[r][c].getPlant();
-                Plant right = grid[r][cols - 1 - c].getPlant();
-                if (left == null && right == null) continue;
-                if (left == null || right == null) return false;
-                if (left.getType() != right.getType()) return false;
-            }
-        }
-        return true;
-    }
+//    public boolean isGardenSymmetric() {
+//        if (grid == null || rows == 0 || cols == 0) return false;
+//        int middleRow = rows / 2;
+//        for (int r = 0; r < rows; r++) {
+//            for (int c = 0; c < cols / 2; c++) {
+//                Plant left = grid[r][c].getPlant();
+//                Plant right = grid[r][cols - 1 - c].getPlant();
+//                if (left == null && right == null) continue;
+//                if (left == null || right == null) return false;
+//                if (left.getType() != right.getType()) return false;
+//            }
+//        }
+//        return true;
+//    }
 
     public boolean isGardenSymmetricExceptMiddleRow() {
         if (grid == null || rows == 0 || cols == 0) return false;
@@ -560,15 +555,11 @@ public abstract class GameWorld {
         return currentTick;
     }
 
-    public long getElapsedTime() {
-        return System.currentTimeMillis() - startTime;
-    }
-
     public void addZombie(Zombie zombie) { activeZombies.add(zombie); }
-    public void addGrave(Grave grave) { activeGrave.add(grave); }
+    public void addGrave(Grave grave) { activeObstacles.add(grave); }
     public void addTarget() {
         activeTargets.addAll(activeZombies);
-        activeTargets.addAll(activeGrave);
+        activeTargets.addAll(activeObstacles);
     }
 
     public GenericObjectPool<Projectile> getProjectilesPool() {
@@ -680,4 +671,5 @@ public abstract class GameWorld {
             this.activeProjectiles.add(projectile);
         }
     }
+    public List<Obstacle> getActiveObstacles() {return activeObstacles;}
 }

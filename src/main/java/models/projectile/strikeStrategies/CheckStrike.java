@@ -1,8 +1,9 @@
 package models.projectile.strikeStrategies;
 
+import models.Damageable;
 import models.zombie.Zombie;
 
 public interface CheckStrike {
-    Zombie strike(double x, double y, double oldX, double oldY);
-    Zombie strike(double x, double y, Zombie zombie);
+    Damageable strike(double x, double y, double oldX, double oldY);
+    Damageable strike(double x, double y, Damageable damageable);
 }

@@ -1,4 +1,6 @@
 package models.mupoint;
+import controller.GameMenuController;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,11 +23,11 @@ public class MupointManager {
 
             if (pts > 0) {
                 String strategyName = strategy.getClass().getSimpleName();
-                System.out.println("   🎯 استراتژی فعال شد: " + strategyName + " -> +" + pts + " امتیاز");
+                GameMenuController.updateState("   🎯 استراتژی فعال شد: " + strategyName + " -> +" + pts + " امتیاز");
                 pointsGained += pts;
             }
         }
-        System.out.println("Current Mupoints: " + totalMupoints);
+        GameMenuController.updateState("Current Mupoints: " + totalMupoints);
         totalMupoints += pointsGained;
     }
 

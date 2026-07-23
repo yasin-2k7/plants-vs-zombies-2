@@ -11,11 +11,9 @@ public enum ShopMenuCommands {
     SHOP_DAILY("^shop\\s+daily$"),
     SHOP_BUY("^shop\\s+buy\\s+-i\\s+(\\w+)\\s+-n\\s+(\\d+)(?:\\s+-t\\s+(\\w+))?$");
 
-    private final String pattern;
     private final Pattern compiledPattern;
 
     ShopMenuCommands(String pattern) {
-        this.pattern = pattern;
         this.compiledPattern = Pattern.compile(pattern);
     }
 

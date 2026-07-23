@@ -1,5 +1,4 @@
 package models.plant.factory;
-
 import models.core.App;
 import models.enums.PlantLayer;
 import models.enums.PlantType;
@@ -10,6 +9,7 @@ import models.plant.components.LifespanComponent;
 import models.plant.components.PlacementBehaviorComponent;
 import models.plant.components.ShooterComponent;
 import models.plant.components.shooterPlantFoodBehaviors.RandomTargetPlantFood;
+import models.plant.components.shooterPlantFoodBehaviors.ThreepeaterPlantFood;
 import models.plant.visions.RotatedVisionStrategy;
 import models.plant.visions.StraightVisionStrategy;
 import models.projectile.hitStrategies.CombinedDamageStrategy;
@@ -47,7 +47,6 @@ public class ShooterFactory {
         registry.put(PlantType.WINTER_MELON, ShooterFactory::buildWinterMelonPult);
         registry.put(PlantType.PEPPER_PULT, ShooterFactory::buildPepperPult);
     }
-
     private static Plant buildPeaShooter(){
         int level = App.getCurrentUser().getUnlockedPlantsLevels().get(PlantType.PEASHOOTER);
         int health = level >= 3 ? 450 : 300;
@@ -101,6 +100,7 @@ public class ShooterFactory {
             MovementStrategy movementStrategy = new StraightMovementStrategy(5, 0, finalI*App.getCellHeight());
             newComponent.getMovementStrategies().add(() -> movementStrategy);
         }
+        newComponent.setPlantFoodBehavior(ThreepeaterPlantFood.INSTANCE);
         p.addComponent(newComponent);
         return p;
     }

@@ -20,27 +20,27 @@ import java.util.Map;
 import java.util.logging.Logger;
 
 public class ZombieFactory {
-    private static final Logger logger = Logger.getLogger(ZombieFactory.class.getName());
-    private static final Map<Zombies, String> enumToAlias = new HashMap<>();
+    private static final Logger LOGGER = Logger.getLogger(ZombieFactory.class.getName());
+    private static final Map<Zombies, String> ENUM_TO_ALIAS = new HashMap<>();
     static {
-        enumToAlias.put(Zombies.ZOMBIE, "ZombieDefault");
-        enumToAlias.put(Zombies.ARMORED, "ZombieArmor1");
-        enumToAlias.put(Zombies.WIZARD, "ZombieWizard");
-        enumToAlias.put(Zombies.SUN_STEALER, "ZombieRa");
-        enumToAlias.put(Zombies.SPAWNER, "ZombieGargantuar");
-        enumToAlias.put(Zombies.SNORKEL, "ZombieBeachSnorkel");
-        enumToAlias.put(Zombies.RANGED, "ZombieIceAgeHunter");
-        enumToAlias.put(Zombies.PUSHER, "ZombieArcade");
-        enumToAlias.put(Zombies.PHASING, "ZombieNewspaper");
-        enumToAlias.put(Zombies.IMP, "ZombieImp");
-        enumToAlias.put(Zombies.FISHERMAN, "ZombieBeachFisherman");
-        enumToAlias.put(Zombies.ELEMENTAL, "ZombieExplorer");
-        enumToAlias.put(Zombies.DODO_RIDER, "ZombieIceAgeDodo");
-        enumToAlias.put(Zombies.DEFLECTOR, "ZombieDarkJuggler");
-        enumToAlias.put(Zombies.PEASHOOTER_ZOMBIE, "ZombiePeashooter");
-        enumToAlias.put(Zombies.JALAPENO_ZOMBIE, "ZombieJalapeno");
-        enumToAlias.put(Zombies.WALLNUT_ZOMBIE, "ZombieWallnut");
-        enumToAlias.put(Zombies.SQUASH_ZOMBIE, "ZombieSquash");
+        ENUM_TO_ALIAS.put(Zombies.ZOMBIE, "ZombieDefault");
+        ENUM_TO_ALIAS.put(Zombies.ARMORED, "ZombieArmor1");
+        ENUM_TO_ALIAS.put(Zombies.WIZARD, "ZombieWizard");
+        ENUM_TO_ALIAS.put(Zombies.SUN_STEALER, "ZombieRa");
+        ENUM_TO_ALIAS.put(Zombies.SPAWNER, "ZombieGargantuar");
+        ENUM_TO_ALIAS.put(Zombies.SNORKEL, "ZombieBeachSnorkel");
+        ENUM_TO_ALIAS.put(Zombies.RANGED, "ZombieIceAgeHunter");
+        ENUM_TO_ALIAS.put(Zombies.PUSHER, "ZombieArcade");
+        ENUM_TO_ALIAS.put(Zombies.PHASING, "ZombieNewspaper");
+        ENUM_TO_ALIAS.put(Zombies.IMP, "ZombieImp");
+        ENUM_TO_ALIAS.put(Zombies.FISHERMAN, "ZombieBeachFisherman");
+        ENUM_TO_ALIAS.put(Zombies.ELEMENTAL, "ZombieExplorer");
+        ENUM_TO_ALIAS.put(Zombies.DODO_RIDER, "ZombieIceAgeDodo");
+        ENUM_TO_ALIAS.put(Zombies.DEFLECTOR, "ZombieDarkJuggler");
+        ENUM_TO_ALIAS.put(Zombies.PEASHOOTER_ZOMBIE, "ZombiePeashooter");
+        ENUM_TO_ALIAS.put(Zombies.JALAPENO_ZOMBIE, "ZombieJalapeno");
+        ENUM_TO_ALIAS.put(Zombies.WALLNUT_ZOMBIE, "ZombieWallnut");
+        ENUM_TO_ALIAS.put(Zombies.SQUASH_ZOMBIE, "ZombieSquash");
     }
 
     public Zombie createZombie(String alias) {
@@ -51,7 +51,7 @@ public class ZombieFactory {
 
         ZombieProperties props = ZombieRegistry.getZombieProperties(alias);
         if (props == null) {
-            logger.warning("Unknown zombie alias: " + alias + " — using default ZombieDefault.");
+            LOGGER.warning("Unknown zombie alias: " + alias + " — using default ZombieDefault.");
             props = ZombieRegistry.getZombieProperties("ZombieDefault");
             if (props == null) {
                 throw new IllegalArgumentException("Cannot find even default zombie: " + alias);
@@ -146,8 +146,8 @@ public class ZombieFactory {
 
         if (createdZombie != null) {
             createdZombie.setSpecificName(alias);
-            if (Math.random() < 0.20) {
-                createdZombie.setDropsReward(true);
+            if (Math.random() < 0.05) {
+                createdZombie.setGlowing(true);
             }
         }
 
@@ -171,7 +171,7 @@ public class ZombieFactory {
                         magnetic = true;
                     }
                 } else {
-                    logger.warning("Armor properties not found for alias: " + alias + " (used in " + data.getClass().getName() + ")");
+                    LOGGER.warning("Armor properties not found for alias: " + alias + " (used in " + data.getClass().getName() + ")");
                 }
             }
             ArmoredZombie zombie = new ArmoredZombie(health, speed, eatDPS, totalArmorHealth, magnetic);
@@ -193,12 +193,6 @@ public class ZombieFactory {
             return inner;
         }
         return ref;
-    }
-
-    public Zombie createZombie(Zombies type) {
-        String alias = enumToAlias.get(type);
-        if (alias == null) return null;
-        return createZombie(alias);
     }
 
     private Zombie createZombotanyZombie(String alias) {

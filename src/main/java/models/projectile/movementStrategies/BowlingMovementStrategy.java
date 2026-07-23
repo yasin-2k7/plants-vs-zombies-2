@@ -1,5 +1,6 @@
 package models.projectile.movementStrategies;
 
+import models.Damageable;
 import models.core.App;
 import models.projectile.Projectile;
 import models.zombie.Zombie;
@@ -23,7 +24,7 @@ public class BowlingMovementStrategy implements MovementStrategy{
 
     @Override
     public void move(Projectile projectile) {
-        Zombie zombie = projectile.getStrikeStrategy().strike(projectile.getX(), projectile.getY(), projectile.getX()-speedX*5, projectile.getY()-speedY*5);
+        Damageable zombie = projectile.getStrikeStrategy().strike(projectile.getX(), projectile.getY(), projectile.getX()-speedX*5, projectile.getY()-speedY*5);
         int sign;
         if (zombie != null){
             if (speedY == 0){

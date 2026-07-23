@@ -2,19 +2,17 @@ package models.zombie.zombiesType;
 
 import models.core.App;
 import models.enums.Zombies;
-import models.plant.Plant;
 import models.world.Cell;
 import models.world.GameWorld;
 import models.zombie.Zombie;
+import models.zombie.state.EatingState;
 
 public class SnorkelZombie extends Zombie {
-    private boolean isSubmerged;
-    private boolean isEating; // برای جلوگیری از بازگشت به زیر آب هنگام خوردن
+    private boolean underwater;
 
     public SnorkelZombie(int health, double speed, int damage) {
         super(Zombies.SNORKEL, health, speed, damage);
-        this.isSubmerged = true;
-        this.isEating = false;
+        this.underwater = false;
     }
 
     @Override
@@ -27,65 +25,55 @@ public class SnorkelZombie extends Zombie {
             return;
         }
 
-        // ۱. تشخیص سلول فعلی و وضعیت آب
-        Cell currentCell = Cell.findZombieCell(game.getGrid(), this);
-        boolean inWater = (currentCell != null && currentCell.isWater());
-
-        // ۲. به‌روزرسانی وضعیت زیرآب بودن (در صورت عدم خوردن)
-        if (!isEating) {
-            if (inWater) {
-                isSubmerged = true;
-            } else {
-                isSubmerged = false;
+        // محاسبه سلول فعلی با دقت بالا
+        int col = (int)(this.x / App.getCellWidth());
+        int row = (int)(this.y / App.getCellHeight());
+        boolean inWater = false;
+        if (row >= 0 && row < game.getRows() && col >= 0 && col < game.getCols()) {
+            Cell cell = game.getGrid()[row][col];
+            if (cell != null) {
+                inWater = cell.isWater();
             }
         }
 
-        // ۳. اگر زیر آب است و به گیاه رسیده، برای خوردن بیرون بیاید
-        if (isSubmerged) {
-            // گیاه در سلول جلویی (سمت چپ زامبی)
-            Cell frontCell = Cell.nextCell(currentCell, game.getGrid());
-            if (frontCell != null) {
-                Plant plant = frontCell.getPlant();
-                if (plant != null && !plant.isDead()) {
-                    emergeToEat();
-                    isEating = true;
-                }
-            }
+        // اگر در حالت خوردن است، از آب خارج می‌شود
+        if (this.getCurrentState() instanceof EatingState) {
+            underwater = false;
         } else {
-            // ۴. اگر در حال خوردن است و گیاه تمام شد، وضعیت را به‌روز کن
-            if (isEating) {
-                Cell frontCell = Cell.nextCell(currentCell, game.getGrid());
-                Plant plant = (frontCell != null) ? frontCell.getPlant() : null;
-                if (plant == null || plant.isDead()) {
-                    isEating = false;
-                    // اگر در آب است، دوباره زیر آب برو
-                    if (inWater) {
-                        isSubmerged = true;
-                    }
-                }
-            }
+            underwater = inWater;
         }
+
         super.update();
     }
 
     @Override
     public void takeDamage(int amount, String damageType) {
         if (isDead) return;
-        if (isSubmerged && !"LOBBER".equals(damageType)) {
-            return;
+
+        // محاسبه مجدد سلول فعلی برای دقت بیشتر
+        GameWorld game = App.getCurrentGame();
+        if (game != null) {
+            int col = (int)(this.x / App.getCellWidth());
+            int row = (int)(this.y / App.getCellHeight());
+            boolean inWater = false;
+            if (row >= 0 && row < game.getRows() && col >= 0 && col < game.getCols()) {
+                Cell cell = game.getGrid()[row][col];
+                if (cell != null) {
+                    inWater = cell.isWater();
+                }
+            }
+            // اگر در آب است و در حال خوردن نیست، فقط lobber آسیب می‌زند
+            if (inWater && !(this.getCurrentState() instanceof EatingState)) {
+                if (!"LOBBER".equalsIgnoreCase(damageType)) {
+                    return; // آسیب نادیده گرفته شود
+                }
+            }
         }
+
         super.takeDamage(amount, damageType);
     }
 
-    public void emergeToEat() {
-        this.isSubmerged = false;
+    public boolean isUnderwater() {
+        return underwater;
     }
-
-    public void submerge() {
-        if (!isEating) {
-            this.isSubmerged = true;
-        }
-    }
-
-    public boolean isSubmerged() { return isSubmerged; }
 }

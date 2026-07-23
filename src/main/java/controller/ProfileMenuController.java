@@ -6,14 +6,13 @@ import view.terminalView.GameMenuView;
 import view.terminalView.MainMenuView;
 import view.terminalView.SignupMenuView;
 
-import java.util.ArrayList;
 import java.util.List;
 
-public class ProfileMenuController implements MenuController{
+public class ProfileMenuController implements MenuController {
     private SignupMenuController signupMenuController = new SignupMenuController();
+
     @Override
     public void changeMenu() {
-
     }
 
     @Override
@@ -21,13 +20,13 @@ public class ProfileMenuController implements MenuController{
         AppView.currentScreen = MainMenuView.getInstance();
     }
 
-    public String changeUsername(String newUsername){
+    public String changeUsername(String newUsername) {
         User user = App.getCurrentUser();
+        String oldUsername = user.getUsername();
 
-        if(user.getUsername().equals(newUsername)){
+        if (user.getUsername().equals(newUsername)) {
             return "new username and your username are similar.";
         }
-
 
         List<String> errors = signupMenuController.getUsernameErrors(newUsername);
         if (!errors.isEmpty()) {
@@ -66,7 +65,6 @@ public class ProfileMenuController implements MenuController{
             return "new email and your email are similar.";
         }
 
-
         List<String> errors = signupMenuController.getEmailErrors(newEmail);
         if (!errors.isEmpty()) {
             return String.join("\n", errors);
@@ -96,28 +94,20 @@ public class ProfileMenuController implements MenuController{
             return String.join("\n", errors);
         }
 
-
         user.setHashPassword(hashNewPass);
         UserDataManager.saveUser(user);
-        user.setHashPassword(hashPassword);
-        UserDataManager.saveUser(user);
         return "your pass changed.";
-
-
     }
 
     public String showInfo() {
         User user = App.getCurrentUser();
-
-        String info = "Username: " + user.getUsername() + "\n" +
-                    "Nickname: " + user.getNickname() + "\n" +
-                    "Games played: " + user.getGamesPlayed() + "\n" +
-                    "Coins: " + user.getCoins() + "\n" +
-                    "Gems: " + user.getGems() + "\n" +
-                    "Levels completed: " + user.getCompletedLevels() + "\n" +
-                    "Mu point: " + user.getMaxMupoint();
-
-        return info;
+        return "Username: " + user.getUsername() + "\n" +
+                "Nickname: " + user.getNickname() + "\n" +
+                "Games played: " + user.getGamesPlayed() + "\n" +
+                "Coins: " + user.getCoins() + "\n" +
+                "Gems: " + user.getGems() + "\n" +
+                "Levels completed: " + user.getCompletedLevels() + "\n" +
+                "Mu point: " + user.getMaxMupoint();
     }
 
     public void showCurrentMenu() {

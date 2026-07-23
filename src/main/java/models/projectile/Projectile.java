@@ -1,5 +1,6 @@
 package models.projectile;
 
+import controller.GameMenuController;
 import models.Damageable;
 import models.core.App;
 import models.enums.PlantType;
@@ -22,7 +23,7 @@ public class Projectile implements Resettable{
     private MovementStrategy movementStrategy;
     private CheckStrike strikeStrategy;
     private ProjectileType type;
-    private Zombie target;
+    private Damageable target;
     private int pierce;
     private boolean dead = false;
     private PlantType plantType;
@@ -35,15 +36,6 @@ public class Projectile implements Resettable{
 
         if (type.movement.equals("STRAIGHT")) {
             Cell currentCell = App.getCurrentGame().getCellAt(x, y);
-            if (currentCell != null && currentCell.blocksProjectile()) {
-                hitStrategy.applyDamage(currentCell.getObstacle(), App.getCurrentGame().getActiveTargets(), this);
-                pierce--;
-                if (pierce == 0) {
-                    dead = true;
-                    App.getCurrentGame().getProjectilesPool().release(this);
-                    return;
-                }
-            }
 
             if (currentCell != null && currentCell.getPlant() != null){
                 if (currentCell.getPlant().isFreeze()){
@@ -63,7 +55,7 @@ public class Projectile implements Resettable{
             }
         }
 
-        Zombie zombie = null;
+        Damageable zombie = null;
         if (type.movement.equals("STRAIGHT")) {
             zombie = strikeStrategy.strike(x, y, oldX, oldY);
         } else if (type.movement.equals("LOBBED")) {
@@ -77,7 +69,7 @@ public class Projectile implements Resettable{
                 if (!deflector.isJuggler() && type.movement.equals("LOBBED")) {
                     dead = true;
                     App.getCurrentGame().getProjectilesPool().release(this);
-                    System.out.println("Parasol deflected a lobbed projectile!");
+                    GameMenuController.updateState("Parasol deflected a lobbed projectile!");
                     return;
                 }
                 // ژانگولر: پرتابه‌های مستقیم را بازتاب می‌دهد
@@ -174,7 +166,7 @@ public class Projectile implements Resettable{
         return strikeStrategy;
     }
 
-    public void setTarget(Zombie target) {
+    public void setTarget(Damageable target) {
         this.target = target;
         targetX = target.getX();
         targetY = target.getY();

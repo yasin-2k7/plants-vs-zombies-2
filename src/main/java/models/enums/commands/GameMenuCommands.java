@@ -9,7 +9,7 @@ public enum GameMenuCommands {
     MENU_EXIT("\\s*menu\\s+exit\\s*"),
     ADVANCE_TIME("\\s*advance\\s+time\\s+-t\\s+(?<count>\\d+)\\s+tick\\s*"),
     COLLECT_SUN("\\s*collect\\s+sun\\s+-l\\s+\\(\\s*(?<x>\\d+)\\s*,\\s*(?<y>\\d+)\\s*\\)\\s*"),
-    COLLECT_COLLECTABLE("\\s*collect\\s+collectable\\s+-l\\s+\\(\\s*(?<x>\\d+)\\s*,\\s*(?<y>\\d+)\\s*\\)\\s+-type\\s+(?<type>\\S+)\\s*"),
+    COLLECT_COLLECTABLE("\\s*collect\\s+collectable\\s+-l\\s+\\(\\s*(?<x>-?\\d+)\\s*,\\s*(?<y>-?\\d+)\\s*\\)\\s+-type\\s+(?<type>\\S+)\\s*"),
     SHOW_SUN_AMOUNT("\\s*show\\s+sun\\s+amount\\s*"),
     CHEAT_ADD_SUNS("\\s*cheat\\s+add\\s+-n\\s+(?<count>\\d+)\\s+suns\\s*"),
     RELEASE_THE_NUKE("\\s*release\\s+the\\s+nuke\\s*"),
@@ -36,12 +36,9 @@ public enum GameMenuCommands {
     THROW_BOWLING_BALL("\\s*throw\\s+bowling-ball\\s+-t\\s+(?<type>\\S+)\\s+-l\\s+\\(\\s*(?<x>\\d+)\\s*,\\s*(?<y>\\d+)\\s*\\)\\s*");
 
 
-
-    private final String pattern;
     private final Pattern compiledPattern;
 
     GameMenuCommands(String pattern) {
-        this.pattern = pattern;
         this.compiledPattern = Pattern.compile(pattern);
     }
 

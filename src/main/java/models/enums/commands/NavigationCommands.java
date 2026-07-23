@@ -8,11 +8,9 @@ public enum NavigationCommands {
     MENU_SHOW_CURRENT("^menu\\s+show\\s+current$"),
     MENU_EXIT("\\s*menu\\s+exit\\s*");
 
-    private final String pattern;
     private final Pattern compiledPattern;
 
     NavigationCommands(String pattern) {
-        this.pattern = pattern;
         this.compiledPattern = Pattern.compile(pattern);
     }
 

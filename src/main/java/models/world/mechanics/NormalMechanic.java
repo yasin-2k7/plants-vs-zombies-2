@@ -23,9 +23,9 @@ public class NormalMechanic implements Mechanic{
     public void applyMechanic(GameWorld world) {
 
 
-        int difficulty = App.getCurrentUser().getGameDifficulty();
-        double decreaseFactor = DifficultyCalculator.decreaseFactor(difficulty);
-        int adjustedInterval = (int) Math.round(zombieSpawnInterval * decreaseFactor);
+//        int difficulty = App.getCurrentUser().getGameDifficulty();
+//        double decreaseFactor = DifficultyCalculator.decreaseFactor(difficulty);
+//        int adjustedInterval = (int) Math.round(zombieSpawnInterval * decreaseFactor);
 
 
 

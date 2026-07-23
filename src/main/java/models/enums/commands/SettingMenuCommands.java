@@ -9,11 +9,9 @@ public enum SettingMenuCommands {
     MENU_EXIT("\\s*menu\\s+exit\\s*"),
     MENU_SETTINGS_CHANGE_DIFFICULTY("\\s*menu\\s+settings\\s+change-difficulty\\s+-l\\s+([1-5])");
 
-    private final String pattern;
     private final Pattern compiledPattern;
 
     SettingMenuCommands(String pattern) {
-        this.pattern = pattern;
         this.compiledPattern = Pattern.compile(pattern);
     }
 

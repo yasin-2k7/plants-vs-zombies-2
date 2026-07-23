@@ -12,6 +12,7 @@ import models.miniGame.IZombie.Brain;
 import models.miniGame.beghouled.GridPosition;
 import models.miniGame.IZombie.IZombieLevel;
 import models.miniGame.beghouled.BeghouledMechanics;
+import models.miniGame.bowling.BowlingBallType;
 import models.miniGame.bowling.BowlingMechanics;
 import models.miniGame.vaseBreaker.SeedPacket;
 import models.miniGame.vaseBreaker.Vase;
@@ -44,13 +45,13 @@ public class GameMenuController implements MenuController {
         if (gameWorld.isWillUnlockLevel()){
             App.getCurrentUser().unlockLevel();
         }
-        User user = App.getCurrentUser();
-        if(user != null && mupointManager != null){
-            user.updateMupointRecord(mupointManager.getTotalMupoints());
-            GameMenuView.getInstance().showResult("your muPoint: " + mupointManager.getTotalMupoints());
-
-            UserDataManager.saveUser(user);
-        }
+//        User user = App.getCurrentUser();
+//        if(user != null && mupointManager != null){
+//            user.updateMupointRecord(mupointManager.getTotalMupoints());
+//            GameMenuView.getInstance().showResult("your muPoint: " + mupointManager.getTotalMupoints());
+//
+//            UserDataManager.saveUser(user);
+//        }
         AppView.setCurrentScreen(MainMenuView.getInstance());
         App.setCurrentGame(null);
         App.getCurrentUser().getPlantBoosts().clear();
@@ -108,7 +109,7 @@ public class GameMenuController implements MenuController {
     }
 
     public void advanceTime(int count){
-        System.out.println("okay");
+        GameMenuView.getInstance().showResult(count + " ticks later...");
         GameWorld game = App.getCurrentGame();
         for (int i = 0; i < count; i++){
             game.tick();
@@ -221,7 +222,7 @@ public class GameMenuController implements MenuController {
                 zombie.die();
             }
 //            game.getActiveZombies().clear();
-            System.out.println("All zombies eliminated by nuke (fallback)!");
+            GameMenuView.getInstance().showResult("All zombies eliminated by nuke (fallback)!");
         }
     }
 
@@ -346,7 +347,7 @@ public class GameMenuController implements MenuController {
         }
     }
 
-    public void showMap(){
+    public void showMap() {
         int currentWaveNum = 1;
         int totalWaves = 1;
         NormalMechanic normal = App.getCurrentGame().getMechanic(NormalMechanic.class);
@@ -360,9 +361,12 @@ public class GameMenuController implements MenuController {
             totalWaves = wm.getTotalWavesCount();
         }
 
-        System.out.println("==================================================================================================");
-        System.out.printf(" WAVE: %d/%d  |  SUN: %d ☀️  |  PLANT FOOD: %d ⚡  |  STATUS: %s 🎮%n",
+        GameMenuView.getInstance().showResult("==================================================================================================");
+        String title = String.format(" WAVE: %d/%d  |  SUN: %d ☀️  |  PLANT FOOD: %d ⚡  |  STATUS: %s 🎮",
                 currentWaveNum, totalWaves, App.getCurrentGame().getSun(), App.getCurrentGame().getPlantFoods(), App.getCurrentGame().getState());
+        GameMenuView.getInstance().showResult(title);
+        GameMenuView.getInstance().showResult("==================================================================================================");
+
         System.out.println("==================================================================================================");
 
         boolean isVaseBreaker = App.getCurrentGame() instanceof VaseBreakerLevel;
@@ -371,6 +375,10 @@ public class GameMenuController implements MenuController {
         IZombieLevel izLevel = isIZombie ? (IZombieLevel) App.getCurrentGame() : null;
 
         for (int y = 0; y < App.getCurrentGame().getGrid().length; y++) {
+            StringBuilder rowBuilder = new StringBuilder();
+
+            String mowerSymbol = App.getCurrentGame().getLawnMowerManager().getMowers().get(y).isAlive() ? "[🚜]" : "[❌]";
+            rowBuilder.append(String.format("Row %d %s | ", y + 1, mowerSymbol));
             String mowerSymbol = "    "; // پیش‌فرض خالی
             if (isIZombie && izLevel != null) {
                 Brain brain = izLevel.getBrainAtRow(y);
@@ -388,7 +396,7 @@ public class GameMenuController implements MenuController {
             for (int x = 0; x < App.getCurrentGame().getGrid()[0].length; x++) {
                 Cell cell = App.getCurrentGame().getGrid()[y][x];
 
-                String terrainSymbol = cell.getTerrain().getTerminalSymbol(); // مقدار پیش‌فرض
+                String terrainSymbol = cell.getTerrain().getTerminalSymbol();
 
                 if (isVaseBreaker && vbLevel != null) {
                     Vase vase = vbLevel.getVaseAt(y, x);
@@ -403,18 +411,11 @@ public class GameMenuController implements MenuController {
 
                 if (cell.hasObstacle()) {
                     Obstacle obs = cell.getObstacle();
-                    if (obs instanceof Grave) {
-                        Grave grave = (Grave) obs;
+                    if (obs instanceof Grave grave) {
                         switch (grave.getType()) {
-                            case SUN:
-                                terrainSymbol = "🪦☀";
-                                break;
-                            case PLANT_FOOD:
-                                terrainSymbol = "🪦⚡";
-                                break;
-                            default:
-                                terrainSymbol = "🪦";
-                                break;
+                            case SUN -> terrainSymbol = "🪦☀";
+                            case PLANT_FOOD -> terrainSymbol = "🪦⚡";
+                            default -> terrainSymbol = "🪦";
                         }
                     } else if (obs instanceof OctopusObstacle) {
                         terrainSymbol = "🐙";
@@ -435,7 +436,6 @@ public class GameMenuController implements MenuController {
                     }
                 }
 
-
                 String zombieString = "       ";
                 List<Zombie> zombiesInCell = Cell.getZombiesInCell(cell);
                 if (!zombiesInCell.isEmpty()) {
@@ -443,12 +443,15 @@ public class GameMenuController implements MenuController {
                     zombieString = String.format("Z(%.1f)", firstZombie.getX());
                 }
 
-                System.out.printf("[ %s | %-4s | %-7s ] | ", terrainSymbol, plantSymbol.trim(), zombieString.trim());
+                String terrain = String.format("[ %s | %-4s | %-7s ] | ", terrainSymbol, plantSymbol.trim(), zombieString.trim());
+
+                rowBuilder.append(terrain);
             }
-            System.out.println();
+
+            GameMenuView.getInstance().showResult(rowBuilder.toString());
         }
-        System.out.println();
-        System.out.println("==================================================================================================");
+
+        GameMenuView.getInstance().showResult("==================================================================================================");
     }
 
     public void showPlantsStatus(){

@@ -24,14 +24,12 @@ public class User {
     private String securityA;
 
     private int gamesPlayed;
-    private int highScore;
 
     private Set<MiniGameLevels> completedMiniGames = EnumSet.noneOf(MiniGameLevels.class);
 
     private int unlockedChapter;
     private transient Chapter currentChapter;
     private int unlockedLevel;
-    private int currentLevel;
     private int userLevel;
     private int coins;
     private int gems;
@@ -59,11 +57,11 @@ public class User {
         this.greenhouse = new GreenHouse();
         this.coins = 10000;
         this.gems = 1000;
-        this.unlockedChapter = 1;
+        this.unlockedChapter = 3;
         this.unlockedLevel = 1;
         this.questStats = new QuestStats();
         gamesPlayed = 0;
-        highScore = 0;
+        maxMupoint = 0;
         putInitialPlants();
         putZombies();
     }
@@ -281,8 +279,8 @@ public class User {
         return newsList;
     }
 
-    public ArrayList<News> getUnreadNews() {
-        return (ArrayList<News>) newsList.stream()
+    public List<News> getUnreadNews() {
+        return newsList.stream()
                 .filter(n -> !n.isRead())
                 .toList();
     }
@@ -444,9 +442,7 @@ public class User {
         return quests.size();
     }
 
-    public int getHighScore() {
-        return highScore;
-    }
+
 
     public int getCompletedMainLevels() {return (unlockedChapter-1)*4 + unlockedLevel-1;}
 

@@ -65,7 +65,7 @@ public class LeaderboardMenuController implements MenuController{
         int i = 1;
         for (User user : sortedUsers){
             String row = String.format("| %-4d | %-14s | %-17s | %-10d | %-8d | %-9d | %-10d |",
-                    i++, user.getUsername(), "SEASON " + user.getUnlockedChapter() + " - " + "LEVEL " + user.getUnlockedLevel(), user.getMiniGameLevels().size(), user.getDailyQuestsCount(), user.getNormalQuestsCount(), user.getHighScore());
+                    i++, user.getUsername(), "SEASON " + user.getUnlockedChapter() + " - " + "LEVEL " + user.getUnlockedLevel(), user.getMiniGameLevels().size(), user.getDailyQuestsCount(), user.getNormalQuestsCount(), user.getMaxMupoint());
             LeaderboardMenuView.getInstance().showResult(row);
         }
 

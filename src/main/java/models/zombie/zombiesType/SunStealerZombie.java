@@ -1,5 +1,6 @@
 package models.zombie.zombiesType;
 
+import controller.GameMenuController;
 import models.core.App;
 import models.plant.Plant;
 import models.world.Cell;
@@ -44,7 +45,7 @@ public class SunStealerZombie extends Zombie {
                 if (Math.abs(dx) < 150 && Math.abs(dy) < 150) {
                     sun.collect();
                     stolenSun += sun.getSize();
-                    System.out.println("Ra stole a sun of size " + sun.getSize());
+                    GameMenuController.updateState("Ra stole a sun of size " + sun.getSize());
                 }
             }
         } else {
@@ -57,7 +58,7 @@ public class SunStealerZombie extends Zombie {
                     if (hasPlant) {
                         isStealing = true;
                         stealTimer = 0;
-                        System.out.println("Turquoise started stealing suns!");
+                        GameMenuController.updateState("Turquoise started stealing suns!");
                     }
                 }
             }
@@ -68,7 +69,7 @@ public class SunStealerZombie extends Zombie {
                 if (stealTimer % STEAL_INTERVAL == 0) {
                     int stolen = game.stealSunFromPlayer(25);
                     stolenSun += stolen;
-                    System.out.println("Turquoise stole 25 suns. Total stolen: " + stolenSun);
+                    GameMenuController.updateState("Turquoise stole 25 suns. Total stolen: " + stolenSun);
                 }
 
                 // بعد از ۵ ثانیه شلیک لیزر
@@ -93,7 +94,7 @@ public class SunStealerZombie extends Zombie {
                 Plant plant = cell.getPlant();
                 if (plant != null && !plant.isDead()) {
                     plant.die();
-                    System.out.println("Laser destroyed plant at (" + plant.getX() + ", " + plant.getY() + ")");
+                    GameMenuController.updateState("Laser destroyed plant at (" + plant.getX() + ", " + plant.getY() + ")");
                 }
             }
         }
@@ -105,11 +106,11 @@ public class SunStealerZombie extends Zombie {
         if (game != null) {
             if (isRa) {
                 game.addSunToPlayer(stolenSun);
-                System.out.println("Ra returned " + stolenSun + " suns.");
+                GameMenuController.updateState("Ra returned " + stolenSun + " suns.");
             } else {
                 int returned = stolenSun / 2;
                 game.addSunToPlayer(returned);
-                System.out.println("Turquoise returned " + returned + " suns (half of " + stolenSun + ").");
+                GameMenuController.updateState("Turquoise returned " + returned + " suns (half of " + stolenSun + ").");
             }
         }
         super.die();

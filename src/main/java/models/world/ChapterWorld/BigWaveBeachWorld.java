@@ -17,6 +17,7 @@ import models.zombie.ZombieFactory;
 
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class BigWaveBeachWorld extends GameWorld {
     private int tideLineCol;
@@ -33,6 +34,7 @@ public class BigWaveBeachWorld extends GameWorld {
 
     @Override
     protected void applyChapterRules() {
+        Random random = new Random();
         if (getLevelSetup() instanceof BigWaveBeachLevelSetup beachSetup) {
             tideLineCol = beachSetup.getTideLineCol();
             this.currentTideCol = 9;
@@ -45,8 +47,9 @@ public class BigWaveBeachWorld extends GameWorld {
     }
 
     private void makeCellLowLyingCoast(){
+        Random random = new Random();
         int cellRow = random.nextInt(getRows());
-        int cellCol = random.nextInt(3) + getCols()-2;
+        int cellCol = random.nextInt(3) + getCols()-3;
         if (grid[cellRow][cellCol].isLowLyingCoast()){
             makeCellLowLyingCoast();
         }

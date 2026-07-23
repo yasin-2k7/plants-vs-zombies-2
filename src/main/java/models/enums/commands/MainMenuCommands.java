@@ -9,11 +9,9 @@ public enum MainMenuCommands {
     SHOW_MENUS("\\s*show\\s+menus\\s*"),
     MENU_LOGOUT("^menu\\s+logout$");
 
-    private final String pattern;
     private final Pattern compiledPattern;
 
     MainMenuCommands(String pattern) {
-        this.pattern = pattern;
         this.compiledPattern = Pattern.compile(pattern);
     }
 
