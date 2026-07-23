@@ -592,8 +592,6 @@ public abstract class GameWorld {
 
     public PlantType getSelectedPlant() {return selectedPlant;}
 
-    public List<Grave> getActiveGrave() {return activeGrave;}
-
     public void addProjectile(Projectile projectile) {
         if (projectile != null) {
             this.activeProjectiles.add(projectile);
