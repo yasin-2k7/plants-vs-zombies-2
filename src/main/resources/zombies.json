@@ -2402,5 +2402,16 @@
         }
       ]
     }
+  },
+  {
+    "aliases": ["ZombieBarrelRoller"],
+    "objclass": "ZombieBarrelRollerProps",
+    "objdata": {
+      "Hitpoints": 470,
+      "EatDPS": 100,
+      "Speed": 0.185,
+      "WavePointCost": 600,
+      "Weight": 3000
+    }
   }
 ]

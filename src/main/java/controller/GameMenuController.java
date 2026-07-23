@@ -18,10 +18,7 @@ import models.plant.card.ImitatorCard;
 import models.plant.card.PlantCard;
 import models.world.*;
 import models.world.mechanics.NormalMechanic;
-import models.world.obstacles.Grave;
-import models.world.obstacles.IceBlock;
-import models.world.obstacles.Obstacle;
-import models.world.obstacles.OctopusObstacle;
+import models.world.obstacles.*;
 import models.zombie.Zombie;
 import models.zombie.ZombieFactory;
 import models.zombie.wave.WaveManager;
@@ -380,6 +377,8 @@ public class GameMenuController implements MenuController {
                         terrainSymbol = "🐙";
                     } else if (obs instanceof IceBlock) {
                         terrainSymbol = "🧊";
+                        }else if (obs instanceof BarrelObstacle) {
+                            terrainSymbol = "🛢️";
                     } else {
                         terrainSymbol = "🪨";
                     }
@@ -430,10 +429,12 @@ public class GameMenuController implements MenuController {
                 }
             }
         }
+
         if (selectedCell == null) {
             GameMenuView.getInstance().showResult("there is no tile in that place!");
             return;
         }
+
         GameMenuView.getInstance().showResult("plants in this tile:");
         for (PlantLayer layer : PlantLayer.values()){
             Plant p = selectedCell.getPlant(layer);
@@ -441,9 +442,19 @@ public class GameMenuController implements MenuController {
                 GameMenuView.getInstance().showResult(p.getType().name() + " | health: " + p.getHealth() + " | damage: " + p.getDamage());
             }
         }
+
         GameMenuView.getInstance().showResult("zombies in this tile:");
         for (Zombie zombie : Cell.getZombiesInCells(List.of(selectedCell))){
             GameMenuView.getInstance().showResult(App.getArmoredZombieName(zombie.getSpecificName()) + " | health: " + zombie.getHealth() + " | damage: "+ zombie.getDamage());
+        }
+
+        if (selectedCell.hasObstacle()) {
+            GameMenuView.getInstance().showResult("obstacles in this tile:");
+            Obstacle obs = selectedCell.getObstacle();
+            GameMenuView.getInstance().showResult(obs.getClass().getSimpleName() + " | health: " + obs.getHealth());
+            if (obs instanceof BarrelObstacle) {
+                GameMenuView.getInstance().showResult("Barrel | health: " + obs.getHealth());
+            }
         }
     }
 
@@ -485,12 +496,9 @@ public class GameMenuController implements MenuController {
     }
 
     public void cheatSpawnZombie(String type, float x, float y){
-        Zombie zombie;
-        try{
-            zombie = new ZombieFactory().createZombie(type);
-        }
-        catch (Exception e){
-            GameMenuView.getInstance().showResult("invalid zombie type!");
+        Zombie zombie = new ZombieFactory().createZombie(type);
+        if (zombie == null) {
+            GameMenuView.getInstance().showResult("❌invalid zombie type!: " + type);
             return;
         }
 

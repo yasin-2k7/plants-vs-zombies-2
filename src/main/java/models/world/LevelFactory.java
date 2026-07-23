@@ -58,6 +58,8 @@ public class LevelFactory {
         int cols = 9;
 
         List<WaveSpawnEntry> availableZombies = List.of(
+                        new WaveSpawnEntry("ZombieBarrelRoller", 200)
+
 //                        new WaveSpawnEntry("ZombieArmor1", 200),   // مخروطی
 //                        new WaveSpawnEntry("ZombieArmor2", 300),   // سطلی
 //                        new WaveSpawnEntry("ZombieArmor4", 400),   // آجری
@@ -69,32 +71,32 @@ public class LevelFactory {
 //                        new WaveSpawnEntry("ZombieIceAgeTroglobite", 600) // تروگلوبایت
 
 //                         Ranged (مهاجم دوربرد)
-//                        new WaveSpawnEntry("ZombieIceAgeHunter", 500), // شکارچی
-//                        new WaveSpawnEntry("ZombieBeachOctopus", 800), // اختاپوس‌پرت‌کن
-//                      new WaveSpawnEntry("ZombieTombRaiser", 300) ,  // قبرساز
+//                        new WaveSpawnEntry("ZombieIceAgeHunter", 500) // شکارچی
+//                        new WaveSpawnEntry("ZombieBeachOctopus", 800) // اختاپوس‌پرت‌کن
+//                      new WaveSpawnEntry("ZombieTombRaiser", 300)  // قبرساز
 
 //                        // SunStealer (دزد خورشید)
 //                        new WaveSpawnEntry("ZombieRa", 100),         // خورشید‌دزد
 //                        new WaveSpawnEntry("ZombieCrystalSkull", 500) // تورکویز
 
                         // Deflector (دفع‌کننده)
-//                        new WaveSpawnEntry("ZombieDarkJuggler", 450), // ژانگولر
+//                        new WaveSpawnEntry("ZombieDarkJuggler", 450) // ژانگولر
 //                        new WaveSpawnEntry("ZombieLostCityJane", 200) // چتردار
-////
+//
 //                        // Spawner (تولیدکننده)
-//                        new WaveSpawnEntry("ZombieGargantuar", 1500), // غول‌پیکر
-//                        new WaveSpawnEntry("ZombieDarkKing", 750)    // پادشاه
-
+//                        new WaveSpawnEntry("ZombieGargantuar", 1500) // غول‌پیکر
+//                        new WaveSpawnEntry("ZombieDarkKing", 750),    // پادشاه
+//                        new WaveSpawnEntry("ZombieDefault", 100)
 //                        // Imp
 //                        new WaveSpawnEntry("ZombieImp", 100),
-//                        new WaveSpawnEntry("ZombieDarkImpDragon", 150),
+//                        new WaveSpawnEntry("ZombieDarkImpDragon", 150)
 //
                         // Phasing (تغییر فاز)
-//                        new WaveSpawnEntry("ZombieNewspaper", 700),   // پیرمرد
-//                        new WaveSpawnEntry("ZombieModernAllStar", 1000) // آل‌استار
+//                        new WaveSpawnEntry("ZombieNewspaper", 700)  // پیرمرد
+//                        new WaveSpawnEntry("ZombieModernAllStar", 250) // آل‌استار
 //
 //                        // Elemental (حساس به المان)
-//                        new WaveSpawnEntry("ZombieExplorer", 250),    // مشعل‌دار
+//                        new WaveSpawnEntry("ZombieExplorer", 250)    // مشعل‌دار
 //                        new WaveSpawnEntry("ZombieProspector", 200)  // اکتشافگر
 
 //                        // Snorkel
@@ -107,7 +109,7 @@ public class LevelFactory {
 //                        new WaveSpawnEntry("ZombieBeachFisherman", 700),
 //
 //                        // Wizard
-                        new WaveSpawnEntry("ZombieWizard", 800)
+//                        new WaveSpawnEntry("ZombieWizard", 800)
         );
 
         List<Wave> waves = Wave.generateWaves(3, 2000, availableZombies, 60);

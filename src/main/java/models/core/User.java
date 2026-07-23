@@ -59,7 +59,7 @@ public class User {
         this.greenhouse = new GreenHouse();
         this.coins = 10000;
         this.gems = 1000;
-        this.unlockedChapter = 3;
+        this.unlockedChapter = 1;
         this.unlockedLevel = 1;
         this.questStats = new QuestStats();
         gamesPlayed = 0;
@@ -121,6 +121,9 @@ public class User {
         this.isLoaded = true;
         if (this.questManager == null) {
             this.questManager = new QuestManager();
+        }
+        if (this.completedQuestIds == null) {
+            this.completedQuestIds = new HashSet<>();
         }
     }
 
@@ -260,7 +263,6 @@ public class User {
     public String getNickname() {return nickname;}
     public int getPlantFoods() {return plantFoods;}
     public String getEmail() {return email;}
-
 
     public String getSecurityA() {
         return securityA;
@@ -430,16 +432,18 @@ public class User {
         return gamesPlayed;
     }
 
-    public int getNormalQuestsCount(){
-        List<Quest> quests = questManager.getCompletedQuests()
-                .stream().filter(quest -> !(quest instanceof DailyQuest)).toList();
-        return quests.size();
+    public int getNormalQuestsCount() {
+        if (completedQuestIds == null) return 0;
+        return (int) completedQuestIds.stream()
+                .filter(id -> !id.startsWith("daily_"))
+                .count();
     }
 
-    public int getDailyQuestsCount(){
-        List<Quest> quests = questManager.getCompletedQuests()
-                .stream().filter(quest -> quest instanceof DailyQuest).toList();
-        return quests.size();
+    public int getDailyQuestsCount() {
+        if (completedQuestIds == null) return 0;
+        return (int) completedQuestIds.stream()
+                .filter(id -> id.startsWith("daily_"))
+                .count();
     }
 
     public int getHighScore() {

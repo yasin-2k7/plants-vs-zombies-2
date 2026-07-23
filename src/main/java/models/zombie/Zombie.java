@@ -150,8 +150,8 @@ public abstract class Zombie implements Damageable {
                     " " + type.name().toLowerCase() + "s now.");
         }
 
-        GameMenuController.updateState("\uD83D\uDC80Zombie of type " + name.name() + " is dead at (" + (int)x + ", " + (int)y + ")");
-    }
+        String displayName = (specificName != null) ? specificName : name.name();
+        GameMenuController.updateState("\uD83D\uDC80Zombie of type " + displayName + " is dead at (" + (int)x + ", " + (int)y + ")");    }
 
     public void applySlow(int ticks, double factor, boolean canWorkInFrostbite) {
         if (!canWorkInFrostbite && App.getCurrentGame() instanceof FrostbiteCavesWorld){

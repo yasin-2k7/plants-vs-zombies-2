@@ -8,10 +8,12 @@ import models.world.GameWorld;
 import models.world.obstacles.OctopusObstacle;
 import models.zombie.Zombie;
 
+import java.util.List;
+
 public class RangedZombie extends Zombie {
     private String projectileType;
     private int cooldown;
-    private final int COOLDOWN_MAX = 10;
+    private final int COOLDOWN_MAX = 120;
 
     public RangedZombie(int health, double speed, int damage, String projectileType) {
         super(Zombies.RANGED, health, speed, damage);
@@ -25,9 +27,14 @@ public class RangedZombie extends Zombie {
 
         switch (projectileType) {
             case "SNOWBALL": {
-                Plant target = game.getNearestPlantInRow((int) this.y, this.x - 10);
+                int row = (int)(this.y / App.getCellHeight());  // تبدیل مختصات به شماره ردیف
+                Plant target = game.getNearestPlantInRow(row, this.x - 10);
                 if (target != null) {
                     target.increaseFrozenAmount();
+                    System.out.println("❄️ Hunter Zombie threw a snowball at " + target.getType() +
+                            " at (" + target.getX() + ", " + target.getY() + ")");
+                } else {
+                    System.out.println("❄️ Hunter Zombie threw a snowball but no target found in row " + row);
                 }
                 break;
             }
@@ -48,20 +55,14 @@ public class RangedZombie extends Zombie {
             }
 
             case "BONE": {
-                int row = (int) (this.y / App.getCellHeight());
-                long graveCountInRow = game.getActiveGrave().stream()
-                        .filter(g -> g.getRow() == row)
-                        .count();
-                if (graveCountInRow >= 3) {
-                    System.out.println("Row " + row + " already has 3 graves, skipping.");
-                    break;
-                }
-                Cell randomEmptyCell = game.getRandomEmptyCellInRowAfterColumn(row, this.x);
-                if (randomEmptyCell != null) {
-                    game.createGrave((int) randomEmptyCell.getX(), (int) randomEmptyCell.getY());
-                    System.out.println("Tomb Raiser threw a bone at (" + randomEmptyCell.getCol() + ", " + randomEmptyCell.getRow() + ")");
+                List<Cell> randomEmptyCells = game.findTwoEmptyCell(false);
+                if (randomEmptyCells != null && !randomEmptyCells.isEmpty()) {
+                    for (Cell randomEmptyCell : randomEmptyCells) {
+                        game.createGrave((int) randomEmptyCell.getX(), (int) randomEmptyCell.getY());
+                        System.out.println("Tomb Raiser threw a bone at (" + randomEmptyCell.getCol() + ", " + randomEmptyCell.getRow() + ")");
+                    }
                 } else {
-                    System.out.println("No empty cell in front of Tomb Raiser in row " + row + " to place grave.");
+//                    System.out.println("No empty cells on the ground to place graves.");
                 }
                 break;
             }

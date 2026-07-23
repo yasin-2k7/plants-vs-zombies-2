@@ -19,7 +19,7 @@ public class PhasingZombie extends Zombie {
 
         if (!isNewspaper) {
             // آل‌استار با سرعت بالا شروع می‌کند و آسیب کشنده دارد
-            this.originalSpeed = speed * 2.5;
+            this.originalSpeed = speed * 3;
             this.speed = this.originalSpeed;
             this.damage = 9999;
         } else {

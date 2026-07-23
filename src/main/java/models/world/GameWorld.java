@@ -24,6 +24,8 @@ import models.world.loseCondition.LoseCondition;
 import models.world.mechanics.Mechanic;
 import models.world.mechanics.NormalMechanic;
 import models.world.obstacles.Grave;
+import models.world.obstacles.Obstacle;
+import models.world.obstacles.OctopusObstacle;
 import models.world.winCondition.WinCondition;
 import models.zombie.Zombie;
 import models.zombie.wave.WaveManager;
@@ -36,33 +38,23 @@ import java.util.*;
 
 public abstract class GameWorld {
     private long startTime;
-    private long currentTime;
-
     protected Random random = new Random();
-
     private GameState state;
-
     private int currentTick = 0;
-
     private Chapter currentChapter;
-
     private boolean willUnlockLevel = false;
-
     protected int plantFoods;
     protected int rows;
     protected int cols;
     protected Cell[][] grid;
     private int currentSun;
-
     private LevelSetup levelSetup;
     private ArrayList<LoseCondition> loseConditions;
     private WinCondition winCondition;
     private ArrayList<Mechanic> mechanics;
-
     private List<PlantCard> conveyorBelt;
     private List<PlantCard> plantLists;
     private boolean isConveyorMode;
-
     protected List<Collectable> activeCollectables;
     protected List<Zombie> activeZombies;
     protected List<Plant> activePlants;
@@ -71,46 +63,34 @@ public abstract class GameWorld {
     protected List<Grave> activeGrave;
     protected List<Damageable> activeTargets;
     protected LawnMowerManager lawnMowerManager;
-
     private GenericObjectPool<Sun> sunsPool = new GenericObjectPool<>(Sun::new);
     private GenericObjectPool<Projectile> projectilesPool = new GenericObjectPool<>(Projectile::new);
-
     private final List<LifespanComponent> smallShrooms = new ArrayList<>();
-
     private boolean sandstormActive = false;
-
     private final List<Runnable> zombieKillListeners = new ArrayList<>();
     private final List<Runnable> plantEatenListeners = new ArrayList<>();
-
     public void registerZombieKillListener(Runnable listener) {
         zombieKillListeners.add(listener);
     }
-
     public void notifyZombieKilled() {
         zombieKillListeners.forEach(Runnable::run);
     }
-
     public void registerPlantEatenListener(Runnable listener) {
         plantEatenListeners.add(listener);
     }
-
     public void notifyPlantEaten() {
         plantEatenListeners.forEach(Runnable::run);
     }
-
     public void registerShroom(LifespanComponent observer) {
         smallShrooms.add(observer);
     }
     public void unregisterPuffShroom(LifespanComponent observer) {
         smallShrooms.remove(observer);
     }
-
     private MupointManager mupointManager;
-
     public MupointManager getMupointManager() {
         return mupointManager;
     }
-
     public void setMupointManager(MupointManager mupointManager) {
         this.mupointManager = mupointManager;
     }
@@ -154,9 +134,7 @@ public abstract class GameWorld {
         App.getCurrentUser().setPlantFoods(0);
     }
 
-    public GameWorld() {
-
-    }
+    public GameWorld() {}
 
     // متد پیدا کردن گیاه بر اساس مختصات حرکتی زامبی
         public Plant getPlantAtPosition(float x, float y) {
@@ -188,15 +166,6 @@ public abstract class GameWorld {
         return nearest;
     }
 
-    public boolean isTileEmpty(float x, float y) {
-        int col = (int)(x / 100);
-        int row = (int)(y / 100);
-        if (row >= 0 && row < rows && col >= 0 && col < cols) {
-            return grid[row][col].isEmpty();
-        }
-        return false;
-    }
-
     public void createGrave(int x, int y) {
         int col = (int) (x / App.getCellWidth());
         int row = (int) (y / App.getCellHeight());
@@ -215,20 +184,6 @@ public abstract class GameWorld {
         cell.setPlantable(false);
         activeGrave.add(grave);
         System.out.println("A grave has been created at (" + col + ", " + row + ")");
-    }
-
-    public Cell getRandomEmptyCellInRow(int row) {
-        if (row < 0 || row >= rows) return null;
-        List<Cell> emptyCells = new ArrayList<>();
-        for (int c = 0; c < cols; c++) {
-            Cell cell = grid[row][c];
-            if (cell.isEmpty() && !cell.hasObstacle()) {
-                emptyCells.add(cell);
-            }
-        }
-        if (emptyCells.isEmpty()) return null;
-        Random rand = new Random();
-        return emptyCells.get(rand.nextInt(emptyCells.size()));
     }
 
     public Cell getRandomEmptyCellInRowAfterColumn(int row, float zombieX) {
@@ -258,21 +213,6 @@ public abstract class GameWorld {
         currentSun += amount;
     }
 
-    public int collectSunInRadius(float x, float y, int radius) {
-        int collected = 0;
-        for (Sun sun : activeSuns) {
-            if (sun.isCollected()) continue;
-            float dx = sun.getX() - x;
-            float dy = sun.getY() - y;
-            if (dx*dx + dy*dy <= radius*radius) {
-                sun.collect();
-                collected += sun.getSize();
-                currentSun += sun.getSize();
-            }
-        }
-        return collected;
-    }
-
     private void processZombieDeath(Zombie zombie) {
         this.notifyZombieKilled();
 
@@ -286,15 +226,13 @@ public abstract class GameWorld {
         String chapter = currentChapter.name();
         stats.addZombiesKilledByChapter(chapter, 1);
 
-        // ثبت آمار بر اساس نوع گیاه کشنده
-        if (zombie.getKillerPlantType() != null) {
+        if (zombie.getKillerPlantType() != null) {         // ثبت آمار بر اساس نوع گیاه کشنده
             stats.addZombiesKilledByPlant(zombie.getKillerPlantType(), 1);
             PlantFamily family = zombie.getKillerPlantType().family;
             stats.addZombieKilledByFamily(family);
         }
 
-        // ثبت آمار برای کوئست ۷ (سرعت عمل در موج اول)
-        NormalMechanic normal = getMechanic(NormalMechanic.class);
+        NormalMechanic normal = getMechanic(NormalMechanic.class);         // ثبت آمار برای کوئست ۷ (سرعت عمل در موج اول)
         if (normal != null && normal.getWaveManager() != null) {
             WaveManager wm = normal.getWaveManager();
             if (wm.getCurrentWaveIndex() == 0 && wm.getCurrentWave() != null) {
@@ -305,8 +243,7 @@ public abstract class GameWorld {
             }
         }
 
-        // بررسی نهایی تمام کوئست‌ها
-        user.getQuestManager().checkAllQuests(user);
+        user.getQuestManager().checkAllQuests(user);         // بررسی نهایی تمام کوئست‌ها
         processZombieDeathMu(zombie);
     }
 
@@ -354,8 +291,8 @@ public abstract class GameWorld {
         currentTick++;
         activePlants.forEach(Plant::update);
         activeCollectables.forEach(Collectable::update);
-        activeZombies.forEach(Zombie::update);
-        activeProjectiles.forEach(Projectile::update);
+//        activeZombies.forEach(Zombie::update);
+//        activeProjectiles.forEach(Projectile::update);
 
         List<Zombie> zombieSnapshot = new ArrayList<>(activeZombies);
         zombieSnapshot.forEach(Zombie::update);
@@ -369,7 +306,7 @@ public abstract class GameWorld {
             }
         }
 
-        for (Sun sun : activeSuns){
+        for (Sun sun : activeSuns){ // مدیریت خورشیدهای منقضی‌شده
             if (sun.getProducer() == null && sun.isExpired()){
                 sun.collect();
             }
@@ -381,6 +318,7 @@ public abstract class GameWorld {
             }
             return false;
         });
+
         lawnMowerManager.updateMowers(activeZombies);
         activeZombies.removeIf(zombie -> {
             if (zombie.isDead()) {
@@ -395,9 +333,19 @@ public abstract class GameWorld {
 
         for (Cell[] row : grid) {
             for (Cell cell : row) {
-                if (cell.hasObstacle() && cell.getObstacle() instanceof Grave grave) {
-                    if (!grave.blocksProjectiles()) {
-                        cell.setPlantable(true);
+                if (cell.hasObstacle()) {
+                    Obstacle obs = cell.getObstacle();
+                    if (obs instanceof Grave grave) {
+                        if (!grave.blocksProjectiles()) {
+                            grave.releaseContent();
+                            cell.setPlantable(true);
+                            cell.removeObstacle();
+                        }
+                    } else if (obs instanceof OctopusObstacle) {
+                        if (cell.isEmpty() || !obs.blocksProjectiles()) {
+                            cell.removeObstacle();
+                        }
+                    } else if (!obs.blocksProjectiles()) {
                         cell.removeObstacle();
                     }
                 }
@@ -407,54 +355,9 @@ public abstract class GameWorld {
         for(Mechanic mechanic : mechanics){
             mechanic.applyMechanic(this);
         }
-        if(winCondition.checkWin(this)){
-            state = GameState.WON;
-            User user = App.getCurrentUser();
-            if (user != null) {
-                QuestStats stats = user.getQuestStats();
-                stats.setLevelWon(true);
-                stats.setFinalSunCount(this.currentSun);   //  کوئست 6
-                boolean symmetric = isGardenSymmetricExceptMiddleRow();  // بررسی تقارن (کوئست ۹)
-                stats.setSymmetryAchieved(symmetric);
-                int difficulty = user.getGameDifficulty();  // کوئست ۱۳: برد با بیشترین سختی
-                if (difficulty == 5) {
-                    stats.incrementConsecutiveWinsMaxDifficulty();
-                } else {
-                    stats.resetConsecutiveWinsMaxDifficulty();
-                }
-                for (int c = 0; c < cols; c++) { //کوئست 17
-                    boolean hasPlant = false;
-                    for (int r = 0; r < rows; r++) {
-                        if (!grid[r][c].isEmpty()) {
-                            hasPlant = true;
-                            break;
-                        }
-                    }
-                    if (!hasPlant) {
-                        stats.addEmptyColumnInLevel(c);
-                    }
-                }
-                for (int r = 0; r < rows; r++) { // کوئست 18
-                    boolean hasPlant = false;
-                    for (int c = 0; c < cols; c++) {
-                        if (!grid[r][c].isEmpty()) {
-                            hasPlant = true;
-                            break;}}
-                    if (!hasPlant) {
-                        stats.addEmptyRowInLevel(r);}}
-                int minDim = Math.min(rows, cols); // کوئست ۱۹: صلیب بی دفاع
-                for (int n = 0; n < minDim; n++) {
-                    if (stats.getEmptyColumnsInLevel().contains(n) && stats.getEmptyRowsInLevel().contains(n)) {
-                        stats.setEmptyColumnForCross(n);
-                        stats.setEmptyRowForCross(n);
-                        break; // فقط کوچکترین n را ثبت می‌کنیم
-                    }
-                }
-                user.getQuestManager().checkAllQuests(user);
-                user.getQuestStats().setLevelWon(true);
-                GameMenuController.handleWinning(this);
-            }
-        }
+
+        handleWinCondition();
+
         for(LoseCondition lose : loseConditions){
             if(lose.checkLose(this)){
                 state = GameState.LOST;
@@ -462,6 +365,68 @@ public abstract class GameWorld {
             }
         }
     }
+
+    private void handleWinCondition() {
+        if (!winCondition.checkWin(this)) return;
+
+        state = GameState.WON;
+        User user = App.getCurrentUser();
+        if (user == null) return;
+
+        QuestStats stats = user.getQuestStats();
+        stats.setLevelWon(true);
+        stats.setFinalSunCount(this.currentSun);   // کوئست 6
+
+        boolean symmetric = isGardenSymmetricExceptMiddleRow();  // کوئست ۹
+        stats.setSymmetryAchieved(symmetric);
+
+        int difficulty = user.getGameDifficulty();  // کوئست ۱۳: برد با بیشترین سختی
+        if (difficulty == 5) {
+            stats.incrementConsecutiveWinsMaxDifficulty();
+        } else {
+            stats.resetConsecutiveWinsMaxDifficulty();
+        }
+
+        for (int c = 0; c < cols; c++) {         // کوئست ۱۷
+
+            boolean hasPlant = false;
+            for (int r = 0; r < rows; r++) {
+                if (!grid[r][c].isEmpty()) {
+                    hasPlant = true;
+                    break;
+                }
+            }
+            if (!hasPlant) {
+                stats.addEmptyColumnInLevel(c);
+            }
+        }
+
+        for (int r = 0; r < rows; r++) {        // کوئست ۱۸
+            boolean hasPlant = false;
+            for (int c = 0; c < cols; c++) {
+                if (!grid[r][c].isEmpty()) {
+                    hasPlant = true;
+                    break;
+                }
+            }
+            if (!hasPlant) {
+                stats.addEmptyRowInLevel(r);
+            }
+        }
+        int minDim = Math.min(rows, cols);         // کوئست ۱۹: صلیب بی دفاع
+        for (int n = 0; n < minDim; n++) {
+            if (stats.getEmptyColumnsInLevel().contains(n) && stats.getEmptyRowsInLevel().contains(n)) {
+                stats.setEmptyColumnForCross(n);
+                stats.setEmptyRowForCross(n);
+                break; // فقط کوچکترین n را ثبت می‌کنیم
+            }
+        }
+
+        user.getQuestManager().checkAllQuests(user);
+        user.getQuestStats().setLevelWon(true);
+        GameMenuController.handleWinning(this);
+    }
+
     public boolean isGardenSymmetric() {
         if (grid == null || rows == 0 || cols == 0) return false;
         int middleRow = rows / 2;
@@ -490,78 +455,58 @@ public abstract class GameWorld {
                 if (left.getType() != right.getType()) return false;
             }
         }
-        return true;
-    }
-
+        return true;}
 
     public List<Sun> getActiveSuns() {
         return activeSuns;
     }
-
     public GenericObjectPool<Sun> getSunsPool() {
         return sunsPool;
     }
-
     public void setSun(int sun) {
         currentSun = sun;
     }
-
     public int getSun() {
         return currentSun;
     }
-
     public List<Plant> getActivePlants() {
         return activePlants;
     }
-
     public int getRows() {
         return rows;
     }
-
     public int getCols() {
         return cols;
     }
-
     public void setRows(int rows) {
         this.rows = rows;
     }
-
     public void setCols(int cols) {
         this.cols = cols;
     }
-
     public Cell[][] getGrid() {
         return grid;
     }
-
     public void setGrid(Cell[][] grid) {
         this.grid = grid;
     }
-
     public void setConveyorMode(boolean conveyorMode) {
         isConveyorMode = conveyorMode;
     }
-
     public GameState getState() { return state; }
     public void setState(GameState state) { this.state = state; }
-
     public List<Zombie> getActiveZombies() { return activeZombies; }
-
     public List<Damageable> getActiveTargets() {
         return activeTargets;
     }
-
     public List<Projectile> getActiveProjectiles() { return activeProjectiles; }
     public LawnMowerManager getLawnMowerManager() { return lawnMowerManager; }
-
     public int getCurrentTick() {
         return currentTick;
     }
-
     public long getElapsedTime() {
         return System.currentTimeMillis() - startTime;
     }
-
     public void addZombie(Zombie zombie) { activeZombies.add(zombie); }
     public void addGrave(Grave grave) { activeGrave.add(grave); }
     public void addTarget() {
@@ -572,19 +517,15 @@ public abstract class GameWorld {
     public GenericObjectPool<Projectile> getProjectilesPool() {
         return projectilesPool;
     }
-
     public void addMechanic(Mechanic mechanic){
         mechanics.add(mechanic);
     }
-
     public List<PlantCard> getConveyorBelt() {
         return conveyorBelt;
     }
-
     public List<PlantCard> getPlantLists() {
         return plantLists;
     }
-
     public void setPlantLists(List<PlantCard> plantLists) {
         this.plantLists = plantLists;
     }
@@ -600,19 +541,15 @@ public abstract class GameWorld {
     public void setPlantFoods(int plantFoods) {
         this.plantFoods = plantFoods;
     }
-
     public int getPlantFoods() {
         return plantFoods;
     }
-
     public ArrayList<LoseCondition> getLoseConditions() {
         return loseConditions;
     }
-
     public ArrayList<Mechanic> getMechanics() {
         return mechanics;
     }
-
     public boolean isConveyorMode() {
         return isConveyorMode;
     }
@@ -646,28 +583,21 @@ public abstract class GameWorld {
     public boolean isSandstormActive() {
         return sandstormActive;
     }
-
     public List<Collectable> getActiveCollectables() {
         return activeCollectables;
     }
-
     public void setSandstormActive(boolean sandstormActive) {
         this.sandstormActive = sandstormActive;
     }
     private boolean plantingPhase = false;
-
     public LevelSetup getLevelSetup() {
         return levelSetup;
     }
-    public boolean isPlantingPhase() { return plantingPhase; }
     public void setPlantingPhase(boolean plantingPhase) { this.plantingPhase = plantingPhase; }
-    public Chapter getCurrentChapter() {return currentChapter;}
     public void setCurrentChapter(Chapter chapter) {this.currentChapter = chapter;}
-
     public void setWillUnlockLevel(boolean willUnlockLevel) {
         this.willUnlockLevel = willUnlockLevel;
     }
-
     public boolean isWillUnlockLevel() {
         return willUnlockLevel;
     }

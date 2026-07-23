@@ -46,27 +46,39 @@ public class DeflectorZombie extends Zombie {
     }
 
     public boolean tryDeflect(Projectile projectile) {
-        if (!isJuggler || isDead) return false;
-        if (!isSpinning) {
-            startSpinning();
+        if (isDead) return false;
+
+        if (isJuggler) {
+            if ("STRAIGHT".equals(projectile.getType().movement)) {
+                if (!isSpinning) {
+                    startSpinning();
+                } else {
+                    spinTicks = 30; // تمدید زمان چرخش
+                }
+                deflectProjectile(projectile);
+                return true;
+            }
+        } else {
+            if ("LOBBED".equals(projectile.getType().movement)) {
+                System.out.println("Parasol deflected a lobbed projectile!");
+                return true;
+            }
         }
-        // فقط پرتابه‌های مستقیم (STRAIGHT) را بازتاب می‌دهیم
-        if (projectile.getType().movement.equals("STRAIGHT")) {
-            deflectProjectile(projectile);
-            return true;
-        }
+
         return false;
     }
 
     private void startSpinning() {
         isSpinning = true;
-        spinTicks = 30;  // حداقل ۳۰ تیک می‌چرخد، با هر پرتابه جدید دوباره reset می‌شود
+        spinTicks = 30;
         System.out.println("Juggler starts spinning!");
     }
 
     private void stopSpinning() {
         isSpinning = false;
-        this.speed = originalSpeed;
+        if (!isSlowed()) {
+            this.speed = originalSpeed;
+        }
         System.out.println("Juggler stops spinning.");
     }
 

@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class FrostbiteCavesWorld extends GameWorld {
     private int lastIcyWindTick = 0;
@@ -37,7 +38,7 @@ public class FrostbiteCavesWorld extends GameWorld {
 
         if (currentTick - lastIcyWindTick >= icyWindTicks) {
             lastIcyWindTick = currentTick;
-            int winds = random.nextInt(3) + 1;
+            int winds =  ThreadLocalRandom.current().nextInt(3) + 1;
 
             List<Integer> pool = new ArrayList<>(List.of(0, 1, 2, 3, 4));
 
@@ -57,8 +58,8 @@ public class FrostbiteCavesWorld extends GameWorld {
     }
 
             private void makeCellSlippy(){
-        int cellRow = random.nextInt(getRows());
-        int cellCol = random.nextInt(3) + getCols()-2;
+        int cellRow = ThreadLocalRandom.current().nextInt(getRows());
+        int cellCol =  ThreadLocalRandom.current().nextInt(3) + getCols()-2;
         if (grid[cellRow][cellCol].isLowLyingCoast()){
             makeCellSlippy();
         }
@@ -66,20 +67,20 @@ public class FrostbiteCavesWorld extends GameWorld {
             int dir;
             if (cellRow == 0) dir = 1;
             else if (cellRow == getRows()) dir = -1;
-            else dir = random.nextBoolean() ? 1 : -1;
+            else dir =  ThreadLocalRandom.current().nextBoolean() ? 1 : -1;
             grid[cellRow][cellCol].setSlippingDir(dir);
         }
     }
 
     private void createIcyZombie(){
-        int cellRow = random.nextInt(getRows());
-        int cellCol = random.nextInt(3) + getCols()-2;
+        int cellRow =  ThreadLocalRandom.current().nextInt(getRows());
+        int cellCol =  ThreadLocalRandom.current().nextInt(3) + getCols()-2;
         if (!Cell.getZombiesInCell(grid[cellRow][cellCol]).isEmpty()){
             createIcyZombie();
         }
         else{
             Cell cell = grid[cellRow][cellCol];
-            Zombie zombie = random.nextBoolean() ? new ZombieFactory().createZombie("ZombieDefault") : new ZombieFactory().createZombie("ZombieConehead");
+            Zombie zombie =  ThreadLocalRandom.current().nextBoolean() ? new ZombieFactory().createZombie("ZombieDefault") : new ZombieFactory().createZombie("ZombieConehead");
             if (zombie != null) {
                 zombie.setX(cell.getX());
                 zombie.setY(cell.getY());
@@ -92,8 +93,8 @@ public class FrostbiteCavesWorld extends GameWorld {
 
     @Override
     protected void applyChapterRules() {
-        int slippingCellsCount = random.nextInt(3) + 1;
-        int icyZombiesCount = random.nextInt(3);
+        int slippingCellsCount =  ThreadLocalRandom.current().nextInt(3) + 1;
+        int icyZombiesCount =  ThreadLocalRandom.current().nextInt(3);
         for (int i = 0; i< slippingCellsCount; i++){
             makeCellSlippy();
         }

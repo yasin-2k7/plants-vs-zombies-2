@@ -13,6 +13,7 @@ import models.quest.QuestStats;
 import models.world.cellTerrains.CellTerrain;
 import models.world.obstacles.Grave;
 import models.world.obstacles.Obstacle;
+import models.world.obstacles.OctopusObstacle;
 import models.zombie.Zombie;
 
 import java.util.ArrayList;
@@ -96,6 +97,12 @@ public class Cell {
     }
 
     public String handlePlanting(PlantType type, boolean boost){
+        if (this.obstacle instanceof Grave grave && type == PlantType.GRAVE_BUSTER) {
+            grave.takeDamage(grave.getHealth(), "NORMAL");
+            this.obstacle = null;
+            this.plantable = true;
+            return null;
+        }
         if (!this.isPlantable()) {
             if (!(this.obstacle instanceof Grave && type == PlantType.GRAVE_BUSTER)){
                 return "you cannot plant in that place!";
@@ -150,7 +157,7 @@ public class Cell {
                 if (newPlant.getType().family == PlantFamily.SUN_PRODUCER) {
                     stats.incrementSunProducerPlantsInLevel();
                 }
-                user.getQuestManager().checkAllQuests(user);
+//                user.getQuestManager().checkAllQuests(user);
             }
             return null;
         }
@@ -340,7 +347,13 @@ public class Cell {
     }
 
     public boolean blocksProjectile() {
-        return hasObstacle() && obstacle.isDestroyed();
+        if (hasObstacle() && obstacle.blocksProjectiles()) {
+            if (obstacle instanceof OctopusObstacle) {
+                return true;
+            }
+            return true;
+        }
+        return false;
     }
 
     public boolean isNecromancyPotential() { return necromancyPotential; }

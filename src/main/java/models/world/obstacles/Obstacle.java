@@ -45,4 +45,5 @@ public abstract class Obstacle implements Damageable {
     public void die() {
         this.isDestroyed = true;
     }
+    public int getHealth() {return health;}
 }
