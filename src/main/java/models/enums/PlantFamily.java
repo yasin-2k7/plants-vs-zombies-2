@@ -6,7 +6,7 @@ public enum PlantFamily {
     LOBBER,
     EXPLOSIVE,
     MELEE,
-    WALL_NUT,
+    WALL_NUTS,
     MODIFIER,
     STRIKE_THROUGH,
     HOMING;

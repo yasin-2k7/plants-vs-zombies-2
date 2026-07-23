@@ -334,7 +334,7 @@ public class GameMenuController implements MenuController {
         }
     }
 
-    public void showMap(){
+    public void showMap() {
         int currentWaveNum = 1;
         int totalWaves = 1;
         NormalMechanic normal = App.getCurrentGame().getMechanic(NormalMechanic.class);
@@ -349,34 +349,29 @@ public class GameMenuController implements MenuController {
         }
 
         GameMenuView.getInstance().showResult("==================================================================================================");
-        String title = String.format(" WAVE: %d/%d  |  SUN: %d ☀️  |  PLANT FOOD: %d ⚡  |  STATUS: %s 🎮%n",
+        String title = String.format(" WAVE: %d/%d  |  SUN: %d ☀️  |  PLANT FOOD: %d ⚡  |  STATUS: %s 🎮",
                 currentWaveNum, totalWaves, App.getCurrentGame().getSun(), App.getCurrentGame().getPlantFoods(), App.getCurrentGame().getState());
         GameMenuView.getInstance().showResult(title);
         GameMenuView.getInstance().showResult("==================================================================================================");
+
         for (int y = 0; y < App.getCurrentGame().getGrid().length; y++) {
+            StringBuilder rowBuilder = new StringBuilder();
+
             String mowerSymbol = App.getCurrentGame().getLawnMowerManager().getMowers().get(y).isAlive() ? "[🚜]" : "[❌]";
-            String mower = String.format("Row %d %s | ", y+1, mowerSymbol);
-            GameMenuView.getInstance().showResult(mower);
+            rowBuilder.append(String.format("Row %d %s | ", y + 1, mowerSymbol));
 
             for (int x = 0; x < App.getCurrentGame().getGrid()[0].length; x++) {
                 Cell cell = App.getCurrentGame().getGrid()[y][x];
 
-                String terrainSymbol = cell.getTerrain().getTerminalSymbol(); // مقدار پیش‌فرض
+                String terrainSymbol = cell.getTerrain().getTerminalSymbol();
 
                 if (cell.hasObstacle()) {
                     Obstacle obs = cell.getObstacle();
-                    if (obs instanceof Grave) {
-                        Grave grave = (Grave) obs;
+                    if (obs instanceof Grave grave) {
                         switch (grave.getType()) {
-                            case SUN:
-                                terrainSymbol = "🪦☀";
-                                break;
-                            case PLANT_FOOD:
-                                terrainSymbol = "🪦⚡";
-                                break;
-                            default:
-                                terrainSymbol = "🪦";
-                                break;
+                            case SUN -> terrainSymbol = "🪦☀";
+                            case PLANT_FOOD -> terrainSymbol = "🪦⚡";
+                            default -> terrainSymbol = "🪦";
                         }
                     } else if (obs instanceof OctopusObstacle) {
                         terrainSymbol = "🐙";
@@ -397,7 +392,6 @@ public class GameMenuController implements MenuController {
                     }
                 }
 
-
                 String zombieString = "       ";
                 List<Zombie> zombiesInCell = Cell.getZombiesInCell(cell);
                 if (!zombiesInCell.isEmpty()) {
@@ -406,11 +400,13 @@ public class GameMenuController implements MenuController {
                 }
 
                 String terrain = String.format("[ %s | %-4s | %-7s ] | ", terrainSymbol, plantSymbol.trim(), zombieString.trim());
-                GameMenuView.getInstance().showResult(terrain);
+
+                rowBuilder.append(terrain);
             }
-            GameMenuView.getInstance().showResult("");
+
+            GameMenuView.getInstance().showResult(rowBuilder.toString());
         }
-        GameMenuView.getInstance().showResult("");
+
         GameMenuView.getInstance().showResult("==================================================================================================");
     }
 

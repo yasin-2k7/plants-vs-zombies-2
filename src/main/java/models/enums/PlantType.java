@@ -46,14 +46,14 @@ public enum PlantType {
     CHOMPER(MELEE, 150, 5),
     WASABI_WHIP(MELEE, 150, 5),
     KIWIBEAST(MELEE, 175, 5),
-    WALL_NUT(WALL_NUT, 50, 20),
-    TALL_NUT(WALL_NUT, 125, 20),
-    ENDURIAN(WALL_NUT, 100, 15),
-    GARLIC(WALL_NUT, 50, 20),
-    SWEET_POTATO(WALL_NUT, 150, 20),
-    EXPLODE_O_NUT(WALL_NUT, 50, 20),
-    PUMPKIN(WALL_NUT, 150, 20),
-    SUN_BEAN(WALL_NUT, 50, 20),
+    WALL_NUT(WALL_NUTS, 50, 20),
+    TALL_NUT(WALL_NUTS, 125, 20),
+    ENDURIAN(WALL_NUTS, 100, 15),
+    GARLIC(WALL_NUTS, 50, 20),
+    SWEET_POTATO(WALL_NUTS, 150, 20),
+    EXPLODE_O_NUT(WALL_NUTS, 50, 20),
+    PUMPKIN(WALL_NUTS, 150, 20),
+    SUN_BEAN(WALL_NUTS, 50, 20),
     TORCHWOOD(MODIFIER, 175, 5),
     MAGNET_SHROOM(HOMING, 100, 15),
     HYPNO_SHROOM(MODIFIER, 125, 20),
@@ -68,18 +68,18 @@ public enum PlantType {
     ARMA_MINT(LOBBER, 0, 85),
     BOMBARD_MINT(EXPLOSIVE, 0, 85),
     ENFORCE_MINT(MELEE, 0, 85),
-    REINFORCE_MINT(WALL_NUT, 0, 85),
+    REINFORCE_MINT(WALL_NUTS, 0, 85),
     ENCHANT_MINT(MODIFIER, 0, 85),
     PIERCE_MINT(STRIKE_THROUGH, 0, 85),
     CAT_TAIL_MINT(HOMING, 0, 85),
-    MARIGOLD(WALL_NUT, 0, 0); // گل معمولی گلخانه;
+    MARIGOLD(WALL_NUTS, 0, 0); // گل معمولی گلخانه;
 
     public String getSymbol() {
         return switch (this.family) {
             case SUN_PRODUCER -> "🌻";
             case SHOOTER, HOMING, LOBBER, STRIKE_THROUGH, MODIFIER-> "🟢";
             case MELEE -> "🥊";
-            case WALL_NUT -> "🧱";
+            case WALL_NUTS -> "🧱";
             case EXPLOSIVE -> "💥";
             default -> "🌱";
         };

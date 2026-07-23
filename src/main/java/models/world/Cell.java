@@ -105,7 +105,7 @@ public class Cell {
         Plant newPlant = PlantFactory.createPlant(type, (int)x, (int)y, this);
         if (boost) newPlant.setPlantFoodInStart(true);
 
-        if (!((this.obstacle instanceof Grave && type == PlantType.GRAVE_BUSTER))
+        if (((this.obstacle instanceof Grave) != (type == PlantType.GRAVE_BUSTER))
            || !(this.terrain.canPlant(newPlant, this))
            || (this.hasIcyZombie())){
             return "you cannot plant in that place!";

@@ -14,8 +14,8 @@ public class EatingState implements ZombieState {
     public void handleAction(Zombie zombie) {
         if (targetPlant != null && !targetPlant.isDead()) {
              targetPlant.takeDamage(zombie.getDamage(), zombie);
-             targetPlant.takeDamage(zombie.getDamage());
-            zombie.setHasEatenPlant(true);
+            System.out.println("hit: " + zombie.getDamage());
+             zombie.setHasEatenPlant(true);
 
              if (targetPlant.isDead()) {
                  zombie.setState(new WalkingState());
