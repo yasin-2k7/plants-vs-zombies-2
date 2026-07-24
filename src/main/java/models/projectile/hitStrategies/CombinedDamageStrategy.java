@@ -101,7 +101,22 @@ public class CombinedDamageStrategy implements HitStrategy{
                     else{
                         zombie.makePoisoned(poisonDamageOnTick*100);
                     }
-
+                }
+                break;
+            case "ICE":
+                if (target instanceof Zombie zombie){
+                    zombie.applySlow(chillTime, 0.5, false);
+                }
+                break;
+            case "FIRE":
+                if (target instanceof Zombie zombie){
+                    if (zombie.getIceHealth() > 0){
+                        zombie.setIceHealth(0);
+                    }
+                    zombie.unfreeze();
+                }
+                else if (target instanceof IceBlock){
+                    target.takeDamage(600, "FIRE");
                 }
                 break;
             case "MOVE":
