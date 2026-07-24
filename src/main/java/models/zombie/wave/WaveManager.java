@@ -81,7 +81,7 @@ public class WaveManager {
         }
     }
 
-    // متد اسپاون زامبی (اصلاح‌شده)
+    // متد اسپاون زامبی
     public void spawnNextZombie(int lane, GameWorld game) {
         if (levelCompleted || currentWave == null) return;
         WaveSpawnEntry entry = currentWave.getNextSpawn();

@@ -25,7 +25,6 @@ public class SnorkelZombie extends Zombie {
             return;
         }
 
-        // محاسبه سلول فعلی با دقت بالا
         int col = (int)(this.x / App.getCellWidth());
         int row = (int)(this.y / App.getCellHeight());
         boolean inWater = false;
@@ -36,7 +35,6 @@ public class SnorkelZombie extends Zombie {
             }
         }
 
-        // اگر در حالت خوردن است، از آب خارج می‌شود
         if (this.getCurrentState() instanceof EatingState) {
             underwater = false;
         } else {
@@ -50,7 +48,6 @@ public class SnorkelZombie extends Zombie {
     public void takeDamage(int amount, String damageType) {
         if (isDead) return;
 
-        // محاسبه مجدد سلول فعلی برای دقت بیشتر
         GameWorld game = App.getCurrentGame();
         if (game != null) {
             int col = (int)(this.x / App.getCellWidth());
@@ -62,10 +59,9 @@ public class SnorkelZombie extends Zombie {
                     inWater = cell.isWater();
                 }
             }
-            // اگر در آب است و در حال خوردن نیست، فقط lobber آسیب می‌زند
             if (inWater && !(this.getCurrentState() instanceof EatingState)) {
                 if (!"LOBBER".equalsIgnoreCase(damageType)) {
-                    return; // آسیب نادیده گرفته شود
+                    return;
                 }
             }
         }

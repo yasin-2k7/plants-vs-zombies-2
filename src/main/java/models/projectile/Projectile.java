@@ -30,7 +30,6 @@ public class Projectile implements Resettable {
 
     void checkProjectilesTowardPlants(double oldX, double oldY){
         Damageable plantTarget = null;
-
         if (type != null && type.movement != null) {
             plantTarget = strikeStrategy.strike(x, y, oldX, oldY);
         }
@@ -51,13 +50,33 @@ public class Projectile implements Resettable {
         double oldX = x;
         double oldY = y;
         movementStrategy.move(this);
-        // بررسی برخورد پرتابه مستقیم با گیاهان (در صورت نیاز)
         if (hitStrategy instanceof PlantDamageStrategy){
             checkProjectilesTowardPlants(oldX, oldY);
             return;
         }
         Damageable zombie = null;
         if (type != null && type.movement != null) {
+
+            //  برخورد تیر مستقیم گیاهان به گیاهان یخ‌زده
+            if (type.movement.equals("STRAIGHT") && !(hitStrategy instanceof PlantDamageStrategy)) {
+                models.world.GameWorld game = App.getCurrentGame();
+                if (game != null) {
+                    Cell currentCell = game.getCellAt(this.x, this.y);
+                    if (currentCell != null && currentCell.getPlant() != null) {
+                        Plant p = currentCell.getPlant();
+                        // بررسی اینکه گیاه یخ زده باشد و گیاه شلیک‌کننده خودش نباشد
+                        if (p.isFreeze() && p.getX() > this.originX + 20) {
+                            p.takeDamage(hitStrategy.getDamage(), (models.zombie.Zombie) null);
+                            pierce--;
+                            if (pierce <= 0) {
+                                dead = true;
+                                return;
+                            }
+                        }
+                    }
+                }
+            }
+
             if (type.movement.equals("STRAIGHT")) {
                 zombie = strikeStrategy.strike(x, y, oldX, oldY);
             } else if (type.movement.equals("LOBBED")) {
@@ -65,26 +84,8 @@ public class Projectile implements Resettable {
             }
         }
         if (zombie != null) {
-            // بررسی دفاع زامبی در برابر پرتابه‌های لابلد (Lobbed)
-            if (type != null && type.movement != null && type.movement.equals("LOBBED")) {
-                boolean areaDeflected = false;
-                for (Damageable activeZombie : App.getCurrentGame().getActiveTargets()) {
-                    if (activeZombie instanceof DeflectorZombie deflector && !deflector.isJuggler() && !deflector.isDead()) {
-                        if (Math.abs(activeZombie.getX() - zombie.getX()) <= 150 && Math.abs(activeZombie.getY() - zombie.getY()) <= 150) {
-                            areaDeflected = true;
-                            deflector.tryDeflect(this);
-                            break;
-                        }
-                    }
-                }
-                if (areaDeflected) {
-                    dead = true;
-                    GameMenuController.updateState("Parasol deflected a lobbed projectile protecting nearby area!");
-                    return;
-                }
-            }
             if (zombie instanceof DeflectorZombie deflector) {
-                if (deflector.isJuggler() && deflector.tryDeflect(this)) {
+                if (deflector.tryDeflect(this)) {
                     dead = true;
                     return;
                 }

@@ -5,7 +5,7 @@ import models.enums.Zombies;
 
 public class ArmoredZombie extends Zombie {
     private int armorHealth;
-    private boolean isMagnetic; // سطل و کلاه شوالیه بله، بلوک و مخروطی خیر
+    private boolean isMagnetic;
 
     public ArmoredZombie(int health, double speed, int damage, int armorHealth, boolean isMagnetic) {
         super(Zombies.ARMORED, health, speed, damage);
@@ -20,7 +20,7 @@ public class ArmoredZombie extends Zombie {
             int excess = amount - armorHealth;
             if (excess > 0) {
                 armorHealth = 0;
-                super.takeDamage(excess, damageType); // مازاد به زامبی می‌رسد
+                super.takeDamage(excess, damageType);
             } else {
                 armorHealth -= amount;
             }
@@ -29,7 +29,6 @@ public class ArmoredZombie extends Zombie {
         }
     }
 
-    // متدی برای مگنت‌شروم
     public void stripArmor() {
         if (isMagnetic) this.armorHealth = 0;
     }

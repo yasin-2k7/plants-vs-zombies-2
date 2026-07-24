@@ -16,7 +16,7 @@ public class BarrelRollerZombie extends Zombie {
     private boolean hasSpawnedImps;
 
     public BarrelRollerZombie(int health, double speed, int damage, int barrelHealth) {
-        super(Zombies.PUSHER, health, speed, damage); // از نوع PUSHER استفاده می‌کنیم
+        super(Zombies.PUSHER, health, speed, damage);
         this.barrelHealth = barrelHealth;
         this.barrelIntact = true;
         this.hasSpawnedImps = false;
@@ -40,11 +40,9 @@ public class BarrelRollerZombie extends Zombie {
         this.currentCell = zombieCell;
 
         if (barrelIntact && barrelHealth > 0) {
-            // له کردن گیاهان در سلول خود و جلویی
             crushPlants(zombieCell, game);
-            super.update(); // حرکت و خوردن معمولی
+            super.update();
         } else {
-            // بشکه خراب است: فقط حرکت معمولی
             super.update();
             if (!barrelIntact && !hasSpawnedImps) {
                 spawnImps(zombieCell, game);
@@ -75,14 +73,13 @@ public class BarrelRollerZombie extends Zombie {
         for (int i = 0; i < 2; i++) {
             ImpZombie imp = (ImpZombie) factory.createZombie("ZombieImp");
             if (imp == null) continue;
-            float impX = zombieCell.getX() - (i * 20); // کمی جابجا
+            float impX = zombieCell.getX() - (i * 20);
             float impY = zombieCell.getY();
             imp.setX(impX);
             imp.setY(impY);
             game.getActiveZombies().add(imp);
             System.out.println("👾 Barrel released Imp #" + (i+1) + " at (" + impX + ", " + impY + ")");
         }
-        // حذف بشکه از سلول (اگر وجود داشته باشد)
         if (zombieCell.getObstacle() instanceof BarrelObstacle) {
             zombieCell.removeObstacle();
         }
@@ -113,7 +110,6 @@ public class BarrelRollerZombie extends Zombie {
 
     @Override
     public void die() {
-        // اگر بشکه سالم است، آن را به‌عنوان مانع در سلول باقی بگذار
         if (barrelIntact && barrelHealth > 0 && currentCell != null) {
             BarrelObstacle barrelObstacle = new BarrelObstacle(
                     currentCell.getX(), currentCell.getY(), barrelHealth

@@ -83,7 +83,7 @@ public class PusherZombie extends Zombie {
             }
         }
         if (!crushed) {
-            super.update(); // شامل حرکت و خوردن (اگر objectHealth <= 0 باشد)
+            super.update();
         } else {
             this.move();
         }
@@ -95,13 +95,11 @@ public class PusherZombie extends Zombie {
 
         int currentRow = zombieCell.getRow();
         int targetRow = currentRow + (random.nextBoolean() ? 1 : -1);
-        // محدودیت ردیف
         if (targetRow < 0 || targetRow >= game.getRows()) {
             targetRow = currentRow + (random.nextBoolean() ? -1 : 1);
             if (targetRow < 0 || targetRow >= game.getRows()) return;
         }
 
-        // پیدا کردن زامبی‌های همسایه (همان سطر)
         List<Zombie> sameRowZombies = new ArrayList<>();
         for (Zombie z : game.getActiveZombies()) {
             if (z != this && Math.abs(z.getY() - this.y) < 10) {
@@ -110,10 +108,8 @@ public class PusherZombie extends Zombie {
         }
         if (sameRowZombies.isEmpty()) return;
 
-        // انتخاب یک زامبی تصادفی از همان سطر
         Zombie targetZombie = sameRowZombies.get(random.nextInt(sameRowZombies.size()));
 
-        // جابه‌جایی به ردیف هدف
         float newY = targetRow * App.getCellHeight() + App.getCellHeight() / 2;
         targetZombie.setY(newY);
         GameMenuController.updateState("Pianist switched a zombie to row " + (targetRow + 1));

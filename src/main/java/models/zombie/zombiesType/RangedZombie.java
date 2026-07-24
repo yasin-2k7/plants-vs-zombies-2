@@ -15,7 +15,6 @@ import java.util.List;
 public class RangedZombie extends Zombie {
     private String projectileType;
     private int cooldown;
-    // تنها یک متغیر COOLDOWN_MAX را نگه داشتیم
     private final int COOLDOWN_MAX = 120;
 
     public RangedZombie(int health, double speed, int damage, String projectileType) {
@@ -30,7 +29,7 @@ public class RangedZombie extends Zombie {
 
         switch (projectileType) {
             case "SNOWBALL": {
-                int row = (int)(this.y / App.getCellHeight());  // تبدیل مختصات به شماره ردیف
+                int row = (int)(this.y / App.getCellHeight());
                 Plant target = game.getNearestPlantInRow(row, this.x - 10);
                 if (target != null) {
                     target.increaseFrozenAmount();
@@ -69,7 +68,6 @@ public class RangedZombie extends Zombie {
                     break;
                 }
 
-                // پیدا کردن یک سلول خالی جلوی زامبی برای انداختن استخوان
                 Cell randomEmptyCell = game.getRandomEmptyCellInRowAfterColumn(row, this.x);
                 if (randomEmptyCell != null) {
                     game.createGrave((int) randomEmptyCell.getX(), (int) randomEmptyCell.getY());
