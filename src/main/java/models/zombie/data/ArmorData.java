@@ -1,6 +1,7 @@
 package models.zombie.data;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,7 +15,15 @@ public class ArmorData {
     @JsonProperty("ArmorFlags")
     private List<String> armorFlags = new ArrayList<>();
 
-    public String getArmorType() { return armorType; }
-    public int getBaseHealth() { return baseHealth; }
-    public List<String> getArmorFlags() { return armorFlags; }
+    public String getArmorType() {
+        return armorType;
+    }
+
+    public int getBaseHealth() {
+        return baseHealth;
+    }
+
+    public List<String> getArmorFlags() {
+        return armorFlags;
+    }
 }

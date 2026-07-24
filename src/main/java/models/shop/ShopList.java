@@ -25,10 +25,12 @@ public class ShopList {
         dailyOffer = new DailyOffer(randomType, 1600);
     }
 
-    private String checkDailyItem(int count, User user){
-        if (!dailyOffer.isAvailableToday()) return "Error: Daily offer already purchased or not available.";
+    private String checkDailyItem(int count, User user) {
+        if (!dailyOffer.isAvailableToday())
+            return "Error: Daily offer already purchased or not available.";
         if (count > 1) return "Error: Can only buy 1 daily offer.";
-        if (!dailyOffer.isAffordable(user.getCoins(), user.getGems())) return "Error: Not enough money for daily offer!";
+        if (!dailyOffer.isAffordable(user.getCoins(), user.getGems()))
+            return "Error: Not enough money for daily offer!";
 
         user.spendCoins(dailyOffer.getCoinCost());
         dailyOffer.setPurchased(true);
@@ -36,7 +38,7 @@ public class ShopList {
         return dailyOffer.getPlantType() + " seeds unlocked permanently!";
     }
 
-    private String buyRandomSeedPacket(User user, int count, int totalCoinCost){
+    private String buyRandomSeedPacket(User user, int count, int totalCoinCost) {
         List<PlantType> unlockedPlants = new ArrayList<>(user.getUnlockedPlantsLevels().keySet());
         if (unlockedPlants.isEmpty()) {
             return "Error: You have no unlocked plants to buy seeds for.";
@@ -48,7 +50,7 @@ public class ShopList {
         return count + " Random Seed Packets bought successfully! Received " + seedsToGive + " seeds for " + randomPlant.name() + ".";
     }
 
-    private String buySpecificSeedPacket(PlantType plantType, User user, int count, int totalGemCost){
+    private String buySpecificSeedPacket(PlantType plantType, User user, int count, int totalGemCost) {
         if (plantType == null) {
             return "Error: You must specify a plant type using -t.";
         }
@@ -65,7 +67,8 @@ public class ShopList {
         User user = App.getCurrentUser();
         if (user == null) return "Error: No user logged in.";
         if (count <= 0) return "Error: Count must be greater than zero.";
-        if (dailyOffer != null && dailyOffer.getId().equals(itemId)) return checkDailyItem(count, user);
+        if (dailyOffer != null && dailyOffer.getId().equals(itemId))
+            return checkDailyItem(count, user);
         ShopItem selectedItem = null;
         for (ShopItem item : permanentItems) {
             if (item.getId().equals(itemId)) {
@@ -109,6 +112,11 @@ public class ShopList {
         return "Error: Custom logic needed for this item.";
     }
 
-    public DailyOffer getDailyOffer() { return dailyOffer; }
-    public List<ShopItem> getPermanentItems() { return permanentItems; }
+    public DailyOffer getDailyOffer() {
+        return dailyOffer;
+    }
+
+    public List<ShopItem> getPermanentItems() {
+        return permanentItems;
+    }
 }

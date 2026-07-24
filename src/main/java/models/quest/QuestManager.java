@@ -5,7 +5,6 @@ import models.core.User;
 import models.enums.Chapter;
 import models.enums.PlantFamily;
 import models.enums.PlantType;
-import models.quest.reward.*;
 import models.quest.types.DailyQuest;
 import models.quest.types.MainQuest;
 
@@ -136,6 +135,7 @@ public class QuestManager {
             activeQuests.add(QuestFactory.createLawnmowerTimeQuest(n));
         }
     }
+
     private int getRandomSunAmount() {
         int[] options = {3000, 4000, 5000};
         return options[new Random().nextInt(options.length)];
@@ -158,7 +158,9 @@ public class QuestManager {
         return activeQuests;
     }
 
-    public void addQuest(Quest quest) { this.activeQuests.add(quest); }
+    public void addQuest(Quest quest) {
+        this.activeQuests.add(quest);
+    }
 
     public void resetDailyIfNeeded(User user) {
         LocalDate today = LocalDate.now();
@@ -169,7 +171,9 @@ public class QuestManager {
         }
     }
 
-    public List<Quest> getActiveQuests() {return activeQuests;}
+    public List<Quest> getActiveQuests() {
+        return activeQuests;
+    }
 
     public List<Quest> getCompletedQuests() {
         return completedQuests;

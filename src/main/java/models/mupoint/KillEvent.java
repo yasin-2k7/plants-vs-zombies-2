@@ -19,9 +19,23 @@ public class KillEvent {
         this.plantEatenInLine = plantEatenInLine;
     }
 
-    public Zombie getZombie() { return zombie; }
-    public long getSurvivalTicks() { return deathTick - spawnTick; }
-    public int getSimultaneousKills() { return simultaneousKills; }
-    public boolean isBySplashDamage() { return bySplashDamage; }
-    public boolean hasEatenPlant() { return plantEatenInLine; }
+    public Zombie getZombie() {
+        return zombie;
+    }
+
+    public long getSurvivalTicks() {
+        return deathTick - spawnTick;
+    }
+
+    public int getSimultaneousKills() {
+        return simultaneousKills;
+    }
+
+    public boolean isBySplashDamage() {
+        return bySplashDamage;
+    }
+
+    public boolean hasEatenPlant() {
+        return plantEatenInLine;
+    }
 }

@@ -2,7 +2,7 @@ package models.projectile.strikeStrategies;
 
 import models.Damageable;
 
-public class CheckLobbedStrike implements CheckStrike{
+public class CheckLobbedStrike implements CheckStrike {
     @Override
     public Damageable strike(double x, double y, double oldX, double oldY) {
         return null;
@@ -10,7 +10,7 @@ public class CheckLobbedStrike implements CheckStrike{
 
     @Override
     public Damageable strike(double x, double y, Damageable zombie) {
-        if (Math.abs(zombie.getX() - x) < 51 && Math.abs(zombie.getY() - y) < 51){
+        if (Math.abs(zombie.getX() - x) < 51 && Math.abs(zombie.getY() - y) < 51) {
             return zombie;
         }
         return null;

@@ -5,7 +5,7 @@ import models.plant.Plant;
 import models.plant.components.PlacementBehaviorComponent;
 import models.world.Cell;
 
-public class WaterTerrain implements CellTerrain{
+public class WaterTerrain implements CellTerrain {
     @Override
     public boolean canPlant(Plant plant, Cell cell) {
         PlacementBehaviorComponent behavior = plant.getComponent(PlacementBehaviorComponent.class);

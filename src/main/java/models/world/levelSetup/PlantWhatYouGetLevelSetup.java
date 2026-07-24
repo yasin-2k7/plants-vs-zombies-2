@@ -2,14 +2,13 @@ package models.world.levelSetup;
 
 import models.plant.card.PlantCard;
 import models.world.GameWorld;
-import models.world.mechanics.ConveyorMechanic;
 import models.world.mechanics.NormalMechanic;
 import models.zombie.wave.Wave;
 import models.zombie.wave.WaveManager;
 
 import java.util.List;
 
-public class PlantWhatYouGetLevelSetup implements LevelSetup{
+public class PlantWhatYouGetLevelSetup implements LevelSetup {
     private int rows;
     private int cols;
     private List<Wave> waves;

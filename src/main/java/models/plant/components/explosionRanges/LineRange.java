@@ -6,9 +6,11 @@ import models.world.Cell;
 
 import java.util.List;
 
-public class LineRange implements ExplosionRange{
+public class LineRange implements ExplosionRange {
     public static final LineRange INSTANCE = new LineRange();
-    private LineRange() {}
+
+    private LineRange() {
+    }
 
 
     @Override

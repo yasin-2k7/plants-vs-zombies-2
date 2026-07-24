@@ -3,10 +3,11 @@ package models.plant.components.shooterPlantFoodBehaviors;
 import models.plant.Plant;
 import models.plant.components.ShooterComponent;
 
-public class BurstPlantFood implements PlantFoodBehavior{
+public class BurstPlantFood implements PlantFoodBehavior {
     public static final BurstPlantFood INSTANCE = new BurstPlantFood();
 
-    private BurstPlantFood() {}
+    private BurstPlantFood() {
+    }
 
     @Override
     public void activate(Plant owner, ShooterComponent shooterComponent) {

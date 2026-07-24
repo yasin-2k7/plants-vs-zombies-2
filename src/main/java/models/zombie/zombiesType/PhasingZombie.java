@@ -47,7 +47,7 @@ public class PhasingZombie extends Zombie {
         if (isNewspaper) {
             // نیوزپیپر عصبانی می‌شود
             this.speed = this.originalSpeed * 3.0;
-            this.damage = (int)(this.damage * 2);
+            this.damage = (int) (this.damage * 2);
             GameMenuController.updateState("Newspaper is angry! Speed and damage increased.");
         }
     }

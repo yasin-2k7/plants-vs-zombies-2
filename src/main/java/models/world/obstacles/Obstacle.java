@@ -39,9 +39,11 @@ public abstract class Obstacle implements Damageable {
             this.isDestroyed = true;
         }
     }
+
     public boolean isDestroyed() {
         return isDestroyed;
     }
+
     public boolean blocksProjectiles() {
         return !isDestroyed;
     }
@@ -49,5 +51,8 @@ public abstract class Obstacle implements Damageable {
     public void die() {
         this.isDestroyed = true;
     }
-    public int getHealth() {return health;}
+
+    public int getHealth() {
+        return health;
+    }
 }

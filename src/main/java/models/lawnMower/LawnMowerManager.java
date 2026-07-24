@@ -4,14 +4,14 @@ import models.core.App;
 import models.world.GameState;
 import models.zombie.Zombie;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.ArrayList;
 
 public class LawnMowerManager {
+    private static final int TOTAL_ROWS = 5;
     private List<LawnMower> mowers;
     private boolean enabled = true;
-    private static final int TOTAL_ROWS = 5;
 
     public LawnMowerManager() {
         this.mowers = new ArrayList<>();
@@ -21,7 +21,7 @@ public class LawnMowerManager {
     }
 
     public void updateMowers(List<Zombie> allZombies) {
-        if(!enabled) {
+        if (!enabled) {
             return;
         }
 

@@ -1,7 +1,7 @@
 package models.zombie.zombiesType;
 
-import models.zombie.Zombie;
 import models.enums.Zombies;
+import models.zombie.Zombie;
 
 public class ArmoredZombie extends Zombie {
     private int armorHealth;
@@ -33,8 +33,15 @@ public class ArmoredZombie extends Zombie {
         if (isMagnetic) this.armorHealth = 0;
     }
 
-    public int getArmorHealth() { return armorHealth; }
-    public boolean isMagnetic() { return isMagnetic; }
+    public int getArmorHealth() {
+        return armorHealth;
+    }
 
-    public void setArmorHealth(int armorHealth) {this.armorHealth = armorHealth;}
+    public void setArmorHealth(int armorHealth) {
+        this.armorHealth = armorHealth;
+    }
+
+    public boolean isMagnetic() {
+        return isMagnetic;
+    }
 }

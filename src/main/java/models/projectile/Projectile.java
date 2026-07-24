@@ -1,6 +1,5 @@
 package models.projectile;
 
-import controller.GameMenuController;
 import models.Damageable;
 import models.core.App;
 import models.enums.PlantType;
@@ -28,7 +27,7 @@ public class Projectile implements Resettable {
     private boolean dead = false;
     private PlantType plantType;
 
-    void checkProjectilesTowardPlants(double oldX, double oldY){
+    void checkProjectilesTowardPlants(double oldX, double oldY) {
         Damageable plantTarget = null;
         if (type != null && type.movement != null) {
             plantTarget = strikeStrategy.strike(x, y, oldX, oldY);
@@ -50,7 +49,7 @@ public class Projectile implements Resettable {
         double oldX = x;
         double oldY = y;
         movementStrategy.move(this);
-        if (hitStrategy instanceof PlantDamageStrategy){
+        if (hitStrategy instanceof PlantDamageStrategy) {
             checkProjectilesTowardPlants(oldX, oldY);
             return;
         }
@@ -105,10 +104,12 @@ public class Projectile implements Resettable {
     }
 
     @Override
-    public void reset(float x, float y, int size, SunProducerComponent component) {}
+    public void reset(float x, float y, int size, SunProducerComponent component) {
+    }
 
     @Override
-    public void reset(float x, float y) {}
+    public void reset(float x, float y) {
+    }
 
     @Override
     public void reset(float x, float y,
@@ -131,18 +132,49 @@ public class Projectile implements Resettable {
         this.plantType = null;
     }
 
-    public void setPierce(int pierce) { this.pierce = pierce; }
-    public void setHitStrategy(HitStrategy hitStrategy) { this.hitStrategy = hitStrategy; }
-    public void setX(float x) { this.x = x; }
-    public void setY(float y) { this.y = y; }
-    public float getX() { return x; }
-    public float getY() { return y; }
-    public ProjectileType getType() { return type; }
-    public void setType(ProjectileType type) { this.type = type; }
-    public double distanceTo(Damageable target) { return Math.sqrt((target.getX() - x) * (target.getX() - x) + (target.getY() - y) * (target.getY() - y)); }
-    public float getOriginX() { return originX; }
-    public float getOriginY() { return originY; }
-    public CheckStrike getStrikeStrategy() { return strikeStrategy; }
+    public void setPierce(int pierce) {
+        this.pierce = pierce;
+    }
+
+    public float getX() {
+        return x;
+    }
+
+    public void setX(float x) {
+        this.x = x;
+    }
+
+    public float getY() {
+        return y;
+    }
+
+    public void setY(float y) {
+        this.y = y;
+    }
+
+    public ProjectileType getType() {
+        return type;
+    }
+
+    public void setType(ProjectileType type) {
+        this.type = type;
+    }
+
+    public double distanceTo(Damageable target) {
+        return Math.sqrt((target.getX() - x) * (target.getX() - x) + (target.getY() - y) * (target.getY() - y));
+    }
+
+    public float getOriginX() {
+        return originX;
+    }
+
+    public float getOriginY() {
+        return originY;
+    }
+
+    public CheckStrike getStrikeStrategy() {
+        return strikeStrategy;
+    }
 
     public void setTarget(Damageable target) {
         this.target = target;
@@ -152,10 +184,31 @@ public class Projectile implements Resettable {
         }
     }
 
-    public boolean isDead() { return dead; }
-    public HitStrategy getHitStrategy() { return hitStrategy; }
-    public float getTargetX() { return targetX; }
-    public float getTargetY() { return targetY; }
-    public void setPlantType(PlantType plantType) { this.plantType = plantType; }
-    public PlantType getPlantType() { return plantType; }
+    public boolean isDead() {
+        return dead;
+    }
+
+    public HitStrategy getHitStrategy() {
+        return hitStrategy;
+    }
+
+    public void setHitStrategy(HitStrategy hitStrategy) {
+        this.hitStrategy = hitStrategy;
+    }
+
+    public float getTargetX() {
+        return targetX;
+    }
+
+    public float getTargetY() {
+        return targetY;
+    }
+
+    public PlantType getPlantType() {
+        return plantType;
+    }
+
+    public void setPlantType(PlantType plantType) {
+        this.plantType = plantType;
+    }
 }

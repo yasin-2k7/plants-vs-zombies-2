@@ -21,17 +21,17 @@ public class MagnetShroomComponent implements GameComponent {
 
     @Override
     public void update(Plant owner) {
-        if (disable){
+        if (disable) {
             currentDisableTick--;
-            if (currentDisableTick <= 0){
+            if (currentDisableTick <= 0) {
                 disable = false;
             }
             return;
         }
         List<Cell> cells = Cell.getNeighborCells(owner.getCell(), LevelMenuController.getGameCells(), radius);
         List<Zombie> zombies = Cell.getZombiesInCells(cells);
-        for (Zombie zombie : zombies){
-            if (zombie instanceof ArmoredZombie armoredZombie){
+        for (Zombie zombie : zombies) {
+            if (zombie instanceof ArmoredZombie armoredZombie) {
                 armoredZombie.stripArmor();
                 disable = true;
                 currentDisableTick = disableTicks;
@@ -45,11 +45,11 @@ public class MagnetShroomComponent implements GameComponent {
         List<Cell> cells = Cell.getNeighborCells(owner.getCell(), LevelMenuController.getGameCells(), radius);
         List<Zombie> zombies = Cell.getZombiesInCells(cells);
         int count = 0;
-        for (Zombie zombie : zombies){
-            if (zombie instanceof ArmoredZombie armoredZombie){
+        for (Zombie zombie : zombies) {
+            if (zombie instanceof ArmoredZombie armoredZombie) {
                 count++;
                 armoredZombie.stripArmor();
-                if (count == 3){
+                if (count == 3) {
                     break;
                 }
             }

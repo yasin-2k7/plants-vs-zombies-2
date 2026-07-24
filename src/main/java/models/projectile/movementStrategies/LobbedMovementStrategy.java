@@ -2,7 +2,7 @@ package models.projectile.movementStrategies;
 
 import models.projectile.Projectile;
 
-public class LobbedMovementStrategy implements MovementStrategy{
+public class LobbedMovementStrategy implements MovementStrategy {
     private final float maxArcHeight = 150.0f;
     private final float speed = 5f;
     private float t = 0f;

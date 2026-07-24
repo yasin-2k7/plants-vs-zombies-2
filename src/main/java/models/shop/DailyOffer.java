@@ -1,6 +1,7 @@
 package models.shop;
 
 import models.enums.PlantType;
+
 import java.time.LocalDate;
 
 public class DailyOffer extends ShopItem {
@@ -19,6 +20,11 @@ public class DailyOffer extends ShopItem {
         return !isPurchased && offerDate.equals(LocalDate.now());
     }
 
-    public PlantType getPlantType() { return plantType; }
-    public void setPurchased(boolean purchased) { isPurchased = purchased; }
+    public PlantType getPlantType() {
+        return plantType;
+    }
+
+    public void setPurchased(boolean purchased) {
+        isPurchased = purchased;
+    }
 }

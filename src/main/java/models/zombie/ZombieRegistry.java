@@ -1,10 +1,11 @@
 package models.zombie;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import models.zombie.data.ArmorProperties;
 import models.zombie.data.ZombieProperties;
-import com.fasterxml.jackson.databind.DeserializationFeature;
+
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;

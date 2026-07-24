@@ -18,49 +18,29 @@ import java.util.List;
 import java.util.function.Supplier;
 
 public class ShooterComponent implements GameComponent {
+    private static final int BURST_DELAY_MAX = 3;
+    private final int shootingTime;
+    public PlantFoodBehavior plantFoodBehavior;
+    Damageable target = null;
     private ProjectileType bulletType;
     private ProjectileType giantType;
-
     private List<Supplier<MovementStrategy>> defaultMovementStrategies = new ArrayList<>();
-
-    private final int shootingTime;
     private int burstProjectileNumber;
     private int burstProjectileNumberOnPlantFood;
-    private static final int BURST_DELAY_MAX = 3;
-
     private int burstDelayMax = BURST_DELAY_MAX;
     private int projectilesLeftForShoot;
     private int shootingTimer = 0;
     private int burstDelayTimer;
-
     private boolean hasGiant;
     private int giantCount;
     private boolean activePlantFood;
-
     private int normalPierce;
     private int giantPierce;
-
-    Damageable target = null;
-
     private Supplier<CombinedDamageStrategy> damageStrategy;
     private CheckStrike strikeStrategy;
     private List<VisionStrategy> visions = new ArrayList<>();
     private List<Supplier<MovementStrategy>> movementStrategies = new ArrayList<>();
-
     private CombinedDamageStrategy plantFoodStrategy;
-
-    public void setPlantFoodStrategy(CombinedDamageStrategy plantFoodStrategy) {
-        this.plantFoodStrategy = plantFoodStrategy;
-    }
-
-    public void setPlantFoodBehavior(PlantFoodBehavior plantFoodBehavior) {
-        this.plantFoodBehavior = plantFoodBehavior;
-    }
-
-    public interface AttackCallback {
-        void onAttack(Plant owner);
-    }
-
     private AttackCallback attackCallback;
 
     public ShooterComponent(ProjectileType bulletType, ProjectileType giantType, int shootingTime, int burstProjectileNumber, int burstProjectileNumberOnPlantFood, boolean hasGiant, Supplier<CombinedDamageStrategy> damageStrategy, CheckStrike strikeStrategy, int giantCount, int normalPierce, int giantPierce, int giantDamageFactor) {
@@ -76,12 +56,12 @@ public class ShooterComponent implements GameComponent {
         this.normalPierce = normalPierce;
         this.giantPierce = giantPierce;
         this.plantFoodBehavior = BurstPlantFood.INSTANCE;
-        plantFoodStrategy = damageStrategy.get().changeDamage(damageStrategy.get().getDamage()*giantDamageFactor);
+        plantFoodStrategy = damageStrategy.get().changeDamage(damageStrategy.get().getDamage() * giantDamageFactor);
     }
 
-    public PlantFoodBehavior plantFoodBehavior;
-
-
+    public void setPlantFoodBehavior(PlantFoodBehavior plantFoodBehavior) {
+        this.plantFoodBehavior = plantFoodBehavior;
+    }
 
     @Override
     public void activatePlantFood(Plant owner) {
@@ -91,25 +71,23 @@ public class ShooterComponent implements GameComponent {
         }
     }
 
-
     @Override
     public void update(Plant owner) {
-        if (projectilesLeftForShoot > 0){
+        if (projectilesLeftForShoot > 0) {
             burstHandler(owner);
             return;
         }
 
 
-        for (VisionStrategy visionStrategy : visions){
-            if (visionStrategy.findZombie(owner) != null){
+        for (VisionStrategy visionStrategy : visions) {
+            if (visionStrategy.findZombie(owner) != null) {
                 if (attackCallback != null) {
                     attackCallback.onAttack(owner);
                 }
                 target = visionStrategy.findZombie(owner);
-                if (shootingTimer > 0){
+                if (shootingTimer > 0) {
                     shootingTimer--;
-                }
-                else {
+                } else {
                     this.projectilesLeftForShoot = burstProjectileNumber;
                     burstDelayMax = BURST_DELAY_MAX;
                     burstDelayTimer = 0;
@@ -121,21 +99,23 @@ public class ShooterComponent implements GameComponent {
 
     }
 
-    private void burstHandler(Plant owner){
-        if (burstDelayTimer > 0){
+    private void burstHandler(Plant owner) {
+        if (burstDelayTimer > 0) {
             burstDelayTimer--;
-        }
-        else{
-            for (Supplier<MovementStrategy> movementStrategy : movementStrategies){
+        } else {
+            for (Supplier<MovementStrategy> movementStrategy : movementStrategies) {
                 Projectile p = App.getCurrentGame().getProjectilesPool().acquire();
 
-                if (activePlantFood && projectilesLeftForShoot <= giantCount && hasGiant){
+                if (activePlantFood && projectilesLeftForShoot <= giantCount && hasGiant) {
                     p.reset(owner.getX(), owner.getY() + movementStrategy.get().changeOriginY(), plantFoodStrategy, movementStrategy.get(), strikeStrategy, giantType);
-                    if (giantPierce != 1) {p.setPierce(giantPierce);}
-                }
-                else{
-                    p.reset(owner.getX(), owner.getY() + movementStrategy.get().changeOriginY(), damageStrategy.get(), movementStrategy.get(),strikeStrategy, bulletType);
-                    if (normalPierce != 1) {p.setPierce(normalPierce);}
+                    if (giantPierce != 1) {
+                        p.setPierce(giantPierce);
+                    }
+                } else {
+                    p.reset(owner.getX(), owner.getY() + movementStrategy.get().changeOriginY(), damageStrategy.get(), movementStrategy.get(), strikeStrategy, bulletType);
+                    if (normalPierce != 1) {
+                        p.setPierce(normalPierce);
+                    }
                 }
                 p.setPlantType(owner.getType());
 
@@ -146,7 +126,7 @@ public class ShooterComponent implements GameComponent {
             projectilesLeftForShoot--;
             burstDelayTimer = burstDelayMax;
 
-            if (projectilesLeftForShoot <= 0){
+            if (projectilesLeftForShoot <= 0) {
                 projectilesLeftForShoot = 0;
                 if (activePlantFood) {
                     activePlantFood = false;
@@ -171,20 +151,12 @@ public class ShooterComponent implements GameComponent {
         this.burstProjectileNumber = burstProjectileNumber;
     }
 
-    public void setBurstProjectileNumberOnPlantFood(int burstProjectileNumberOnPlantFood) {
-        this.burstProjectileNumberOnPlantFood = burstProjectileNumberOnPlantFood;
-    }
-
     public void setGiantCount(int giantCount) {
         this.giantCount = giantCount;
     }
 
     public void setAttackCallback(AttackCallback callback) {
         this.attackCallback = callback;
-    }
-
-    public void setProjectilesLeftForShoot(int projectilesLeftForShoot) {
-        this.projectilesLeftForShoot = projectilesLeftForShoot;
     }
 
     public void setShootingTimer(int shootingTimer) {
@@ -203,12 +175,20 @@ public class ShooterComponent implements GameComponent {
         return burstProjectileNumberOnPlantFood;
     }
 
+    public void setBurstProjectileNumberOnPlantFood(int burstProjectileNumberOnPlantFood) {
+        this.burstProjectileNumberOnPlantFood = burstProjectileNumberOnPlantFood;
+    }
+
     public ProjectileType getGiantType() {
         return giantType;
     }
 
     public CombinedDamageStrategy getPlantFoodStrategy() {
         return plantFoodStrategy;
+    }
+
+    public void setPlantFoodStrategy(CombinedDamageStrategy plantFoodStrategy) {
+        this.plantFoodStrategy = plantFoodStrategy;
     }
 
     public CheckStrike getStrikeStrategy() {
@@ -219,15 +199,23 @@ public class ShooterComponent implements GameComponent {
         this.damageStrategy = damageStrategy;
     }
 
-    public void setBulletType(ProjectileType bulletType) {
-        this.bulletType = bulletType;
-    }
-
     public int getProjectilesLeftForShoot() {
         return projectilesLeftForShoot;
     }
 
+    public void setProjectilesLeftForShoot(int projectilesLeftForShoot) {
+        this.projectilesLeftForShoot = projectilesLeftForShoot;
+    }
+
     public ProjectileType getBulletType() {
         return bulletType;
+    }
+
+    public void setBulletType(ProjectileType bulletType) {
+        this.bulletType = bulletType;
+    }
+
+    public interface AttackCallback {
+        void onAttack(Plant owner);
     }
 }

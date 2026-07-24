@@ -16,12 +16,12 @@ public class LifespanComponent implements GameComponent {
     }
 
     @Override
-    public void activatePlantFood(Plant owner){
+    public void activatePlantFood(Plant owner) {
         App.getCurrentGame().triggerSmallShroomsPlantFood(type);
     }
 
-    public void onGlobalPlantFoodActivated(PlantType type){
-        if (this.type.equals(type)){
+    public void onGlobalPlantFoodActivated(PlantType type) {
+        if (this.type.equals(type)) {
             timer = 0f;
         }
     }
@@ -29,7 +29,7 @@ public class LifespanComponent implements GameComponent {
     @Override
     public void update(Plant owner) {
         timer++;
-        if (timer >= maxLifeTime){
+        if (timer >= maxLifeTime) {
             owner.destroy();
         }
     }

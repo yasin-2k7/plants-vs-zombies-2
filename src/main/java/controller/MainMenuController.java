@@ -48,7 +48,7 @@ public class MainMenuController implements MenuController {
         }
     }
 
-    public void showMenus(){
+    public void showMenus() {
         MainMenuView.getInstance().showResult("MENUS\n" +
                 "-play\n" +
                 "-setting\n" +
@@ -76,8 +76,7 @@ public class MainMenuController implements MenuController {
     }
 
 
-
-    public void showCurrentMenu(){
+    public void showCurrentMenu() {
         GameMenuView.getInstance().showResult("Current menu: main menu");
     }
 }

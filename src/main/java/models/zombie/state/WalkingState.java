@@ -2,8 +2,8 @@ package models.zombie.state;
 
 import models.core.App;
 import models.plant.Plant;
-import models.zombie.Zombie;
 import models.world.GameWorld;
+import models.zombie.Zombie;
 
 public class WalkingState implements ZombieState {
     @Override

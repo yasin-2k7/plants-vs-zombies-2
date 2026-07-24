@@ -8,8 +8,8 @@ import models.world.GameWorld;
 import models.zombie.Zombie;
 
 public class JalapenoZombie extends Zombie {
-    private int ticksSinceSpawn = 0;
     private static final int EXPLODE_AFTER_TICKS = 50;
+    private int ticksSinceSpawn = 0;
     private boolean exploded = false;
 
     public JalapenoZombie(Zombies name, int health, double speed, int damage) {

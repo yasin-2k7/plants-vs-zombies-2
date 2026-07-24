@@ -39,7 +39,7 @@ public class ArmorComponent implements GameComponent {
         armorHp = initHp;
     }
 
-    protected void onDestroy(Plant owner){
+    protected void onDestroy(Plant owner) {
 
     }
 

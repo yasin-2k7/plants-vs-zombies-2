@@ -9,32 +9,32 @@ import java.util.regex.Matcher;
 
 public class ChapterMenuView implements View {
     private static ChapterMenuView instance;
+    String result;
     private ChapterMenuController controller;
+
     public ChapterMenuView(ChapterMenuController controller) {
         this.controller = controller;
     }
 
-    public static ChapterMenuView getInstance(){
-        if (instance == null){
+    public static ChapterMenuView getInstance() {
+        if (instance == null) {
             instance = new ChapterMenuView(new ChapterMenuController());
         }
         return instance;
     }
 
-    String result;
-
     @Override
     public void processCommand(String command) {
         boolean commandFound = false;
-        for(ChapterMenuCommands chapterMenuCommands : ChapterMenuCommands.values()) {
+        for (ChapterMenuCommands chapterMenuCommands : ChapterMenuCommands.values()) {
             Matcher matcher = chapterMenuCommands.matcher(command);
             if (matcher.matches()) {
                 commandFound = true;
-                switch (chapterMenuCommands){
+                switch (chapterMenuCommands) {
                     case CHOOSE_CHAPTER:
                         String chapterStr = matcher.group(1);
                         Chapter chapter = Chapter.fromString(chapterStr);
-                        if(chapter != null){
+                        if (chapter != null) {
                             result = controller.chooseChapter(chapter);
                             System.out.println(result);
                         } else {
@@ -74,17 +74,16 @@ public class ChapterMenuView implements View {
                 break;
             }
         }
-        if(!commandFound){
+        if (!commandFound) {
             System.out.println("invalid command in chapter menu.");
         }
 
     }
 
 
-    public void showResult(String message){
+    public void showResult(String message) {
         System.out.println(message);
     }
-
 
 
 }

@@ -7,22 +7,23 @@ import models.world.GameWorld;
 import view.View;
 
 public class App {
-    private static User currentUser;
-    private static MenuController currentMenu;
-    private static View currentScreen;
-    private static GameWorld currentGame;
     private static final PlantFactory FACTORY = new PlantFactory();
-
     private static final float CELL_HEIGHT = 100;
     private static final float CELL_WIDTH = 100;
     private static final float FIRST_CELL_X = 0;
     private static final float FIRST_CELL_Y = 0;
+    private static User currentUser;
+    private static MenuController currentMenu;
+    private static View currentScreen;
+    private static GameWorld currentGame;
 
     public static User getCurrentUser() {
         return currentUser;
     }
 
-    public static void setCurrentUser(User currentUser) {App.currentUser = currentUser;}
+    public static void setCurrentUser(User currentUser) {
+        App.currentUser = currentUser;
+    }
 
     public static MenuController getCurrentMenu() {
         return currentMenu;
@@ -65,11 +66,11 @@ public class App {
         return currentScreen;
     }
 
-    public static String getArmoredZombieName(String id){
+    public static String getArmoredZombieName(String id) {
         if (id == null) {
             return "Regular Zombie";
         }
-        switch (id){
+        switch (id) {
             case "ZombieArmor1":
                 return "ZombieConeHead";
             case "ZombieArmor2":
@@ -83,11 +84,11 @@ public class App {
         }
     }
 
-    public static String getZombieId(String name){
+    public static String getZombieId(String name) {
         if (name == null) {
             return null;
         }
-        switch (name){
+        switch (name) {
             case "ZombieConehead":
                 return "ZombieArmor1";
             case "ZombieBuckethead":

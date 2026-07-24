@@ -7,7 +7,7 @@ import models.world.obstacles.IceBlock;
 
 import java.util.List;
 
-public class MeltIceBehavior implements ExplosiveBehavior{
+public class MeltIceBehavior implements ExplosiveBehavior {
     private ExplosionRange area;
 
 

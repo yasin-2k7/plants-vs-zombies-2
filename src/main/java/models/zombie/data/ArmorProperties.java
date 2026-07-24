@@ -14,7 +14,15 @@ public class ArmorProperties {
     @JsonProperty("objdata")
     private ArmorData objdata;
 
-    public List<String> getAliases() { return aliases; }
-    public String getObjclass() { return objclass; }
-    public ArmorData getObjdata() { return objdata; }
+    public List<String> getAliases() {
+        return aliases;
+    }
+
+    public String getObjclass() {
+        return objclass;
+    }
+
+    public ArmorData getObjdata() {
+        return objdata;
+    }
 }

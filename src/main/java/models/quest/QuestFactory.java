@@ -3,7 +3,10 @@ package models.quest;
 import models.core.App;
 import models.enums.PlantFamily;
 import models.enums.PlantType;
-import models.quest.reward.*;
+import models.quest.reward.CurrencyReward;
+import models.quest.reward.RandomSeedPacketReward;
+import models.quest.reward.RandomUnlockReward;
+import models.quest.reward.Reward;
 import models.quest.types.DailyQuest;
 import models.quest.types.EpicChallengeQuest;
 import models.quest.types.MainQuest;
@@ -40,7 +43,7 @@ public class QuestFactory {
     // 3. Professional Plant Killer
     public static DailyQuest createPlantKillerQuest(PlantType plant) {
         String date = LocalDate.now().toString();
-        String id = "daily_plant_killer_" + plant.name()  + "_" + date;
+        String id = "daily_plant_killer_" + plant.name() + "_" + date;
         String desc = "Kill 10 zombies only with " + plant.name();
         Predicate<QuestStats> condition = stats ->
                 stats.getZombiesKilledByPlant().getOrDefault(plant, 0) >= 10 &&
@@ -53,7 +56,7 @@ public class QuestFactory {
     // 4. Only Cactus
     public static DailyQuest createCactusOnlyQuest() {
         String date = LocalDate.now().toString();
-        String id = "daily_cactus_only"  + "_" + date;
+        String id = "daily_cactus_only" + "_" + date;
         String desc = "Kill 10 zombies only with Cactus";
         Predicate<QuestStats> condition = stats ->
                 stats.getZombiesKilledByPlant().getOrDefault(PlantType.CACTUS, 0) >= 10 &&
@@ -66,7 +69,7 @@ public class QuestFactory {
     // 5. Economic Vegetarian
     public static MainQuest createEconomicVegetarianQuest(int n) {
         String date = LocalDate.now().toString();
-        String id = "main_eco_" + n  + "_" + date;
+        String id = "main_eco_" + n + "_" + date;
         String desc = "Win a level without losing more than " + n + " plants";
         Predicate<QuestStats> condition = stats ->
                 stats.isLevelWon() && stats.getPlantsLostInLevel() <= n;

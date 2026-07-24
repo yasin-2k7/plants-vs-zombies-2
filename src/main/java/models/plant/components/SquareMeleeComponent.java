@@ -5,19 +5,18 @@ import models.plant.GameComponent;
 import models.plant.Plant;
 import models.world.Cell;
 import models.zombie.Zombie;
+
 import java.util.List;
 
 public class SquareMeleeComponent implements GameComponent {
-    private int plantationTicks = 0;
-
-    private int currentStage = 1;
     private final int maxStage;
-    private boolean hasGrowing;
     private final int stage2Ticks = 240;
     private final int stage3Ticks = 720;
     private final int stage4Ticks = 1440;
-
     private final int baseDamage;
+    private int plantationTicks = 0;
+    private int currentStage = 1;
+    private boolean hasGrowing;
     private int attackIntervalTicks;
     private int lastAttackTick = 0;
 

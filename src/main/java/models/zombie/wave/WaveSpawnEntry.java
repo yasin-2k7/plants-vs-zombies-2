@@ -5,7 +5,7 @@ public class WaveSpawnEntry {
     private String zombieAlias;
     private int wavePointCost;
 
-    public WaveSpawnEntry(String zombieAlias,int wavePointCost) {
+    public WaveSpawnEntry(String zombieAlias, int wavePointCost) {
         this.wavePointCost = wavePointCost;
         this.zombieAlias = zombieAlias;
 

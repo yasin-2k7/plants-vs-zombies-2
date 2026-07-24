@@ -11,11 +11,11 @@ public class AppView {
         currentScreen = screen;
     }
 
-    public static void run(){
+    public static void run() {
         Scanner scanner = new Scanner(System.in);
-        while (true){
+        while (true) {
             String command = scanner.nextLine();
-            if (command.equals("exit")){
+            if (command.equals("exit")) {
                 System.exit(0);
             }
             currentScreen.processCommand(command);

@@ -9,6 +9,7 @@ import models.world.Sun;
 import java.util.ArrayList;
 
 public class SunProducerComponent implements GameComponent {
+    private final ArrayList<Sun> componentSuns = new ArrayList<>();
     private int sunSize; //مقدار خورشید تولیدی
     private int sunNumber;
     private int lastProductionTicks;
@@ -20,10 +21,7 @@ public class SunProducerComponent implements GameComponent {
     private boolean checkShroomSize;
     private boolean enable;
     private int growTimeToReduce;
-
     private boolean isInstant;
-
-    private final ArrayList<Sun> componentSuns = new ArrayList<>();
 
     public SunProducerComponent(int sunSize, int sunNumber, int productionTime, boolean doubleSunChance, boolean shroom, int sunNumberWithPlantFood, int growTimeToReduce) {
         this(sunSize, sunNumber, productionTime, doubleSunChance, shroom, sunNumberWithPlantFood, growTimeToReduce, false);
@@ -46,20 +44,19 @@ public class SunProducerComponent implements GameComponent {
 
         tick();
 
-        if (shroom && checkShroomSize){
-            if (plantationTime > 10*(72-growTimeToReduce)){
+        if (shroom && checkShroomSize) {
+            if (plantationTime > 10 * (72 - growTimeToReduce)) {
                 checkShroomSize = false;
                 setSunSize(75);
-            }
-            else if (plantationTime > 10*(24-growTimeToReduce)){
+            } else if (plantationTime > 10 * (24 - growTimeToReduce)) {
                 setSunSize(50);
             }
         }
 
-        if (lastProductionTicks >= productionTime*10){
+        if (lastProductionTicks >= productionTime * 10) {
             enable = false;
             lastProductionTicks = 0;
-            for (int i = 0; i < sunNumber; i++){
+            for (int i = 0; i < sunNumber; i++) {
                 if (doubleSunChance && Math.random() < 0.2) componentSuns.add(produceSun(owner));
                 componentSuns.add(produceSun(owner));
             }
@@ -72,7 +69,7 @@ public class SunProducerComponent implements GameComponent {
             }
         }
 
-        if (!isInstant && componentSuns.isEmpty()){
+        if (!isInstant && componentSuns.isEmpty()) {
             enable = true;
         }
 
@@ -93,23 +90,22 @@ public class SunProducerComponent implements GameComponent {
     }
 
 
-
-    public void plantFoodEffect(Plant owner){
-        if (shroom){
+    public void plantFoodEffect(Plant owner) {
+        if (shroom) {
             setSunSize(75);
         }
-        for (int i = 0; i < sunNumberWithPlantFood; i++){
+        for (int i = 0; i < sunNumberWithPlantFood; i++) {
             componentSuns.add(produceSun(owner));
         }
     }
 
-    private void setSunSize(int newSize){
+    private void setSunSize(int newSize) {
         this.sunSize = newSize;
     }
 
-    private void tick(){
+    private void tick() {
         plantationTime++;
-        if (enable){
+        if (enable) {
             lastProductionTicks++;
         }
     }

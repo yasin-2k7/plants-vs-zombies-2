@@ -22,6 +22,7 @@ import java.util.logging.Logger;
 public class ZombieFactory {
     private static final Logger LOGGER = Logger.getLogger(ZombieFactory.class.getName());
     private static final Map<Zombies, String> ENUM_TO_ALIAS = new HashMap<>();
+
     static {
         ENUM_TO_ALIAS.put(Zombies.ZOMBIE, "ZombieDefault");
         ENUM_TO_ALIAS.put(Zombies.ARMORED, "ZombieArmor1");
@@ -43,13 +44,14 @@ public class ZombieFactory {
         ENUM_TO_ALIAS.put(Zombies.SQUASH_ZOMBIE, "ZombieSquash");
     }
 
-    private Zombie selectZombie(String objClass, int health, int eatDPS, double speed, ZombieData data){
+    private Zombie selectZombie(String objClass, int health, int eatDPS, double speed, ZombieData data) {
         return switch (objClass) {
             case "ZombieGargantuarProps" -> new SpawnerZombie(health, speed, eatDPS, true);
             case "ZombieRaProps" -> new SunStealerZombie(health, speed, eatDPS, true);
             case "ZombieCrystalSkullProps" -> new SunStealerZombie(health, speed, eatDPS, false);
             case "ZombieExplorerProps" -> new ElementalZombie(health, speed, eatDPS, true);
-            case "ZombieProspectorProps" -> new ElementalZombie(health, speed, eatDPS, false); // false = Prospector
+            case "ZombieProspectorProps" ->
+                    new ElementalZombie(health, speed, eatDPS, false); // false = Prospector
             case "ZombieIceAgeHunterProps" -> new RangedZombie(health, speed, eatDPS, "SNOWBALL");
             case "ZombieBeachOctopusProps" -> new RangedZombie(health, speed, eatDPS, "OCTOPUS");
             case "ZombieTombRaiserProps" -> new RangedZombie(health, speed, eatDPS, "BONE");
@@ -63,7 +65,8 @@ public class ZombieFactory {
             case "ZombieNewspaperProps" -> new PhasingZombie(health, speed, eatDPS, 800, true);
             case "ZombiePianoProps" -> new PusherZombie(health, speed, eatDPS, "PIANO", 1100);
             case "ZombieArcadeProps" -> new PusherZombie(health, speed, eatDPS, "ARCADE", 1100);
-            case "ZombieIceAgeTroglobiteProps" -> new PusherZombie(health, speed, eatDPS, "ICEBLOCK", 600);
+            case "ZombieIceAgeTroglobiteProps" ->
+                    new PusherZombie(health, speed, eatDPS, "ICEBLOCK", 600);
             case "ZombieBeachSnorkelProps" -> new SnorkelZombie(health, speed, eatDPS);
             case "ZombieImpProps" -> new ImpZombie(health, speed, eatDPS, false);
             case "ZombieDarkImpDragonProps" -> new ImpZombie(health, speed, eatDPS, true);
@@ -141,7 +144,8 @@ public class ZombieFactory {
             return zombie;
         }
         // زامبی معمولی بدون زره
-        return new Zombie(Zombies.ZOMBIE, health, speed, eatDPS) {};
+        return new Zombie(Zombies.ZOMBIE, health, speed, eatDPS) {
+        };
     }
 
     private String extractAlias(String ref) {

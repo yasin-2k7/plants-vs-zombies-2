@@ -27,31 +27,18 @@ import models.world.obstacles.OctopusObstacle;
 import models.world.winCondition.WinCondition;
 import models.zombie.Zombie;
 import models.zombie.wave.WaveManager;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Random;
+
+import java.util.*;
 
 public abstract class GameWorld {
-    private long startTime;
+    private final List<LifespanComponent> smallShrooms = new ArrayList<>();
+    private final List<Runnable> zombieKillListeners = new ArrayList<>();
+    private final List<Runnable> plantEatenListeners = new ArrayList<>();
     protected Random random = new Random();
-    private GameState state;
-    private int currentTick = 0;
-    private Chapter currentChapter;
-    private boolean willUnlockLevel = false;
     protected int plantFoods;
     protected int rows;
     protected int cols;
     protected Cell[][] grid;
-    private int currentSun;
-    private LevelSetup levelSetup;
-    private ArrayList<LoseCondition> loseConditions;
-    private WinCondition winCondition;
-    private ArrayList<Mechanic> mechanics;
-    private List<PlantCard> conveyorBelt;
-    private List<PlantCard> plantLists;
-    private boolean isConveyorMode;
     protected List<Collectable> activeCollectables;
     protected List<Zombie> activeZombies;
     protected List<Plant> activePlants;
@@ -60,32 +47,30 @@ public abstract class GameWorld {
     protected List<Obstacle> activeObstacles;
     protected List<Damageable> activeTargets;
     protected LawnMowerManager lawnMowerManager;
+    private long startTime;
+    private GameState state;
+    private int currentTick = 0;
+    private Chapter currentChapter;
+    private boolean willUnlockLevel = false;
+    private int currentSun;
+    private LevelSetup levelSetup;
+    private ArrayList<LoseCondition> loseConditions;
+    private WinCondition winCondition;
+    private ArrayList<Mechanic> mechanics;
+    private List<PlantCard> conveyorBelt;
+    private List<PlantCard> plantLists;
+    private boolean isConveyorMode;
     private GenericObjectPool<Sun> sunsPool = new GenericObjectPool<>(Sun::new);
     private GenericObjectPool<Projectile> projectilesPool = new GenericObjectPool<>(Projectile::new);
-    private final List<LifespanComponent> smallShrooms = new ArrayList<>();
     private boolean sandstormActive = false;
-    private final List<Runnable> zombieKillListeners = new ArrayList<>();
-    private final List<Runnable> plantEatenListeners = new ArrayList<>();
     private MupointManager mupointManager;
     private boolean isPlantSelected = false;
     private PlantType selectedPlant = null;
     private boolean plantingPhase = false;
-    public void registerZombieKillListener(Runnable listener) {zombieKillListeners.add(listener);}
-    public void notifyZombieKilled() {zombieKillListeners.forEach(Runnable::run);}
-    public void registerPlantEatenListener(Runnable listener) {plantEatenListeners.add(listener);}
-    public void notifyPlantEaten() {plantEatenListeners.forEach(Runnable::run);}
-    public void registerShroom(LifespanComponent observer) {smallShrooms.add(observer);}
-    public void unregisterPuffShroom(LifespanComponent observer) {smallShrooms.remove(observer);}
-    public MupointManager getMupointManager() {return mupointManager;}
-    public void setMupointManager(MupointManager mupointManager) {this.mupointManager = mupointManager;}
-    public void triggerSmallShroomsPlantFood(PlantType type) {
-        for (LifespanComponent observer : smallShrooms) {
-            observer.onGlobalPlantFoodActivated(type);
-        }
-    }
+
     public GameWorld(LevelSetup levelSetup, ArrayList<LoseCondition> loseConditions,
                      WinCondition winCondition, ArrayList<Mechanic> mechanics) {
-        App.getCurrentUser().setGamesPlayed(App.getCurrentUser().getGamesPlayed()+1);
+        App.getCurrentUser().setGamesPlayed(App.getCurrentUser().getGamesPlayed() + 1);
         UserDataManager.saveUser(App.getCurrentUser());
 
         this.levelSetup = levelSetup;
@@ -110,13 +95,52 @@ public abstract class GameWorld {
         App.getCurrentUser().setPlantFoods(0);
     }
 
-    public GameWorld() {}
+    public GameWorld() {
+    }
+
+    public void registerZombieKillListener(Runnable listener) {
+        zombieKillListeners.add(listener);
+    }
+
+    public void notifyZombieKilled() {
+        zombieKillListeners.forEach(Runnable::run);
+    }
+
+    public void registerPlantEatenListener(Runnable listener) {
+        plantEatenListeners.add(listener);
+    }
+
+    public void notifyPlantEaten() {
+        plantEatenListeners.forEach(Runnable::run);
+    }
+
+    public void registerShroom(LifespanComponent observer) {
+        smallShrooms.add(observer);
+    }
+
+    public void unregisterPuffShroom(LifespanComponent observer) {
+        smallShrooms.remove(observer);
+    }
+
+    public MupointManager getMupointManager() {
+        return mupointManager;
+    }
+
+    public void setMupointManager(MupointManager mupointManager) {
+        this.mupointManager = mupointManager;
+    }
+
+    public void triggerSmallShroomsPlantFood(PlantType type) {
+        for (LifespanComponent observer : smallShrooms) {
+            observer.onGlobalPlantFoodActivated(type);
+        }
+    }
 
     public Plant getPlantAtPosition(float x, float y) {
-        int col = (int)(x / App.getCellWidth());
-        int row = (int)(y / App.getCellHeight());
+        int col = (int) (x / App.getCellWidth());
+        int row = (int) (y / App.getCellHeight());
         if (row >= 0 && row < rows && col >= 0 && col < cols) {
-            if (Math.abs(x-grid[row][col].getX()) < App.getCellWidth()/4) {
+            if (Math.abs(x - grid[row][col].getX()) < App.getCellWidth() / 4) {
                 return grid[row][col].getPlant();
             }
         }
@@ -178,6 +202,7 @@ public abstract class GameWorld {
         currentSun -= stolen;
         return stolen;
     }
+
     public void addSunToPlayer(int amount) {
         currentSun += amount;
     }
@@ -210,7 +235,7 @@ public abstract class GameWorld {
         processZombieDeathMu(zombie);
     }
 
-    public void processZombieDeathMu(Zombie zombie){
+    public void processZombieDeathMu(Zombie zombie) {
         if (this.mupointManager != null) {
             int simultaneousKills = (int) activeZombies.stream().filter(Zombie::isDead).count();
             boolean isSplashDamage = false;
@@ -242,7 +267,8 @@ public abstract class GameWorld {
             }
         }
     }
-    private void updateAll(){
+
+    private void updateAll() {
         activePlants.forEach(Plant::update);
         activeCollectables.forEach(Collectable::update);
         List<Zombie> zombieSnapshot = new ArrayList<>(activeZombies);
@@ -255,16 +281,17 @@ public abstract class GameWorld {
             }
         }
         if (!isConveyorMode) for (PlantCard card : plantLists) card.update();
-        for (Sun sun : activeSuns){
-            if (sun.getProducer() == null && sun.isExpired()){
+        for (Sun sun : activeSuns) {
+            if (sun.getProducer() == null && sun.isExpired()) {
                 sun.collect();
             }
         }
         lawnMowerManager.updateMowers(activeZombies);
     }
-    private void removeIfDead(){
+
+    private void removeIfDead() {
         activeSuns.removeIf(sun -> {
-            if(sun.isCollected()){
+            if (sun.isCollected()) {
                 sunsPool.release(sun);
                 return true;
             }
@@ -282,21 +309,26 @@ public abstract class GameWorld {
         activeCollectables.removeIf(Collectable::isDead);
         activeObstacles.removeIf(Obstacle::isDestroyed);
         activeProjectiles.removeIf(projectile -> {
-            if(projectile.isDead()){
+            if (projectile.isDead()) {
                 projectilesPool.release(projectile);
                 return true;
             }
             return false;
         });
     }
-    public void initialize(){applyChapterRules();}
+
+    public void initialize() {
+        applyChapterRules();
+    }
+
     protected abstract void applyChapterRules();
+
     public void tick() {
         if (state != GameState.PLAYING) return;
         currentTick++;
         updateAll();
         removeIfDead();
-        for (Projectile projectile : activeProjectiles){
+        for (Projectile projectile : activeProjectiles) {
             System.out.println(projectile.getX());
         }
         for (Cell[] row : grid) {
@@ -320,12 +352,12 @@ public abstract class GameWorld {
             }
         }
         cleanupDeadZombies();
-        for(Mechanic mechanic : mechanics){
+        for (Mechanic mechanic : mechanics) {
             mechanic.applyMechanic(this);
         }
         handleWinCondition();
-        for(LoseCondition lose : loseConditions){
-            if(lose.checkLose(this)){
+        for (LoseCondition lose : loseConditions) {
+            if (lose.checkLose(this)) {
                 state = GameState.LOST;
                 GameMenuController.handleLosing(this, mupointManager);
             }
@@ -401,37 +433,115 @@ public abstract class GameWorld {
         return true;
     }
 
-    public List<Sun> getActiveSuns() { return activeSuns; }
-    public GenericObjectPool<Sun> getSunsPool() { return sunsPool; }
-    public void setSun(int sun) { currentSun = sun; }
-    public int getSun() { return currentSun; }
-    public List<Plant> getActivePlants() { return activePlants; }
-    public int getRows() { return rows; }
-    public int getCols() { return cols; }
-    public void setRows(int rows) { this.rows = rows; }
-    public void setCols(int cols) { this.cols = cols; }
-    public Cell[][] getGrid() { return grid; }
-    public void setGrid(Cell[][] grid) { this.grid = grid; }
-    public void setConveyorMode(boolean conveyorMode) { isConveyorMode = conveyorMode; }
-    public GameState getState() { return state; }
-    public void setState(GameState state) { this.state = state; }
-    public List<Zombie> getActiveZombies() { return activeZombies; }
-    public List<Damageable> getActiveTargets() { return activeTargets; }
-    public List<Projectile> getActiveProjectiles() { return activeProjectiles; }
-    public LawnMowerManager getLawnMowerManager() { return lawnMowerManager; }
-    public int getCurrentTick() { return currentTick; }
-    public long getElapsedTime() { return System.currentTimeMillis() - startTime; }
-    public void addZombie(Zombie zombie) { activeZombies.add(zombie); }
-    public void addGrave(Grave grave) { activeObstacles.add(grave); }
+    public List<Sun> getActiveSuns() {
+        return activeSuns;
+    }
+
+    public GenericObjectPool<Sun> getSunsPool() {
+        return sunsPool;
+    }
+
+    public int getSun() {
+        return currentSun;
+    }
+
+    public void setSun(int sun) {
+        currentSun = sun;
+    }
+
+    public List<Plant> getActivePlants() {
+        return activePlants;
+    }
+
+    public int getRows() {
+        return rows;
+    }
+
+    public void setRows(int rows) {
+        this.rows = rows;
+    }
+
+    public int getCols() {
+        return cols;
+    }
+
+    public void setCols(int cols) {
+        this.cols = cols;
+    }
+
+    public Cell[][] getGrid() {
+        return grid;
+    }
+
+    public void setGrid(Cell[][] grid) {
+        this.grid = grid;
+    }
+
+    public GameState getState() {
+        return state;
+    }
+
+    public void setState(GameState state) {
+        this.state = state;
+    }
+
+    public List<Zombie> getActiveZombies() {
+        return activeZombies;
+    }
+
+    public List<Damageable> getActiveTargets() {
+        return activeTargets;
+    }
+
+    public List<Projectile> getActiveProjectiles() {
+        return activeProjectiles;
+    }
+
+    public LawnMowerManager getLawnMowerManager() {
+        return lawnMowerManager;
+    }
+
+    public int getCurrentTick() {
+        return currentTick;
+    }
+
+    public long getElapsedTime() {
+        return System.currentTimeMillis() - startTime;
+    }
+
+    public void addZombie(Zombie zombie) {
+        activeZombies.add(zombie);
+    }
+
+    public void addGrave(Grave grave) {
+        activeObstacles.add(grave);
+    }
+
     public void addTarget() {
         activeTargets.addAll(activeZombies);
         activeTargets.addAll(activeObstacles);
     }
-    public GenericObjectPool<Projectile> getProjectilesPool() { return projectilesPool; }
-    public void addMechanic(Mechanic mechanic){ mechanics.add(mechanic); }
-    public List<PlantCard> getConveyorBelt() { return conveyorBelt; }
-    public List<PlantCard> getPlantLists() { return plantLists; }
-    public void setPlantLists(List<PlantCard> plantLists) { this.plantLists = plantLists; }
+
+    public GenericObjectPool<Projectile> getProjectilesPool() {
+        return projectilesPool;
+    }
+
+    public void addMechanic(Mechanic mechanic) {
+        mechanics.add(mechanic);
+    }
+
+    public List<PlantCard> getConveyorBelt() {
+        return conveyorBelt;
+    }
+
+    public List<PlantCard> getPlantLists() {
+        return plantLists;
+    }
+
+    public void setPlantLists(List<PlantCard> plantLists) {
+        this.plantLists = plantLists;
+    }
+
     public <T extends Mechanic> T getMechanic(Class<T> type) {
         return mechanics.stream()
                 .filter(m -> type.isInstance(m))
@@ -439,52 +549,116 @@ public abstract class GameWorld {
                 .findFirst()
                 .orElse(null);
     }
-    public void setPlantFoods(int plantFoods) { this.plantFoods = plantFoods; }
-    public int getPlantFoods() { return plantFoods; }
-    public ArrayList<LoseCondition> getLoseConditions() { return loseConditions; }
-    public ArrayList<Mechanic> getMechanics() { return mechanics; }
-    public boolean isConveyorMode() { return isConveyorMode; }
-    public Cell getCellAt(float x, float y) { return Cell.findCell(x,y,grid); }
-    public List<Cell> findTwoEmptyCell(boolean water){
+
+    public int getPlantFoods() {
+        return plantFoods;
+    }
+
+    public void setPlantFoods(int plantFoods) {
+        this.plantFoods = plantFoods;
+    }
+
+    public ArrayList<LoseCondition> getLoseConditions() {
+        return loseConditions;
+    }
+
+    public ArrayList<Mechanic> getMechanics() {
+        return mechanics;
+    }
+
+    public boolean isConveyorMode() {
+        return isConveyorMode;
+    }
+
+    public void setConveyorMode(boolean conveyorMode) {
+        isConveyorMode = conveyorMode;
+    }
+
+    public Cell getCellAt(float x, float y) {
+        return Cell.findCell(x, y, grid);
+    }
+
+    public List<Cell> findTwoEmptyCell(boolean water) {
         List<Cell> emptyCells = new ArrayList<>();
-        for (Cell[] cells : grid){
-            for (Cell cell : cells){
-                if (cell.isEmpty() && cell.isPlantable() && !cell.hasObstacle()){
+        for (Cell[] cells : grid) {
+            for (Cell cell : cells) {
+                if (cell.isEmpty() && cell.isPlantable() && !cell.hasObstacle()) {
                     if (water == cell.getTerrain().isWater()) emptyCells.add(cell);
                 }
             }
         }
-        if (emptyCells.size() <= 2){
+        if (emptyCells.size() <= 2) {
             return emptyCells;
         }
         Collections.shuffle(emptyCells);
         return new ArrayList<>(emptyCells.subList(0, 2));
     }
-    public boolean isSandstormActive() { return sandstormActive; }
-    public List<Collectable> getActiveCollectables() { return activeCollectables; }
-    public void setSandstormActive(boolean sandstormActive) { this.sandstormActive = sandstormActive; }
-    public LevelSetup getLevelSetup() { return levelSetup; }
-    public void setPlantingPhase(boolean plantingPhase) { this.plantingPhase = plantingPhase; }
-    public void setCurrentChapter(Chapter chapter) {this.currentChapter = chapter;}
-    public void setWillUnlockLevel(boolean willUnlockLevel) { this.willUnlockLevel = willUnlockLevel; }
-    public boolean isWillUnlockLevel() { return willUnlockLevel;}
-    public void setPlantSelected(boolean plantSelected) {isPlantSelected = plantSelected;}
-    public boolean isPlantSelected() {return isPlantSelected;}
-    public void setSelectedPlant(PlantType selectedPlant) {this.selectedPlant = selectedPlant;}
-    public PlantType getSelectedPlant() {return selectedPlant;}
+
+    public boolean isSandstormActive() {
+        return sandstormActive;
+    }
+
+    public void setSandstormActive(boolean sandstormActive) {
+        this.sandstormActive = sandstormActive;
+    }
+
+    public List<Collectable> getActiveCollectables() {
+        return activeCollectables;
+    }
+
+    public LevelSetup getLevelSetup() {
+        return levelSetup;
+    }
+
+    public void setPlantingPhase(boolean plantingPhase) {
+        this.plantingPhase = plantingPhase;
+    }
+
+    public void setCurrentChapter(Chapter chapter) {
+        this.currentChapter = chapter;
+    }
+
+    public boolean isWillUnlockLevel() {
+        return willUnlockLevel;
+    }
+
+    public void setWillUnlockLevel(boolean willUnlockLevel) {
+        this.willUnlockLevel = willUnlockLevel;
+    }
+
+    public boolean isPlantSelected() {
+        return isPlantSelected;
+    }
+
+    public void setPlantSelected(boolean plantSelected) {
+        isPlantSelected = plantSelected;
+    }
+
+    public PlantType getSelectedPlant() {
+        return selectedPlant;
+    }
+
+    public void setSelectedPlant(PlantType selectedPlant) {
+        this.selectedPlant = selectedPlant;
+    }
+
     public List<Grave> getActiveGrave() {
         List<Grave> graves = new ArrayList<>();
-        for(Obstacle o : activeObstacles) {
-            if(o instanceof Grave) {
+        for (Obstacle o : activeObstacles) {
+            if (o instanceof Grave) {
                 graves.add((Grave) o);
             }
         }
         return graves;
     }
+
     public void addProjectile(Projectile projectile) {
         if (projectile != null) {
             this.activeProjectiles.add(projectile);
         }
     }
-    public List<Obstacle> getActiveObstacles() {return activeObstacles;}
+
+    public List<Obstacle> getActiveObstacles() {
+        return activeObstacles;
+    }
 }

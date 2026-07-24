@@ -4,7 +4,7 @@ import models.plant.Plant;
 
 import java.util.List;
 
-public class CompositeBehavior implements ExplosiveBehavior{
+public class CompositeBehavior implements ExplosiveBehavior {
     private final List<ExplosiveBehavior> behaviors;
 
     public CompositeBehavior(ExplosiveBehavior... behaviors) {

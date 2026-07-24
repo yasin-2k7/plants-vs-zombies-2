@@ -13,10 +13,21 @@ public class Brain {
         this.eaten = false;
     }
 
-    public int getRow() { return row; }
-    public float getX() { return x; }
-    public float getY() { return y; }
-    public boolean isEaten() { return eaten; }
+    public int getRow() {
+        return row;
+    }
+
+    public float getX() {
+        return x;
+    }
+
+    public float getY() {
+        return y;
+    }
+
+    public boolean isEaten() {
+        return eaten;
+    }
 
     public void eat() {
         this.eaten = true;

@@ -6,6 +6,7 @@ import models.world.cellTerrains.LandTerrain;
 
 public interface LevelSetup {
     void groundSetup(GameWorld game);
+
     boolean requirePlantSelection();
 
     default void buildGrid(GameWorld world, int rows, int cols) {

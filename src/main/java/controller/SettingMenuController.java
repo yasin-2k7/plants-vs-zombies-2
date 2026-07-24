@@ -6,7 +6,7 @@ import view.terminalView.AppView;
 import view.terminalView.GameMenuView;
 import view.terminalView.MainMenuView;
 
-public class SettingMenuController implements MenuController{
+public class SettingMenuController implements MenuController {
     @Override
     public void changeMenu() {
 
@@ -17,7 +17,7 @@ public class SettingMenuController implements MenuController{
         AppView.currentScreen = MainMenuView.getInstance();
     }
 
-    public String changeDifficulty(int newLevel){
+    public String changeDifficulty(int newLevel) {
         if (newLevel < 1 || newLevel > 5) {
             return "Difficulty level must be between 1 and 5";
         }
@@ -27,7 +27,7 @@ public class SettingMenuController implements MenuController{
         return "Difficulty level changed to " + newLevel;
     }
 
-    public void showCurrentMenu(){
+    public void showCurrentMenu() {
         GameMenuView.getInstance().showResult("Current menu: settings menu");
     }
 }

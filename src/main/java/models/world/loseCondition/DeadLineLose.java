@@ -2,10 +2,10 @@ package models.world.loseCondition;
 
 import models.world.GameWorld;
 
-public class DeadLineLose implements LoseCondition{
+public class DeadLineLose implements LoseCondition {
     private int deadLineCol;
 
-    public DeadLineLose(int deadLineCol){
+    public DeadLineLose(int deadLineCol) {
         this.deadLineCol = deadLineCol;
     }
 

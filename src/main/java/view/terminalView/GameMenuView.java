@@ -7,17 +7,19 @@ import view.View;
 
 import java.util.regex.Matcher;
 
-public class GameMenuView implements View{
+public class GameMenuView implements View {
     private static GameMenuView instance;
-    public static GameMenuView getInstance(){
-        if (instance == null){
+    private GameMenuController controller;
+
+    public static GameMenuView getInstance() {
+        if (instance == null) {
             instance = new GameMenuView();
             instance.controller = new GameMenuController();
             return instance;
         }
         return instance;
     }
-    private GameMenuController controller;
+
     @Override
     public void processCommand(String command) {
         command = command.trim();
@@ -27,7 +29,7 @@ public class GameMenuView implements View{
                 switch (gameMenuCommands) {
                     case ADVANCE_TIME:
                         int count = Integer.parseInt(matcher.group("count"));
-                        if (count <= 0){
+                        if (count <= 0) {
                             System.out.println("Count must be an integer bigger than 0!");
                             return;
                         }
@@ -61,13 +63,13 @@ public class GameMenuView implements View{
                     case SELECT_PLANT:
                         type = matcher.group("type");
                         PlantType selectedType = null;
-                        for (PlantType plantType : PlantType.values()){
-                            if (plantType.name().equalsIgnoreCase(type)){
+                        for (PlantType plantType : PlantType.values()) {
+                            if (plantType.name().equalsIgnoreCase(type)) {
                                 selectedType = plantType;
                                 break;
                             }
                         }
-                        if (selectedType == null){
+                        if (selectedType == null) {
                             System.out.println("please select a valid plant");
                             return;
                         }
@@ -76,20 +78,20 @@ public class GameMenuView implements View{
                     case PLANT_SELECTED_PLANT:
                         x = Float.parseFloat(matcher.group("x"));
                         y = Float.parseFloat(matcher.group("y"));
-                        controller.plantSelectedPlant(x,y);
+                        controller.plantSelectedPlant(x, y);
                         return;
                     case PLANT_PLANT:
                         type = matcher.group("type");
                         x = Float.parseFloat(matcher.group("x"));
                         y = Float.parseFloat(matcher.group("y"));
                         selectedType = null;
-                        for (PlantType plantType : PlantType.values()){
-                            if (plantType.name().equalsIgnoreCase(type)){
+                        for (PlantType plantType : PlantType.values()) {
+                            if (plantType.name().equalsIgnoreCase(type)) {
                                 selectedType = plantType;
                                 break;
                             }
                         }
-                        if (selectedType == null){
+                        if (selectedType == null) {
                             System.out.println("please select a valid plant");
                             return;
                         }
@@ -170,13 +172,13 @@ public class GameMenuView implements View{
                     case UPGRADE_PLANT:
                         type = matcher.group("type");
                         PlantType upgradeType = null;
-                        for (PlantType plantType : PlantType.values()){
-                            if (plantType.name().equalsIgnoreCase(type)){
+                        for (PlantType plantType : PlantType.values()) {
+                            if (plantType.name().equalsIgnoreCase(type)) {
                                 upgradeType = plantType;
                                 break;
                             }
                         }
-                        if (upgradeType == null){
+                        if (upgradeType == null) {
                             System.out.println("please select a valid plant");
                             return;
                         }
@@ -198,13 +200,13 @@ public class GameMenuView implements View{
                         x = Float.parseFloat(matcher.group("x"));
                         y = Float.parseFloat(matcher.group("y"));
                         PlantType ballType = null;
-                        for (PlantType bt : PlantType.values()){
-                            if (bt.name().equalsIgnoreCase(type)){
+                        for (PlantType bt : PlantType.values()) {
+                            if (bt.name().equalsIgnoreCase(type)) {
                                 ballType = bt;
                                 break;
                             }
                         }
-                        if (ballType == null){
+                        if (ballType == null) {
                             System.out.println("please select a valid bowling ball type");
                             return;
                         }
@@ -219,7 +221,7 @@ public class GameMenuView implements View{
         System.out.println("invalid command!");
     }
 
-    public void showResult(String message){
+    public void showResult(String message) {
         System.out.println(message);
     }
 

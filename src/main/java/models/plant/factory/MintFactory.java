@@ -23,18 +23,18 @@ public class MintFactory {
 
     }
 
-    private static Plant buildMint(PlantType type){
+    private static Plant buildMint(PlantType type) {
         int level = App.getCurrentUser().getUnlockedPlantsLevels().get(type);
         boolean resetCooldown = level >= 4;
         Plant p = new Plant(type, 300, 0);
         p.addComponent(new MintComponent(type, owner -> {
-            for (Plant plant : App.getCurrentGame().getActivePlants()){
-                if (plant.getType().family == type.family){
+            for (Plant plant : App.getCurrentGame().getActivePlants()) {
+                if (plant.getType().family == type.family) {
                     plant.activatePlantFood();
                 }
             }
-            if (resetCooldown){
-                for (PlantCard card : App.getCurrentGame().getPlantLists()){
+            if (resetCooldown) {
+                for (PlantCard card : App.getCurrentGame().getPlantLists()) {
                     card.reset();
                 }
             }

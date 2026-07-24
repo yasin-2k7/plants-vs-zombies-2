@@ -13,7 +13,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class DodoRiderZombie extends Zombie {
-    private boolean isRiding;
     private static final Set<PlantType> FLY_OVER_PLANTS = new HashSet<>();
 
     static {
@@ -31,6 +30,8 @@ public class DodoRiderZombie extends Zombie {
         FLY_OVER_PLANTS.add(PlantType.ICE_SHROOM);
     }
 
+    private boolean isRiding;
+
     public DodoRiderZombie(int health, double speed, int damage) {
         super(Zombies.DODO_RIDER, health, speed, damage);
         this.isRiding = true;
@@ -46,8 +47,8 @@ public class DodoRiderZombie extends Zombie {
             return;
         }
 
-        int col = (int)(this.x / App.getCellWidth());
-        int row = (int)(this.y / App.getCellHeight());
+        int col = (int) (this.x / App.getCellWidth());
+        int row = (int) (this.y / App.getCellHeight());
         if (row < 0 || row >= game.getRows() || col < 0 || col >= game.getCols()) {
             super.update();
             return;

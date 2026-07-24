@@ -7,30 +7,32 @@ import view.View;
 import java.util.List;
 import java.util.regex.Matcher;
 
-public class LevelMenuView implements View{
+public class LevelMenuView implements View {
     private static LevelMenuView instance;
     private LevelMenuController controller;
-    public static LevelMenuView getInstance(LevelMenuController controller){
-        if (instance == null){
+
+    public LevelMenuView(LevelMenuController controller) {
+        this.controller = controller;
+    }
+
+    public static LevelMenuView getInstance(LevelMenuController controller) {
+        if (instance == null) {
             instance = new LevelMenuView(controller);
         }
         return instance;
-    }
-    public LevelMenuView(LevelMenuController controller){
-        this.controller = controller;
     }
 
     @Override
     public void processCommand(String command) {
         boolean commandFound = false;
-        for(LevelMenuCommands levelMenuCommands : LevelMenuCommands.values()) {
+        for (LevelMenuCommands levelMenuCommands : LevelMenuCommands.values()) {
             Matcher matcher = levelMenuCommands.matcher(command);
             if (matcher.matches()) {
                 commandFound = true;
-                switch (levelMenuCommands){
+                switch (levelMenuCommands) {
                     case SHOW_LEVELS:
                         List<String> levels = controller.getLevelsToShow();
-                        for(String level : levels){
+                        for (String level : levels) {
                             System.out.println(level);
                         }
                         break;
@@ -52,7 +54,7 @@ public class LevelMenuView implements View{
                 break;
             }
         }
-        if(!commandFound){
+        if (!commandFound) {
             System.out.println("invalid command in level menu.");
         }
     }

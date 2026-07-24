@@ -9,7 +9,7 @@ import models.zombie.wave.WaveManager;
 
 import java.util.List;
 
-public class ConveyorLevelSetup implements LevelSetup{
+public class ConveyorLevelSetup implements LevelSetup {
     private int rows;
     private int cols;
     private List<Wave> waves;

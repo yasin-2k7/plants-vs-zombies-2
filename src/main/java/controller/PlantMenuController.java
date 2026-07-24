@@ -21,8 +21,8 @@ public class PlantMenuController implements MenuController {
     public void changeMenu() {
     }
 
-    public void reset(){
-        maxSlots = 8-App.getCurrentGame().getPlantLists().size();
+    public void reset() {
+        maxSlots = 8 - App.getCurrentGame().getPlantLists().size();
         numberOfLockedPlantsInList = App.getCurrentGame().getPlantLists().size();
         this.imitatorTarget = null;
     }
@@ -69,7 +69,7 @@ public class PlantMenuController implements MenuController {
         }
 
         boolean gameHasThisCard = false;
-        for (PlantCard card : App.getCurrentGame().getPlantLists()){
+        for (PlantCard card : App.getCurrentGame().getPlantLists()) {
             if (card.getType() == type) {
                 gameHasThisCard = true;
                 break;
@@ -129,7 +129,7 @@ public class PlantMenuController implements MenuController {
         }
 
         boolean gameHasThisCard = false;
-        for (PlantCard card : App.getCurrentGame().getPlantLists()){
+        for (PlantCard card : App.getCurrentGame().getPlantLists()) {
             if (card.getType() == type) {
                 gameHasThisCard = true;
                 break;
@@ -137,7 +137,7 @@ public class PlantMenuController implements MenuController {
         }
 
         if (!selectedPlants.contains(type)) {
-            if (gameHasThisCard){
+            if (gameHasThisCard) {
                 return "Error: This plant can't be removed!";
             }
             return "Error: Plant is not selected.";
@@ -169,7 +169,7 @@ public class PlantMenuController implements MenuController {
         }
 
         boolean gameHasThisCard = false;
-        for (PlantCard card : App.getCurrentGame().getPlantLists()){
+        for (PlantCard card : App.getCurrentGame().getPlantLists()) {
             if (card.getType() == type) {
                 gameHasThisCard = true;
                 break;
@@ -195,7 +195,7 @@ public class PlantMenuController implements MenuController {
         if (user == null) return "Error: No user logged in.";
 
         if (selectedPlants.size() < maxSlots) {
-            return "Error: Please select " + (maxSlots-selectedPlants.size()) + " more plants";
+            return "Error: Please select " + (maxSlots - selectedPlants.size()) + " more plants";
         }
 
         for (PlantType type : selectedPlants) {
@@ -230,7 +230,7 @@ public class PlantMenuController implements MenuController {
     public void exitMenu() {
     }
 
-    public void showCurrentMenu(){
+    public void showCurrentMenu() {
         GameMenuView.getInstance().showResult("Current menu: plant menu");
     }
 }

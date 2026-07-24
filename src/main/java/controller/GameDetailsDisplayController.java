@@ -25,20 +25,23 @@ import view.terminalView.GameMenuView;
 import java.util.List;
 
 public class GameDetailsDisplayController {
-    public static void showSunAmount(){
+    public static void showSunAmount() {
         GameMenuView.getInstance().showResult("current sun amount: " + App.getCurrentGame().getSun());
     }
 
-    public static void showPlantFoodsCount(){
+    public static void showPlantFoodsCount() {
         GameMenuView.getInstance().showResult("plant foods count: " + App.getCurrentUser().getPlantFoods());
     }
 
-    private static String getCellDetails(Cell cell, int x, int y){
+    private static String getCellDetails(Cell cell, int x, int y) {
         boolean isVaseBreaker = App.getCurrentGame() instanceof VaseBreakerLevel;
         VaseBreakerLevel vbLevel = isVaseBreaker ? (VaseBreakerLevel) App.getCurrentGame() : null;
         String terrainSymbol = cell.getTerrain().getTerminalSymbol();
-        if (cell.getSlippingDir() == 1) { terrainSymbol = "🧊👇"; }
-        else if (cell.getSlippingDir() == -1) { terrainSymbol = "🧊👆";}
+        if (cell.getSlippingDir() == 1) {
+            terrainSymbol = "🧊👇";
+        } else if (cell.getSlippingDir() == -1) {
+            terrainSymbol = "🧊👆";
+        }
         if (isVaseBreaker) {
             Vase vase = vbLevel.getVaseAt(y, x);
             SeedPacket seed = vbLevel.getSeedPacketAt(y, x);
@@ -127,20 +130,21 @@ public class GameDetailsDisplayController {
         GameMenuView.getInstance().showResult("==================================================================================================");
     }
 
-    public static void showPlantsStatus(){
+    public static void showPlantsStatus() {
         if (App.getCurrentGame().isConveyorMode()) return;
-        for (PlantCard card : App.getCurrentGame().getPlantLists()){
+        for (PlantCard card : App.getCurrentGame().getPlantLists()) {
             String ticksRemaining = card.isReady() ? "" : " | ticks remaining: " + (card.getMaxCooldownTicks() - card.getCurrentCooldownTicks());
             GameMenuView.getInstance().showResult(card.getType().name() + " | Cost: " + card.getSunCost() + " | is ready: " + card.isReady() + ticksRemaining);
         }
     }
 
-    public static void showTileStatus(float x, float y){
+    public static void showTileStatus(float x, float y) {
         Cell selectedCell = null;
-        for (Cell[] cells : App.getCurrentGame().getGrid()){
-            if (!(cells[0].getY() + App.getCellHeight()/2 > y && cells[0].getY() - App.getCellHeight()/2 < y)) continue;
-            for (Cell cell : cells){
-                if ((cell.getX() + App.getCellWidth()/2 > x && cell.getX() - App.getCellWidth()/2 < x)){
+        for (Cell[] cells : App.getCurrentGame().getGrid()) {
+            if (!(cells[0].getY() + App.getCellHeight() / 2 > y && cells[0].getY() - App.getCellHeight() / 2 < y))
+                continue;
+            for (Cell cell : cells) {
+                if ((cell.getX() + App.getCellWidth() / 2 > x && cell.getX() - App.getCellWidth() / 2 < x)) {
                     selectedCell = cell;
                     break;
                 }
@@ -151,15 +155,15 @@ public class GameDetailsDisplayController {
             return;
         }
         GameMenuView.getInstance().showResult("plants in this tile:");
-        for (PlantLayer layer : PlantLayer.values()){
+        for (PlantLayer layer : PlantLayer.values()) {
             Plant p = selectedCell.getPlant(layer);
-            if (p != null){
+            if (p != null) {
                 GameMenuView.getInstance().showResult(p.getType().name() + " | health: " + p.getHealth() + " | damage: " + p.getDamage());
             }
         }
         GameMenuView.getInstance().showResult("zombies in this tile:");
-        for (Zombie zombie : Cell.getZombiesInCells(List.of(selectedCell))){
-            GameMenuView.getInstance().showResult(App.getArmoredZombieName(zombie.getSpecificName()) + " | health: " + zombie.getHealth() + " | damage: "+ zombie.getDamage());
+        for (Zombie zombie : Cell.getZombiesInCells(List.of(selectedCell))) {
+            GameMenuView.getInstance().showResult(App.getArmoredZombieName(zombie.getSpecificName()) + " | health: " + zombie.getHealth() + " | damage: " + zombie.getDamage());
         }
     }
 

@@ -36,5 +36,8 @@ public enum ProjectileType {
 
 
     public final String movement;
-    ProjectileType(String movement) {this.movement = movement;}
+
+    ProjectileType(String movement) {
+        this.movement = movement;
+    }
 }

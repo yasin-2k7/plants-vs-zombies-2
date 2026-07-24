@@ -28,13 +28,13 @@ public class WallNutFactory {
         registry.put(PlantType.SUN_BEAN, WallNutFactory::buildSunBean);
     }
 
-    private static Plant buildWallNut(){
+    private static Plant buildWallNut() {
         int level = App.getCurrentUser().getUnlockedPlantsLevels().get(PlantType.WALL_NUT);
         int health = 4000;
         if (level >= 2) health += 1000;
         if (level >= 4) health += 1500;
         Plant p = new Plant(PlantType.WALL_NUT, health, 0);
-        p.addComponent(new WallNutsComponent(){
+        p.addComponent(new WallNutsComponent() {
             @Override
             public void activatePlantFood(Plant owner) {
                 ArmorComponent armor = p.getComponent(ArmorComponent.class);
@@ -48,13 +48,13 @@ public class WallNutFactory {
         return p;
     }
 
-    private static Plant buildTallNut(){
+    private static Plant buildTallNut() {
         int level = App.getCurrentUser().getUnlockedPlantsLevels().get(PlantType.TALL_NUT);
         int health = 8000;
         if (level >= 2) health += 2000;
         if (level >= 4) health += 3000;
         Plant p = new Plant(PlantType.TALL_NUT, health, 0);
-        p.addComponent(new WallNutsComponent(){
+        p.addComponent(new WallNutsComponent() {
             @Override
             public void activatePlantFood(Plant owner) {
                 ArmorComponent armor = p.getComponent(ArmorComponent.class);
@@ -68,17 +68,18 @@ public class WallNutFactory {
         return p;
     }
 
-    private static Plant buildEndurian(){
+    private static Plant buildEndurian() {
         int level = App.getCurrentUser().getUnlockedPlantsLevels().get(PlantType.ENDURIAN);
         int health = (level >= 3) ? 4000 : 3000;
         int damage = (level >= 2) ? 25 : 20;
         Plant p = new Plant(PlantType.ENDURIAN, health, damage);
-        p.addComponent(new WallNutsComponent(){
+        p.addComponent(new WallNutsComponent() {
             @Override
             public int onTakeDamage(Plant owner, int damageAmount, Zombie attacker) {
                 attacker.takeDamage(owner.getDamage(), "NORMAL");
                 return 0;
             }
+
             @Override
             public void activatePlantFood(Plant owner) {
                 ArmorComponent armor = p.getComponent(ArmorComponent.class);
@@ -94,7 +95,7 @@ public class WallNutFactory {
         return p;
     }
 
-    private static Plant buildGarlic(){
+    private static Plant buildGarlic() {
         int level = App.getCurrentUser().getUnlockedPlantsLevels().get(PlantType.GARLIC);
         int health = 300;
         if (level >= 2) health += 150;
@@ -104,7 +105,7 @@ public class WallNutFactory {
         return p;
     }
 
-    private static Plant buildSweetPotato(){
+    private static Plant buildSweetPotato() {
         int level = App.getCurrentUser().getUnlockedPlantsLevels().get(PlantType.SWEET_POTATO);
         int health = 3000;
         if (level >= 2) health += 1000;
@@ -114,7 +115,7 @@ public class WallNutFactory {
         return p;
     }
 
-    private static Plant buildExplodeONut(){
+    private static Plant buildExplodeONut() {
         int level = App.getCurrentUser().getUnlockedPlantsLevels().get(PlantType.EXPLODE_O_NUT);
         int health = (level >= 2) ? 5000 : 4000;
         int damage = (level >= 3) ? 2000 : 1800;
@@ -124,11 +125,11 @@ public class WallNutFactory {
             public void activatePlantFood(Plant owner) {
                 ArmorComponent armor = p.getComponent(ArmorComponent.class);
                 if (armor == null) {
-                    p.addComponent(new ArmorComponent(4000){
+                    p.addComponent(new ArmorComponent(4000) {
                         @Override
                         protected void onDestroy(Plant owner) {
                             ExplosivesComponent explosivesComponent = new ExplosivesComponent(InstantTrigger.INSTANCE,
-                                                new AreaDamageBehavior(damage, new CircularRange(1)), 0);
+                                    new AreaDamageBehavior(damage, new CircularRange(1)), 0);
                             explosivesComponent.setPostTriggerDelay(0);
                             explosivesComponent.update(owner);
                         }
@@ -137,10 +138,11 @@ public class WallNutFactory {
                     armor.setArmorHp(4000);
                 }
             }
+
             @Override
             public void onDeath(Plant owner) {
                 ExplosivesComponent explosivesComponent = new ExplosivesComponent(InstantTrigger.INSTANCE,
-                                    new AreaDamageBehavior(damage, new CircularRange(1)), 0);
+                        new AreaDamageBehavior(damage, new CircularRange(1)), 0);
                 explosivesComponent.setPostTriggerDelay(0);
                 explosivesComponent.update(owner);
             }
@@ -148,13 +150,13 @@ public class WallNutFactory {
         return p;
     }
 
-    private static Plant buildPumpkin(){
+    private static Plant buildPumpkin() {
         int level = App.getCurrentUser().getUnlockedPlantsLevels().get(PlantType.PUMPKIN);
         int health = 4000;
         if (level >= 2) health += 1000;
         if (level >= 4) health += 1500;
         Plant p = new Plant(PlantType.PUMPKIN, health, 0);
-        p.addComponent(new WallNutsComponent(){
+        p.addComponent(new WallNutsComponent() {
             @Override
             public void activatePlantFood(Plant owner) {
                 ArmorComponent armor = p.getComponent(ArmorComponent.class);
@@ -169,7 +171,7 @@ public class WallNutFactory {
         return p;
     }
 
-    private static Plant buildSunBean(){
+    private static Plant buildSunBean() {
         int level = App.getCurrentUser().getUnlockedPlantsLevels().get(PlantType.SUN_BEAN);
         int health = (level >= 3) ? 1000 : 1150;
         int sunSize = (level >= 2) ? 10 : 5;

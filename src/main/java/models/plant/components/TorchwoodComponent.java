@@ -22,14 +22,13 @@ public class TorchwoodComponent implements GameComponent {
 
     @Override
     public void update(Plant owner) {
-        for (Projectile projectile : App.getCurrentGame().getActiveProjectiles()){
-            if (Cell.findCell(projectile.getX(), projectile.getY(), LevelMenuController.getGameCells()) == owner.getCell()){
-                if (projectile.getType().equals(ProjectileType.PEA)){
+        for (Projectile projectile : App.getCurrentGame().getActiveProjectiles()) {
+            if (Cell.findCell(projectile.getX(), projectile.getY(), LevelMenuController.getGameCells()) == owner.getCell()) {
+                if (projectile.getType().equals(ProjectileType.PEA)) {
                     projectile.setType(ProjectileType.FIRE_PEA);
                     projectile.getHitStrategy().setElement("FIRE");
                     projectile.getHitStrategy().increaseDamage(factor);
-                }
-                else if (projectile.getType().equals(ProjectileType.ICE_PEA)){
+                } else if (projectile.getType().equals(ProjectileType.ICE_PEA)) {
                     projectile.setType(ProjectileType.PEA);
                     projectile.getHitStrategy().setElement(null);
                 }
@@ -45,7 +44,7 @@ public class TorchwoodComponent implements GameComponent {
 
     @Override
     public void onDeath(Plant owner) {
-        if (explodeOnDeath){
+        if (explodeOnDeath) {
             ExplosivesComponent explosivesComponent = new ExplosivesComponent(InstantTrigger.INSTANCE,
                     new AreaDamageBehavior(200, new CircularRange(1)), 0);
             explosivesComponent.setPostTriggerDelay(0);

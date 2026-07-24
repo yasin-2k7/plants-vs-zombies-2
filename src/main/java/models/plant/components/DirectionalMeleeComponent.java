@@ -28,14 +28,14 @@ public class DirectionalMeleeComponent implements GameComponent {
         if (lastAttackTick >= attackIntervalTicks) {
             List<Zombie> targets;
             if ((targets = checkRight(owner)) != null) {
-                if (!targets.isEmpty()){
+                if (!targets.isEmpty()) {
                     attack(targets);
                     lastAttackTick = 0;
                     return;
                 }
             }
             if ((targets = checkLeft(owner)) != null) {
-                if (!targets.isEmpty()){
+                if (!targets.isEmpty()) {
                     attack(targets);
                     lastAttackTick = 0;
                 }
@@ -50,8 +50,8 @@ public class DirectionalMeleeComponent implements GameComponent {
         List<Cell> cells = Cell.getCellsInRow(cell, LevelMenuController.getGameCells());
         List<Zombie> rowZombies = Cell.getZombiesInCells(cells);
         List<Zombie> targets = new ArrayList<>();
-        for (Zombie zombie : rowZombies){
-            if (zombie.getX() >= owner.getX() && zombie.getX() - owner.getX() <= rangeX){
+        for (Zombie zombie : rowZombies) {
+            if (zombie.getX() >= owner.getX() && zombie.getX() - owner.getX() <= rangeX) {
                 targets.add(zombie);
             }
         }
@@ -65,8 +65,8 @@ public class DirectionalMeleeComponent implements GameComponent {
         List<Cell> cells = Cell.getCellsInRow(cell, LevelMenuController.getGameCells());
         List<Zombie> rowZombies = Cell.getZombiesInCells(cells);
         List<Zombie> targets = new ArrayList<>();
-        for (Zombie zombie : rowZombies){
-            if (zombie.getX() <= owner.getX() && owner.getX() - zombie.getX() <= rangeX){
+        for (Zombie zombie : rowZombies) {
+            if (zombie.getX() <= owner.getX() && owner.getX() - zombie.getX() <= rangeX) {
                 targets.add(zombie);
             }
         }
@@ -74,7 +74,7 @@ public class DirectionalMeleeComponent implements GameComponent {
     }
 
     private void attack(List<Zombie> targets) {
-        for (Zombie zombie : targets){
+        for (Zombie zombie : targets) {
             zombie.takeDamage(damage, "NORMAL");
         }
     }

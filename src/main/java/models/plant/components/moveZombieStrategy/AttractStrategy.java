@@ -6,7 +6,7 @@ import models.plant.Plant;
 import models.world.Cell;
 import models.zombie.Zombie;
 
-public class AttractStrategy implements MoveZombieStrategy{
+public class AttractStrategy implements MoveZombieStrategy {
     @Override
     public void onUpdate(Plant owner) {
         float plantX = owner.getX();

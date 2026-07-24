@@ -6,19 +6,11 @@ import models.enums.CollectableType;
 import models.world.Collectable;
 import models.world.GameWorld;
 
-public class Grave extends Obstacle{
-    public enum GraveType {
-        NORMAL,
-        SUN,
-        PLANT_FOOD
-    }
-
+public class Grave extends Obstacle {
     private GraveType type;
     private boolean isCollected = false;
-
     private int row;
     private int col;
-
     public Grave(float x, float y, int row, int col, GraveType type) {
         super(x, y, 700);
         this.row = row;
@@ -26,16 +18,30 @@ public class Grave extends Obstacle{
         this.type = type;
     }
 
-    public int getRow() { return row; }
-    public int getCol() { return col; }
+    public int getRow() {
+        return row;
+    }
 
-    public GraveType getType() { return type; }
-    public boolean isCollected() { return isCollected; }
-    public void setCollected(boolean collected) { isCollected = collected; }
+    public int getCol() {
+        return col;
+    }
+
+    public GraveType getType() {
+        return type;
+    }
+
+    public boolean isCollected() {
+        return isCollected;
+    }
+
+    public void setCollected(boolean collected) {
+        isCollected = collected;
+    }
 
     public boolean blocksProjectiles() {
         return !isDestroyed;
     }
+
     @Override
     public void takeDamage(int amount, String type) {
         if (isDestroyed) return;
@@ -62,6 +68,12 @@ public class Grave extends Obstacle{
             }
         }
         isCollected = true;
+    }
+
+    public enum GraveType {
+        NORMAL,
+        SUN,
+        PLANT_FOOD
     }
 
 }

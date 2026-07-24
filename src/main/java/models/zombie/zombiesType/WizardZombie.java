@@ -12,9 +12,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class WizardZombie extends Zombie {
+    private static final int COOLDOWN_MAX = 20;
     private List<Plant> transformedPlants;
     private int cooldown;
-    private static final int COOLDOWN_MAX = 20;
 
     public WizardZombie(int health, double speed, int damage) {
         super(Zombies.WIZARD, health, speed, damage);

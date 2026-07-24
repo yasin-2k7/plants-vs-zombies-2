@@ -6,7 +6,7 @@ import models.world.Cell;
 
 import java.util.List;
 
-public class SingleTargetDamageBehavior implements ExplosiveBehavior{
+public class SingleTargetDamageBehavior implements ExplosiveBehavior {
     private ExplosionRange area;
 
     public SingleTargetDamageBehavior(ExplosionRange area) {

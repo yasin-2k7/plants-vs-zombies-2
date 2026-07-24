@@ -44,12 +44,12 @@ public class ChomperMeleeComponent implements GameComponent {
         List<Cell> cells = Cell.getCellsInRow(cell, LevelMenuController.getGameCells());
         List<Zombie> rowZombies = Cell.getZombiesInCells(cells);
         List<Zombie> targets = new ArrayList<>();
-        for (Zombie zombie : rowZombies){
-            if (zombie.getX() >= owner.getX() && zombie.getX() - owner.getX() <= App.getCellWidth()*1.5f){
+        for (Zombie zombie : rowZombies) {
+            if (zombie.getX() >= owner.getX() && zombie.getX() - owner.getX() <= App.getCellWidth() * 1.5f) {
                 targets.add(zombie);
             }
         }
-        if (!targets.isEmpty()){
+        if (!targets.isEmpty()) {
             return targets.getFirst();
         }
         return null;

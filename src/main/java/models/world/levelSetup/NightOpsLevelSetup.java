@@ -7,12 +7,12 @@ import models.zombie.wave.WaveManager;
 
 import java.util.List;
 
-public class NightOpsLevelSetup implements LevelSetup{
+public class NightOpsLevelSetup implements LevelSetup {
     private int rows;
     private int cols;
     private List<Wave> waves;
 
-    public NightOpsLevelSetup(int rows, int cols, List<Wave> waves){
+    public NightOpsLevelSetup(int rows, int cols, List<Wave> waves) {
         this.rows = rows;
         this.cols = cols;
         this.waves = waves;

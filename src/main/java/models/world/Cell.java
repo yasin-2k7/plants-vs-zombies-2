@@ -21,7 +21,6 @@ import java.util.Arrays;
 import java.util.List;
 
 
-
 public class Cell {
     private int row;
     private int col;
@@ -43,9 +42,96 @@ public class Cell {
     public Cell(int row, int col, CellTerrain initialTerrain) {
         this.row = row;
         this.col = col;
-        x = (col) * App.getCellWidth() + App.getCellWidth()/2;
-        y = (row) * App.getCellHeight() + App.getCellHeight()/2;
+        x = (col) * App.getCellWidth() + App.getCellWidth() / 2;
+        y = (row) * App.getCellHeight() + App.getCellHeight() / 2;
         this.terrain = initialTerrain;
+    }
+
+    public static Cell findCell(float x, float y, Cell[][] grid) {
+        for (Cell[] cellRows : grid) {
+            for (Cell cell : cellRows) {
+                if (cell.containsX(x) && cell.containsY(y)) {
+                    return cell;
+                }
+            }
+        }
+        return null;
+
+    }
+
+    public static List<Cell> getNeighborCells(Cell inputCell, Cell[][] grid, int radius) {
+        List<Cell> neighbors = new ArrayList<>();
+
+        int centerCol = inputCell.getCol();
+        int centerLane = inputCell.getRow();
+
+        int totalLanes = grid.length;
+        int totalCols = grid[0].length;
+
+        int minLane = Math.max(0, centerLane - radius);
+        int maxLane = Math.min(totalLanes - 1, centerLane + radius);
+
+        int minCol = Math.max(0, centerCol - radius);
+        int maxCol = Math.min(totalCols - 1, centerCol + radius);
+
+        for (int l = minLane; l <= maxLane; l++) {
+            neighbors.addAll(Arrays.asList(grid[l]).subList(minCol, maxCol + 1));
+        }
+
+        return neighbors;
+    }
+
+    public static List<Cell> getCellsInRow(Cell inputCell, Cell[][] grid) {
+        return new ArrayList<>(Arrays.asList(grid[inputCell.getRow()]).subList(0, grid[0].length));
+    }
+
+    public static List<Zombie> getZombiesInCells(List<Cell> affectedCells) {
+        List<Zombie> activeZombies = App.getCurrentGame().getActiveZombies();
+
+        return activeZombies.stream()
+                .filter(zombie -> affectedCells.stream().anyMatch(cell ->
+                        zombie.getY() == cell.getY() &&
+                                cell.containsX(zombie.getX())
+                ))
+                .toList();
+    }
+
+    public static List<Zombie> getZombiesInCell(Cell affectedCell) {
+        List<Zombie> activeZombies = App.getCurrentGame().getActiveZombies();
+
+        return activeZombies.stream()
+                .filter(zombie ->
+                        zombie.getY() == affectedCell.getY() &&
+                                affectedCell.containsX(zombie.getX())
+                )
+                .toList();
+    }
+
+    public static Cell findZombieCell(Cell[][] grid, Zombie zombie) {
+        for (Cell[] cellRows : grid) {
+            for (Cell cell : cellRows) {
+                if (cell.containsX(zombie.getX()) && cell.getY() == zombie.getY()) {
+                    return cell;
+                }
+            }
+        }
+        return null;
+    }
+
+    public static Cell nextCell(Cell origin, Cell[][] grid) {
+        int row = origin.getRow();
+        if (origin.getCol() >= grid[0].length - 1) {
+            return null;
+        }
+        return grid[row][origin.getCol() + 1];
+    }
+
+    public static Cell previousCell(Cell origin, Cell[][] grid) {
+        int row = origin.getRow();
+        if (origin.getCol() <= 0) {
+            return null;
+        }
+        return grid[row][origin.getCol() - 1];
     }
 
     public boolean isLayerEmpty(PlantLayer layer) {
@@ -79,32 +165,30 @@ public class Cell {
         return null;
     }
 
-    public Plant getPlant(){
-        if (shieldPlant != null){
+    public Plant getPlant() {
+        if (shieldPlant != null) {
             return shieldPlant;
-        }
-        else if (mainPlant != null){
+        } else if (mainPlant != null) {
             return mainPlant;
-        }
-        else {
+        } else {
             return basePlant;
         }
     }
 
-    public boolean isEmpty(){
+    public boolean isEmpty() {
         return basePlant == null && mainPlant == null && shieldPlant == null;
     }
 
-    public String handlePlanting(PlantType type, boolean boost){
+    public String handlePlanting(PlantType type, boolean boost) {
         if (!this.isPlantable()) {
             if (!(this.obstacle instanceof Grave && type == PlantType.GRAVE_BUSTER))
                 return "you cannot plant in that place!";
         }
-        Plant newPlant = PlantFactory.createPlant(type, (int)x, (int)y, this);
+        Plant newPlant = PlantFactory.createPlant(type, (int) x, (int) y, this);
         if (boost) newPlant.setPlantFoodInStart(true);
         if (((this.obstacle instanceof Grave) != (type == PlantType.GRAVE_BUSTER))
-           || !(this.terrain.canPlant(newPlant, this))
-           || (this.hasIcyZombie())){
+                || !(this.terrain.canPlant(newPlant, this))
+                || (this.hasIcyZombie())) {
             return "you cannot plant in that place!";
         }
         PlacementBehaviorComponent behavior = newPlant.getComponent(PlacementBehaviorComponent.class);
@@ -150,100 +234,11 @@ public class Cell {
         return handlePlanting(type, false);
     }
 
-    public static Cell findCell(float x, float y, Cell[][] grid){
-        for (Cell[] cellRows : grid){
-            for (Cell cell : cellRows){
-                if (cell.containsX(x) && cell.containsY(y)){
-                    return cell;
-                }
-            }
-        }
-        return null;
-
-    }
-
-    public static List<Cell> getNeighborCells(Cell inputCell, Cell[][] grid, int radius) {
-        List<Cell> neighbors = new ArrayList<>();
-
-        int centerCol = inputCell.getCol();
-        int centerLane = inputCell.getRow();
-
-        int totalLanes = grid.length;
-        int totalCols = grid[0].length;
-
-        int minLane = Math.max(0, centerLane - radius);
-        int maxLane = Math.min(totalLanes - 1, centerLane + radius);
-
-        int minCol = Math.max(0, centerCol - radius);
-        int maxCol = Math.min(totalCols - 1, centerCol + radius);
-
-        for (int l = minLane; l <= maxLane; l++) {
-            neighbors.addAll(Arrays.asList(grid[l]).subList(minCol, maxCol + 1));
-        }
-
-        return neighbors;
-    }
-
-    public static List<Cell> getCellsInRow(Cell inputCell, Cell[][] grid){
-        return new ArrayList<>(Arrays.asList(grid[inputCell.getRow()]).subList(0, grid[0].length));
-    }
-
-    public static List<Zombie> getZombiesInCells(List<Cell> affectedCells) {
-        List<Zombie> activeZombies = App.getCurrentGame().getActiveZombies();
-
-        return activeZombies.stream()
-                .filter(zombie -> affectedCells.stream().anyMatch(cell ->
-                        zombie.getY() == cell.getY() &&
-                                cell.containsX(zombie.getX())
-                ))
-                .toList();
-    }
-
-    public static List<Zombie> getZombiesInCell(Cell affectedCell) {
-        List<Zombie> activeZombies = App.getCurrentGame().getActiveZombies();
-
-        return activeZombies.stream()
-                .filter(zombie ->
-                        zombie.getY() == affectedCell.getY() &&
-                                affectedCell.containsX(zombie.getX())
-                )
-                .toList();
-    }
-
-    public static Cell findZombieCell(Cell[][] grid, Zombie zombie){
-        for (Cell[] cellRows : grid){
-            for (Cell cell : cellRows){
-                if (cell.containsX(zombie.getX()) && cell.getY() == zombie.getY()){
-                    return cell;
-                }
-            }
-        }
-        return null;
-    }
-
-    public static Cell nextCell(Cell origin, Cell[][] grid){
-        int row = origin.getRow();
-        if (origin.getCol() >= grid[0].length - 1) {
-            return null;
-        }
-        return grid[row][origin.getCol() + 1];
-    }
-
-    public static Cell previousCell(Cell origin, Cell[][] grid){
-        int row = origin.getRow();
-        if (origin.getCol() <= 0) {
-            return null;
-        }
-        return grid[row][origin.getCol() - 1];
-    }
-
-
-
-    public void removePlant(){
+    public void removePlant() {
         this.mainPlant = null;
     }
 
-    public Plant findPlant(){
+    public Plant findPlant() {
         if (this.shieldPlant != null) {
             return this.shieldPlant;
         }
@@ -256,7 +251,7 @@ public class Cell {
         return null;
     }
 
-    public boolean findAndRemovePlant(){
+    public boolean findAndRemovePlant() {
         if (this.shieldPlant != null) {
             this.shieldPlant.die();
             this.shieldPlant = null;
@@ -275,12 +270,12 @@ public class Cell {
         return false;
     }
 
-    public boolean containsX(float x){
-        return (x > this.x - App.getCellWidth()/2 && x <= this.x + App.getCellWidth()/2);
+    public boolean containsX(float x) {
+        return (x > this.x - App.getCellWidth() / 2 && x <= this.x + App.getCellWidth() / 2);
     }
 
-    public boolean containsY(float y){
-        return (y > this.y - App.getCellHeight()/2 && y <= this.y + App.getCellHeight()/2);
+    public boolean containsY(float y) {
+        return (y > this.y - App.getCellHeight() / 2 && y <= this.y + App.getCellHeight() / 2);
     }
 
     public int getRow() {
@@ -299,13 +294,20 @@ public class Cell {
         return y;
     }
 
-    public boolean hasObstacle() { return obstacle != null; }
-    public Obstacle getObstacle() { return obstacle; }
-    public void setObstacle(Obstacle obstacle) { this.obstacle = obstacle; }
-    public void removeObstacle() { this.obstacle = null; }
+    public boolean hasObstacle() {
+        return obstacle != null;
+    }
 
-    public void setTerrain(CellTerrain terrain) {
-        this.terrain = terrain;
+    public Obstacle getObstacle() {
+        return obstacle;
+    }
+
+    public void setObstacle(Obstacle obstacle) {
+        this.obstacle = obstacle;
+    }
+
+    public void removeObstacle() {
+        this.obstacle = null;
     }
 
     public boolean canPlant(Plant plant) {
@@ -328,6 +330,10 @@ public class Cell {
         return terrain;
     }
 
+    public void setTerrain(CellTerrain terrain) {
+        this.terrain = terrain;
+    }
+
     public boolean blocksProjectile() {
         if (hasObstacle() && obstacle.blocksProjectiles()) {
             if (obstacle instanceof OctopusObstacle) {
@@ -338,10 +344,21 @@ public class Cell {
         return false;
     }
 
-    public boolean isNecromancyPotential() { return necromancyPotential; }
-    public void setNecromancyPotential(boolean value) { this.necromancyPotential = value; }
-    public boolean isNecromancyTriggered() { return necromancyTriggered; }
-    public void setNecromancyTriggered(boolean value) { this.necromancyTriggered = value; }
+    public boolean isNecromancyPotential() {
+        return necromancyPotential;
+    }
+
+    public void setNecromancyPotential(boolean value) {
+        this.necromancyPotential = value;
+    }
+
+    public boolean isNecromancyTriggered() {
+        return necromancyTriggered;
+    }
+
+    public void setNecromancyTriggered(boolean value) {
+        this.necromancyTriggered = value;
+    }
 
 
     public boolean isLowLyingCoast() {
@@ -356,14 +373,14 @@ public class Cell {
         return slippingDir;
     }
 
-    public boolean hasIcyZombie(){
-        for (Zombie zombie: Cell.getZombiesInCell(this)){
+    public void setSlippingDir(int slippingDir) {
+        this.slippingDir = slippingDir;
+    }
+
+    public boolean hasIcyZombie() {
+        for (Zombie zombie : Cell.getZombiesInCell(this)) {
             if (zombie.getIceHealth() > 0) return true;
         }
         return false;
-    }
-
-    public void setSlippingDir(int slippingDir) {
-        this.slippingDir = slippingDir;
     }
 }

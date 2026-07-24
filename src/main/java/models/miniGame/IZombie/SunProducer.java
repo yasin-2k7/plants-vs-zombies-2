@@ -18,13 +18,13 @@ public class SunProducer extends Zombie {
         this.lastSunProduceTick = 0;
     }
 
-    public void initSpawnTick(long currentTick){
+    public void initSpawnTick(long currentTick) {
         this.spawnTick = currentTick;
         this.lastSunProduceTick = currentTick;
         this.initialized = true;
     }
 
-    public int calculateSunAmount(long currentTick){
+    public int calculateSunAmount(long currentTick) {
         long elapsedTicks = currentTick - spawnTick;
         return 15 + (int) (elapsedTicks / 100) * 5;
     }
@@ -46,7 +46,7 @@ public class SunProducer extends Zombie {
             health -= amount;
             if (health < 0) health = 0;
             this.isDead = true;
-        }else {
+        } else {
             super.takeDamage(amount, damageType);
         }
     }

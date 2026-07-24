@@ -9,27 +9,28 @@ import java.util.regex.Matcher;
 public class ProfileMenuView implements View {
     private static ProfileMenuView instance;
     private ProfileMenuController controller;
-    public static ProfileMenuView getInstance(ProfileMenuController controller){
-        if (instance == null){
+    private String result;
+
+    public ProfileMenuView(ProfileMenuController controller) {
+        this.controller = controller;
+    }
+
+    public static ProfileMenuView getInstance(ProfileMenuController controller) {
+        if (instance == null) {
             instance = new ProfileMenuView(controller);
             return instance;
         }
         return instance;
     }
 
-    public ProfileMenuView(ProfileMenuController controller){
-        this.controller = controller;
-    }
-    private String result;
-
     @Override
     public void processCommand(String command) {
         boolean commandFound = false;
-        for(ProfileMenuCommands profileMenuCommands : ProfileMenuCommands.values()) {
+        for (ProfileMenuCommands profileMenuCommands : ProfileMenuCommands.values()) {
             Matcher matcher = profileMenuCommands.matcher(command);
             if (matcher.matches()) {
                 commandFound = true;
-                switch (profileMenuCommands){
+                switch (profileMenuCommands) {
                     case MENU_SHOW_CURRENT:
                         controller.showCurrentMenu();
                         break;
@@ -61,7 +62,7 @@ public class ProfileMenuView implements View {
                 break;
             }
         }
-        if(!commandFound){
+        if (!commandFound) {
             System.out.println("invalid command in profile menu");
         }
     }

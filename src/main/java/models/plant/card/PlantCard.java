@@ -16,24 +16,24 @@ public class PlantCard {
         this.maxCooldownTicks = maxCooldownTicks;
     }
 
-    public void update(){
+    public void update() {
         if (!activeCooldown) return;
         if (ready) return;
         currentCooldownTicks++;
 
-        if (currentCooldownTicks >= maxCooldownTicks){
+        if (currentCooldownTicks >= maxCooldownTicks) {
 
             ready = true;
             currentCooldownTicks = 0;
         }
     }
 
-    public void deactivateCooldown(){
+    public void deactivateCooldown() {
         ready = true;
         activeCooldown = false;
     }
 
-    public void setActiveCooldown(){
+    public void setActiveCooldown() {
         activeCooldown = true;
     }
 
@@ -50,7 +50,7 @@ public class PlantCard {
         this.ready = ready;
     }
 
-    public void reset(){
+    public void reset() {
         ready = true;
         currentCooldownTicks = 0;
     }
@@ -59,12 +59,12 @@ public class PlantCard {
         return sunCost;
     }
 
-    public int getMaxCooldownTicks() {
-        return maxCooldownTicks;
-    }
-
     public void setSunCost(int sunCost) {
         this.sunCost = sunCost;
+    }
+
+    public int getMaxCooldownTicks() {
+        return maxCooldownTicks;
     }
 
     public void setMaxCooldownTicks(int maxCooldownTicks) {

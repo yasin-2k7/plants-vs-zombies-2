@@ -6,7 +6,7 @@ import view.View;
 
 import java.util.regex.Matcher;
 
-public class SettingMenuView implements View{
+public class SettingMenuView implements View {
     private static SettingMenuView instance;
     private SettingMenuController controller;
 
@@ -14,21 +14,22 @@ public class SettingMenuView implements View{
         this.controller = controller;
     }
 
-    public static SettingMenuView getInstance(SettingMenuController controller){
-        if (instance == null){
+    public static SettingMenuView getInstance(SettingMenuController controller) {
+        if (instance == null) {
             instance = new SettingMenuView(controller);
             return instance;
         }
         return instance;
     }
+
     @Override
     public void processCommand(String command) {
         boolean commandFound = false;
-        for(SettingMenuCommands settingMenuCommands : SettingMenuCommands.values()) {
+        for (SettingMenuCommands settingMenuCommands : SettingMenuCommands.values()) {
             Matcher matcher = settingMenuCommands.matcher(command);
             if (matcher.matches()) {
                 commandFound = true;
-                switch (settingMenuCommands){
+                switch (settingMenuCommands) {
                     case MENU_EXIT:
                         controller.exitMenu();
                         break;
@@ -43,7 +44,7 @@ public class SettingMenuView implements View{
                 break;
             }
         }
-        if(!commandFound){
+        if (!commandFound) {
             System.out.println("invalid command in settings menu");
         }
     }

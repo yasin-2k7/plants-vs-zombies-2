@@ -16,7 +16,7 @@ import java.awt.*;
 import java.util.List;
 import java.util.Map;
 
-public class SaveOurSeedsLevelSetup implements LevelSetup{
+public class SaveOurSeedsLevelSetup implements LevelSetup {
     private int rows;
     private int cols;
     private List<Wave> waves;
@@ -41,7 +41,7 @@ public class SaveOurSeedsLevelSetup implements LevelSetup{
                 grid[r][c] = new Cell(r, c, new LandTerrain());
         world.setGrid(grid);
 
-        for(Map.Entry<Point, PlantType> entry : protectedPlants.entrySet()){
+        for (Map.Entry<Point, PlantType> entry : protectedPlants.entrySet()) {
             int row = (int) entry.getKey().getY();
             int col = (int) entry.getKey().getX();
 

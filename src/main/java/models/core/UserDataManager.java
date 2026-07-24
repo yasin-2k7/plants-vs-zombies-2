@@ -39,8 +39,8 @@ public class UserDataManager {
         }
     }
 
-    public static boolean saveUser(User user){
-        if(user == null || user.getUsername() == null) return false;
+    public static boolean saveUser(User user) {
+        if (user == null || user.getUsername() == null) return false;
 
         File userFile = new File(USERS_DIR + user.getUsername() + ".json");
 
@@ -53,23 +53,23 @@ public class UserDataManager {
         }
     }
 
-    public static User loadUser(String username){
+    public static User loadUser(String username) {
         File userFile = new File(USERS_DIR + username + ".json");
 
-        if(!userFile.exists()){
+        if (!userFile.exists()) {
             return null;
         }
 
-            try (FileReader reader = new FileReader(userFile)) {
-                User user = GSON.fromJson(reader, User.class);
-                if (user != null) {
-                    user.afterLoad();
-                }
-                return user;
-            } catch (IOException e) {
-                GameMenuController.updateState("read error: " + e.getMessage());
-                return null;
+        try (FileReader reader = new FileReader(userFile)) {
+            User user = GSON.fromJson(reader, User.class);
+            if (user != null) {
+                user.afterLoad();
             }
+            return user;
+        } catch (IOException e) {
+            GameMenuController.updateState("read error: " + e.getMessage());
+            return null;
+        }
     }
 
     public static List<User> loadAllUsers() {
@@ -95,12 +95,12 @@ public class UserDataManager {
         return users;
     }
 
-    public static boolean userExists(String username){
+    public static boolean userExists(String username) {
         return new File(USERS_DIR + username +
                 ".json").exists();
     }
 
-    public static void saveLoggedInUser(String username){
+    public static void saveLoggedInUser(String username) {
         try (FileWriter writer = new FileWriter(CURRENT_USER_FILE)) {
             writer.write(username);
         } catch (IOException e) {
@@ -108,9 +108,9 @@ public class UserDataManager {
         }
     }
 
-    public static String getLoggedInUsername(){
+    public static String getLoggedInUsername() {
         File file = new File(CURRENT_USER_FILE);
-        if(!file.exists()) return null;
+        if (!file.exists()) return null;
 
         try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
             String username = reader.readLine();

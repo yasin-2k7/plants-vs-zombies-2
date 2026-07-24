@@ -9,7 +9,7 @@ import models.zombie.Zombie;
 
 import java.util.List;
 
-public class CombinedDamageStrategy implements HitStrategy{
+public class CombinedDamageStrategy implements HitStrategy {
     private int damage;
     private int neighborDamage = 0;
     private float radius = 0;
@@ -17,22 +17,6 @@ public class CombinedDamageStrategy implements HitStrategy{
     private int chillTime = 50;
     private int poisonDamageOnTick = 5;
     private ProjectileType projectileType;
-
-    public int getPoisonDamageOnTick() {
-        return poisonDamageOnTick;
-    }
-
-    public void setPoisonDamageOnTick(int poisonDamageOnTick) {
-        this.poisonDamageOnTick = poisonDamageOnTick;
-    }
-
-    public void setChillTime(int chillTime) {
-        this.chillTime = chillTime;
-    }
-
-    public int getChillTime() {
-        return chillTime;
-    }
 
     private CombinedDamageStrategy(int damage, int neighborDamage, float radius,
                                    String element, int chillTime, int poisonDamageOnTick,
@@ -51,12 +35,6 @@ public class CombinedDamageStrategy implements HitStrategy{
         this.projectileType = projectileType;
     }
 
-
-    @Override
-    public int getDamage() {
-        return damage;
-    }
-
     public CombinedDamageStrategy(int damage, int neighborDamage, float radius, ProjectileType projectileType) {
         this.damage = damage;
         this.neighborDamage = neighborDamage;
@@ -64,8 +42,29 @@ public class CombinedDamageStrategy implements HitStrategy{
         this.projectileType = projectileType;
     }
 
-    public CombinedDamageStrategy changeDamage(int damage){
-        return new CombinedDamageStrategy(damage, neighborDamage, radius,this.element, this.chillTime, this.poisonDamageOnTick, projectileType);
+    public int getPoisonDamageOnTick() {
+        return poisonDamageOnTick;
+    }
+
+    public void setPoisonDamageOnTick(int poisonDamageOnTick) {
+        this.poisonDamageOnTick = poisonDamageOnTick;
+    }
+
+    public int getChillTime() {
+        return chillTime;
+    }
+
+    public void setChillTime(int chillTime) {
+        this.chillTime = chillTime;
+    }
+
+    @Override
+    public int getDamage() {
+        return damage;
+    }
+
+    public CombinedDamageStrategy changeDamage(int damage) {
+        return new CombinedDamageStrategy(damage, neighborDamage, radius, this.element, this.chillTime, this.poisonDamageOnTick, projectileType);
     }
 
     @Override
@@ -95,27 +94,25 @@ public class CombinedDamageStrategy implements HitStrategy{
         switch (element) {
             case "POISON":
                 if (target instanceof Zombie zombie) {
-                    if (projectileType == ProjectileType.GOO){
+                    if (projectileType == ProjectileType.GOO) {
                         zombie.makePoisoned(poisonDamageOnTick);
-                    }
-                    else{
-                        zombie.makePoisoned(poisonDamageOnTick*100);
+                    } else {
+                        zombie.makePoisoned(poisonDamageOnTick * 100);
                     }
                 }
                 break;
             case "ICE":
-                if (target instanceof Zombie zombie){
+                if (target instanceof Zombie zombie) {
                     zombie.applySlow(chillTime, 0.5, false);
                 }
                 break;
             case "FIRE":
-                if (target instanceof Zombie zombie){
-                    if (zombie.getIceHealth() > 0){
+                if (target instanceof Zombie zombie) {
+                    if (zombie.getIceHealth() > 0) {
                         zombie.setIceHealth(0);
                     }
                     zombie.unfreeze();
-                }
-                else if (target instanceof IceBlock){
+                } else if (target instanceof IceBlock) {
                     target.takeDamage(600, "FIRE");
                 }
                 break;
@@ -130,7 +127,7 @@ public class CombinedDamageStrategy implements HitStrategy{
     }
 
     @Override
-    public void increaseDamage(int factor){
+    public void increaseDamage(int factor) {
         damage *= factor;
     }
 
@@ -140,13 +137,13 @@ public class CombinedDamageStrategy implements HitStrategy{
     }
 
     @Override
-    public void setElement(String element) {
-        this.element = element;
+    public String getElement() {
+        return element;
     }
 
     @Override
-    public String getElement() {
-        return element;
+    public void setElement(String element) {
+        this.element = element;
     }
 
 

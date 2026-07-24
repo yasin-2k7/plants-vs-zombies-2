@@ -8,16 +8,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 
-public class SignupMenuView implements View{
+public class SignupMenuView implements View {
     private static SignupMenuView instance;
-    public static SignupMenuView getInstance(){
-        if (instance == null){
-            instance = new SignupMenuView();
-            instance.controller = new SignupMenuController();
-        }
-        return instance;
-    }
-
     private SignupMenuController controller;
     private boolean isSigningUp = false;
     private String username;
@@ -25,8 +17,15 @@ public class SignupMenuView implements View{
     private String nickname;
     private String email;
     private String gender;
-
     private String pickQuestionError = "Invalid command. Please pick a question.";
+
+    public static SignupMenuView getInstance() {
+        if (instance == null) {
+            instance = new SignupMenuView();
+            instance.controller = new SignupMenuController();
+        }
+        return instance;
+    }
 
     @Override
     public void processCommand(String command) {

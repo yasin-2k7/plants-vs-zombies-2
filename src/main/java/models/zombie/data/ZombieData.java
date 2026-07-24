@@ -44,13 +44,39 @@ public class ZombieData {
     private Integer healthPercentThrowImp;
     // سایر فیلدهای خاص بر اساس objclass (مثل MaxTorchReach, MaxClaimedSunCurrency و ...)
 
-    public int getHitpoints() { return hitpoints; }
-    public int getEatDPS() { return eatDPS; }
-    public double getSpeed() { return speed; }
-    public int getWavePointCost() { return wavePointCost; }
-    public int getWeight() { return weight; }
-    public List<String> getZombieArmorProps() { return zombieArmorProps; }
-    public Integer getImpTargetColumn() { return impTargetColumn; }
-    public String getImpType() { return impType; }
-    public Integer getHealthPercentThrowImp() { return healthPercentThrowImp; }
+    public int getHitpoints() {
+        return hitpoints;
+    }
+
+    public int getEatDPS() {
+        return eatDPS;
+    }
+
+    public double getSpeed() {
+        return speed;
+    }
+
+    public int getWavePointCost() {
+        return wavePointCost;
+    }
+
+    public int getWeight() {
+        return weight;
+    }
+
+    public List<String> getZombieArmorProps() {
+        return zombieArmorProps;
+    }
+
+    public Integer getImpTargetColumn() {
+        return impTargetColumn;
+    }
+
+    public String getImpType() {
+        return impType;
+    }
+
+    public Integer getHealthPercentThrowImp() {
+        return healthPercentThrowImp;
+    }
 }

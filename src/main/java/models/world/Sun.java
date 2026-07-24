@@ -24,17 +24,16 @@ public class Sun implements Resettable {
         return amount;
     }
 
-    public boolean isExpired(){
-        if (y != finalY){
+    public boolean isExpired() {
+        if (y != finalY) {
             y += 10;
-            if (y >= finalY){
-                if (type == SunType.RADIOACTIVE){
+            if (y >= finalY) {
+                if (type == SunType.RADIOACTIVE) {
                     type = SunType.NORMAL;
                 }
                 y = finalY;
                 GameMenuController.updateState("Sun reached the ground at position (" + finalX + ", " + finalY + ")");
-            }
-            else{
+            } else {
                 GameMenuController.updateState("Dropping sun position (" + x + ", " + y + ")");
             }
         }
@@ -43,16 +42,16 @@ public class Sun implements Resettable {
         return elapsed > 100; //ms
     }
 
-    public void collect(){
+    public void collect() {
         isCollected = true;
     }
 
-    public void setup(int row, int col, SunType type){
+    public void setup(int row, int col, SunType type) {
         if (game == null) {
             game = App.getCurrentGame();
         }
-        this.finalX = col * App.getCellWidth() + App.getCellWidth()/2;
-        this.finalY = row * App.getCellHeight() + App.getCellHeight()/2;
+        this.finalX = col * App.getCellWidth() + App.getCellWidth() / 2;
+        this.finalY = row * App.getCellHeight() + App.getCellHeight() / 2;
         this.x = finalX;
         this.y = 0;
         this.type = type;

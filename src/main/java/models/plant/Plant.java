@@ -30,59 +30,75 @@ public class Plant implements Damageable {
     private boolean isFire = false;
     private boolean plantFoodInStart = false;
 
+    public Plant(PlantType type, int health, int damage) {
+        this.type = type;
+        this.health = health;
+        this.damage = damage;
+        initHealth = health;
+    }
+
+    public static boolean isMushroom(PlantType type) {
+        return switch (type) {
+            case SUN_SHROOM, PUFF_SHROOM, FUME_SHROOM, SEA_SHROOM,
+                 ICE_SHROOM, DOOM_SHROOM, MAGNET_SHROOM, HYPNO_SHROOM -> true;
+            default -> false;
+        };
+    }
+
     public void addComponent(GameComponent comp) {
         components.add(comp);
     }
 
     public void update() {
         if (disabled || freeze || cat) return;
-        if (plantFoodInStart){
+        if (plantFoodInStart) {
             activatePlantFood();
             plantFoodInStart = false;
         }
         for (GameComponent comp : components) {
-            if (type == PlantType.SUN_BEAN && comp instanceof SunProducerComponent){
+            if (type == PlantType.SUN_BEAN && comp instanceof SunProducerComponent) {
                 continue;
             }
             comp.update(this);
         }
-        if (isFire){
+        if (isFire) {
             checkFire();
         }
     }
 
-    private void checkFire(){
+    private void checkFire() {
         List<Cell> neighborCells = Cell.getNeighborCells(cell, App.getCurrentGame().getGrid(), 1);
-        for (Cell cell1 : neighborCells){
-            if (cell1.getPlant().freeze){
+        for (Cell cell1 : neighborCells) {
+            if (cell1.getPlant().freeze) {
                 cell1.getPlant().iceHealth -= 6;
-                if (cell1.getPlant().iceHealth <= 0){
+                if (cell1.getPlant().iceHealth <= 0) {
                     cell1.getPlant().unfreeze();
                 }
             }
-            if (cell1.hasObstacle() && cell1.getObstacle() instanceof IceBlock iceBlock){
+            if (cell1.hasObstacle() && cell1.getObstacle() instanceof IceBlock iceBlock) {
                 iceBlock.takeDamage(6, "NORMAL");
             }
-            for (Zombie zombie : Cell.getZombiesInCell(cell)){
-                if (zombie.getIceHealth() > 0){
-                    zombie.setIceHealth(zombie.getIceHealth()-6);
+            for (Zombie zombie : Cell.getZombiesInCell(cell)) {
+                if (zombie.getIceHealth() > 0) {
+                    zombie.setIceHealth(zombie.getIceHealth() - 6);
                 }
             }
         }
     }
 
-    public void takeDamage(int damage){
+    public void takeDamage(int damage) {
         takeDamage(damage, (Zombie) null);
     }
 
     @Override
-    public void takeDamage(int damage, String damageType) {}
+    public void takeDamage(int damage, String damageType) {
+    }
 
     @Override
-    public void takeDamage(int damage, Zombie zombie){
-        if (iceHealth > 0){
+    public void takeDamage(int damage, Zombie zombie) {
+        if (iceHealth > 0) {
             iceHealth -= damage;
-            if (iceHealth <= 0){
+            if (iceHealth <= 0) {
                 unfreeze();
             }
             return;
@@ -98,7 +114,7 @@ public class Plant implements Damageable {
 
         this.health -= remainingDamage;
 
-        if (health <= 0){
+        if (health <= 0) {
             User user = App.getCurrentUser();
             if (user != null) {
                 user.getQuestStats().incrementPlantsLost();
@@ -109,26 +125,11 @@ public class Plant implements Damageable {
 
     }
 
-    public Plant(PlantType type, int health, int damage) {
-        this.type = type;
-        this.health = health;
-        this.damage = damage;
-        initHealth = health;
-    }
-
-    public void setY(int y) {
-        this.y = y;
-    }
-
-    public void setCell(Cell cell) {
-        this.cell = cell;
-    }
-
     public void die() {
         if (this.dead) return;
 
         this.dead = true;
-        for (GameComponent component : components){
+        for (GameComponent component : components) {
             component.onDeath(this);
         }
 
@@ -138,20 +139,49 @@ public class Plant implements Damageable {
         }
         GameMenuController.updateState("Plant " + this.getType().name() + " at (" + this.x + ", " + this.y + ") is destroyed.");
     }
-    public boolean isDead() { return dead; }
-    public void setCat(boolean cat) { this.cat = cat; }
-    public void setDisabled(boolean disabled) { this.disabled = disabled; }
-    public float getX() { return x; }
-    public float getY() { return y; }
-    public PlantType getType() { return type; }
-    public void setX(int x) { this.x = x; }
+
+    public boolean isDead() {
+        return dead;
+    }
+
+    public void setDisabled(boolean disabled) {
+        this.disabled = disabled;
+    }
+
+    public float getX() {
+        return x;
+    }
+
+    public void setX(int x) {
+        this.x = x;
+    }
+
+    public float getY() {
+        return y;
+    }
+
+    public void setY(int y) {
+        this.y = y;
+    }
+
+    public PlantType getType() {
+        return type;
+    }
 
     public Cell getCell() {
         return cell;
     }
 
+    public void setCell(Cell cell) {
+        this.cell = cell;
+    }
+
     public int getDamage() {
         return damage;
+    }
+
+    public void setDamage(int damage) {
+        this.damage = damage;
     }
 
     public <T extends GameComponent> T getComponent(Class<T> componentClass) {
@@ -163,10 +193,10 @@ public class Plant implements Damageable {
         return null;
     }
 
-    public void increaseFrozenAmount(){
+    public void increaseFrozenAmount() {
         if (frozenAmount == 99 || isFire) return;
         frozenAmount += 33;
-        if (frozenAmount >= 99){
+        if (frozenAmount >= 99) {
             frozenAmount = 0;
             freeze = true;
             iceHealth = 600;
@@ -177,13 +207,13 @@ public class Plant implements Damageable {
         return freeze;
     }
 
-    public void unfreeze(){
+    public void unfreeze() {
         freeze = false;
         iceHealth = 0;
     }
 
-    public void activatePlantFood(){
-        for (GameComponent component : components){
+    public void activatePlantFood() {
+        for (GameComponent component : components) {
             component.activatePlantFood(this);
         }
     }
@@ -192,7 +222,11 @@ public class Plant implements Damageable {
         return health;
     }
 
-    public void destroy(){
+    public void setHealth(int health) {
+        this.health = health;
+    }
+
+    public void destroy() {
 
     }
 
@@ -201,34 +235,24 @@ public class Plant implements Damageable {
             this.components = new ArrayList<>();
         }
     }
+
     public void setFire(boolean fire) {
         isFire = fire;
-    }
-
-    public static boolean isMushroom(PlantType type) {
-        return switch (type) {
-            case SUN_SHROOM, PUFF_SHROOM, FUME_SHROOM, SEA_SHROOM,
-                 ICE_SHROOM, DOOM_SHROOM, MAGNET_SHROOM, HYPNO_SHROOM -> true;
-            default -> false;
-        };
-    }
-
-    public void setHealth(int health) {
-        this.health = health;
     }
 
     public int getInitHealth() {
         return initHealth;
     }
 
-    public void setDamage(int damage) {
-        this.damage = damage;
-    }
-
     public void setPlantFoodInStart(boolean plantFoodInStart) {
         this.plantFoodInStart = plantFoodInStart;
     }
+
     public boolean isCat() {
         return cat;
+    }
+
+    public void setCat(boolean cat) {
+        this.cat = cat;
     }
 }

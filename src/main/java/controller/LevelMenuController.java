@@ -12,9 +12,9 @@ import view.terminalView.PlantMenuView;
 
 import java.util.List;
 
-public class LevelMenuController implements MenuController{
+public class LevelMenuController implements MenuController {
 
-    public static Cell[][] getGameCells(){
+    public static Cell[][] getGameCells() {
         return App.getCurrentGame().getGrid();
     }
 
@@ -28,9 +28,9 @@ public class LevelMenuController implements MenuController{
 
     }
 
-    public String chooseLevel(int level){
+    public String chooseLevel(int level) {
         User user = App.getCurrentUser();
-        if (user.getUnlockedChapter() == user.getCurrentChapter().ordinal()+1 && user.getUnlockedLevel() < level){
+        if (user.getUnlockedChapter() == user.getCurrentChapter().ordinal() + 1 && user.getUnlockedLevel() < level) {
             return "this level is locked!";
         }
 
@@ -39,7 +39,7 @@ public class LevelMenuController implements MenuController{
         game.initialize();
         if (game.isConveyorMode())
             AppView.setCurrentScreen(GameMenuView.getInstance());
-        else{
+        else {
             AppView.setCurrentScreen(PlantMenuView.getInstance());
             PlantMenuView.getInstance().getController().reset();
         }
@@ -63,7 +63,7 @@ public class LevelMenuController implements MenuController{
         }
     }
 
-    public void showCurrentMenu(){
+    public void showCurrentMenu() {
         GameMenuView.getInstance().showResult("Current menu: level menu");
     }
 }

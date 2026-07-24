@@ -33,15 +33,18 @@ public class BowlingBallFactory {
     private static HitStrategy createHitStrategy(PlantType plantType) {
         int normalHealth = normalZombieHealth();
         return switch (plantType) {
-            case WALL_NUT -> new CombinedDamageStrategy(normalHealth, ProjectileType.BOWLING_STRAIGHT);
+            case WALL_NUT ->
+                    new CombinedDamageStrategy(normalHealth, ProjectileType.BOWLING_STRAIGHT);
             case EXPLODE_O_NUT -> new CombinedDamageStrategy(
                     normalHealth,
                     normalHealth,
                     App.getCellWidth() * 1.5f,
                     ProjectileType.BOWLING_STRAIGHT
             );
-            case GIANT_WALLNUT -> new CombinedDamageStrategy(normalHealth * 2, ProjectileType.BOWLING_STRAIGHT);
-            default -> throw new IllegalArgumentException("Invalid plant type for bowling: " + plantType);
+            case GIANT_WALLNUT ->
+                    new CombinedDamageStrategy(normalHealth * 2, ProjectileType.BOWLING_STRAIGHT);
+            default ->
+                    throw new IllegalArgumentException("Invalid plant type for bowling: " + plantType);
         };
     }
 

@@ -10,12 +10,10 @@ import models.world.obstacles.Grave;
 import models.world.obstacles.OctopusObstacle;
 import models.zombie.Zombie;
 
-import java.util.List;
-
 public class RangedZombie extends Zombie {
+    private final int COOLDOWN_MAX = 120;
     private String projectileType;
     private int cooldown;
-    private final int COOLDOWN_MAX = 120;
 
     public RangedZombie(int health, double speed, int damage, String projectileType) {
         super(Zombies.RANGED, health, speed, damage);
@@ -29,7 +27,7 @@ public class RangedZombie extends Zombie {
 
         switch (projectileType) {
             case "SNOWBALL": {
-                int row = (int)(this.y / App.getCellHeight());
+                int row = (int) (this.y / App.getCellHeight());
                 Plant target = game.getNearestPlantInRow(row, this.x - 10);
                 if (target != null) {
                     target.increaseFrozenAmount();

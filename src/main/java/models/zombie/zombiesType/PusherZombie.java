@@ -13,10 +13,10 @@ import java.util.List;
 import java.util.Random;
 
 public class PusherZombie extends Zombie {
+    private static final int ROW_SWITCH_INTERVAL = 50; // هر ۵۰ تیک یک بار
     private String objectName;
     private int objectHealth;
     private int rowSwitchCooldown = 0;
-    private static final int ROW_SWITCH_INTERVAL = 50; // هر ۵۰ تیک یک بار
     private Random random = new Random();
 
     public PusherZombie(int health, double speed, int damage, String pushedObjectName, int objHealth) {
@@ -115,6 +115,11 @@ public class PusherZombie extends Zombie {
         GameMenuController.updateState("Pianist switched a zombie to row " + (targetRow + 1));
     }
 
-    public int getObjectHealth() { return objectHealth; }
-    public String getObjectName() { return objectName; }
+    public int getObjectHealth() {
+        return objectHealth;
+    }
+
+    public String getObjectName() {
+        return objectName;
+    }
 }

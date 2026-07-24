@@ -10,7 +10,7 @@ import models.zombie.wave.WaveManager;
 
 import java.util.List;
 
-public class BigWaveBeachLevelSetup implements LevelSetup{
+public class BigWaveBeachLevelSetup implements LevelSetup {
     private final int tideLineCol;
     private int rows;
     private int cols;
@@ -28,7 +28,7 @@ public class BigWaveBeachLevelSetup implements LevelSetup{
         buildGrid(game, rows, cols);
         Cell[][] grid = game.getGrid();
         for (int r = 0; r < game.getRows(); r++) {
-            grid[r][game.getCols()-1].setTerrain(new WaterTerrain());
+            grid[r][game.getCols() - 1].setTerrain(new WaterTerrain());
         }
 
         WaveManager waveManager = new WaveManager(waves);

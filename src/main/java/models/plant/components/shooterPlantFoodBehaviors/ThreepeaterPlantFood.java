@@ -8,7 +8,8 @@ public class ThreepeaterPlantFood implements PlantFoodBehavior {
     public static final ThreepeaterPlantFood INSTANCE = new ThreepeaterPlantFood();
     private static final int TOTAL_PLANT_FOOD_SHOTS = 30;
 
-    private ThreepeaterPlantFood() {}
+    private ThreepeaterPlantFood() {
+    }
 
     @Override
     public void activate(Plant owner, ShooterComponent shooterComponent) {

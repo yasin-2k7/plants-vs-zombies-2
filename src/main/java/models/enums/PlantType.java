@@ -75,23 +75,23 @@ public enum PlantType {
     CAT_TAIL_MINT(HOMING, 0, 850),
     MARIGOLD(WALL_NUTS, 0, 0); // گل معمولی گلخانه;
 
+    public final PlantFamily family;
+    public final int baseSunCost;
+    public final int baseCoolDown;
+    PlantType(PlantFamily family, int baseSunCost, int baseCoolDown) {
+        this.family = family;
+        this.baseSunCost = baseSunCost;
+        this.baseCoolDown = baseCoolDown;
+    }
+
     public String getSymbol() {
         return switch (this.family) {
             case SUN_PRODUCER -> "🌻";
-            case SHOOTER, HOMING, LOBBER, STRIKE_THROUGH, MODIFIER-> "🟢";
+            case SHOOTER, HOMING, LOBBER, STRIKE_THROUGH, MODIFIER -> "🟢";
             case MELEE -> "🥊";
             case WALL_NUTS -> "🧱";
             case EXPLOSIVE -> "💥";
             default -> "🌱";
         };
-    }
-
-    public final PlantFamily family;
-    public final int baseSunCost;
-    public final int baseCoolDown;
-    PlantType(PlantFamily family, int baseSunCost, int baseCoolDown){
-        this.family = family;
-        this.baseSunCost = baseSunCost;
-        this.baseCoolDown = baseCoolDown;
     }
 }

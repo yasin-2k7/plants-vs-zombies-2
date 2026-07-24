@@ -8,9 +8,14 @@ import java.util.List;
 
 public interface HitStrategy {
     void applyDamage(Damageable target, List<Damageable> allTargets, Projectile projectile);
+
     String getElement();
-    int getDamage();
+
     void setElement(String element);
+
+    int getDamage();
+
     void increaseDamage(int factor);
+
     void applyDamage(Plant plant, Projectile projectile);
 }

@@ -53,13 +53,39 @@ public class Pot {
         return (long) Math.ceil(remainingMillis / (3600.0 * 1000));
     }
 
-    public int getX() { return x; }
-    public int getY() { return y; }
-    public boolean isLocked() { return isLocked; }
-    public void setLocked(boolean locked) { isLocked = locked; }
-    public Plant getPlant() { return plant; }
-    public PlantType getPlantType() { return plantType; }
-    public boolean isReady() { return isReady; }
-    public void setReady(boolean ready) { isReady = ready; }
-    public long getPlantedTime() { return plantedTime; }
+    public int getX() {
+        return x;
+    }
+
+    public int getY() {
+        return y;
+    }
+
+    public boolean isLocked() {
+        return isLocked;
+    }
+
+    public void setLocked(boolean locked) {
+        isLocked = locked;
+    }
+
+    public Plant getPlant() {
+        return plant;
+    }
+
+    public PlantType getPlantType() {
+        return plantType;
+    }
+
+    public boolean isReady() {
+        return isReady;
+    }
+
+    public void setReady(boolean ready) {
+        isReady = ready;
+    }
+
+    public long getPlantedTime() {
+        return plantedTime;
+    }
 }

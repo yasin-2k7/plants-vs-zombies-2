@@ -20,14 +20,14 @@ public class Vase {
         this.hiddenSeed = hiddenSeed;
     }
 
-    public String breakVase(VaseBreakerLevel level){
-        if(isBroken) return "This vase is already broken.";
+    public String breakVase(VaseBreakerLevel level) {
+        if (isBroken) return "This vase is already broken.";
         isBroken = true;
 
         float spawnX = col * 100 + 50;
         float spawnY = row * 100 + 50;
 
-        if(hiddenZombie != null){
+        if (hiddenZombie != null) {
             hiddenZombie.setX(spawnX);
             hiddenZombie.setY(spawnY);
             level.addZombie(hiddenZombie);
@@ -42,10 +42,27 @@ public class Vase {
 
     }
 
-    public int getRow() { return row; }
-    public int getCol() { return col; }
-    public boolean isBroken() { return isBroken; }
-    public VaseType getType() { return type; }
-    public Zombie getHiddenZombie() { return hiddenZombie; }
-    public SeedPacket getHiddenSeed() { return hiddenSeed; }
+    public int getRow() {
+        return row;
+    }
+
+    public int getCol() {
+        return col;
+    }
+
+    public boolean isBroken() {
+        return isBroken;
+    }
+
+    public VaseType getType() {
+        return type;
+    }
+
+    public Zombie getHiddenZombie() {
+        return hiddenZombie;
+    }
+
+    public SeedPacket getHiddenSeed() {
+        return hiddenSeed;
+    }
 }

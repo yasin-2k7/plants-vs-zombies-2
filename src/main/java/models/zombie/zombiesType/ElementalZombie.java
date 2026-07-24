@@ -2,7 +2,6 @@ package models.zombie.zombiesType;
 
 import controller.GameMenuController;
 import models.core.App;
-import models.enums.ProjectileType;
 import models.enums.Zombies;
 import models.plant.Plant;
 import models.world.Cell;
@@ -12,11 +11,6 @@ import models.zombie.Zombie;
 import java.util.Set;
 
 public class ElementalZombie extends Zombie {
-    private boolean isExplorer;
-    private boolean isIgnited;
-    private int fuseTimer;
-    private boolean hasExploded;
-
     private static final Set<String> FIRE_TYPES = Set.of(
             "FIRE_PEA",
             "PEPPER",
@@ -24,7 +18,6 @@ public class ElementalZombie extends Zombie {
             "FIRE_PEASHOOTER",
             "FIRE"
     );
-
     private static final Set<String> ICE_TYPES = Set.of(
             "ICE_PEA",
             "SNOW_PEA",
@@ -33,6 +26,10 @@ public class ElementalZombie extends Zombie {
             "ICE_SHROOM",
             "ICE"
     );
+    private boolean isExplorer;
+    private boolean isIgnited;
+    private int fuseTimer;
+    private boolean hasExploded;
 
     public ElementalZombie(int health, double speed, int damage, boolean isExplorer) {
         super(Zombies.ELEMENTAL, health, speed, damage);
@@ -153,7 +150,7 @@ public class ElementalZombie extends Zombie {
     @Override
     public void move() {
         if (!isExplorer && hasExploded) {
-            float newX = (float)(this.x - this.speed);
+            float newX = (float) (this.x - this.speed);
 
             GameWorld game = App.getCurrentGame();
             if (game != null) {
@@ -167,7 +164,15 @@ public class ElementalZombie extends Zombie {
         }
     }
 
-    public boolean isExplorer() { return isExplorer; }
-    public boolean isIgnited() { return isIgnited; }
-    public boolean hasExploded() { return hasExploded; }
+    public boolean isExplorer() {
+        return isExplorer;
+    }
+
+    public boolean isIgnited() {
+        return isIgnited;
+    }
+
+    public boolean hasExploded() {
+        return hasExploded;
+    }
 }

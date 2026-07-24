@@ -1,6 +1,5 @@
 package models.miniGame.IZombie;
 
-import models.core.App;
 import models.enums.PlantLayer;
 import models.enums.PlantType;
 import models.enums.Zombies;

@@ -1,7 +1,6 @@
 package models.zombie.zombiesType;
 
 import models.enums.Zombies;
-import models.plant.Plant;
 import models.zombie.Zombie;
 
 public class ImpZombie extends Zombie {
@@ -31,6 +30,11 @@ public class ImpZombie extends Zombie {
         super.takeDamage(amount, damageType);
     }
 
-    public boolean isDragon() { return isDragon; }
-    public boolean isThrown() { return isThrown; }
+    public boolean isDragon() {
+        return isDragon;
+    }
+
+    public boolean isThrown() {
+        return isThrown;
+    }
 }

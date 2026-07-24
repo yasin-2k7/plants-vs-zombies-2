@@ -2,6 +2,7 @@ package models.quest;
 
 import models.enums.PlantFamily;
 import models.enums.PlantType;
+
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -111,21 +112,42 @@ public class QuestStats {
         this.lawnmowerKills = 0;
     }
 
-    public int getSunsCollectedToday() { return sunsCollectedToday; }
-    public void addSunsCollectedToday(int amount) { this.sunsCollectedToday += amount; }
+    public int getSunsCollectedToday() {
+        return sunsCollectedToday;
+    }
 
-    public int getZombiesKilledToday() { return zombiesKilledToday; }
-    public void addZombiesKilledToday(int amount) { this.zombiesKilledToday += amount; }
+    public void addSunsCollectedToday(int amount) {
+        this.sunsCollectedToday += amount;
+    }
 
-    public int getTotalZombiesKilled() { return totalZombiesKilled; }
-    public void addTotalZombiesKilled(int amount) { this.totalZombiesKilled += amount; }
+    public int getZombiesKilledToday() {
+        return zombiesKilledToday;
+    }
 
-    public Map<String, Integer> getZombiesKilledByChapter() { return zombiesKilledByChapter; }
+    public void addZombiesKilledToday(int amount) {
+        this.zombiesKilledToday += amount;
+    }
+
+    public int getTotalZombiesKilled() {
+        return totalZombiesKilled;
+    }
+
+    public void addTotalZombiesKilled(int amount) {
+        this.totalZombiesKilled += amount;
+    }
+
+    public Map<String, Integer> getZombiesKilledByChapter() {
+        return zombiesKilledByChapter;
+    }
+
     public void addZombiesKilledByChapter(String chapter, int count) {
         zombiesKilledByChapter.put(chapter, zombiesKilledByChapter.getOrDefault(chapter, 0) + count);
     }
 
-    public Map<PlantType, Integer> getZombiesKilledByPlant() { return zombiesKilledByPlant; }
+    public Map<PlantType, Integer> getZombiesKilledByPlant() {
+        return zombiesKilledByPlant;
+    }
+
     public void addZombiesKilledByPlant(PlantType plant, int count) {
         zombiesKilledByPlant.put(plant, zombiesKilledByPlant.getOrDefault(plant, 0) + count);
 
@@ -136,24 +158,58 @@ public class QuestStats {
         }
     }
 
-    public int getPlantsLostInLevel() { return plantsLostInLevel; }
-    public void incrementPlantsLost() { this.plantsLostInLevel++; }
+    public int getPlantsLostInLevel() {
+        return plantsLostInLevel;
+    }
 
-    public boolean isLevelWon() { return levelWon; }
-    public void setLevelWon(boolean levelWon) { this.levelWon = levelWon; }
+    public void incrementPlantsLost() {
+        this.plantsLostInLevel++;
+    }
 
-    public PlantType getExclusivePlantUsed() { return exclusivePlantUsed; }
-    public boolean isOnlyPlantKills() { return onlyPlantKills; }
-    public LocalDate getLastResetDate() {return lastResetDate;}
+    public boolean isLevelWon() {
+        return levelWon;
+    }
 
-    public int getExplosivePlantsUsedInLevel() { return explosivePlantsUsedInLevel; }
-    public void incrementExplosivePlantsUsed() { this.explosivePlantsUsedInLevel++; }
+    public void setLevelWon(boolean levelWon) {
+        this.levelWon = levelWon;
+    }
 
-    public boolean isSymmetryAchieved() { return symmetryAchieved; }
-    public void setSymmetryAchieved(boolean symmetryAchieved) { this.symmetryAchieved = symmetryAchieved; }
+    public PlantType getExclusivePlantUsed() {
+        return exclusivePlantUsed;
+    }
 
-    public PlantFamily getExclusiveFamilyUsed() { return exclusiveFamilyUsed; }
-    public boolean isOnlyFamilyKills() { return onlyFamilyKills; }
+    public boolean isOnlyPlantKills() {
+        return onlyPlantKills;
+    }
+
+    public LocalDate getLastResetDate() {
+        return lastResetDate;
+    }
+
+    public int getExplosivePlantsUsedInLevel() {
+        return explosivePlantsUsedInLevel;
+    }
+
+    public void incrementExplosivePlantsUsed() {
+        this.explosivePlantsUsedInLevel++;
+    }
+
+    public boolean isSymmetryAchieved() {
+        return symmetryAchieved;
+    }
+
+    public void setSymmetryAchieved(boolean symmetryAchieved) {
+        this.symmetryAchieved = symmetryAchieved;
+    }
+
+    public PlantFamily getExclusiveFamilyUsed() {
+        return exclusiveFamilyUsed;
+    }
+
+    public boolean isOnlyFamilyKills() {
+        return onlyFamilyKills;
+    }
+
     public void addZombieKilledByFamily(PlantFamily family) {
         if (exclusiveFamilyUsed == null) {
             exclusiveFamilyUsed = family;
@@ -162,53 +218,128 @@ public class QuestStats {
         }
     }
 
-    public long getFirstWaveStartTime() { return firstWaveStartTime; }
-    public void setFirstWaveStartTime(long time) { this.firstWaveStartTime = time; this.firstWaveStarted = true; }
-    public int getZombiesKilledInFirstWave() { return zombiesKilledInFirstWave; }
-    public void incrementZombiesKilledInFirstWave() { this.zombiesKilledInFirstWave++; }
-    public boolean isFirstWaveStarted() { return firstWaveStarted; }
+    public long getFirstWaveStartTime() {
+        return firstWaveStartTime;
+    }
 
-    public int getFinalSunCount() { return finalSunCount; }
-    public void setFinalSunCount(int finalSunCount) { this.finalSunCount = finalSunCount; }
+    public void setFirstWaveStartTime(long time) {
+        this.firstWaveStartTime = time;
+        this.firstWaveStarted = true;
+    }
+
+    public int getZombiesKilledInFirstWave() {
+        return zombiesKilledInFirstWave;
+    }
+
+    public void incrementZombiesKilledInFirstWave() {
+        this.zombiesKilledInFirstWave++;
+    }
+
+    public boolean isFirstWaveStarted() {
+        return firstWaveStarted;
+    }
+
+    public int getFinalSunCount() {
+        return finalSunCount;
+    }
+
+    public void setFinalSunCount(int finalSunCount) {
+        this.finalSunCount = finalSunCount;
+    }
+
     public Set<PlantFamily> getFamiliesUsedInLevel() {
         return familiesUsedInLevel;
     }
+
     public void addFamilyUsedInLevel(PlantFamily family) {
         familiesUsedInLevel.add(family);
     }
 
-    public int getMushroomPlantsUsedInLevel() { return mushroomPlantsUsedInLevel; }
-    public void incrementMushroomPlantsUsed() { this.mushroomPlantsUsedInLevel++; }
+    public int getMushroomPlantsUsedInLevel() {
+        return mushroomPlantsUsedInLevel;
+    }
 
-    public int getTotalPlantsUsedInLevel() { return totalPlantsUsedInLevel; }
-    public void incrementTotalPlantsUsed() { this.totalPlantsUsedInLevel++; }
+    public void incrementMushroomPlantsUsed() {
+        this.mushroomPlantsUsedInLevel++;
+    }
 
-    public int getConsecutiveWinsMaxDifficulty() { return consecutiveWinsMaxDifficulty; }
+    public int getTotalPlantsUsedInLevel() {
+        return totalPlantsUsedInLevel;
+    }
+
+    public void incrementTotalPlantsUsed() {
+        this.totalPlantsUsedInLevel++;
+    }
+
+    public int getConsecutiveWinsMaxDifficulty() {
+        return consecutiveWinsMaxDifficulty;
+    }
+
     public void setConsecutiveWinsMaxDifficulty(int consecutiveWins) {
         this.consecutiveWinsMaxDifficulty = consecutiveWins;
     }
-    public void incrementConsecutiveWinsMaxDifficulty() { this.consecutiveWinsMaxDifficulty++; }
-    public void resetConsecutiveWinsMaxDifficulty() { this.consecutiveWinsMaxDifficulty = 0; }
 
-    public int getZombiesKilledInFirstColumnWithoutMower() { return zombiesKilledInFirstColumnWithoutMower; }
+    public void incrementConsecutiveWinsMaxDifficulty() {
+        this.consecutiveWinsMaxDifficulty++;
+    }
+
+    public void resetConsecutiveWinsMaxDifficulty() {
+        this.consecutiveWinsMaxDifficulty = 0;
+    }
+
+    public int getZombiesKilledInFirstColumnWithoutMower() {
+        return zombiesKilledInFirstColumnWithoutMower;
+    }
+
     public void incrementZombiesKilledInFirstColumnWithoutMower() {
         this.zombiesKilledInFirstColumnWithoutMower++;
     }
 
-    public int getSunProducerPlantsInLevel() { return sunProducerPlantsInLevel; }
-    public void incrementSunProducerPlantsInLevel() { this.sunProducerPlantsInLevel++; }
+    public int getSunProducerPlantsInLevel() {
+        return sunProducerPlantsInLevel;
+    }
 
-    public Set<Integer> getEmptyColumnsInLevel() { return emptyColumnsInLevel; }
-    public void addEmptyColumnInLevel(int col) { emptyColumnsInLevel.add(col); }
+    public void incrementSunProducerPlantsInLevel() {
+        this.sunProducerPlantsInLevel++;
+    }
 
-    public Set<Integer> getEmptyRowsInLevel() { return emptyRowsInLevel; }
-    public void addEmptyRowInLevel(int row) { emptyRowsInLevel.add(row); }
+    public Set<Integer> getEmptyColumnsInLevel() {
+        return emptyColumnsInLevel;
+    }
 
-    public int getEmptyColumnForCross() { return emptyColumnForCross; }
-    public void setEmptyColumnForCross(int col) { this.emptyColumnForCross = col; }
-    public int getEmptyRowForCross() { return emptyRowForCross; }
-    public void setEmptyRowForCross(int row) { this.emptyRowForCross = row; }
+    public void addEmptyColumnInLevel(int col) {
+        emptyColumnsInLevel.add(col);
+    }
 
-    public int getLawnmowerKills() { return lawnmowerKills; }
-    public void incrementLawnmowerKills() { this.lawnmowerKills++; }
+    public Set<Integer> getEmptyRowsInLevel() {
+        return emptyRowsInLevel;
+    }
+
+    public void addEmptyRowInLevel(int row) {
+        emptyRowsInLevel.add(row);
+    }
+
+    public int getEmptyColumnForCross() {
+        return emptyColumnForCross;
+    }
+
+    public void setEmptyColumnForCross(int col) {
+        this.emptyColumnForCross = col;
+    }
+
+    public int getEmptyRowForCross() {
+        return emptyRowForCross;
+    }
+
+    public void setEmptyRowForCross(int row) {
+        this.emptyRowForCross = row;
+    }
+
+    public int getLawnmowerKills() {
+        return lawnmowerKills;
+    }
+
+    public void incrementLawnmowerKills() {
+        this.lawnmowerKills++;
+    }
 }

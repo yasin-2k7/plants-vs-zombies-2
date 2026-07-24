@@ -6,7 +6,7 @@ import models.world.Cell;
 
 import java.util.List;
 
-public class MakeUnplantableBehavior implements ExplosiveBehavior{
+public class MakeUnplantableBehavior implements ExplosiveBehavior {
     private final ExplosionRange range;
 
     public MakeUnplantableBehavior(ExplosionRange range) {

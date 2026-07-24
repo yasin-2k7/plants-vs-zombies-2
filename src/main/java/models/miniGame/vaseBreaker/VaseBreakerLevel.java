@@ -18,7 +18,7 @@ public class VaseBreakerLevel extends GameWorld {
     public VaseBreakerLevel(LevelSetup levelSetup,
                             ArrayList<LoseCondition> loseConditions,
                             WinCondition winCondition,
-                            ArrayList<Mechanic> mechanics){
+                            ArrayList<Mechanic> mechanics) {
         super(levelSetup, loseConditions, winCondition, mechanics);
 
     }
@@ -39,7 +39,7 @@ public class VaseBreakerLevel extends GameWorld {
         droppedSeeds.removeIf(SeedPacket::isExpired);
     }
 
-    public String breakVaseAt(int row, int col){
+    public String breakVaseAt(int row, int col) {
         Vase vase = getVaseAt(row, col);
         if (vase == null) return "There is no vase at that location.";
         if (vase.isBroken()) return "This vase is already broken.";
@@ -98,5 +98,8 @@ public class VaseBreakerLevel extends GameWorld {
         if (droppedSeeds == null) droppedSeeds = new ArrayList<>();
         return droppedSeeds;
     }
-    public void addVase(Vase vase) { getVases().add(vase); }
+
+    public void addVase(Vase vase) {
+        getVases().add(vase);
+    }
 }

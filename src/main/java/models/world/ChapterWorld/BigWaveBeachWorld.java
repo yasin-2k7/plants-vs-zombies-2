@@ -19,12 +19,12 @@ import java.util.ArrayList;
 import java.util.Random;
 
 public class BigWaveBeachWorld extends GameWorld {
+    private final int tideCycleTicks = 300;
+    private final int lowLyingCoastSpawnTicks = 250;
     private int tideLineCol;
     private int currentTideCol;
     private int lastTideChangeTick = 0;
-    private final int tideCycleTicks = 300;
     private int lastLowLyingCoastSpawnTick = 0;
-    private final int lowLyingCoastSpawnTicks = 250;
     private Random random = new Random();
 
     public BigWaveBeachWorld(LevelSetup levelSetup, ArrayList<LoseCondition> loseConditions, WinCondition winCondition, ArrayList<Mechanic> mechanics) {
@@ -39,19 +39,18 @@ public class BigWaveBeachWorld extends GameWorld {
             this.currentTideCol = 9;
         }
         int lowLyingCoastsCount = random.nextInt(4) + 1;
-        for (int i = 0; i< lowLyingCoastsCount; i++){
+        for (int i = 0; i < lowLyingCoastsCount; i++) {
             makeCellLowLyingCoast();
         }
     }
 
-    private void makeCellLowLyingCoast(){
+    private void makeCellLowLyingCoast() {
         Random random = new Random();
         int cellRow = random.nextInt(getRows());
-        int cellCol = random.nextInt(3) + getCols()-3;
-        if (grid[cellRow][cellCol].isLowLyingCoast()){
+        int cellCol = random.nextInt(3) + getCols() - 3;
+        if (grid[cellRow][cellCol].isLowLyingCoast()) {
             makeCellLowLyingCoast();
-        }
-        else{
+        } else {
             grid[cellRow][cellCol].setLowLyingCoast(true);
         }
     }
@@ -69,10 +68,10 @@ public class BigWaveBeachWorld extends GameWorld {
         if (currentTick - lastLowLyingCoastSpawnTick >= lowLyingCoastSpawnTicks) {
             lastLowLyingCoastSpawnTick = currentTick;
 
-            for (Cell[] cells : grid){
-                for (Cell cell : cells){
-                    if (cell.isLowLyingCoast()){
-                        if (random.nextBoolean()){
+            for (Cell[] cells : grid) {
+                for (Cell cell : cells) {
+                    if (cell.isLowLyingCoast()) {
+                        if (random.nextBoolean()) {
                             Zombie zombie = random.nextBoolean() ? new ZombieFactory().createZombie("ZombieDefault") : new ZombieFactory().createZombie(App.getZombieId("ZombieConehead"));
                             if (zombie != null) {
                                 zombie.setX(cell.getX());
@@ -102,8 +101,7 @@ public class BigWaveBeachWorld extends GameWorld {
                     changeColumnTerrain(c, true);
                 }
                 GameMenuController.updateState("tide rising...");
-            }
-            else if (newTideCol > currentTideCol) {
+            } else if (newTideCol > currentTideCol) {
                 for (int c = currentTideCol; c < newTideCol; c++) {
                     changeColumnTerrain(c, false);
                 }
@@ -123,7 +121,8 @@ public class BigWaveBeachWorld extends GameWorld {
             if (makeWater) {
                 cell.setTerrain(new WaterTerrain());
                 if (cell.getPlant(PlantLayer.MAIN) != null) cell.getPlant(PlantLayer.MAIN).die();
-                if (cell.getPlant(PlantLayer.SHIELD) != null) cell.getPlant(PlantLayer.SHIELD).die();
+                if (cell.getPlant(PlantLayer.SHIELD) != null)
+                    cell.getPlant(PlantLayer.SHIELD).die();
             } else {
                 cell.setTerrain(new LandTerrain());
                 if (cell.getPlant(PlantLayer.BASE) != null) cell.getPlant(PlantLayer.BASE).die();

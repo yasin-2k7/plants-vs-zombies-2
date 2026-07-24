@@ -9,7 +9,7 @@ import models.projectile.hitStrategies.HitStrategy;
 import models.projectile.movementStrategies.BouncingStrategy;
 import models.projectile.strikeStrategies.CheckStraightStrike;
 
-public class GrapeshotBehavior implements ExplosiveBehavior{
+public class GrapeshotBehavior implements ExplosiveBehavior {
     private static final float GRAPE_SPEED = 8f;
     private final int bounceMax;
 

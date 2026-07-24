@@ -7,25 +7,25 @@
     <!-- Code Size Rules -->
     <rule ref="category/java/design.xml/ExcessiveClassLength">
         <properties>
-            <property name="minimum" value="500" />
+            <property name="minimum" value="500"/>
         </properties>
     </rule>
 
     <rule ref="category/java/design.xml/ExcessiveMethodLength">
         <properties>
-            <property name="minimum" value="50" />
+            <property name="minimum" value="50"/>
         </properties>
     </rule>
 
     <rule ref="category/java/design.xml/ExcessivePublicCount">
         <properties>
-            <property name="minimum" value="45" />
+            <property name="minimum" value="45"/>
         </properties>
     </rule>
 
     <!-- Unused Code Rules -->
-    <rule ref="category/java/bestpractices.xml/UnusedPrivateField" />
-    <rule ref="category/java/bestpractices.xml/UnusedLocalVariable" />
-    <rule ref="category/java/bestpractices.xml/UnusedPrivateMethod" />
+    <rule ref="category/java/bestpractices.xml/UnusedPrivateField"/>
+    <rule ref="category/java/bestpractices.xml/UnusedLocalVariable"/>
+    <rule ref="category/java/bestpractices.xml/UnusedPrivateMethod"/>
 
 </ruleset>

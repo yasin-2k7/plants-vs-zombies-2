@@ -7,39 +7,39 @@ import view.View;
 
 import java.util.regex.Matcher;
 
-public class LoginMenuView implements View{
+public class LoginMenuView implements View {
     private static LoginMenuView instance;
     private LoginMenuController controller;
-    public static LoginMenuView getInstance(LoginMenuController controller){
-        if (instance == null){
-            instance = new LoginMenuView(controller);
-        }
-        return instance;
-    }
     private String result;
     private String username;
     private String password;
     private String email;
-
     public LoginMenuView(LoginMenuController controller) {
         this.controller = controller;
+    }
+
+    public static LoginMenuView getInstance(LoginMenuController controller) {
+        if (instance == null) {
+            instance = new LoginMenuView(controller);
+        }
+        return instance;
     }
 
     @Override
     public void processCommand(String command) {
         boolean commandFound = false;
-        for(LoginMenuCommands loginMenuCommands : LoginMenuCommands.values()){
+        for (LoginMenuCommands loginMenuCommands : LoginMenuCommands.values()) {
             Matcher matcher = loginMenuCommands.matcher(command);
-            if(matcher.matches()){
+            if (matcher.matches()) {
                 commandFound = true;
-                switch (loginMenuCommands){
+                switch (loginMenuCommands) {
                     case LOGIN:
                         username = matcher.group(1);
                         password = matcher.group(2);
                         String stayLoggedIn = matcher.group(3);
-                        if(stayLoggedIn == null){
+                        if (stayLoggedIn == null) {
                             result = controller.loginUser(username, password, false);
-                        } else{
+                        } else {
                             result = controller.loginUser(username, password, true);
                         }
                         System.out.println(result);
@@ -61,9 +61,9 @@ public class LoginMenuView implements View{
                         System.out.println(result);
                         break;
                     case MENU_ENTER:
-                        if(App.getCurrentUser() != null){
+                        if (App.getCurrentUser() != null) {
                             controller.changeMenu();
-                        } else{
+                        } else {
                             System.out.println("You should login first");
                         }
                         break;

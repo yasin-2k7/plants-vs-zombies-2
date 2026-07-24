@@ -3,11 +3,11 @@ package models.projectile.movementStrategies;
 import models.core.App;
 import models.projectile.Projectile;
 
-public class BouncingStrategy implements MovementStrategy{
+public class BouncingStrategy implements MovementStrategy {
+    private final int maxBounces;
     private float speedX;
     private float speedY;
     private int bounceCount = 0;
-    private final int maxBounces;
 
     public BouncingStrategy(float speedX, float speedY, int maxBounces) {
         this.speedX = speedX;

@@ -9,7 +9,7 @@ import models.zombie.Zombie;
 import java.util.DoubleSummaryStatistics;
 import java.util.List;
 
-public class AreaDamageBehavior implements ExplosiveBehavior{
+public class AreaDamageBehavior implements ExplosiveBehavior {
     private int damage;
     private ExplosionRange area;
 
@@ -24,16 +24,16 @@ public class AreaDamageBehavior implements ExplosiveBehavior{
         DoubleSummaryStatistics xStats = cells.stream()
                 .mapToDouble(Cell::getX)
                 .summaryStatistics();
-        double minX = xStats.getMin() - App.getCellWidth()/2;
-        double maxX = xStats.getMax() + App.getCellWidth()/2;
+        double minX = xStats.getMin() - App.getCellWidth() / 2;
+        double maxX = xStats.getMax() + App.getCellWidth() / 2;
         DoubleSummaryStatistics yStats = cells.stream()
                 .mapToDouble(Cell::getY)
                 .summaryStatistics();
         double minY = yStats.getMin();
         double maxY = yStats.getMax();
 
-        for (Zombie zombie : App.getCurrentGame().getActiveZombies()){
-            if (zombie.getY() <= maxY && zombie.getY() >= minY && zombie.getX() <= maxX && zombie.getX() >= minX){
+        for (Zombie zombie : App.getCurrentGame().getActiveZombies()) {
+            if (zombie.getY() <= maxY && zombie.getY() >= minY && zombie.getX() <= maxX && zombie.getX() >= minX) {
                 zombie.takeDamage(damage, "NORMAL");
             }
         }

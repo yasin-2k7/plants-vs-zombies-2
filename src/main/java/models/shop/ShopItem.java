@@ -25,11 +25,23 @@ public class ShopItem {
         return maxCapacity != -1 && currentCount >= maxCapacity;
     }
 
-    public String getName() { return name; }
-    public int getCoinCost() { return coinCost; }
-    public int getDiamondCost() { return diamondCost; }
+    public String getName() {
+        return name;
+    }
+
+    public int getCoinCost() {
+        return coinCost;
+    }
+
+    public int getDiamondCost() {
+        return diamondCost;
+    }
+
     public boolean isPermanent() {
         return this.isPermanent;
     }
-    public String getId() { return id; }
+
+    public String getId() {
+        return id;
+    }
 }

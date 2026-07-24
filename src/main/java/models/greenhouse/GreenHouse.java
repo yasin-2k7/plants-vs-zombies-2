@@ -58,7 +58,7 @@ public class GreenHouse {
 
 
         PlantFactory factory = App.getFactory();
-        Plant newPlant = factory.createPlant(chosenType, x, y, new Cell(1,1, new LandTerrain()));
+        Plant newPlant = factory.createPlant(chosenType, x, y, new Cell(1, 1, new LandTerrain()));
         if (newPlant == null) {
             return "Error: Could not create plant.";
         }

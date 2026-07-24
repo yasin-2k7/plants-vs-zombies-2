@@ -13,7 +13,7 @@ public class BeghouledWinCondition implements WinCondition {
     public boolean checkWin(GameWorld game) {
         BeghouledMechanics mechanics = game.getMechanic(BeghouledMechanics.class);
         if (mechanics == null) return false;
-        if (mechanics.getScore() >= mechanics.getTargetScore()){
+        if (mechanics.getScore() >= mechanics.getTargetScore()) {
             if (currentLevel != null) App.getCurrentUser().getMiniGameLevels().add(currentLevel);
             UserDataManager.saveUser(App.getCurrentUser());
         }

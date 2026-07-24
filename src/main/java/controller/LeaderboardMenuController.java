@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-public class LeaderboardMenuController implements MenuController{
+public class LeaderboardMenuController implements MenuController {
     @Override
     public void changeMenu() {
 
@@ -23,7 +23,7 @@ public class LeaderboardMenuController implements MenuController{
         AppView.setCurrentScreen(MainMenuView.getInstance());
     }
 
-    public void showCurrentMenu(){
+    public void showCurrentMenu() {
         GameMenuView.getInstance().showResult("Current menu: leaderboard menu");
     }
 
@@ -42,15 +42,15 @@ public class LeaderboardMenuController implements MenuController{
         return sortedList;
     }
 
-    public void showList(String field, boolean ascending){
+    public void showList(String field, boolean ascending) {
         LeaderboardSortField sortField = null;
-        for (LeaderboardSortField leaderboardSortField : LeaderboardSortField.values()){
-            if (field.equalsIgnoreCase(leaderboardSortField.name())){
+        for (LeaderboardSortField leaderboardSortField : LeaderboardSortField.values()) {
+            if (field.equalsIgnoreCase(leaderboardSortField.name())) {
                 sortField = leaderboardSortField;
                 break;
             }
         }
-        if (sortField == null){
+        if (sortField == null) {
             LeaderboardMenuView.getInstance().showResult("invalid field!");
             return;
         }
@@ -63,13 +63,13 @@ public class LeaderboardMenuController implements MenuController{
                 "+------+----------------+--------------------+------------+----------+-----------+------------+");
 
         int i = 1;
-        for (User user : sortedUsers){
+        for (User user : sortedUsers) {
             String row = String.format("| %-4d | %-14s | %-17s | %-10d | %-8d | %-9d | %-10d |",
                     i++, user.getUsername(), "SEASON " + user.getUnlockedChapter() + " - " + "LEVEL " + user.getUnlockedLevel(), user.getMiniGameLevels().size(), user.getDailyQuestsCount(), user.getNormalQuestsCount(), user.getMaxMupoint());
             LeaderboardMenuView.getInstance().showResult(row);
         }
 
         LeaderboardMenuView.getInstance().showResult("===============================================================================================\n" +
-                "* Sorted by: " + sortField.name() + (ascending? " (Ascending)" : " (Descending)"));
+                "* Sorted by: " + sortField.name() + (ascending ? " (Ascending)" : " (Descending)"));
     }
 }

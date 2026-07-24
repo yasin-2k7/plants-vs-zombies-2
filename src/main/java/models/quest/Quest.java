@@ -2,6 +2,7 @@ package models.quest;
 
 import models.core.User;
 import models.quest.reward.Reward;
+
 import java.util.function.Predicate;
 
 public abstract class Quest implements Comparable<Quest> {
@@ -47,10 +48,27 @@ public abstract class Quest implements Comparable<Quest> {
         return this.priority.compareTo(other.priority);
     }
 
-    public String getId() { return id; }
-    public String getDescription() { return description; }
-    public boolean isCompleted() { return isCompleted; }
-    public QuestPriority getPriority() {return priority;}
-    public void setCompleted(boolean completed) {this.isCompleted = completed;}
-    public Reward getReward() { return reward; }
+    public String getId() {
+        return id;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public boolean isCompleted() {
+        return isCompleted;
+    }
+
+    public void setCompleted(boolean completed) {
+        this.isCompleted = completed;
+    }
+
+    public QuestPriority getPriority() {
+        return priority;
+    }
+
+    public Reward getReward() {
+        return reward;
+    }
 }

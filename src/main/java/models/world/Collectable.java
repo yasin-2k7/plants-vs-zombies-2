@@ -3,7 +3,7 @@ package models.world;
 import models.enums.CollectableType;
 
 public class Collectable {
-    private float x,y;
+    private float x, y;
     private CollectableType type;
     private int lifeTime = 70;
     private int currentTime = 0;
@@ -15,14 +15,14 @@ public class Collectable {
         this.type = type;
     }
 
-    public void update(){
+    public void update() {
         currentTime++;
-        if (currentTime >= lifeTime){
+        if (currentTime >= lifeTime) {
             dead = true;
         }
     }
 
-    public void collect(){
+    public void collect() {
         dead = true;
     }
 

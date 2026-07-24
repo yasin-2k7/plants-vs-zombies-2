@@ -7,7 +7,7 @@ import models.zombie.Zombie;
 
 import java.util.List;
 
-public class PlantDamageStrategy implements HitStrategy{
+public class PlantDamageStrategy implements HitStrategy {
     private int damage;
     private String element = "NORMAL"; // مقادیر ممکن: "NORMAL", "ICE", "CHILL"
 
@@ -40,11 +40,6 @@ public class PlantDamageStrategy implements HitStrategy{
     }
 
     @Override
-    public void setElement(String element) {
-        this.element = element;
-    }
-
-    @Override
     public void applyDamage(Damageable target, List<Damageable> allTargets, Projectile projectile) {
 
     }
@@ -52,5 +47,10 @@ public class PlantDamageStrategy implements HitStrategy{
     @Override
     public String getElement() {
         return element;
+    }
+
+    @Override
+    public void setElement(String element) {
+        this.element = element;
     }
 }

@@ -7,7 +7,7 @@ import models.plant.components.ExplosivesComponent;
 import models.world.Cell;
 import models.zombie.Zombie;
 
-public class ProximityTrigger implements ExplosiveTrigger{
+public class ProximityTrigger implements ExplosiveTrigger {
     private final float rangeX;
 
     public ProximityTrigger(float rangeX) {
@@ -16,15 +16,13 @@ public class ProximityTrigger implements ExplosiveTrigger{
 
     @Override
     public boolean shouldTrigger(Plant owner, ExplosivesComponent component) {
-        for (Zombie zombie : App.getCurrentGame().getActiveZombies()){
-            if (zombie.getY() == owner.getY() && Math.abs(zombie.getX() - owner.getX()) < rangeX/2){
-                if (zombie.getX() > owner.getX() + App.getCellWidth()/2){
+        for (Zombie zombie : App.getCurrentGame().getActiveZombies()) {
+            if (zombie.getY() == owner.getY() && Math.abs(zombie.getX() - owner.getX()) < rangeX / 2) {
+                if (zombie.getX() > owner.getX() + App.getCellWidth() / 2) {
                     component.setTarget(Cell.nextCell(owner.getCell(), LevelMenuController.getGameCells()));
-                }
-                else if (zombie.getX() < owner.getX() - App.getCellWidth()/2){
+                } else if (zombie.getX() < owner.getX() - App.getCellWidth() / 2) {
                     component.setTarget(Cell.previousCell(owner.getCell(), LevelMenuController.getGameCells()));
-                }
-                else component.setTarget(owner.getCell());
+                } else component.setTarget(owner.getCell());
                 return true;
             }
         }

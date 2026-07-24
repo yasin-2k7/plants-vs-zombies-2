@@ -80,7 +80,7 @@ public class Wave {
             }
             int cost = (int) Math.round(difficulty * decreaseFactor);
 
-            Wave wave = generateRandomWave(i, cost, availableEntries, i == 1? 60 : spawnDelayTicks, isFinal, random);
+            Wave wave = generateRandomWave(i, cost, availableEntries, i == 1 ? 60 : spawnDelayTicks, isFinal, random);
             waves.add(wave);
         }
         return waves;
@@ -116,7 +116,15 @@ public class Wave {
         return spawnEntries.size();
     }
 
-    public int getWaveNumber() { return waveNumber; }
-    public int getTotalCost() { return totalCost; }
-    public boolean isFlagWave() { return isFinalWave; }
+    public int getWaveNumber() {
+        return waveNumber;
+    }
+
+    public int getTotalCost() {
+        return totalCost;
+    }
+
+    public boolean isFlagWave() {
+        return isFinalWave;
+    }
 }

@@ -32,7 +32,7 @@ public class IZombieLevel extends GameWorld {
     }
 
     @Override
-    public void tick(){
+    public void tick() {
         currentTick++;
         super.tick();
 
@@ -61,11 +61,11 @@ public class IZombieLevel extends GameWorld {
 
     public String placeZombie(Zombie zombie, float x, float y) {
         int col = (int) (x / 100);
-        if(col < redLineCol) {
+        if (col < redLineCol) {
             return "u cant place zombie here";
         }
         int cost = getZombieCost(zombie);
-        if(!(getSun() >= cost)){
+        if (!(getSun() >= cost)) {
             return "u dont have enough sun";
         }
 

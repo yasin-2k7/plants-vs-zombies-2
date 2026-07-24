@@ -10,7 +10,7 @@ import models.zombie.wave.WaveManager;
 
 import java.util.List;
 
-public class LockedPlantsLevelSetup implements LevelSetup{
+public class LockedPlantsLevelSetup implements LevelSetup {
     private int rows;
     private int cols;
     private List<Wave> waves;

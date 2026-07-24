@@ -6,19 +6,20 @@ import view.View;
 
 import java.util.regex.Matcher;
 
-public class NewsMenuView implements View{
+public class NewsMenuView implements View {
     private static NewsMenuView instance;
     private NewsMenuController controller;
 
-    public static NewsMenuView getInstance(){
-        if (instance == null){
+    public NewsMenuView(NewsMenuController controller) {
+        this.controller = controller;
+    }
+
+    public static NewsMenuView getInstance() {
+        if (instance == null) {
             instance = new NewsMenuView(new NewsMenuController());
             return instance;
         }
         return instance;
-    }
-    public NewsMenuView(NewsMenuController controller) {
-        this.controller = controller;
     }
 
     @Override
@@ -49,11 +50,9 @@ public class NewsMenuView implements View{
         System.out.println("Unknown command in Leaderboard menu.");
     }
 
-    public void showResult(String message){
+    public void showResult(String message) {
         System.out.println(message);
     }
-
-
 
 
 }

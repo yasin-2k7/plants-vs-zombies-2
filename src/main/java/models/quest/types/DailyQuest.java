@@ -4,6 +4,7 @@ import models.quest.Quest;
 import models.quest.QuestPriority;
 import models.quest.QuestStats;
 import models.quest.reward.Reward;
+
 import java.time.LocalDate;
 import java.util.function.Predicate;
 

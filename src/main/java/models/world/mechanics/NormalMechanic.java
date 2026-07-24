@@ -7,13 +7,13 @@ import models.zombie.wave.WaveManager;
 import java.util.List;
 import java.util.Random;
 
-public class NormalMechanic implements Mechanic{
+public class NormalMechanic implements Mechanic {
     private WaveManager waveManager;
     private long lastZombieSpawnTime = 0;
     private int zombieSpawnInterval;
     private Random random = new Random();
 
-    public NormalMechanic(WaveManager waveManager){
+    public NormalMechanic(WaveManager waveManager) {
         this.waveManager = waveManager;
     }
 
@@ -26,8 +26,7 @@ public class NormalMechanic implements Mechanic{
 //        int adjustedInterval = (int) Math.round(zombieSpawnInterval * decreaseFactor);
 
 
-
-        if(!waveManager.update()){
+        if (!waveManager.update()) {
             waveManager.spawnNextZombie(random.nextInt(world.getRows()), world);
         }
 
@@ -45,7 +44,7 @@ public class NormalMechanic implements Mechanic{
 
     }
 
-    public WaveManager getWaveManager(){
+    public WaveManager getWaveManager() {
         return waveManager;
     }
 }

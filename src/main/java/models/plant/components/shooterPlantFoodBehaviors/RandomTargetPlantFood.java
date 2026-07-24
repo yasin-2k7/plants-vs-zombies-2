@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class RandomTargetPlantFood implements PlantFoodBehavior{
+public class RandomTargetPlantFood implements PlantFoodBehavior {
     private final int targetCount;
 
     public RandomTargetPlantFood(int targetCount) {
@@ -25,7 +25,7 @@ public class RandomTargetPlantFood implements PlantFoodBehavior{
     public void activate(Plant owner, ShooterComponent shooterComponent) {
         List<Zombie> allZombies = App.getCurrentGame().getActiveZombies();
 
-        if (allZombies.isEmpty()){
+        if (allZombies.isEmpty()) {
             return;
         }
 
@@ -34,7 +34,7 @@ public class RandomTargetPlantFood implements PlantFoodBehavior{
         int finalCount = Math.min(targetCount, zombieCopy.size());
         List<Zombie> selectedZombies = zombieCopy.subList(0, finalCount);
 
-        for (Zombie zombie : selectedZombies){
+        for (Zombie zombie : selectedZombies) {
             Projectile p = App.getCurrentGame().getProjectilesPool().acquire();
             p.reset(owner.getX(), owner.getY(), shooterComponent.getPlantFoodStrategy(), shooterComponent.getMovementStrategies().getFirst().get(), shooterComponent.getStrikeStrategy(), shooterComponent.getGiantType());
             p.setTarget(zombie);

@@ -8,7 +8,6 @@ import models.miniGame.MiniGameLevels;
 import models.quest.Quest;
 import models.quest.QuestManager;
 import models.quest.QuestStats;
-import models.quest.types.DailyQuest;
 
 import java.util.*;
 
@@ -49,7 +48,7 @@ public class User {
     private int maxMupoint = 0;
 
 
-    public User(){
+    public User() {
         this.plantBoosts = new HashMap<>();
         this.unlockedPlantsLevels = new HashMap<>();
         this.seedPackets = new HashMap<>();
@@ -66,7 +65,7 @@ public class User {
         putZombies();
     }
 
-    private void putZombies(){
+    private void putZombies() {
         showedZombies.put("ZombieDefault", false);
         showedZombies.put("ZombieConeHead", false);
         showedZombies.put("ZombieBucketHead", false);
@@ -96,7 +95,7 @@ public class User {
         showedZombies.put("ZombieNewspaper", false);
     }
 
-    private void putInitialPlants(){
+    private void putInitialPlants() {
         unlockedPlantsLevels.put(PlantType.SUNFLOWER, 1);
         unlockedPlantsLevels.put(PlantType.PEASHOOTER, 1);
         unlockedPlantsLevels.put(PlantType.CABBAGE_PULT, 1);
@@ -171,38 +170,53 @@ public class User {
         save();
     }
 
-    public void addCoins(int amount){
+    public void addCoins(int amount) {
         this.coins += amount;
         save();
     }
-    public boolean spendCoins(int amount){
+
+    public boolean spendCoins(int amount) {
         if (coins < amount) return false;
         coins -= amount;
         save();
         return true;
     }
-    public void addGems(int amount){
+
+    public void addGems(int amount) {
         this.gems += amount;
         save();
     }
-    public boolean spendGems(int amount){
+
+    public boolean spendGems(int amount) {
         if (gems < amount) return false;
         gems -= amount;
         save();
         return true;
     }
 
-    public void unlockNewPlant(){}
+    public void unlockNewPlant() {
+    }
 
-    public void advanceLevel(){}
+    public void advanceLevel() {
+    }
 
     public HashMap<PlantType, Integer> getUnlockedPlantsLevels() {
         return unlockedPlantsLevels;
     }
 
-    public boolean hasBoost(PlantType type) {return plantBoosts.getOrDefault(type, false);}
-    public void addBoost(PlantType type) {plantBoosts.put(type, true); save();}
-    public void useBoost(PlantType type) {plantBoosts.put(type, false); save();}
+    public boolean hasBoost(PlantType type) {
+        return plantBoosts.getOrDefault(type, false);
+    }
+
+    public void addBoost(PlantType type) {
+        plantBoosts.put(type, true);
+        save();
+    }
+
+    public void useBoost(PlantType type) {
+        plantBoosts.put(type, false);
+        save();
+    }
 
     public List<PlantType> getUnlockedPlantTypesWithPlantFood() {
         List<PlantType> result = new ArrayList<>();
@@ -241,10 +255,6 @@ public class User {
         return true;
     }
 
-    public void setPlantFoods(int count){
-        this.plantFoods = count;
-    }
-
     public boolean usePlantFood() {
         if (this.plantFoods > 0) {
             this.plantFoods--;
@@ -254,18 +264,64 @@ public class User {
         return false;
     }
 
-    public GreenHouse getGreenhouse() {return greenhouse;}
+    public GreenHouse getGreenhouse() {
+        return greenhouse;
+    }
+
     public String getUsername() {
         return username;
     }
-    public int getCoins() {return coins;}
-    public int getGems() {return gems;}
-    public String getNickname() {return nickname;}
-    public int getPlantFoods() {return plantFoods;}
-    public String getEmail() {return email;}
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public int getCoins() {
+        return coins;
+    }
+
+    public void setCoins(int coins) {
+        this.coins = coins;
+    }
+
+    public int getGems() {
+        return gems;
+    }
+
+    public void setGems(int gems) {
+        this.gems = gems;
+    }
+
+    public String getNickname() {
+        return nickname;
+    }
+
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
+    }
+
+    public int getPlantFoods() {
+        return plantFoods;
+    }
+
+    public void setPlantFoods(int count) {
+        this.plantFoods = count;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
 
     public String getSecurityA() {
         return securityA;
+    }
+
+    public void setSecurityA(String securityA) {
+        this.securityA = securityA;
     }
 
     public boolean checkSeqA(String answer) {
@@ -275,6 +331,10 @@ public class User {
 
     public String getSecurityQ() {
         return securityQ;
+    }
+
+    public void setSecurityQ(String securityQ) {
+        this.securityQ = securityQ;
     }
 
     public List<News> getAllNews() {
@@ -291,35 +351,31 @@ public class User {
         return hashPassword;
     }
 
+    public void setHashPassword(String hashPassword) {
+        this.hashPassword = hashPassword;
+    }
+
     public Chapter getCurrentChapter() {
         return currentChapter;
+    }
+
+    public void setCurrentChapter(Chapter currentChapter) {
+        this.currentChapter = currentChapter;
     }
 
     public int getGameDifficulty() {
         return gameDifficulty;
     }
 
-    public void setHashPassword(String hashPassword) { this.hashPassword = hashPassword;}
-    public void setUsername(String username) {
-        this.username = username;
-    }
-    public void setNickname(String nickname) {
-        this.nickname = nickname;
-    }
-    public void setEmail(String email) { this.email = email;}
-    public void setGender(String gender) { this.gender = gender;}
-    public void setSecurityQ(String securityQ) { this.securityQ = securityQ;}
-    public void setSecurityA(String securityA) {this.securityA = securityA;}
-
     public void setGameDifficulty(int gameDifficulty) {
-        if(gameDifficulty < 1 || gameDifficulty > 5){
+        if (gameDifficulty < 1 || gameDifficulty > 5) {
             throw new IllegalArgumentException("Difficulty level must be between 1 and 5");
         }
         this.gameDifficulty = gameDifficulty;
     }
 
-    public void setCurrentChapter(Chapter currentChapter) {
-        this.currentChapter = currentChapter;
+    public void setGender(String gender) {
+        this.gender = gender;
     }
 
     public int getUnlockedChapter() {
@@ -338,7 +394,7 @@ public class User {
         return unlockedLevel;
     }
 
-    public void addNews(News news){
+    public void addNews(News news) {
         newsList.add(news);
     }
 
@@ -346,7 +402,7 @@ public class User {
         return showedZombies;
     }
 
-    public void notifyPlantUnlock(String plantName){
+    public void notifyPlantUnlock(String plantName) {
         addNews(new News(
                 "Unlock plant",
                 "plant" + plantName,
@@ -354,7 +410,7 @@ public class User {
         ));
     }
 
-    public void notifyZombieUnlock(String zombieName){
+    public void notifyZombieUnlock(String zombieName) {
         addNews(new News(
                 "Unlock zombie",
                 "zombie" + zombieName,
@@ -362,7 +418,7 @@ public class User {
         ));
     }
 
-    public void notifyLevelUnlock(String levelName){
+    public void notifyLevelUnlock(String levelName) {
         addNews(new News(
                 "Unlock new level",
                 "level" + levelName,
@@ -370,7 +426,7 @@ public class User {
         ));
     }
 
-    public void notifyMinigameUnlocked(String minigameName){
+    public void notifyMinigameUnlocked(String minigameName) {
         addNews(new News(
                 "Unlock minigame",
                 "minigame" + minigameName,
@@ -382,10 +438,22 @@ public class User {
         return questManager;
     }
 
-    public int getPot() {return pot;}
+    public int getPot() {
+        return pot;
+    }
 
-    public QuestStats getQuestStats() { return questStats; }
-    public Set<String> getCompletedQuestIds() { return completedQuestIds; }
+    public void setPot(int pot) {
+        this.pot = pot;
+    }
+
+    public QuestStats getQuestStats() {
+        return questStats;
+    }
+
+    public Set<String> getCompletedQuestIds() {
+        return completedQuestIds;
+    }
+
     public void addCompletedQuest(String questId) {
         completedQuestIds.add(questId);
         save();
@@ -393,26 +461,16 @@ public class User {
 
     public void unlockLevel() {
         if (unlockedLevel == 4 && unlockedChapter == 4) return;
-        int newLevel = unlockedLevel == 4 ? 1 : unlockedLevel+1;
-        int newChapter = newLevel == 1 ? unlockedChapter+1 : unlockedChapter;
+        int newLevel = unlockedLevel == 4 ? 1 : unlockedLevel + 1;
+        int newChapter = newLevel == 1 ? unlockedChapter + 1 : unlockedChapter;
         unlockedLevel = newLevel;
         unlockedChapter = newChapter;
         notifyLevelUnlock(newChapter + "-" + newLevel);
         UserDataManager.saveUser(this);
     }
 
-
-
-    public void setCoins(int coins) {
-        this.coins = coins;
-    }
-
     public HashMap<PlantType, Boolean> getPlantBoosts() {
         return plantBoosts;
-    }
-
-    public void setGems(int gems) {
-        this.gems = gems;
     }
 
     public int getMaxMupoint() {
@@ -433,6 +491,10 @@ public class User {
         return gamesPlayed;
     }
 
+    public void setGamesPlayed(int gamesPlayed) {
+        this.gamesPlayed = gamesPlayed;
+    }
+
     public int getNormalQuestsCount() {
         if (completedQuestIds == null) return 0;
         return (int) completedQuestIds.stream()
@@ -447,23 +509,15 @@ public class User {
                 .count();
     }
 
-
-
-    public int getCompletedMainLevels() {return (unlockedChapter-1)*4 + unlockedLevel-1;}
+    public int getCompletedMainLevels() {
+        return (unlockedChapter - 1) * 4 + unlockedLevel - 1;
+    }
 
     public int getCompletedLevels() {
-        return completedMiniGames.size() + (unlockedChapter-1)*4 + unlockedLevel-1;
+        return completedMiniGames.size() + (unlockedChapter - 1) * 4 + unlockedLevel - 1;
     }
 
     public Set<MiniGameLevels> getMiniGameLevels() {
         return completedMiniGames;
-    }
-
-    public void setGamesPlayed(int gamesPlayed) {
-        this.gamesPlayed = gamesPlayed;
-    }
-
-    public void setPot(int pot) {
-        this.pot = pot;
     }
 }

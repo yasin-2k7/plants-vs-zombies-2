@@ -39,7 +39,7 @@ public class ExplosiveFactory {
     }
 
 
-    private static Plant buildPotatoMine(){
+    private static Plant buildPotatoMine() {
         int level = App.getCurrentUser().getUnlockedPlantsLevels().get(PlantType.POTATO_MINE);
         int armTime = level >= 2 ? 120 : 150;
         int damage = level >= 4 ? 2400 : 1800;
@@ -61,7 +61,7 @@ public class ExplosiveFactory {
         return p;
     }
 
-    private static Plant buildPrimalPotatoMine(){
+    private static Plant buildPrimalPotatoMine() {
         int level = App.getCurrentUser().getUnlockedPlantsLevels().get(PlantType.PRIMAL_POTATO_MINE);
         int armTime = level >= 2 ? 40 : 50;
         int damage = level >= 4 ? 2800 : 2400;
@@ -83,7 +83,7 @@ public class ExplosiveFactory {
         return p;
     }
 
-    private static Plant buildCherryBomb(){
+    private static Plant buildCherryBomb() {
         int level = App.getCurrentUser().getUnlockedPlantsLevels().get(PlantType.CHERRY_BOMB);
         int damage = level >= 3 ? 2400 : 1800;
         Plant p = new Plant(PlantType.CHERRY_BOMB, 1000, damage);
@@ -91,12 +91,12 @@ public class ExplosiveFactory {
         return p;
     }
 
-    private static Plant buildSquash(){
+    private static Plant buildSquash() {
         int level = App.getCurrentUser().getUnlockedPlantsLevels().get(PlantType.SQUASH);
         int damage = level >= 3 ? 2400 : 1800;
         Plant p = new Plant(PlantType.SQUASH, 1000, damage);
-        ExplosivesComponent component = new ExplosivesComponent(new ProximityTrigger(App.getCellWidth()*3), new AreaDamageBehavior(damage, new CircularRange(0)), 0);
-        if (level >= 4 ) component.setLives(2);
+        ExplosivesComponent component = new ExplosivesComponent(new ProximityTrigger(App.getCellWidth() * 3), new AreaDamageBehavior(damage, new CircularRange(0)), 0);
+        if (level >= 4) component.setLives(2);
         p.addComponent(component);
         component.setPlantFoodBehavior((owner, comp) -> {
             List<Zombie> allZombies = new ArrayList<>(App.getCurrentGame().getActiveZombies());
@@ -108,7 +108,7 @@ public class ExplosiveFactory {
         return p;
     }
 
-    private static Plant buildGrapeshot(){
+    private static Plant buildGrapeshot() {
         int level = App.getCurrentUser().getUnlockedPlantsLevels().get(PlantType.GRAPESHOT);
         int damage = level >= 2 ? 2400 : 1800;
         int bounceMax = level >= 3 ? 4 : 3;
@@ -117,7 +117,7 @@ public class ExplosiveFactory {
         return p;
     }
 
-    private static Plant buildJalapeno(){
+    private static Plant buildJalapeno() {
         int level = App.getCurrentUser().getUnlockedPlantsLevels().get(PlantType.JALAPENO);
         int damage = level >= 3 ? 2400 : 1800;
         Plant p = new Plant(PlantType.JALAPENO, 1000, damage);
@@ -125,7 +125,7 @@ public class ExplosiveFactory {
         return p;
     }
 
-    private static Plant buildDoomShroom(){
+    private static Plant buildDoomShroom() {
         int level = App.getCurrentUser().getUnlockedPlantsLevels().get(PlantType.DOOM_SHROOM);
         int damage = level >= 3 ? 2600 : 1800;
         Plant p = new Plant(PlantType.DOOM_SHROOM, 1000, damage);
@@ -133,11 +133,11 @@ public class ExplosiveFactory {
         return p;
     }
 
-    private static Plant buildTangleKelp(){
+    private static Plant buildTangleKelp() {
         int level = App.getCurrentUser().getUnlockedPlantsLevels().get(PlantType.TANGLE_KELP);
         Plant p = new Plant(PlantType.TANGLE_KELP, 1000, 20000);
         ExplosivesComponent component = new ExplosivesComponent(new ProximityTrigger(App.getCellWidth()), new SingleTargetDamageBehavior(new CircularRange(0)), 0);
-        if (level >= 3 ) component.setLives(2);
+        if (level >= 3) component.setLives(2);
         component.setPlantFoodBehavior((owner, comp) -> {
             List<Zombie> waterZombies = App.getCurrentGame().getActiveZombies().stream()
                     .filter(zombie -> {
@@ -154,20 +154,20 @@ public class ExplosiveFactory {
         return p;
     }
 
-    private static Plant buildIcebergLettuce(){
+    private static Plant buildIcebergLettuce() {
         int level = App.getCurrentUser().getUnlockedPlantsLevels().get(PlantType.ICEBERG_LETTUCE);
         int freezeTime = level >= 3 ? 60 : 40;
         Plant p = new Plant(PlantType.ICEBERG_LETTUCE, 1000, 0);
         ExplosivesComponent component = new ExplosivesComponent(new ProximityTrigger(App.getCellWidth()), new FreezeZombieBehavior(new CircularRange(0), freezeTime), 0);
         component.setPlantFoodBehavior((owner, comp) -> {
-               App.getCurrentGame().getActiveZombies()
-                 .forEach(zombie -> zombie.freeze(40));
+            App.getCurrentGame().getActiveZombies()
+                    .forEach(zombie -> zombie.freeze(40));
         });
         p.addComponent(component);
         return p;
     }
 
-    private static Plant buildIceShroom(){
+    private static Plant buildIceShroom() {
         int level = App.getCurrentUser().getUnlockedPlantsLevels().get(PlantType.ICE_SHROOM);
         int freezeTime = level >= 2 ? 60 : 40;
         int damage = level >= 4 ? 50 : 0;
@@ -176,23 +176,23 @@ public class ExplosiveFactory {
         return p;
     }
 
-    private static Plant buildHotPotato(){
+    private static Plant buildHotPotato() {
         int level = App.getCurrentUser().getUnlockedPlantsLevels().get(PlantType.HOT_POTATO);
         int radius = level >= 3 ? 1 : 0;
         Plant p = new Plant(PlantType.HOT_POTATO, 1000, 0);
         ExplosivesComponent component = new ExplosivesComponent(InstantTrigger.INSTANCE, new MeltIceBehavior(new CircularRange(radius)), 0);
-        if (level >= 4){
+        if (level >= 4) {
             component.scheduleDelayedBehavior(new AreaDamageBehavior(100, new CircularRange(1)), 20);
         }
         return p;
     }
 
-    private static Plant buildGraveBuster(){
+    private static Plant buildGraveBuster() {
         int level = App.getCurrentUser().getUnlockedPlantsLevels().get(PlantType.GRAVE_BUSTER);
         int delay = level >= 2 ? 30 : 20;
         Plant p = new Plant(PlantType.GRAVE_BUSTER, 300, 0);
         ExplosivesComponent component = new ExplosivesComponent(InstantTrigger.INSTANCE, new RemoveGraveBehavior(), 0, delay);
-        if (level >= 4){
+        if (level >= 4) {
             component.scheduleDelayedBehavior(new AreaDamageBehavior(100, new CircularRange(1)), delay);
         }
         p.addComponent(component);

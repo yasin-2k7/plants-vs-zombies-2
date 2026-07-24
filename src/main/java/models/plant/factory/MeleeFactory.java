@@ -28,7 +28,7 @@ public class MeleeFactory {
         int interval = (level >= 3) ? 2 : 3;
 
         Plant plant = new Plant(PlantType.BONK_CHOY, health, damage);
-        plant.addComponent(new DirectionalMeleeComponent(damage, interval, 1.5f*App.getCellWidth()));
+        plant.addComponent(new DirectionalMeleeComponent(damage, interval, 1.5f * App.getCellWidth()));
         return plant;
     }
 

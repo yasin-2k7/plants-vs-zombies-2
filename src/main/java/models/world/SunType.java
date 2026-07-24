@@ -6,6 +6,7 @@ public enum SunType {
     RADIOACTIVE(0);
 
     public final int amount;
+
     SunType(int amount) {
         this.amount = amount;
     }

@@ -7,10 +7,10 @@ import models.world.GameWorld;
 import models.world.cellTerrains.LandTerrain;
 import models.world.levelSetup.LevelSetup;
 import models.world.mechanics.ConveyorMechanic;
+import models.world.mechanics.NormalMechanic;
 import models.zombie.wave.Wave;
 import models.zombie.wave.WaveManager;
 import models.zombie.wave.WaveSpawnEntry;
-import models.world.mechanics.NormalMechanic;
 
 import java.util.List;
 

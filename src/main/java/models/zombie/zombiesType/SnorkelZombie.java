@@ -25,8 +25,8 @@ public class SnorkelZombie extends Zombie {
             return;
         }
 
-        int col = (int)(this.x / App.getCellWidth());
-        int row = (int)(this.y / App.getCellHeight());
+        int col = (int) (this.x / App.getCellWidth());
+        int row = (int) (this.y / App.getCellHeight());
         boolean inWater = false;
         if (row >= 0 && row < game.getRows() && col >= 0 && col < game.getCols()) {
             Cell cell = game.getGrid()[row][col];
@@ -50,8 +50,8 @@ public class SnorkelZombie extends Zombie {
 
         GameWorld game = App.getCurrentGame();
         if (game != null) {
-            int col = (int)(this.x / App.getCellWidth());
-            int row = (int)(this.y / App.getCellHeight());
+            int col = (int) (this.x / App.getCellWidth());
+            int row = (int) (this.y / App.getCellHeight());
             boolean inWater = false;
             if (row >= 0 && row < game.getRows() && col >= 0 && col < game.getCols()) {
                 Cell cell = game.getGrid()[row][col];

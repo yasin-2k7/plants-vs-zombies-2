@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Supplier;
 
-public class GenericObjectPool < T extends Resettable> {
+public class GenericObjectPool<T extends Resettable> {
     private final List<T> freeObjects = new ArrayList<>();
     private final Set<T> inPoolSet = new HashSet<>();
     private final Supplier<T> factory;
@@ -16,11 +16,10 @@ public class GenericObjectPool < T extends Resettable> {
         this.factory = factory;
     }
 
-    public T acquire(){
-        if (freeObjects.isEmpty()){
+    public T acquire() {
+        if (freeObjects.isEmpty()) {
             return factory.get();
-        }
-        else{
+        } else {
             T obj = freeObjects.removeLast();
             inPoolSet.remove(obj);
             return obj;

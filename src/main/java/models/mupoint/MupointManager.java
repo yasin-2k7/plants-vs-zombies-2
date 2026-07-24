@@ -1,4 +1,5 @@
 package models.mupoint;
+
 import controller.GameMenuController;
 
 import java.util.ArrayList;

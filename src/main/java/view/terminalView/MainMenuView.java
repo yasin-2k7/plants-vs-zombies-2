@@ -3,16 +3,18 @@ package view.terminalView;
 import controller.MainMenuController;
 import models.enums.commands.MainMenuCommands;
 import view.View;
+
 import java.util.regex.Matcher;
 
 public class MainMenuView implements View {
 
-        private static MainMenuView instance;
-        private MainMenuController controller;
+    private static MainMenuView instance;
+    private MainMenuController controller;
 
-        private MainMenuView(MainMenuController controller) {
-            this.controller = controller;
-        }
+    private MainMenuView(MainMenuController controller) {
+        this.controller = controller;
+    }
+
     public static MainMenuView getInstance() {
         if (instance == null) {
             instance = new MainMenuView(new MainMenuController());
@@ -49,7 +51,7 @@ public class MainMenuView implements View {
         System.out.println("Unknown command in Main menu.");
     }
 
-    public void showResult(String message){
+    public void showResult(String message) {
         System.out.println(message);
     }
 

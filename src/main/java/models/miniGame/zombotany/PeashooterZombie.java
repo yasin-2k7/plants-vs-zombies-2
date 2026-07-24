@@ -5,24 +5,22 @@ import models.enums.ProjectileType;
 import models.enums.Zombies;
 import models.plant.Plant;
 import models.projectile.Projectile;
-import models.projectile.hitStrategies.CombinedDamageStrategy;
 import models.projectile.hitStrategies.PlantDamageStrategy;
 import models.projectile.movementStrategies.StraightMovementStrategy;
 import models.projectile.strikeStrategies.CheckPlantStrike;
-import models.projectile.strikeStrategies.CheckStraightStrike;
 import models.projectile.strikeStrategies.CheckStrike;
 import models.world.GameWorld;
 import models.zombie.Zombie;
 
 public class PeashooterZombie extends Zombie {
-    private int shootCooldown = 0;
     private static final int COOLDOWN_TICKS = 15;
+    private int shootCooldown = 0;
 
     public PeashooterZombie(Zombies name, int health, double speed, int damage) {
         super(name, health, speed, damage);
     }
 
-    private void shoot(){
+    private void shoot() {
         GameWorld world = App.getCurrentGame();
         if (world == null) return;
 
@@ -50,11 +48,11 @@ public class PeashooterZombie extends Zombie {
 
     @Override
     public void update() {
-        if(isDead) return;
+        if (isDead) return;
         super.update();
-        if(isDead) return;
+        if (isDead) return;
 
-        if(shootCooldown <= 0){
+        if (shootCooldown <= 0) {
             shoot();
             shootCooldown = COOLDOWN_TICKS;
         } else {

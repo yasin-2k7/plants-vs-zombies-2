@@ -4,13 +4,15 @@ import controller.GameMenuController;
 import models.enums.PlantType;
 import models.plant.Plant;
 import models.world.Cell;
-import java.util.*;
+
+import java.util.HashMap;
+import java.util.Map;
 import java.util.function.Supplier;
 
 public class PlantFactory {
     private static final Map<PlantType, Supplier<Plant>> REGISTRY = new HashMap<>();
 
-    public PlantFactory(){
+    public PlantFactory() {
         SunProducerFactory.register(REGISTRY);
         ShooterFactory.register(REGISTRY);
         ExplosiveFactory.register(REGISTRY);

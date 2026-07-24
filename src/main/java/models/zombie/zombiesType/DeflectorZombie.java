@@ -8,17 +8,16 @@ import models.projectile.hitStrategies.HitStrategy;
 import models.projectile.hitStrategies.PlantDamageStrategy;
 import models.projectile.movementStrategies.StraightMovementStrategy;
 import models.projectile.strikeStrategies.CheckPlantStrike;
-import models.projectile.strikeStrategies.CheckStraightStrike;
 import models.projectile.strikeStrategies.CheckStrike;
 import models.world.GameWorld;
 import models.zombie.Zombie;
 
 public class DeflectorZombie extends Zombie {
+    private static final double SPIN_SPEED_MULTIPLIER = 1.8;  // افزایش سرعت در حالت چرخش
     private final boolean isJuggler;
     private boolean isSpinning = false;
     private int spinTicks = 0;
     private double originalSpeed;
-    private static final double SPIN_SPEED_MULTIPLIER = 1.8;  // افزایش سرعت در حالت چرخش
 
     public DeflectorZombie(int health, double speed, int damage, boolean isJuggler) {
         super(Zombies.DEFLECTOR, health, speed, damage);

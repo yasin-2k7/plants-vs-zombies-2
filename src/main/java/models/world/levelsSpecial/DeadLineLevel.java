@@ -19,7 +19,8 @@ public class DeadLineLevel extends GameWorld {
     }
 
     @Override
-    protected void applyChapterRules() {}
+    protected void applyChapterRules() {
+    }
 
     public void setDeadLineCol(int deadLineCol) {
         this.deadLineCol = deadLineCol;

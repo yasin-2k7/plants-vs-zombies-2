@@ -12,12 +12,12 @@ import java.util.ArrayList;
 import java.util.Random;
 
 public class AncientEgyptWorld extends GameWorld {
-    private int deadLineCol;
-
     private static final int MIN_GRAVES = 2;
     private static final int MAX_GRAVES = 5;
+    private int deadLineCol;
 
-    public AncientEgyptWorld(LevelSetup levelSetup, ArrayList<LoseCondition> loseConditions, WinCondition winCondition, ArrayList<Mechanic> mechanics) {
+    public AncientEgyptWorld(LevelSetup levelSetup, ArrayList<LoseCondition> loseConditions,
+                             WinCondition winCondition, ArrayList<Mechanic> mechanics) {
         super(levelSetup, loseConditions, winCondition, mechanics);
     }
 
@@ -50,7 +50,7 @@ public class AncientEgyptWorld extends GameWorld {
             float x = col * 100f + 50f;
             float y = row * 100f + 50f;
 
-            Grave grave = new Grave(x, y, row, col,  Grave.GraveType.NORMAL);
+            Grave grave = new Grave(x, y, row, col, Grave.GraveType.NORMAL);
             cell.setObstacle(grave);
             cell.setPlantable(false);
 

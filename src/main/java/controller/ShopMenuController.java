@@ -66,7 +66,7 @@ public class ShopMenuController implements MenuController {
         return shopList.buy(itemId, type, count);
     }
 
-    public void showCurrentMenu(){
+    public void showCurrentMenu() {
         GameMenuView.getInstance().showResult("Current menu: shop menu");
     }
 }

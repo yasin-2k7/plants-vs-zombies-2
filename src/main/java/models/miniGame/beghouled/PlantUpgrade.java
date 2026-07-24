@@ -13,7 +13,15 @@ public class PlantUpgrade {
         this.cost = cost;
     }
 
-    public PlantType getFrom() { return from; }
-    public PlantType getTo() { return to; }
-    public int getCost() { return cost; }
+    public PlantType getFrom() {
+        return from;
+    }
+
+    public PlantType getTo() {
+        return to;
+    }
+
+    public int getCost() {
+        return cost;
+    }
 }

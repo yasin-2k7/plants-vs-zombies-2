@@ -9,7 +9,8 @@ import models.world.ChapterWorld.DarkAgesWorld;
 import models.world.ChapterWorld.FrostbiteCavesWorld;
 import models.world.levelSetup.*;
 import models.world.loseCondition.*;
-import models.world.mechanics.*;
+import models.world.mechanics.DarkAgesMechanic;
+import models.world.mechanics.Mechanic;
 import models.world.winCondition.NormalWin;
 import models.world.winCondition.TimedWarWin;
 import models.world.winCondition.WinCondition;
@@ -22,7 +23,7 @@ import java.util.List;
 import java.util.Map;
 
 public class LevelFactory {
-    public static GameWorld createLevel(Chapter chapter, int level){
+    public static GameWorld createLevel(Chapter chapter, int level) {
         return switch (chapter) {
             case EGYPT -> switch (level) {
                 case 1 -> createAncientEgyptLevel1();
@@ -34,7 +35,8 @@ public class LevelFactory {
                 case 1 -> createBigWaveBeachLevel1();
                 case 2 -> createBigWaveBeachLevel2();
                 case 3 -> createBigWaveBeachLevel3();
-                default -> throw new IllegalArgumentException("invalid level for big wave beach chapter");
+                default ->
+                        throw new IllegalArgumentException("invalid level for big wave beach chapter");
             };
             case DARK_AGES -> switch (level) {
                 case 1 -> createDarkAgesLevel1();
@@ -51,7 +53,7 @@ public class LevelFactory {
         };
     }
 
-    private static GameWorld createAncientEgyptLevel1(){
+    private static GameWorld createAncientEgyptLevel1() {
         int rows = 5;
         int cols = 9;
         List<WaveSpawnEntry> availableZombies = List.of(
@@ -82,7 +84,7 @@ public class LevelFactory {
         return world;
     }
 
-    private static GameWorld createAncientEgyptLevel2(){
+    private static GameWorld createAncientEgyptLevel2() {
         int rows = 5;
         int cols = 9;
         List<WaveSpawnEntry> availableZombies = List.of(
@@ -111,7 +113,7 @@ public class LevelFactory {
         return world;
     }
 
-    private static GameWorld createAncientEgyptLevel3(){
+    private static GameWorld createAncientEgyptLevel3() {
         int rows = 5;
         int cols = 9;
         List<WaveSpawnEntry> availableZombies = List.of(
@@ -154,7 +156,7 @@ public class LevelFactory {
         return world;
     }
 
-    private static GameWorld createAncientEgyptLevel4(){
+    private static GameWorld createAncientEgyptLevel4() {
         int rows = 5;
         int cols = 9;
         List<WaveSpawnEntry> availableZombies = List.of(
@@ -175,7 +177,7 @@ public class LevelFactory {
         return world;
     }
 
-    private static GameWorld createBigWaveBeachLevel1(){
+    private static GameWorld createBigWaveBeachLevel1() {
         int rows = 5;
         int cols = 9;
         List<WaveSpawnEntry> availableZombies = List.of(
@@ -201,7 +203,7 @@ public class LevelFactory {
         return world;
     }
 
-    private static GameWorld createBigWaveBeachLevel2(){
+    private static GameWorld createBigWaveBeachLevel2() {
         int rows = 5;
         int cols = 9;
         List<WaveSpawnEntry> availableZombies = List.of(
@@ -233,7 +235,7 @@ public class LevelFactory {
         return world;
     }
 
-    private static GameWorld createBigWaveBeachLevel3(){
+    private static GameWorld createBigWaveBeachLevel3() {
         int rows = 5;
         int cols = 9;
         List<WaveSpawnEntry> availableZombies = List.of(
@@ -261,7 +263,7 @@ public class LevelFactory {
         return world;
     }
 
-    private static GameWorld createBigWaveBeachLevel4(){
+    private static GameWorld createBigWaveBeachLevel4() {
         int rows = 5;
         int cols = 9;
         List<WaveSpawnEntry> availableZombies = List.of(
@@ -282,7 +284,7 @@ public class LevelFactory {
         return world;
     }
 
-    private static GameWorld createDarkAgesLevel1(){
+    private static GameWorld createDarkAgesLevel1() {
         int rows = 5;
         int cols = 9;
         List<WaveSpawnEntry> availableZombies = List.of(
@@ -310,7 +312,7 @@ public class LevelFactory {
         return world;
     }
 
-    private static GameWorld createDarkAgesLevel2(){
+    private static GameWorld createDarkAgesLevel2() {
         int rows = 5;
         int cols = 9;
         List<WaveSpawnEntry> availableZombies = List.of(
@@ -339,7 +341,7 @@ public class LevelFactory {
         return world;
     }
 
-    private static GameWorld createDarkAgesLevel3(){
+    private static GameWorld createDarkAgesLevel3() {
         int rows = 5;
         int cols = 9;
         List<WaveSpawnEntry> availableZombies = List.of(
@@ -368,7 +370,7 @@ public class LevelFactory {
         return world;
     }
 
-    private static GameWorld createDarkAgesLevel4(){
+    private static GameWorld createDarkAgesLevel4() {
         int rows = 5;
         int cols = 9;
         List<WaveSpawnEntry> availableZombies = List.of(
@@ -391,7 +393,7 @@ public class LevelFactory {
         return world;
     }
 
-    private static GameWorld createFrostbiteCavesLevel1(){
+    private static GameWorld createFrostbiteCavesLevel1() {
         int rows = 5;
         int cols = 9;
         List<WaveSpawnEntry> availableZombies = List.of(
@@ -419,7 +421,7 @@ public class LevelFactory {
         return world;
     }
 
-    private static GameWorld createFrostbiteCavesLevel2(){
+    private static GameWorld createFrostbiteCavesLevel2() {
         int rows = 5;
         int cols = 9;
         List<WaveSpawnEntry> availableZombies = List.of(
@@ -449,7 +451,7 @@ public class LevelFactory {
         return world;
     }
 
-    private static GameWorld createFrostbiteCavesLevel3(){
+    private static GameWorld createFrostbiteCavesLevel3() {
         int rows = 5;
         int cols = 9;
         List<WaveSpawnEntry> availableZombies = List.of(
@@ -476,7 +478,7 @@ public class LevelFactory {
         return world;
     }
 
-    private static GameWorld createFrostbiteCavesLevel4(){
+    private static GameWorld createFrostbiteCavesLevel4() {
         int rows = 5;
         int cols = 9;
         List<WaveSpawnEntry> availableZombies = List.of(

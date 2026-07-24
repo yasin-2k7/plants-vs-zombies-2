@@ -1,10 +1,11 @@
 package models.lawnMower;
-import java.util.List;
 
 import controller.GameMenuController;
 import models.core.App;
 import models.core.User;
 import models.zombie.Zombie;
+
+import java.util.List;
 
 public class LawnMower {
     private int row;
@@ -78,8 +79,14 @@ public class LawnMower {
         return isAlive;
     }
 
-    public boolean isActive() { return isActive; }
-    public int getRow() { return row; }
+    public boolean isActive() {
+        return isActive;
+    }
+
+    public int getRow() {
+        return row;
+    }
+
     public boolean isSpent() {
         return isSpent;
     }

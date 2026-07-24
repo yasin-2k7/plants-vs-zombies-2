@@ -23,12 +23,12 @@ public class UserManager {
     }
 
     public static String register(String username,
-                           String password,
-                           String nickname,
-                           String email,
-                           String gender,
-                           String securityQ,
-                           String securityA){
+                                  String password,
+                                  String nickname,
+                                  String email,
+                                  String gender,
+                                  String securityQ,
+                                  String securityA) {
         User newUser = new User();
         newUser.setUsername(username);
         newUser.setHashPassword(PasswordHasher.hashSHA256(password));
@@ -58,7 +58,7 @@ public class UserManager {
             currentUser = user;
             App.setCurrentUser(user);
             user.initQuests();
-            if(stayLoggedIn){
+            if (stayLoggedIn) {
                 UserDataManager.saveLoggedInUser(username);
             }
             return "Login successful! Welcome " + user.getNickname();
@@ -67,7 +67,11 @@ public class UserManager {
         }
     }
 
-    public void logout(){
+    public static User getCurrentUser() {
+        return currentUser;
+    }
+
+    public void logout() {
         if (currentUser != null) {
             UserDataManager.saveUser(currentUser); // ذخیره نهایی قبل از خروج
             currentUser = null;
@@ -75,10 +79,5 @@ public class UserManager {
             UserDataManager.clearLoggedInUser();
             GameMenuController.updateState("You have been logged out.");
         }
-    }
-
-
-    public static User getCurrentUser(){
-        return currentUser;
     }
 }

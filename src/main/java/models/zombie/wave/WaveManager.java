@@ -22,10 +22,6 @@ public class WaveManager {
 
     private boolean repeatForever = false;
 
-    public void setRepeatForever(boolean repeatForever) {
-        this.repeatForever = repeatForever;
-    }
-
     public WaveManager(List<Wave> waves) {
         this.waves = waves;
         this.currentWaveIndex = 0;
@@ -38,6 +34,10 @@ public class WaveManager {
             this.levelCompleted = true;
         }
         this.killedZombiesInCurrentWave = 0;
+    }
+
+    public void setRepeatForever(boolean repeatForever) {
+        this.repeatForever = repeatForever;
     }
 
     private void printWaveStartMessage(Wave wave) {
@@ -68,8 +68,7 @@ public class WaveManager {
             totalZombiesInCurrentWave = currentWave.getTotalZombieCount();
             killedZombiesInCurrentWave = 0;
             printWaveStartMessage(currentWave);
-        }
-        else if (repeatForever) {
+        } else if (repeatForever) {
             currentWaveIndex = 0;
             currentWave = waves.get(0);
             totalZombiesInCurrentWave = currentWave.getTotalZombieCount();
@@ -153,11 +152,18 @@ public class WaveManager {
     public boolean isLevelCompleted() {
         return levelCompleted;
     }
+
     public Wave getCurrentWave() {
         return currentWave;
     }
-    public int getKilledZombiesInCurrentWave() { return killedZombiesInCurrentWave; }
-    public int getTotalZombiesInCurrentWave() { return totalZombiesInCurrentWave; }
+
+    public int getKilledZombiesInCurrentWave() {
+        return killedZombiesInCurrentWave;
+    }
+
+    public int getTotalZombiesInCurrentWave() {
+        return totalZombiesInCurrentWave;
+    }
 
     public List<Wave> getWaves() {
         return waves;

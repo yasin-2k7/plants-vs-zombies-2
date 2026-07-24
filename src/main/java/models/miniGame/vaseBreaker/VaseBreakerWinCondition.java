@@ -18,8 +18,9 @@ public class VaseBreakerWinCondition implements WinCondition {
                     return false;
                 }
             }
-            if (level.getActiveZombies().isEmpty()){
-                if (currentLevel != null) App.getCurrentUser().getMiniGameLevels().add(currentLevel);
+            if (level.getActiveZombies().isEmpty()) {
+                if (currentLevel != null)
+                    App.getCurrentUser().getMiniGameLevels().add(currentLevel);
                 UserDataManager.saveUser(App.getCurrentUser());
             }
             return level.getActiveZombies().isEmpty();

@@ -1,6 +1,6 @@
 package models.mupoint;
 
-public class FastKillStrategy implements ScoreStrategy{
+public class FastKillStrategy implements ScoreStrategy {
 
     @Override
     public int calculatePoints(KillEvent event) {

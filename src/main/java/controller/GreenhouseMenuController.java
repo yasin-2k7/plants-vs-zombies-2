@@ -84,7 +84,7 @@ public class GreenhouseMenuController implements MenuController {
 //        return "Enterning Shop...";
 //    }
 
-    public void showCurrentMenu(){
+    public void showCurrentMenu() {
         GameMenuView.getInstance().showResult("Current menu: greenhouse menu");
     }
 }

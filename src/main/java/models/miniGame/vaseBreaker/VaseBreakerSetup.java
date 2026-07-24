@@ -10,11 +10,11 @@ import java.util.List;
 import java.util.Random;
 
 public class VaseBreakerSetup implements LevelSetup {
-    private int rows;
-    private int cols;
     private final List<String> normalVaseZombies;
     private final List<String> giantVaseZombies;
     private final List<PlantType> possiblePlants;
+    private int rows;
+    private int cols;
 
     public VaseBreakerSetup(int rows, int cols,
                             List<String> normalVaseZombies,

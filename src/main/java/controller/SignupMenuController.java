@@ -9,7 +9,7 @@ import view.terminalView.LoginMenuView;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SignupMenuController implements MenuController{
+public class SignupMenuController implements MenuController {
     private List<String> questions = new ArrayList<>();
 
     public SignupMenuController() {
@@ -18,10 +18,9 @@ public class SignupMenuController implements MenuController{
         questions.add("3. What is your major?");
     }
 
-    public String getQuestion(int index){
-        return questions.get(index-1);
+    public String getQuestion(int index) {
+        return questions.get(index - 1);
     }
-
 
 
     @Override
@@ -61,8 +60,7 @@ public class SignupMenuController implements MenuController{
     }
 
 
-
-    public List<String> validatePasswordStrength(String password){
+    public List<String> validatePasswordStrength(String password) {
         boolean hasUpper = false;
         boolean hasLower = false;
         boolean hasDigit = false;
@@ -87,9 +85,10 @@ public class SignupMenuController implements MenuController{
         if (!hasUpper) errors.add("password requires at least one uppercase letter.");
         if (!hasLower) errors.add("password requires at least one lowercase letter.");
         if (!hasDigit) errors.add("password requires at least one digit.");
-        if (!hasSpecial) errors.add("password requires at least one special symbol such as (! $ *).");
+        if (!hasSpecial)
+            errors.add("password requires at least one special symbol such as (! $ *).");
         if (hasInvalidChar) errors.add("password contains illegal characters.");
-        if(password.length() < 8) errors.add("password requires at least 8 characters.");
+        if (password.length() < 8) errors.add("password requires at least 8 characters.");
 
         return errors;
     }
@@ -110,27 +109,27 @@ public class SignupMenuController implements MenuController{
         return errors;
     }
 
-    public String createUser( String username,
-                            String password,
-                            String nickname,
-                            String email,
-                            String gender,
-                            String securityQ,
-                            String securityA){
+    public String createUser(String username,
+                             String password,
+                             String nickname,
+                             String email,
+                             String gender,
+                             String securityQ,
+                             String securityA) {
         String result = UserManager.register(username, password, nickname, email, gender, securityQ, securityA);
         AppView.currentScreen = LoginMenuView.getInstance(new LoginMenuController());
         return result;
 
     }
 
-    public List<String> getEmailErrors(String email){
+    public List<String> getEmailErrors(String email) {
         List<String> errors = new ArrayList<>();
 
-        if(email.matches(".*[!#$%^&*()=+{}\\[\\]|/\\\\:;',<>?].*")){
+        if (email.matches(".*[!#$%^&*()=+{}\\[\\]|/\\\\:;',<>?].*")) {
             errors.add("email should not contain special symbol");
         }
 
-        if(!email.matches("^[^@]+@[^@]+$")){
+        if (!email.matches("^[^@]+@[^@]+$")) {
             errors.add("email should only contain one @");
             return errors;
         }
@@ -173,9 +172,9 @@ public class SignupMenuController implements MenuController{
         return errors;
     }
 
-    public List<String> getPickQErrors(int num, String answer, String answerCon){
+    public List<String> getPickQErrors(int num, String answer, String answerCon) {
         List<String> errors = new ArrayList<>();
-        if(num <= 0 || num >= 4){
+        if (num <= 0 || num >= 4) {
             errors.add("Please choose a num between 1 and 3.");
         }
 
@@ -190,7 +189,7 @@ public class SignupMenuController implements MenuController{
         return questions;
     }
 
-    public void showCurrentMenu(){
+    public void showCurrentMenu() {
         GameMenuView.getInstance().showResult("Current menu: signup menu");
     }
 }

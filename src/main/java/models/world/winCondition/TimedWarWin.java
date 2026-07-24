@@ -6,7 +6,7 @@ import models.miniGame.MiniGameLevels;
 import models.world.GameWorld;
 import models.world.loseCondition.TimedWarLose;
 
-public class TimedWarWin implements WinCondition{
+public class TimedWarWin implements WinCondition {
     private final TimedWarLose loseCondition;
 
     public TimedWarWin(TimedWarLose loseCondition) {
@@ -15,7 +15,7 @@ public class TimedWarWin implements WinCondition{
 
     @Override
     public boolean checkWin(GameWorld game) {
-        if (loseCondition.getCurrentKills() >= loseCondition.getTargetKills()){
+        if (loseCondition.getCurrentKills() >= loseCondition.getTargetKills()) {
             UserDataManager.saveUser(App.getCurrentUser());
         }
         return loseCondition.getCurrentKills() >= loseCondition.getTargetKills();

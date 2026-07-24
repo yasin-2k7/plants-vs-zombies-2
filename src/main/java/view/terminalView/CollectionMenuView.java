@@ -9,19 +9,19 @@ import java.util.regex.Matcher;
 
 public class CollectionMenuView implements View {
     private static CollectionMenuView instance;
+    private CollectionMenuController controller;
 
-    public static CollectionMenuView getInstance(){
-        if (instance == null){
+    public CollectionMenuView(CollectionMenuController controller) {
+        this.controller = controller;
+    }
+
+    public static CollectionMenuView getInstance() {
+        if (instance == null) {
             instance = new CollectionMenuView(new CollectionMenuController());
             return instance;
         }
         return instance;
     }
-    public CollectionMenuView(CollectionMenuController controller) {
-        this.controller = controller;
-    }
-
-    private CollectionMenuController controller;
 
     @Override
     public void processCommand(String command) {
@@ -80,7 +80,7 @@ public class CollectionMenuView implements View {
     }
 
 
-    public void showResult(String message){
+    public void showResult(String message) {
         System.out.println(message);
     }
 

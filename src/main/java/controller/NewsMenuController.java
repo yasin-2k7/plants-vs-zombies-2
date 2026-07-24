@@ -10,7 +10,7 @@ import view.terminalView.NewsMenuView;
 
 import java.util.List;
 
-public class NewsMenuController implements MenuController{
+public class NewsMenuController implements MenuController {
     @Override
     public void changeMenu() {
 
@@ -21,10 +21,10 @@ public class NewsMenuController implements MenuController{
         AppView.setCurrentScreen(MainMenuView.getInstance());
     }
 
-    public void showNewsUnread(){
+    public void showNewsUnread() {
         User user = App.getCurrentUser();
         List<News> unreadNews = user.getUnreadNews();
-        for (News news : unreadNews){
+        for (News news : unreadNews) {
             NewsMenuView.getInstance().showResult(news.getTitle());
             NewsMenuView.getInstance().showResult("------------------------------------------------\n");
             NewsMenuView.getInstance().showResult(news.getMessage());
@@ -32,10 +32,10 @@ public class NewsMenuController implements MenuController{
         }
     }
 
-    public void showNews(){
+    public void showNews() {
         User user = App.getCurrentUser();
         List<News> allNews = user.getAllNews();
-        for (News news : allNews){
+        for (News news : allNews) {
             NewsMenuView.getInstance().showResult(news.getTitle());
             NewsMenuView.getInstance().showResult("------------------------------------------------\n");
             NewsMenuView.getInstance().showResult(news.getMessage());
@@ -43,7 +43,7 @@ public class NewsMenuController implements MenuController{
         }
     }
 
-    public void showCurrentMenu(){
+    public void showCurrentMenu() {
         GameMenuView.getInstance().showResult("Current menu: news menu");
     }
 }

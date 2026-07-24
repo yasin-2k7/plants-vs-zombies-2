@@ -40,7 +40,6 @@ public class ExplosivesComponent implements GameComponent {
     }
 
 
-
     public void update(Plant owner) {
 
         if (!isArmed) {
@@ -56,11 +55,10 @@ public class ExplosivesComponent implements GameComponent {
             if (postTriggerDelay <= 0) {
                 lives--;
                 explosiveBehavior.execute(owner);
-                if (lives > 0){
+                if (lives > 0) {
                     postTriggerDelay = maxPostTriggerDelay;
                     isTriggered = false;
-                }
-                else{
+                } else {
                     owner.getCell().findAndRemovePlant();
                 }
             }
@@ -83,7 +81,7 @@ public class ExplosivesComponent implements GameComponent {
 
     @Override
     public void activatePlantFood(Plant owner) {
-        if (this.plantFoodBehavior != null){
+        if (this.plantFoodBehavior != null) {
             this.plantFoodBehavior.execute(owner, this);
         }
     }
@@ -97,7 +95,7 @@ public class ExplosivesComponent implements GameComponent {
         this.lives = lives;
     }
 
-    public void setPlantFoodBehavior(ExplosivePlantFoodBehavior plantFoodBehavior){
+    public void setPlantFoodBehavior(ExplosivePlantFoodBehavior plantFoodBehavior) {
         this.plantFoodBehavior = plantFoodBehavior;
     }
 

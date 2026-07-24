@@ -8,12 +8,12 @@ import models.zombie.wave.WaveManager;
 
 import java.util.List;
 
-public class NormalLevelSetup implements LevelSetup{
+public class NormalLevelSetup implements LevelSetup {
     private int rows;
     private int cols;
     private List<Wave> waves;
 
-    public NormalLevelSetup(int rows, int cols, List<Wave> waves){
+    public NormalLevelSetup(int rows, int cols, List<Wave> waves) {
         this.rows = rows;
         this.cols = cols;
         this.waves = waves;

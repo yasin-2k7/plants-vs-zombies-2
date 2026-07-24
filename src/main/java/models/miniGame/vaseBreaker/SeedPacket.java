@@ -3,12 +3,12 @@ package models.miniGame.vaseBreaker;
 import models.enums.PlantType;
 
 public class SeedPacket {
+    private static final int EXPIRE_AFTER_TICKS = 50;
     private float x;
     private float y;
     private PlantType plantType;
     private boolean collected;
     private int ticksAlive = 0;
-    private static final int EXPIRE_AFTER_TICKS = 50;
 
     public SeedPacket(float x, float y, PlantType plantType) {
         this.x = x;
@@ -26,10 +26,21 @@ public class SeedPacket {
     }
 
 
-    public float getX() { return x; }
-    public float getY() { return y; }
-    public PlantType getPlantType() { return plantType; }
-    public boolean isCollected() { return collected; }
+    public float getX() {
+        return x;
+    }
+
+    public float getY() {
+        return y;
+    }
+
+    public PlantType getPlantType() {
+        return plantType;
+    }
+
+    public boolean isCollected() {
+        return collected;
+    }
 
     public void collect() {
         this.collected = true;

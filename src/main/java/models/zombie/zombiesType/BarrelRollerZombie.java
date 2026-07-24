@@ -78,7 +78,7 @@ public class BarrelRollerZombie extends Zombie {
             imp.setX(impX);
             imp.setY(impY);
             game.getActiveZombies().add(imp);
-            System.out.println("👾 Barrel released Imp #" + (i+1) + " at (" + impX + ", " + impY + ")");
+            System.out.println("👾 Barrel released Imp #" + (i + 1) + " at (" + impX + ", " + impY + ")");
         }
         if (zombieCell.getObstacle() instanceof BarrelObstacle) {
             zombieCell.removeObstacle();
@@ -115,10 +115,13 @@ public class BarrelRollerZombie extends Zombie {
                     currentCell.getX(), currentCell.getY(), barrelHealth
             );
             currentCell.setObstacle(barrelObstacle);
-            System.out.println("🛢️ Barrel left behind as obstacle at (" + currentCell.getX() + ", " + currentCell.getY() + ")");
+            System.out.println("🛢️ Barrel left behind as obstacle at (" +
+                    currentCell.getX() + ", " + currentCell.getY() + ")");
         }
         super.die();
     }
 
-    public int getBarrelHealth() { return barrelHealth; }
+    public int getBarrelHealth() {
+        return barrelHealth;
+    }
 }

@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MuPointLevel {
-    public static GameWorld createMuPointLevel(){
+    public static GameWorld createMuPointLevel() {
         int rows = 5;
         int cols = 9;
 

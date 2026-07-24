@@ -2,10 +2,10 @@ package models.world.loseCondition;
 
 import models.world.GameWorld;
 
-public class SaveOurSeedsLose implements LoseCondition{
+public class SaveOurSeedsLose implements LoseCondition {
     private boolean protectedPlantEaten = false;
 
-    public void onProtectedPlantEaten(){
+    public void onProtectedPlantEaten() {
         protectedPlantEaten = true;
     }
 

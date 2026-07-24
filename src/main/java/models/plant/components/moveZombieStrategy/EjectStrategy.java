@@ -8,7 +8,7 @@ import models.zombie.Zombie;
 
 import java.util.List;
 
-public class EjectStrategy implements MoveZombieStrategy{
+public class EjectStrategy implements MoveZombieStrategy {
     @Override
     public void onUpdate(Plant owner) {
 
@@ -20,14 +20,12 @@ public class EjectStrategy implements MoveZombieStrategy{
     }
 
     private void ejectZombie(Plant owner, Zombie attacker) {
-        if (owner.getCell().getRow() == 0){
+        if (owner.getCell().getRow() == 0) {
             attacker.setY(attacker.getY() + App.getCellHeight());
-        }
-        else if (owner.getCell().getRow() == App.getCurrentGame().getRows()-1){
+        } else if (owner.getCell().getRow() == App.getCurrentGame().getRows() - 1) {
             attacker.setY(attacker.getY() - App.getCellHeight());
-        }
-        else {
-            attacker.setY(attacker.getY() + (Math.random() < 0.5 ? 1 : -1 ) * App.getCellHeight());
+        } else {
+            attacker.setY(attacker.getY() + (Math.random() < 0.5 ? 1 : -1) * App.getCellHeight());
         }
     }
 
@@ -35,7 +33,7 @@ public class EjectStrategy implements MoveZombieStrategy{
     public void onPlantFood(Plant owner) {
         List<Cell> cells = Cell.getCellsInRow(owner.getCell(), LevelMenuController.getGameCells());
         List<Zombie> zombieList = Cell.getZombiesInCells(cells);
-        for (Zombie zombie : zombieList){
+        for (Zombie zombie : zombieList) {
             ejectZombie(owner, zombie);
         }
     }

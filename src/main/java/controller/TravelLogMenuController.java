@@ -7,10 +7,13 @@ import models.miniGame.MiniGames;
 import models.quest.Quest;
 import models.quest.QuestPriority;
 import models.quest.types.DailyQuest;
-import models.quest.types.MainQuest;
 import models.quest.types.EpicChallengeQuest;
+import models.quest.types.MainQuest;
 import models.world.GameWorld;
-import view.terminalView.*;
+import view.terminalView.AppView;
+import view.terminalView.GameMenuView;
+import view.terminalView.MainMenuView;
+import view.terminalView.PlantMenuView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,7 +38,7 @@ public class TravelLogMenuController implements MenuController {
 
     public String changePage(String pageName) {
         if (pageName.equalsIgnoreCase("daily") || pageName.equalsIgnoreCase("main")
-                || pageName.equalsIgnoreCase("epic") || pageName.equalsIgnoreCase("minigame")){
+                || pageName.equalsIgnoreCase("epic") || pageName.equalsIgnoreCase("minigame")) {
             this.currentPage = pageName.toLowerCase();
             return "Switched to " + pageName + " page.";
         }
@@ -97,11 +100,16 @@ public class TravelLogMenuController implements MenuController {
 
     private String getPriorityIcon(QuestPriority priority) {
         switch (priority) {
-            case CRITICAL: return "🔥 CRITICAL";
-            case HIGH: return "⭐ HIGH";
-            case MEDIUM: return "● MEDIUM";
-            case LOW: return "○ LOW";
-            default: return "";
+            case CRITICAL:
+                return "🔥 CRITICAL";
+            case HIGH:
+                return "⭐ HIGH";
+            case MEDIUM:
+                return "● MEDIUM";
+            case LOW:
+                return "○ LOW";
+            default:
+                return "";
         }
     }
 

@@ -1,6 +1,9 @@
 package controller;
 
-import models.core.*;
+import models.core.App;
+import models.core.PasswordHasher;
+import models.core.User;
+import models.core.UserDataManager;
 import view.terminalView.AppView;
 import view.terminalView.GameMenuView;
 import view.terminalView.MainMenuView;

@@ -7,8 +7,16 @@ public class ZombieProperties {
     private String objclass;
     private ZombieData objdata;
 
-    public List<String> getAliases() { return aliases; }
-    public String getObjclass() { return objclass; }
-    public ZombieData getObjdata() { return objdata; }
+    public List<String> getAliases() {
+        return aliases;
+    }
+
+    public String getObjclass() {
+        return objclass;
+    }
+
+    public ZombieData getObjdata() {
+        return objdata;
+    }
 
 }

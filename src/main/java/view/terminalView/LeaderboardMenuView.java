@@ -14,6 +14,7 @@ public class LeaderboardMenuView implements View {
     private LeaderboardMenuView(LeaderboardMenuController controller) {
         this.controller = controller;
     }
+
     public static LeaderboardMenuView getInstance() {
         if (instance == null) {
             instance = new LeaderboardMenuView(new LeaderboardMenuController());
@@ -48,11 +49,11 @@ public class LeaderboardMenuView implements View {
         System.out.println("Unknown command in Leaderboard menu.");
     }
 
-    public void showLeaderboard(){
+    public void showLeaderboard() {
         controller.showList("LAST_STAGE", false);
     }
 
-    public void showResult(String message){
+    public void showResult(String message) {
         System.out.println(message);
     }
 

@@ -2,22 +2,22 @@ package models.zombie.zombiesType;
 
 import controller.GameMenuController;
 import models.core.App;
+import models.enums.Zombies;
 import models.plant.Plant;
 import models.world.Cell;
 import models.world.GameWorld;
 import models.world.Sun;
 import models.zombie.Zombie;
-import models.enums.Zombies;
 
 import java.util.List;
 
 public class SunStealerZombie extends Zombie {
+    private static final int STEAL_INTERVAL = 15;  // 1 second (15 ticks)
+    private static final int LASER_DELAY = 75;     // 5 seconds
     private int stolenSun;
     private boolean isRa;
     private int stealTimer;
     private boolean isStealing;
-    private static final int STEAL_INTERVAL = 15;  // 1 second (15 ticks)
-    private static final int LASER_DELAY = 75;     // 5 seconds
 
     public SunStealerZombie(int health, double speed, int damage, boolean isRa) {
         super(Zombies.SUN_STEALER, health, speed, damage);

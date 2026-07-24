@@ -2,7 +2,7 @@ package models.projectile.movementStrategies;
 
 import models.projectile.Projectile;
 
-public class StraightMovementStrategy implements MovementStrategy{
+public class StraightMovementStrategy implements MovementStrategy {
     float speedX;
     float speedY;
     float changeYAmount = 0;

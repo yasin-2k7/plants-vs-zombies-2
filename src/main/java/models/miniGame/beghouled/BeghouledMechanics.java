@@ -16,9 +16,8 @@ public class BeghouledMechanics implements Mechanic {
     private final List<PlantUpgrade> upgrades;
     private final Set<GridPosition> craters = new HashSet<>();
     private final Random random = new Random();
-
-    private int score = 0;
     private final int targetScore;
+    private int score = 0;
 
     public BeghouledMechanics(List<PlantType> availablePlantTypes, List<PlantUpgrade> upgrades, int targetScore) {
         this.availablePlantTypes = availablePlantTypes;
@@ -29,7 +28,6 @@ public class BeghouledMechanics implements Mechanic {
     @Override
     public void applyMechanic(GameWorld world) {
     }
-
 
 
     public void fillRandomPlants(GameWorld world) {
@@ -48,11 +46,12 @@ public class BeghouledMechanics implements Mechanic {
 
     private void placePlant(GameWorld world, int row, int col, PlantType type) {
         Cell cell = world.getGrid()[row][col];
-        Plant plant = PlantFactory.createPlant(type, (int) (50 + App.getCellWidth()*cell.getCol()), (int) (50 + App.getCellHeight()*cell.getRow()), cell);
+        Plant plant = PlantFactory.createPlant(
+                type, (int) (50 + App.getCellWidth() * cell.getCol()),
+                (int) (50 + App.getCellHeight() * cell.getRow()), cell);
         cell.setPlant(plant, PlantLayer.MAIN);
         world.getActivePlants().add(plant);
     }
-
 
 
     public String trySwap(GameWorld world, GridPosition a, GridPosition b) {
@@ -100,7 +99,6 @@ public class BeghouledMechanics implements Mechanic {
     }
 
 
-
     private List<List<GridPosition>> findAllMatches(GameWorld world) {
         List<List<GridPosition>> matches = new ArrayList<>();
 
@@ -108,7 +106,10 @@ public class BeghouledMechanics implements Mechanic {
             int c = 0;
             while (c < world.getCols()) {
                 PlantType type = typeAt(world, r, c);
-                if (type == null) { c++; continue; }
+                if (type == null) {
+                    c++;
+                    continue;
+                }
                 int start = c;
                 while (c < world.getCols() && typeAt(world, r, c) == type) c++;
                 if (c - start >= 3) {
@@ -123,7 +124,10 @@ public class BeghouledMechanics implements Mechanic {
             int r = 0;
             while (r < world.getRows()) {
                 PlantType type = typeAt(world, r, c);
-                if (type == null) { r++; continue; }
+                if (type == null) {
+                    r++;
+                    continue;
+                }
                 int start = r;
                 while (r < world.getRows() && typeAt(world, r, c) == type) r++;
                 if (r - start >= 3) {
@@ -141,7 +145,6 @@ public class BeghouledMechanics implements Mechanic {
         Plant plant = world.getGrid()[row][col].getPlant();
         return (plant == null) ? null : plant.getType();
     }
-
 
 
     private void processMatches(GameWorld world, List<List<GridPosition>> matches, boolean isCascade) {
@@ -264,7 +267,6 @@ public class BeghouledMechanics implements Mechanic {
     }
 
 
-
     public String upgradePlant(GameWorld world, PlantType from) {
         PlantUpgrade upgrade = upgrades.stream()
                 .filter(u -> u.getFrom() == from)
@@ -296,7 +298,6 @@ public class BeghouledMechanics implements Mechanic {
     }
 
 
-
     public void createCrater(GameWorld world, int row, int col) {
         GridPosition pos = new GridPosition(row, col);
         craters.add(pos);
@@ -306,8 +307,15 @@ public class BeghouledMechanics implements Mechanic {
     }
 
 
+    public int getScore() {
+        return score;
+    }
 
-    public int getScore() { return score; }
-    public int getTargetScore() { return targetScore; }
-    public Set<GridPosition> getCraters() { return craters; }
+    public int getTargetScore() {
+        return targetScore;
+    }
+
+    public Set<GridPosition> getCraters() {
+        return craters;
+    }
 }

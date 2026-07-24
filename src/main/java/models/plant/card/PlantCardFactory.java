@@ -17,7 +17,8 @@ public class PlantCardFactory {
 
     public static void init(Reader reader) {
         Gson gson = new Gson();
-        Type typeOfHashMap = new TypeToken<Map<String, Map<Integer, UpgradeConfig>>>(){}.getType();
+        Type typeOfHashMap = new TypeToken<Map<String, Map<Integer, UpgradeConfig>>>() {
+        }.getType();
         upgradeRules = gson.fromJson(reader, typeOfHashMap);
     }
 

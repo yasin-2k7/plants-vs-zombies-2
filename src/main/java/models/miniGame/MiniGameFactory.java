@@ -31,37 +31,37 @@ import java.util.List;
 
 public class MiniGameFactory {
 
-    public static GameWorld createMiniGameLevel(MiniGames miniGame, int level){
-        return switch (miniGame){
-            case VASE_BREAKER -> switch (level){
+    public static GameWorld createMiniGameLevel(MiniGames miniGame, int level) {
+        return switch (miniGame) {
+            case VASE_BREAKER -> switch (level) {
                 case 1 -> createVaseBreakerLevel1();
                 case 2 -> createVaseBreakerLevel2();
                 case 3 -> createVaseBreakerLevel3();
                 default -> throw new IllegalArgumentException("invalid level for vase breaker");
             };
 
-            case BOWLING -> switch (level){
+            case BOWLING -> switch (level) {
                 case 1 -> createBowlingLevel1();
                 case 2 -> createBowlingLevel2();
                 case 3 -> createBowlingLevel3();
                 default -> throw new IllegalArgumentException("invalid level for Bowling");
             };
 
-            case BEGHOULED -> switch (level){
+            case BEGHOULED -> switch (level) {
                 case 1 -> createBeghouledLevel1();
                 case 2 -> createBeghouledLevel2();
                 case 3 -> createBeghouledLevel3();
                 default -> throw new IllegalArgumentException("invalid level for Beghouled");
             };
 
-            case I_ZOMBIE -> switch (level){
+            case I_ZOMBIE -> switch (level) {
                 case 1 -> createIZombieLevel1();
                 case 2 -> createIZombieLevel2();
                 case 3 -> createIZombieLevel3();
                 default -> throw new IllegalArgumentException("invalid level for I Zombie");
             };
 
-            case ZOMBOTANY -> switch (level){
+            case ZOMBOTANY -> switch (level) {
                 case 1 -> createZombotanyLevel1();
                 case 2 -> createZombotanyLevel2();
                 case 3 -> createZombotanyLevel3();

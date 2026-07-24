@@ -9,7 +9,7 @@ import view.terminalView.GameMenuView;
 import view.terminalView.MainMenuView;
 import view.terminalView.SignupMenuView;
 
-public class LoginMenuController implements MenuController{
+public class LoginMenuController implements MenuController {
 
     private User recoveringUser = null;
     private boolean isSQPassed = false;
@@ -24,17 +24,17 @@ public class LoginMenuController implements MenuController{
         AppView.currentScreen = SignupMenuView.getInstance();
     }
 
-    public String loginUser(String username, String password, boolean stayLoggedIn){
+    public String loginUser(String username, String password, boolean stayLoggedIn) {
         String result = UserManager.login(username, password, stayLoggedIn);
         return result;
     }
 
-    public String forgetPassword(String username, String email){
+    public String forgetPassword(String username, String email) {
         User user = UserDataManager.loadUser(username);
         if (user == null) {
             return "This username doesn't exist.";
         }
-        if(!user.getEmail().equals(email)){
+        if (!user.getEmail().equals(email)) {
             return "Email is not correct.";
         }
         this.recoveringUser = user;
@@ -44,12 +44,12 @@ public class LoginMenuController implements MenuController{
 
     }
 
-    public String answerSQ(String answer){
+    public String answerSQ(String answer) {
         if (recoveringUser == null) {
             return "Please enter your username and email first.";
         }
 
-        if(!recoveringUser.checkSeqA(answer)){
+        if (!recoveringUser.checkSeqA(answer)) {
             isSQPassed = false;
             return "your answer is incorrect";
         }
@@ -58,7 +58,7 @@ public class LoginMenuController implements MenuController{
 
     }
 
-    public String newPassword(String password){
+    public String newPassword(String password) {
         if (recoveringUser == null) {
             return "Please enter your username and email first.";
         }
@@ -80,7 +80,7 @@ public class LoginMenuController implements MenuController{
         }
     }
 
-    public void showCurrentMenu(){
+    public void showCurrentMenu() {
         GameMenuView.getInstance().showResult("Current menu: login menu");
     }
 }

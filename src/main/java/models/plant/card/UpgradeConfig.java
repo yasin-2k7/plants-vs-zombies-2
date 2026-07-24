@@ -9,6 +9,11 @@ public class UpgradeConfig {
         this.cooldownReductionTicks = cooldownReductionTicks;
     }
 
-    public int getSunCostModifier() { return sunCostModifier; }
-    public int getCooldownReductionTicks() { return cooldownReductionTicks; }
+    public int getSunCostModifier() {
+        return sunCostModifier;
+    }
+
+    public int getCooldownReductionTicks() {
+        return cooldownReductionTicks;
+    }
 }

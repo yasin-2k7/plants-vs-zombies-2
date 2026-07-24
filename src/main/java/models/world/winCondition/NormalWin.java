@@ -6,13 +6,13 @@ import models.miniGame.MiniGameLevels;
 import models.world.GameWorld;
 import models.world.mechanics.NormalMechanic;
 
-public class NormalWin implements WinCondition{
+public class NormalWin implements WinCondition {
     MiniGameLevels currentLevel;
 
     @Override
     public boolean checkWin(GameWorld game) {
         NormalMechanic mechanic = game.getMechanic(NormalMechanic.class);
-        if (mechanic.getWaveManager().isLevelCompleted() && game.getActiveZombies().isEmpty()){
+        if (mechanic.getWaveManager().isLevelCompleted() && game.getActiveZombies().isEmpty()) {
             if (currentLevel != null) App.getCurrentUser().getMiniGameLevels().add(currentLevel);
 
             UserDataManager.saveUser(App.getCurrentUser());

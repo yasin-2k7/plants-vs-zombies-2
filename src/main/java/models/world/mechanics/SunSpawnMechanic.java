@@ -8,7 +8,7 @@ import models.world.SunType;
 
 import java.util.Random;
 
-public class SunSpawnMechanic implements Mechanic{
+public class SunSpawnMechanic implements Mechanic {
     private long lastSpawnTick = 0;
     private int spawnInterval = 120; //ms
 
@@ -23,13 +23,13 @@ public class SunSpawnMechanic implements Mechanic{
 
         if (now - lastSpawnTick >= adjustedInterval) {
             spawnRandomSun(world);
-            spawnInterval = Math.max((int) (6+0.05* world.getCurrentTick()), 120);
+            spawnInterval = Math.max((int) (6 + 0.05 * world.getCurrentTick()), 120);
             lastSpawnTick = now;
         }
 
     }
 
-    private void spawnRandomSun(GameWorld world){
+    private void spawnRandomSun(GameWorld world) {
         SunType type;
         Random random = new Random();
         double r = random.nextDouble();
