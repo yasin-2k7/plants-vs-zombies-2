@@ -16,12 +16,11 @@ public class SpawnerZombie extends Zombie {
     public SpawnerZombie(int health, double speed, int damage, boolean isGargantuar) {
         super(Zombies.SPAWNER, health, speed, damage);
         this.isGargantuar = isGargantuar;
-        this.spawnCooldown = 50; // هر ۵۰ تیک یک بار (برای پادشاه)
+        this.spawnCooldown = 50;
         this.currentCooldown = spawnCooldown;
         this.hasThrownImp = false;
 
         if (!isGargantuar) {
-            // پادشاه: سرعت را صفر می‌کنیم تا حرکت نکند
             this.speed = 0;
             this.originalSpeed = 0;
         }
@@ -30,16 +29,14 @@ public class SpawnerZombie extends Zombie {
     @Override
     public void update() {
         if (isDead) return;
-        super.update(); // حرکت و خوردن (پادشاه سرعت ۰ دارد)
+        super.update();
 
         if (isGargantuar) {
-            // اگر به نصف جان رسید و هنوز ایمپ پرتاب نشده
             if (!hasThrownImp && this.health <= this.maxHealth / 2) {
                 throwImp();
                 hasThrownImp = true;
             }
         } else {
-            // پادشاه: هر چند ثانیه یک زامبی ساده را شوالیه می‌کند
             if (currentCooldown <= 0) {
                 knightNearbyZombie();
                 currentCooldown = spawnCooldown;
@@ -53,9 +50,7 @@ public class SpawnerZombie extends Zombie {
         GameWorld game = App.getCurrentGame();
         if (game == null) return;
 
-        // ایجاد ایمپ (غیر اژدها)
         ImpZombie imp = (ImpZombie) new ZombieFactory().createZombie("ZombieImp");
-        // ستون سوم از چپ = ایندکس ۲
         float targetX = 2 * App.getCellWidth() + App.getCellWidth() / 2;
         float targetY = this.y;
         imp.throwImp(targetX, targetY);
@@ -68,16 +63,13 @@ public class SpawnerZombie extends Zombie {
         if (game == null) return;
 
         for (Zombie z : game.getActiveZombies()) {
-            // ۱. خود پادشاه را نادیده بگیر
             if (z == this) continue;
 
-            // ۲. فقط زامبی‌های ساده (بدون زره و با نام ZombieDefault) را بپذیر
             boolean isBasic = z.getName() == Zombies.ZOMBIE &&
                     !(z instanceof ArmoredZombie) &&
                     Math.abs(z.getY() - this.y) < 10;
 
             if (isBasic) {
-                // تبدیل به شوالیه
                 ArmoredZombie knight = new ArmoredZombie(
                         z.getHealth(),
                         z.getSpeed(),
@@ -89,7 +81,6 @@ public class SpawnerZombie extends Zombie {
                 knight.setY(z.getY());
                 knight.setSpecificName("ZombieDarkArmor3");
 
-                // جایگزینی در لیست
                 game.getActiveZombies().remove(z);
                 game.getActiveZombies().add(knight);
                 GameMenuController.updateState("King turned a zombie into a knight at (" + knight.getX() + ", " + knight.getY() + ")");
@@ -101,7 +92,6 @@ public class SpawnerZombie extends Zombie {
     @Override
     public void move() {
         if (!isGargantuar) {
-            // پادشاه حرکت نمی‌کند
             return;
         }
         super.move();

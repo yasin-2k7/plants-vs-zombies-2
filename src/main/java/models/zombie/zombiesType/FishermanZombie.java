@@ -22,7 +22,6 @@ public class FishermanZombie extends Zombie {
     public void update() {
         if (isDead) return;
 
-        // ماهیگیر حرکت نمی‌کند
         if (hookCooldown <= 0) {
             tryHook();
             hookCooldown = HOOK_INTERVAL;
@@ -48,8 +47,8 @@ public class FishermanZombie extends Zombie {
         }
         Cell currentCell = Cell.findCell(targetX, targetY, game.getGrid());
         if (currentCell == null) return;
-        int targetCol = currentCell.getCol() + 1; // یک خانه به راست
-        if (targetCol >= game.getCols()) return; // اگر خارج از محدوده بود، کاری نکن
+        int targetCol = currentCell.getCol() + 1;
+        if (targetCol >= game.getCols()) return;
         Cell targetCell = game.getGrid()[row][targetCol];
         if (targetCell == null || !targetCell.isEmpty()) {
             return;
@@ -66,13 +65,12 @@ public class FishermanZombie extends Zombie {
         targetCell.setPlant(target, layer);
         target.setX((int) targetCell.getX());
         target.setY((int) targetCell.getY());
-        target.setCell(targetCell); // به‌روزرسانی مرجع سلول
+        target.setCell(targetCell);
         GameMenuController.updateState("Fisherman pulled plant from (" + currentCell.getX() + ", " + currentCell.getY() +
                 ") to (" + targetCell.getX() + ", " + targetCell.getY() + ")");
     }
 
     @Override
     public void move() {
-        // ماهیگیر حرکت نمی‌کند
     }
 }

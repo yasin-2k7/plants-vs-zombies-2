@@ -30,7 +30,7 @@ public class SunStealerZombie extends Zombie {
     @Override
     public void update() {
         if (isDead) return;
-        super.update(); // حرکت و خوردن معمولی
+        super.update();
         GameWorld game = App.getCurrentGame();
         if (game == null) return;
         if (isRa) {
@@ -78,7 +78,6 @@ public class SunStealerZombie extends Zombie {
     private void fireLaser(GameWorld game) {
         int row = (int) (this.y / App.getCellHeight());
         int col = (int) (this.x / App.getCellWidth());
-        // ۴ خانه جلوتر (سمت چپ)
         for (int i = 1; i <= 4; i++) {
             int targetCol = col - i;
             if (targetCol < 0) break;

@@ -20,47 +20,19 @@ public class WizardZombie extends Zombie {
         super(Zombies.WIZARD, health, speed, damage);
         this.transformedPlants = new ArrayList<>();
         this.cooldown = 0;
-        // وضعیت را نادیده می‌گیریم تا هیچ‌گاه وارد EatingState نشود
         this.currentState = null;
     }
 
     @Override
     public void update() {
         if (isDead) return;
-
-//        // ---- مدیریت کندی ----
-//        if (slowTicksRemaining > 0) {
-//            slowTicksRemaining--;
-//            if (slowTicksRemaining == 0) {
-//                this.speed = originalSpeed;
-//            }
-//        }
-//
-//        // ---- مدیریت غیرفعال‌سازی ----
-//        if (disabledTicksRemaining > 0) {
-//            disabledTicksRemaining--;
-//            return;
-//        }
-//
-//        // ---- مدیریت یخ‌زدگی ----
-//        if (freezedTicksRemaining > 0) {
-//            freezedTicksRemaining--;
-//            if (freezedTicksRemaining == 0) {
-//                applySlow(20, 0.5, true);
-//            }
-//            return;
-//        }
-
-        // ---- لغزندگی (از سلول) ----
         Cell currentCell = Cell.findZombieCell(App.getCurrentGame().getGrid(), this);
         if (currentCell != null && currentCell.getSlippingDir() != 0) {
             y += App.getCellHeight() * currentCell.getSlippingDir();
         }
 
-        // ---- حرکت (بدون خوردن) ----
         move();
 
-        // ---- پرتاب طلسم ----
         if (cooldown <= 0) {
             castSpell();
             cooldown = COOLDOWN_MAX;
@@ -73,7 +45,6 @@ public class WizardZombie extends Zombie {
         GameWorld game = App.getCurrentGame();
         if (game == null) return;
 
-        // پیدا کردن نزدیک‌ترین گیاه در همان سطر، سمت راست جادوگر
         Plant target = game.getNearestPlantInRow((int) (this.y / App.getCellHeight()), this.x + 10);
         if (target != null && !target.isDead() && !target.isCat()) {
             target.setCat(true);
@@ -84,7 +55,6 @@ public class WizardZombie extends Zombie {
 
     @Override
     public void die() {
-        // رفع طلسم از تمام گیاهان تبدیل‌شده (اگر زنده باشند)
         for (Plant p : transformedPlants) {
             if (p != null && !p.isDead()) {
                 p.setCat(false);

@@ -6,7 +6,7 @@ import models.zombie.Zombie;
 
 public class ImpZombie extends Zombie {
     private boolean isDragon;
-    private boolean isThrown; // true اگر توسط غول‌پیکر پرتاب شده باشد
+    private boolean isThrown;
 
     public ImpZombie(int health, double speed, int damage, boolean isDragon) {
         super(Zombies.IMP, health, speed, damage);

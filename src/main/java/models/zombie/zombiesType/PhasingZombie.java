@@ -8,7 +8,7 @@ import models.zombie.state.EatingState;
 public class PhasingZombie extends Zombie {
     private boolean isPhaseChanged;
     private boolean isNewspaper; // true: newspaper, false: all-star
-    private int shieldHealth; // جان روزنامه
+    private int shieldHealth;
     private boolean hasKilledPlant; // برای آل‌استار
 
     public PhasingZombie(int health, double speed, int damage, int shieldHealth, boolean isNewspaper) {
@@ -19,12 +19,10 @@ public class PhasingZombie extends Zombie {
         this.hasKilledPlant = false;
 
         if (!isNewspaper) {
-            // آل‌استار با سرعت بالا شروع می‌کند و آسیب کشنده دارد
             this.originalSpeed = speed * 3;
             this.speed = this.originalSpeed;
             this.damage = 9999;
         } else {
-            // نیوزپیپر سرعت عادی دارد
             this.originalSpeed = speed;
             this.speed = this.originalSpeed;
         }
@@ -35,13 +33,11 @@ public class PhasingZombie extends Zombie {
         if (isDead) return;
 
         if (!isPhaseChanged && shieldHealth > 0) {
-            // نیوزپیپر: روزنامه آسیب می‌بیند
             shieldHealth -= amount;
             if (shieldHealth <= 0) {
                 triggerPhaseChange();
             }
         } else {
-            // آسیب به خود زامبی (یا آل‌استار که زره ندارد)
             super.takeDamage(amount, damageType);
         }
     }

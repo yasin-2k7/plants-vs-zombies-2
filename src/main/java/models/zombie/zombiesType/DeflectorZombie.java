@@ -5,8 +5,11 @@ import models.core.App;
 import models.enums.Zombies;
 import models.projectile.Projectile;
 import models.projectile.hitStrategies.HitStrategy;
+import models.projectile.hitStrategies.PlantDamageStrategy;
 import models.projectile.movementStrategies.StraightMovementStrategy;
+import models.projectile.strikeStrategies.CheckPlantStrike;
 import models.projectile.strikeStrategies.CheckStraightStrike;
+import models.projectile.strikeStrategies.CheckStrike;
 import models.world.GameWorld;
 import models.zombie.Zombie;
 
@@ -32,6 +35,28 @@ public class DeflectorZombie extends Zombie {
         if (isDead) return;
 
         if (isJuggler) {
+            boolean approaching = false;
+            models.world.GameWorld game = App.getCurrentGame();
+
+            if (game != null) {
+                for (Projectile p : game.getActiveProjectiles()) {
+                    if (p.getType() != null && "STRAIGHT".equals(p.getType().movement) && !(p.getHitStrategy() instanceof PlantDamageStrategy)) {
+                        if (Math.abs(p.getY() - this.y) < 50 && p.getX() < this.x && p.getX() > this.x - 250) {
+                            approaching = true;
+                            break;
+                        }
+                    }
+                }
+            }
+
+            if (approaching) {
+                if (!isSpinning) {
+                    startSpinning();
+                } else {
+                    spinTicks = 30;
+                }
+            }
+
             if (isSpinning) {
                 spinTicks--;
                 if (spinTicks <= 0) {
@@ -43,7 +68,7 @@ public class DeflectorZombie extends Zombie {
             }
         }
 
-        super.update();  // حرکت و خوردن معمولی
+        super.update();
     }
 
     public boolean tryDeflect(Projectile projectile) {
@@ -54,7 +79,7 @@ public class DeflectorZombie extends Zombie {
                 if (!isSpinning) {
                     startSpinning();
                 } else {
-                    spinTicks = 30; // تمدید زمان چرخش
+                    spinTicks = 30;
                 }
                 deflectProjectile(projectile);
                 return true;
@@ -72,7 +97,7 @@ public class DeflectorZombie extends Zombie {
         isSpinning = true;
         spinTicks = 30;
         System.out.println("Juggler starts spinning!");
-        spinTicks = 30;  // حداقل ۳۰ تیک می‌چرخد، با هر پرتابه جدید دوباره reset می‌شود
+        spinTicks = 30;
         GameMenuController.updateState("Juggler starts spinning!");
     }
 
@@ -90,14 +115,22 @@ public class DeflectorZombie extends Zombie {
         GameWorld game = App.getCurrentGame();
         if (game == null) return;
 
-        // ایجاد پرتابه جدید با همان مشخصات ولی در جهت مخالف (به سمت چپ)
         Projectile deflected = game.getProjectilesPool().acquire();
-        StraightMovementStrategy movement = new StraightMovementStrategy(
-                -1f * 5, 0, 0);  // سرعت منفی = حرکت به چپ
-        HitStrategy hitStrategy = original.getHitStrategy();
-        CheckStraightStrike strike = new CheckStraightStrike();
+        StraightMovementStrategy movement = new StraightMovementStrategy(-1f * 5, 0, 0);
+
+        String element = "NORMAL";
+        int dmg = 20;
+        if (original.getHitStrategy() != null) {
+            element = original.getHitStrategy().getElement();
+            dmg = original.getHitStrategy().getDamage();
+        }
+
+        HitStrategy hitStrategy = new PlantDamageStrategy(dmg, element);
+        CheckStrike strike = new CheckPlantStrike();
+
         deflected.reset(original.getX(), original.getY(), hitStrategy, movement, strike, original.getType());
         deflected.setPlantType(original.getPlantType());
+
         game.getActiveProjectiles().add(deflected);
         GameMenuController.updateState("Juggler deflected a projectile back to plants!");
     }
