@@ -9,7 +9,6 @@ import models.enums.PlantType;
 import models.miniGame.beghouled.GridPosition;
 import models.miniGame.IZombie.IZombieLevel;
 import models.miniGame.beghouled.BeghouledMechanics;
-import models.miniGame.bowling.BowlingBallType;
 import models.miniGame.bowling.BowlingMechanics;
 import models.miniGame.vaseBreaker.VaseBreakerLevel;
 import models.mupoint.MupointManager;

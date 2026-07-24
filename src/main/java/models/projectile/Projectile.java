@@ -31,7 +31,7 @@ public class Projectile implements Resettable {
         double oldX = x;
         double oldY = y;
         movementStrategy.move(this);
-
+        // استفاده از boooooooooooooooooooooolean
         // بررسی برخورد پرتابه مستقیم با گیاهان (در صورت نیاز)
         if (type != null && type.movement != null && type.movement.equals("STRAIGHT")) {
             Cell currentCell = App.getCurrentGame().getCellAt(x, y);
@@ -64,7 +64,6 @@ public class Projectile implements Resettable {
                 }
             }
         }
-
         Damageable zombie = null;
         if (type != null && type.movement != null) {
             if (type.movement.equals("STRAIGHT")) {
@@ -73,7 +72,6 @@ public class Projectile implements Resettable {
                 zombie = strikeStrategy.strike(x, y, target);
             }
         }
-
         if (zombie != null) {
             // بررسی دفاع زامبی در برابر پرتابه‌های لابلد (Lobbed)
             if (type != null && type.movement != null && type.movement.equals("LOBBED")) {
@@ -93,7 +91,6 @@ public class Projectile implements Resettable {
                     return;
                 }
             }
-
             if (zombie instanceof DeflectorZombie deflector) {
                 if (deflector.isJuggler() && deflector.tryDeflect(this)) {
                     dead = true;
@@ -101,11 +98,9 @@ public class Projectile implements Resettable {
                     return;
                 }
             }
-
             if (hitStrategy != null) {
                 hitStrategy.applyDamage(zombie, App.getCurrentGame().getActiveTargets(), this);
             }
-
             pierce--;
             if (pierce == 0) {
                 dead = true;
@@ -113,7 +108,6 @@ public class Projectile implements Resettable {
                 return;
             }
         }
-
         if (movementStrategy.isDead(this)) {
             dead = true;
             App.getCurrentGame().getProjectilesPool().release(this);
