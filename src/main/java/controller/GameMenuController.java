@@ -12,7 +12,6 @@ import models.miniGame.IZombie.Brain;
 import models.miniGame.beghouled.GridPosition;
 import models.miniGame.IZombie.IZombieLevel;
 import models.miniGame.beghouled.BeghouledMechanics;
-import models.miniGame.bowling.BowlingBallType;
 import models.miniGame.bowling.BowlingMechanics;
 import models.miniGame.vaseBreaker.SeedPacket;
 import models.miniGame.vaseBreaker.Vase;
