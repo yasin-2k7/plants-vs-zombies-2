@@ -122,7 +122,7 @@ public class GameMenuController implements MenuController {
                     User user = App.getCurrentUser();
                     if (user != null) {
                         user.getQuestStats().addSunsCollectedToday(sun.getSize());
-                        user.getQuestManager().checkAllQuests(user);
+                        user.getQuestManager().checkAllQuests(user, false);
                     }
                 }
                 return;
