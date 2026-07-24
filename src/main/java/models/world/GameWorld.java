@@ -206,7 +206,7 @@ public abstract class GameWorld {
                 stats.incrementZombiesKilledInFirstWave();
             }
         }
-        user.getQuestManager().checkAllQuests(user);
+        user.getQuestManager().checkAllQuests(user, false);
         processZombieDeathMu(zombie);
     }
 
@@ -378,7 +378,7 @@ public abstract class GameWorld {
                 break;
             }
         }
-        user.getQuestManager().checkAllQuests(user);
+        user.getQuestManager().checkAllQuests(user, true);
         user.getQuestStats().setLevelWon(true);
         GameMenuController.handleWinning(this, mupointManager);
     }

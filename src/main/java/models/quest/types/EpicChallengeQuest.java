@@ -8,6 +8,11 @@ import java.util.function.Predicate;
 
 public class EpicChallengeQuest extends Quest {
     public EpicChallengeQuest(String id, String description, Predicate<QuestStats> condition, Reward reward) {
-        super(id, description, QuestPriority.HIGH, condition, reward);
+        this(id, description, condition, reward, false);
+    }
+
+    public EpicChallengeQuest(String id, String description, Predicate<QuestStats> condition,
+                              Reward reward, boolean endGameDependent) {
+        super(id, description, QuestPriority.HIGH, condition, reward, endGameDependent);
     }
 }

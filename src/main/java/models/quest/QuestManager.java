@@ -17,11 +17,14 @@ public class QuestManager {
     private List<Quest> activeQuests = new ArrayList<>();
     private List<Quest> completedQuests = new ArrayList<>();
 
-    public void checkAllQuests(User user) {
+    public void checkAllQuests(User user, boolean isGameEnded) {
         QuestStats stats = user.getQuestStats();
         Iterator<Quest> iterator = activeQuests.iterator();
         while (iterator.hasNext()) {
             Quest quest = iterator.next();
+            if (quest.isEndGameDependent() && !isGameEnded) {
+                continue;
+            }
             if (!quest.isCompleted() && quest.checkCompletion(stats)) {
                 quest.complete(user);
                 String msg = "🎉 Quest completed: " + quest.getDescription();
@@ -31,6 +34,10 @@ public class QuestManager {
                 iterator.remove();
             }
         }
+    }
+
+    public void checkAllQuests(User user) {
+        checkAllQuests(user, false);
     }
 
     public void generateDailyQuests(User user) {

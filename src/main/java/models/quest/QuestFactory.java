@@ -72,7 +72,7 @@ public class QuestFactory {
                 stats.isLevelWon() && stats.getPlantsLostInLevel() <= n;
         int seedCount = 20 - n;
         Reward reward = new RandomSeedPacketReward(seedCount);
-        return new MainQuest(id, desc, condition, reward);
+        return new MainQuest(id, desc, condition, reward, true);
     }
 
 
@@ -117,7 +117,7 @@ public class QuestFactory {
         String desc = "Finish a level with a symmetric garden (except middle row)";
         Predicate<QuestStats> condition = stats -> stats.isSymmetryAchieved();
         Reward reward = new CurrencyReward(500, 0);
-        return new DailyQuest(id, desc, QuestPriority.HIGH, condition, reward);
+        return new DailyQuest(id, desc, QuestPriority.HIGH, condition, reward, true);
     }
 
     // 10. کشتار خانوادگی (Daily)
@@ -162,7 +162,7 @@ public class QuestFactory {
                     stats.getTotalPlantsUsedInLevel() == stats.getMushroomPlantsUsedInLevel();
         };
         Reward reward = new CurrencyReward(0, 20);
-        return new EpicChallengeQuest(id, desc, condition, reward);
+        return new EpicChallengeQuest(id, desc, condition, reward, true);
     }
 
     // 13. برد پشت برد (Daily)
@@ -194,7 +194,7 @@ public class QuestFactory {
         Predicate<QuestStats> condition = stats ->
                 stats.isLevelWon() && !stats.isSymmetryAchieved();
         Reward reward = new CurrencyReward(800, 0);
-        return new DailyQuest(id, desc, QuestPriority.MEDIUM, condition, reward);
+        return new DailyQuest(id, desc, QuestPriority.MEDIUM, condition, reward, true);
     }
 
     // 16. روز ابری (Daily)
@@ -205,7 +205,7 @@ public class QuestFactory {
         Predicate<QuestStats> condition = stats ->
                 stats.isLevelWon() && stats.getSunProducerPlantsInLevel() == 3;
         Reward reward = new CurrencyReward(0, 10);
-        return new DailyQuest(id, desc, QuestPriority.HIGH, condition, reward);
+        return new DailyQuest(id, desc, QuestPriority.HIGH, condition, reward, true);
     }
 
     // 17. یه ستون کمتر (Daily)
@@ -216,7 +216,7 @@ public class QuestFactory {
         Predicate<QuestStats> condition = stats ->
                 stats.isLevelWon() && stats.getEmptyColumnsInLevel().contains(n);
         Reward reward = new CurrencyReward(0, 10);
-        return new DailyQuest(id, desc, QuestPriority.HIGH, condition, reward);
+        return new DailyQuest(id, desc, QuestPriority.HIGH, condition, reward, true);
     }
 
     // 18. سطر بی دفاع (Daily)
@@ -240,7 +240,7 @@ public class QuestFactory {
                         stats.getEmptyColumnForCross() == n &&
                         stats.getEmptyRowForCross() == n;
         Reward reward = new CurrencyReward(0, 25);
-        return new DailyQuest(id, desc, QuestPriority.HIGH, condition, reward);
+        return new DailyQuest(id, desc, QuestPriority.HIGH, condition, reward, true);
     }
 
     // 20. وقت چمن‌زنی (Epic)
