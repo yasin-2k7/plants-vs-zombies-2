@@ -255,12 +255,13 @@ public class LevelFactory {
         );
 
         LevelSetup levelSetup = new SaveOurSeedsLevelSetup(rows, cols, waves, protectedPlants);
-        LoseCondition loseCondition = new NormalLose();
+        LoseCondition loseCondition = new SaveOurSeedsLose();
+        LoseCondition loseCondition1 = new NormalLose();
         WinCondition winCondition = new NormalWin();
 
         BigWaveBeachWorld world = new BigWaveBeachWorld(
                 levelSetup,
-                new ArrayList<>(List.of(loseCondition)),
+                new ArrayList<>(List.of(loseCondition, loseCondition1)),
                 winCondition,
                 new ArrayList<>()
         );

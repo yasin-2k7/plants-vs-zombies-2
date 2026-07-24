@@ -9,12 +9,14 @@ import models.enums.PlantType;
 import models.miniGame.beghouled.GridPosition;
 import models.miniGame.IZombie.IZombieLevel;
 import models.miniGame.beghouled.BeghouledMechanics;
+import models.miniGame.bowling.BowlingBallType;
 import models.miniGame.bowling.BowlingMechanics;
 import models.miniGame.vaseBreaker.VaseBreakerLevel;
 import models.mupoint.MupointManager;
 import models.plant.card.ImitatorCard;
 import models.plant.card.PlantCard;
 import models.world.*;
+import models.world.levelSetup.DeadLineLevelSetup;
 import models.world.mechanics.NormalMechanic;
 import models.zombie.Zombie;
 import models.zombie.ZombieFactory;
@@ -40,6 +42,8 @@ public class GameMenuController implements MenuController {
     public static void handleLosing(GameWorld gameWorld, MupointManager mupointManager) {
         if (gameWorld instanceof IZombieLevel) {
             GameMenuView.getInstance().showResult("You ran out of zombies and failed to eat all the brains! LOSER!!!");
+        } else if (gameWorld.getLevelSetup() instanceof DeadLineLevelSetup) {
+            GameMenuView.getInstance().showResult("Zombie passed deadLine; Loser!!!");
         } else {
             GameMenuView.getInstance().showResult("The zombie ate your brain; LOSER!!!");
         }
