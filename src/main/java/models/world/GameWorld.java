@@ -296,10 +296,6 @@ public abstract class GameWorld {
         if (state != GameState.PLAYING) return;
         currentTick++;
         updateAll();
-        List<Zombie> zombieSnapshot = new ArrayList<>(activeZombies);
-        zombieSnapshot.forEach(Zombie::update);
-        List<Projectile> projectileSnapshot = new ArrayList<>(activeProjectiles);
-        projectileSnapshot.forEach(Projectile::update);
         removeIfDead();
         for (Cell[] row : grid) {
             for (Cell cell : row) {

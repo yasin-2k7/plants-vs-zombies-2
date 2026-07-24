@@ -32,7 +32,6 @@ public class PlantDamageStrategy implements HitStrategy{
 
     @Override
     public void applyDamage(Plant target, Projectile projectile) {
-        String type = element != null ? element : "NORMAL";
         target.takeDamage(damage, (Zombie) null);
 
         if ("ICE".equalsIgnoreCase(element)) {

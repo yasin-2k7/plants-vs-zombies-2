@@ -18,6 +18,7 @@ public class PlantCard {
 
     public void update(){
         if (!activeCooldown) return;
+        if (ready) return;
         currentCooldownTicks++;
 
         if (currentCooldownTicks >= maxCooldownTicks){

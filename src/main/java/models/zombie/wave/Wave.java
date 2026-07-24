@@ -80,7 +80,7 @@ public class Wave {
             }
             int cost = (int) Math.round(difficulty * decreaseFactor);
 
-            Wave wave = generateRandomWave(i, cost, availableEntries, spawnDelayTicks, isFinal, random);
+            Wave wave = generateRandomWave(i, cost, availableEntries, i == 1? 30 : spawnDelayTicks, isFinal, random);
             waves.add(wave);
         }
         return waves;
