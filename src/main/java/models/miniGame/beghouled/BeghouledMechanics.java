@@ -1,5 +1,6 @@
 package models.miniGame.beghouled;
 
+import models.core.App;
 import models.enums.PlantLayer;
 import models.enums.PlantType;
 import models.plant.Plant;
@@ -47,7 +48,7 @@ public class BeghouledMechanics implements Mechanic {
 
     private void placePlant(GameWorld world, int row, int col, PlantType type) {
         Cell cell = world.getGrid()[row][col];
-        Plant plant = PlantFactory.createPlant(type, cell.getRow(), cell.getCol(), cell);
+        Plant plant = PlantFactory.createPlant(type, (int) (50 + App.getCellWidth()*cell.getCol()), (int) (50 + App.getCellHeight()*cell.getRow()), cell);
         cell.setPlant(plant, PlantLayer.MAIN);
         world.getActivePlants().add(plant);
     }
