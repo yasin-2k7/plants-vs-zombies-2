@@ -9,6 +9,7 @@ import models.plant.Plant;
 import models.plant.components.SunProducerComponent;
 import models.pool.Resettable;
 import models.projectile.hitStrategies.HitStrategy;
+import models.projectile.hitStrategies.PlantDamageStrategy;
 import models.projectile.movementStrategies.MovementStrategy;
 import models.projectile.strikeStrategies.CheckStrike;
 import models.world.Cell;
@@ -27,42 +28,33 @@ public class Projectile implements Resettable {
     private boolean dead = false;
     private PlantType plantType;
 
+    void checkProjectilesTowardPlants(double oldX, double oldY){
+        Damageable plantTarget = null;
+
+        if (type != null && type.movement != null) {
+            plantTarget = strikeStrategy.strike(x, y, oldX, oldY);
+        }
+
+        if (plantTarget instanceof Plant plant) {
+            if (hitStrategy != null) {
+                hitStrategy.applyDamage(plant, this);
+            }
+
+            pierce--;
+            if (pierce == 0) {
+                dead = true;
+            }
+        }
+    }
+
     public void update() {
         double oldX = x;
         double oldY = y;
         movementStrategy.move(this);
-        // استفاده از boooooooooooooooooooooolean
         // بررسی برخورد پرتابه مستقیم با گیاهان (در صورت نیاز)
-        if (type != null && type.movement != null && type.movement.equals("STRAIGHT")) {
-            Cell currentCell = App.getCurrentGame().getCellAt(x, y);
-
-            if (currentCell != null && currentCell.getPlant() != null) {
-                Plant plant = currentCell.getPlant();
-                System.out.println("💥 Zombie Pea hit " + plant.getClass().getSimpleName() + " for "
-                        + hitStrategy.getDamage() + " damage!");
-
-                if (plant.isFreeze()) {
-                    if (hitStrategy.getElement().equalsIgnoreCase("FIRE")) {
-                        plant.unfreeze();
-                    } else {
-                        plant.takeDamage(hitStrategy.getDamage());
-                    }
-                } else {
-                    if (hitStrategy != null) {
-                        plant.takeDamage(hitStrategy.getDamage());
-                        if ("ICE".equalsIgnoreCase(hitStrategy.getElement()) || type == ProjectileType.ICE_PEA) {
-                            plant.increaseFrozenAmount();
-                        }
-                    }
-                    plant.takeDamage(hitStrategy.getDamage());
-                }
-                pierce--;
-                if (pierce == 0) {
-                    dead = true;
-                    App.getCurrentGame().getProjectilesPool().release(this);
-                    return;
-                }
-            }
+        if (hitStrategy instanceof PlantDamageStrategy){
+            checkProjectilesTowardPlants(oldX, oldY);
+            return;
         }
         Damageable zombie = null;
         if (type != null && type.movement != null) {
@@ -86,7 +78,6 @@ public class Projectile implements Resettable {
                 }
                 if (areaDeflected) {
                     dead = true;
-                    App.getCurrentGame().getProjectilesPool().release(this);
                     GameMenuController.updateState("Parasol deflected a lobbed projectile protecting nearby area!");
                     return;
                 }
@@ -94,7 +85,6 @@ public class Projectile implements Resettable {
             if (zombie instanceof DeflectorZombie deflector) {
                 if (deflector.isJuggler() && deflector.tryDeflect(this)) {
                     dead = true;
-                    App.getCurrentGame().getProjectilesPool().release(this);
                     return;
                 }
             }
@@ -104,13 +94,11 @@ public class Projectile implements Resettable {
             pierce--;
             if (pierce == 0) {
                 dead = true;
-                App.getCurrentGame().getProjectilesPool().release(this);
                 return;
             }
         }
         if (movementStrategy.isDead(this)) {
             dead = true;
-            App.getCurrentGame().getProjectilesPool().release(this);
         }
     }
 

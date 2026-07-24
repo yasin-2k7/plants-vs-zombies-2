@@ -1,6 +1,7 @@
 package models.world.obstacles;
 
 import models.Damageable;
+import models.zombie.Zombie;
 
 public abstract class Obstacle implements Damageable {
     protected float x, y;
@@ -23,6 +24,10 @@ public abstract class Obstacle implements Damageable {
         return y;
     }
 
+    @Override
+    public void takeDamage(int damage, Zombie zombie) {
+
+    }
 
     @Override
     public void takeDamage(int amount, String type) {

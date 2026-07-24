@@ -94,6 +94,7 @@ public abstract class Zombie implements Damageable {
         Cell currentCell = Cell.findZombieCell(App.getCurrentGame().getGrid(), this);
         if (currentCell != null && currentCell.getSlippingDir() != 0){
             y += App.getCellHeight() * currentCell.getSlippingDir();
+            x -= App.getCellWidth() / 2;
         }
         if (currentState != null) {
             currentState.handleAction(this);
@@ -290,6 +291,10 @@ public abstract class Zombie implements Damageable {
         return world;
     }
 
+    @Override
+    public void takeDamage(int damage, Zombie zombie) {
+
+    }
 
     public void eatBrainAndLeave() {
         this.isDead = true;

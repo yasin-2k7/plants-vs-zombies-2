@@ -1,6 +1,7 @@
 package models.plant;
 
 import controller.GameMenuController;
+import models.Damageable;
 import models.core.App;
 import models.core.User;
 import models.enums.PlantType;
@@ -12,7 +13,7 @@ import models.zombie.Zombie;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Plant {
+public class Plant implements Damageable {
     private PlantType type;
     private int health;
     private int initHealth;
@@ -71,9 +72,13 @@ public class Plant {
     }
 
     public void takeDamage(int damage){
-        takeDamage(damage, null);
+        takeDamage(damage, (Zombie) null);
     }
 
+    @Override
+    public void takeDamage(int damage, String damageType) {}
+
+    @Override
     public void takeDamage(int damage, Zombie zombie){
         if (iceHealth > 0){
             iceHealth -= damage;
@@ -136,8 +141,8 @@ public class Plant {
     public boolean isDead() { return dead; }
     public void setCat(boolean cat) { this.cat = cat; }
     public void setDisabled(boolean disabled) { this.disabled = disabled; }
-    public int getX() { return x; }
-    public int getY() { return y; }
+    public float getX() { return x; }
+    public float getY() { return y; }
     public PlantType getType() { return type; }
     public void setX(int x) { this.x = x; }
 
