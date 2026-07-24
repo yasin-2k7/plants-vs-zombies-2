@@ -5,6 +5,7 @@ import models.enums.PlantLayer;
 import models.enums.PlantType;
 import models.enums.Zombies;
 import models.plant.Plant;
+import models.plant.factory.PlantFactory;
 import models.world.Cell;
 import models.world.GameWorld;
 import models.world.cellTerrains.LandTerrain;
@@ -50,16 +51,18 @@ public class IZombieSetup implements LevelSetup {
             }
             PlantType[] possiblePlants = {PlantType.PEASHOOTER, PlantType.SNOW_PEA, PlantType.WALL_NUT, PlantType.SUNFLOWER};
             for (int r = 0; r < rows; r++) {
-                int plantCount = 2 + random.nextInt(2);
-                for (int i = 0; i < plantCount; i++) {
-                    int col = 1 + random.nextInt(4);
-                    if (grid[r][col].isEmpty()) {
-                        PlantType type = possiblePlants[random.nextInt(possiblePlants.length)];
-                        Plant plant = createPlantInstance(type, r, col);
-                        if (plant != null) {
-                            grid[r][col].setPlant(plant, PlantLayer.MAIN);
-                            level.getActivePlants().add(plant);
-                        }
+                for (int c = 0; c < 5; c++) {
+                    PlantType type = possiblePlants[random.nextInt(possiblePlants.length)];
+
+                    int x = c * 100 + 50;
+                    int y = r * 100 + 50;
+                    Cell cell = grid[r][c];
+
+                    Plant plant = PlantFactory.createPlant(type, x, y, cell);
+
+                    if (plant != null) {
+                        cell.setPlant(plant, PlantLayer.MAIN);
+                        level.getActivePlants().add(plant);
                     }
                 }
             }
@@ -74,18 +77,6 @@ public class IZombieSetup implements LevelSetup {
         }
     }
 
-    private Plant createPlantInstance(PlantType type, int row, int col) {
-        Plant plant = switch (type) {
-            case PEASHOOTER -> new Plant(PlantType.PEASHOOTER, 300, 100);
-            case SNOW_PEA -> new Plant(PlantType.SNOW_PEA, 300, 80);
-            case WALL_NUT -> new Plant(PlantType.WALL_NUT, 4000, 0);
-            case SUNFLOWER -> new Plant(PlantType.SUNFLOWER, 300, 0);
-            default -> new Plant(type, 300, 100);
-        };
-        plant.setX((int) (col* App.getCellWidth()+50));
-        plant.setY((int) (row* App.getCellHeight()+50));
-        return plant;
-    }
 
     @Override
     public boolean requirePlantSelection() {

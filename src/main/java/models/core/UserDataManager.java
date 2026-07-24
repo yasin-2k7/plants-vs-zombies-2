@@ -96,7 +96,8 @@ public class UserDataManager {
     }
 
     public static boolean userExists(String username){
-        return new File(USERS_DIR + username + ".json").exists();
+        return new File(USERS_DIR + username +
+                ".json").exists();
     }
 
     public static void saveLoggedInUser(String username){

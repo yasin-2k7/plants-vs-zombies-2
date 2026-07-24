@@ -26,17 +26,17 @@ public class PlantWhatYouGetLevelSetup implements LevelSetup{
 
     @Override
     public void groundSetup(GameWorld world) {
-        world.setConveyorMode(true);
+        world.setConveyorMode(false);
         buildGrid(world, rows, cols);
+        world.setSun(800);
 
         WaveManager waveManager = new WaveManager(waves);
         world.addMechanic(new NormalMechanic(waveManager));
-        world.addMechanic(new ConveyorMechanic(availablePlants));
         world.setPlantingPhase(true);
     }
 
     @Override
     public boolean requirePlantSelection() {
-        return false;
+        return true;
     }
 }
