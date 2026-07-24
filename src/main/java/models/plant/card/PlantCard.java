@@ -7,7 +7,7 @@ public class PlantCard {
     private int sunCost;
     private int maxCooldownTicks;
     private int currentCooldownTicks = 0;
-    private boolean ready = false;
+    private boolean ready = true;
     private boolean activeCooldown = true;
 
     public PlantCard(PlantType type, int sunCost, int maxCooldownTicks) {

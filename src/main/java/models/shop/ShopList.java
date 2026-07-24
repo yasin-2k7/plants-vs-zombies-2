@@ -25,22 +25,47 @@ public class ShopList {
         dailyOffer = new DailyOffer(randomType, 1600);
     }
 
+    private String checkDailyItem(int count, User user){
+        if (!dailyOffer.isAvailableToday()) return "Error: Daily offer already purchased or not available.";
+        if (count > 1) return "Error: Can only buy 1 daily offer.";
+        if (!dailyOffer.isAffordable(user.getCoins(), user.getGems())) return "Error: Not enough money for daily offer!";
+
+        user.spendCoins(dailyOffer.getCoinCost());
+        dailyOffer.setPurchased(true);
+        user.addSeedPackets(dailyOffer.getPlantType(), 10);
+        return dailyOffer.getPlantType() + " seeds unlocked permanently!";
+    }
+
+    private String buyRandomSeedPacket(User user, int count, int totalCoinCost){
+        List<PlantType> unlockedPlants = new ArrayList<>(user.getUnlockedPlantsLevels().keySet());
+        if (unlockedPlants.isEmpty()) {
+            return "Error: You have no unlocked plants to buy seeds for.";
+        }
+        user.spendCoins(totalCoinCost);
+        PlantType randomPlant = unlockedPlants.get(new Random().nextInt(unlockedPlants.size()));
+        int seedsToGive = 5 * count;
+        user.addSeedPackets(randomPlant, seedsToGive);
+        return count + " Random Seed Packets bought successfully! Received " + seedsToGive + " seeds for " + randomPlant.name() + ".";
+    }
+
+    private String buySpecificSeedPacket(PlantType plantType, User user, int count, int totalGemCost){
+        if (plantType == null) {
+            return "Error: You must specify a plant type using -t.";
+        }
+        if (!user.getUnlockedPlantsLevels().containsKey(plantType)) {
+            return "Error: Plant " + plantType.name() + " is not unlocked yet.";
+        }
+        user.spendGems(totalGemCost);
+        int seedsToGive = 10 * count;
+        user.addSeedPackets(plantType, seedsToGive);
+        return count + " Specific Seed Packets for " + plantType.name() + " bought successfully! Received " + seedsToGive + " seeds.";
+    }
+
     public String buy(String itemId, PlantType plantType, int count) {
         User user = App.getCurrentUser();
         if (user == null) return "Error: No user logged in.";
         if (count <= 0) return "Error: Count must be greater than zero.";
-
-        if (dailyOffer != null && dailyOffer.getId().equals(itemId)) {
-            if (!dailyOffer.isAvailableToday()) return "Error: Daily offer already purchased or not available.";
-            if (count > 1) return "Error: Can only buy 1 daily offer.";
-            if (!dailyOffer.isAffordable(user.getCoins(), user.getGems())) return "Error: Not enough money for daily offer!";
-
-            user.spendCoins(dailyOffer.getCoinCost());
-            dailyOffer.setPurchased(true);
-            user.addSeedPackets(dailyOffer.getPlantType(), 10);
-            return dailyOffer.getPlantType() + " seeds unlocked permanently!";
-        }
-
+        if (dailyOffer != null && dailyOffer.getId().equals(itemId)) return checkDailyItem(count, user);
         ShopItem selectedItem = null;
         for (ShopItem item : permanentItems) {
             if (item.getId().equals(itemId)) {
@@ -48,21 +73,13 @@ public class ShopList {
                 break;
             }
         }
-
-
-        if (selectedItem == null) {
-            return "Error: Item not found.";
-        }
-
+        if (selectedItem == null) return "Error: Item not found.";
         int totalCoinCost = selectedItem.getCoinCost() * count;
         int totalGemCost = selectedItem.getDiamondCost() * count;
-
         if (user.getCoins() < totalCoinCost || user.getGems() < totalGemCost) {
             return "Error: Not enough currency. Need " + totalCoinCost + " coins and " + totalGemCost + " gems.";
         }
-
         String itemName = selectedItem.getName();
-
         if (itemName.equalsIgnoreCase("Unlock Pot")) {
             String result = "";
             for (int i = 0; i < count; i++) {
@@ -73,52 +90,22 @@ public class ShopList {
                 user.spendCoins(selectedItem.getCoinCost());
             }
             return count + " pots processed. Status: " + result;
-
         } else if (itemName.equalsIgnoreCase("Plant Food")) {
             if (user.getPlantFoods() + count > 3) {
                 return "Error: Maximum capacity for Plant Food is 3. You currently have " + user.getPlantFoods() + ".";
             }
-
             user.spendGems(totalGemCost);
             user.addPlantFood(count);
             return count + " Plant Food bought successfully! You now have " + user.getPlantFoods() + " Plant Foods.";
-
         } else if (itemName.equalsIgnoreCase("Random Seed Packet")) {
-            List<PlantType> unlockedPlants = new ArrayList<>(user.getUnlockedPlantsLevels().keySet());
-            if (unlockedPlants.isEmpty()) {
-                return "Error: You have no unlocked plants to buy seeds for.";
-            }
-
-            user.spendCoins(totalCoinCost);
-
-            PlantType randomPlant = unlockedPlants.get(new Random().nextInt(unlockedPlants.size()));
-            int seedsToGive = 5 * count;
-
-            user.addSeedPackets(randomPlant, seedsToGive);
-
-            return count + " Random Seed Packets bought successfully! Received " + seedsToGive + " seeds for " + randomPlant.name() + ".";
-
+            return buyRandomSeedPacket(user, count, totalCoinCost);
         } else if (itemName.equalsIgnoreCase("Specific Seed Packet")) {
-            if (plantType == null) {
-                return "Error: You must specify a plant type using -t.";
-            }
-            if (!user.getUnlockedPlantsLevels().containsKey(plantType)) {
-                return "Error: Plant " + plantType.name() + " is not unlocked yet.";
-            }
-
-            user.spendGems(totalGemCost);
-            int seedsToGive = 10 * count;
-
-            user.addSeedPackets(plantType, seedsToGive);
-
-            return count + " Specific Seed Packets for " + plantType.name() + " bought successfully! Received " + seedsToGive + " seeds.";
-
+            return buySpecificSeedPacket(plantType, user, count, totalGemCost);
         } else if (itemName.equalsIgnoreCase("Currency Exchange")) {
             user.spendGems(totalGemCost);
             user.addCoins(500 * count);
             return "Exchanged " + totalGemCost + " gems for " + (500 * count) + " coins.";
         }
-
         return "Error: Custom logic needed for this item.";
     }
 

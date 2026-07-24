@@ -2,6 +2,7 @@ package models.projectile.hitStrategies;
 
 import models.Damageable;
 import models.enums.ProjectileType;
+import models.plant.Plant;
 import models.projectile.Projectile;
 import models.world.obstacles.IceBlock;
 import models.zombie.Zombie;
@@ -94,7 +95,13 @@ public class CombinedDamageStrategy implements HitStrategy{
         switch (element) {
             case "POISON":
                 if (target instanceof Zombie zombie) {
-                    zombie.setHealth(zombie.getHealth() - poisonDamageOnTick);
+                    if (projectileType == ProjectileType.GOO){
+                        zombie.makePoisoned(poisonDamageOnTick);
+                    }
+                    else{
+                        zombie.makePoisoned(poisonDamageOnTick*100);
+                    }
+
                 }
                 break;
             case "MOVE":
@@ -110,6 +117,11 @@ public class CombinedDamageStrategy implements HitStrategy{
     @Override
     public void increaseDamage(int factor){
         damage *= factor;
+    }
+
+    @Override
+    public void applyDamage(Plant plant, Projectile projectile) {
+
     }
 
     @Override

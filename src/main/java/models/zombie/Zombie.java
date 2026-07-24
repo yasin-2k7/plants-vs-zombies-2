@@ -31,6 +31,8 @@ public abstract class Zombie implements Damageable {
     private double slowFactor = 0.5;            // ضریب کندی
     private int disabledTicksRemaining;
     private int freezedTicksRemaining;
+    private int onPoisonTicksRemaining;
+    private int poisonDamage;
     protected List<String> armorTypes = new ArrayList<>();
     private int iceHealth = 0;
     private boolean dropsReward;      // آیا این زامبی جایزه دارد؟
@@ -66,6 +68,16 @@ public abstract class Zombie implements Damageable {
 
     public void update() {
         if (isDead || health <= 0 || iceHealth > 0) return;
+        if (freezedTicksRemaining > 0) {
+            freezedTicksRemaining--;
+            if (freezedTicksRemaining == 0) applySlow(20, 0.5, true);
+            return;
+        }
+        if (onPoisonTicksRemaining > 0){
+            onPoisonTicksRemaining--;
+            health -= poisonDamage;
+            if (health <= 0) die();
+        }
         if (slowTicksRemaining > 0) {
             slowTicksRemaining--;
             if (slowTicksRemaining == 0) {
@@ -73,18 +85,16 @@ public abstract class Zombie implements Damageable {
             }
         }
 
+
         if (disabledTicksRemaining > 0) {
             disabledTicksRemaining--;
             return;
         }
-        if (freezedTicksRemaining > 0) {
-            freezedTicksRemaining--;
-            if (freezedTicksRemaining == 0) applySlow(20, 0.5, true);
-            return;
-        }
+
         Cell currentCell = Cell.findZombieCell(App.getCurrentGame().getGrid(), this);
         if (currentCell != null && currentCell.getSlippingDir() != 0){
             y += App.getCellHeight() * currentCell.getSlippingDir();
+            x -= App.getCellWidth() / 2;
         }
         if (currentState != null) {
             currentState.handleAction(this);
@@ -100,16 +110,16 @@ public abstract class Zombie implements Damageable {
     @Override
     public void takeDamage(int amount, String damageType) {
         if (isDead) return;
-        if (iceHealth > 0){
-            iceHealth -= damage;
-            if (iceHealth <= 0){
+        if (iceHealth > 0) {
+            iceHealth -= amount; // اصلاح شد: استفاده از مقدار دمیج دریافتی (amount) به جای فیلد damage زامبی
+            if (iceHealth <= 0) {
                 unfreeze();
             }
             return;
         }
         this.health -= amount;
         if (this.health <= 0) {
-                die();
+            die();
         }
     }
 
@@ -165,6 +175,11 @@ public abstract class Zombie implements Damageable {
         if (ticks > slowTicksRemaining) {
             slowTicksRemaining = ticks;
         }
+    }
+
+    public void makePoisoned(int damageOnTick){
+        onPoisonTicksRemaining = 7;
+        poisonDamage = damageOnTick;
     }
 
     public void disableFor(int ticks) {
@@ -276,6 +291,10 @@ public abstract class Zombie implements Damageable {
         return world;
     }
 
+    @Override
+    public void takeDamage(int damage, Zombie zombie) {
+
+    }
 
     public void eatBrainAndLeave() {
         this.isDead = true;
