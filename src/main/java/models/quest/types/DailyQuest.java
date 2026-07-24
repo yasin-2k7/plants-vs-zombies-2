@@ -10,8 +10,14 @@ import java.util.function.Predicate;
 public class DailyQuest extends Quest {
     private LocalDate questDate;
 
-    public DailyQuest(String id, String description, QuestPriority priority, Predicate<QuestStats> condition, Reward reward) {
-        super(id, description, priority, condition, reward);
+    public DailyQuest(String id, String description, QuestPriority priority,
+                      Predicate<QuestStats> condition, Reward reward) {
+        this(id, description, priority, condition, reward, false);
+    }
+
+    public DailyQuest(String id, String description, QuestPriority priority,
+                      Predicate<QuestStats> condition, Reward reward, boolean endGameDependent) {
+        super(id, description, priority, condition, reward, endGameDependent);
         this.questDate = LocalDate.now();
     }
 

@@ -11,14 +11,21 @@ public abstract class Quest implements Comparable<Quest> {
     private boolean isCompleted;
     private Reward reward;
     private transient Predicate<QuestStats> condition;
+    private boolean endGameDependent; // NEW
 
-    public Quest(String id, String description, QuestPriority priority, Predicate<QuestStats> condition, Reward reward) {
+    public Quest(String id, String description, QuestPriority priority,
+                 Predicate<QuestStats> condition, Reward reward, boolean endGameDependent) {
         this.id = id;
         this.description = description;
         this.priority = priority;
         this.condition = condition;
         this.reward = reward;
         this.isCompleted = false;
+        this.endGameDependent = endGameDependent;
+    }
+
+    public boolean isEndGameDependent() {
+        return endGameDependent;
     }
 
     public void complete(User user) {
