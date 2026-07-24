@@ -55,50 +55,17 @@ public class LevelFactory {
         int rows = 5;
         int cols = 9;
         List<WaveSpawnEntry> availableZombies = List.of(
-//                        new WaveSpawnEntry("ZombieBarrelRoller", 200)
-
-//                        new WaveSpawnEntry("ZombieArmor1", 200),   // مخروطی
-//                        new WaveSpawnEntry("ZombieArmor2", 300),   // سطلی
-//                        new WaveSpawnEntry("ZombieArmor4", 400),   // آجری
-//                        new WaveSpawnEntry("ZombieDarkArmor3", 550), // شوالیه
-                        // Pusher (هل‌دهنده)
-//                        new WaveSpawnEntry("ZombieArcade", 600),   // آرکید
-//                        new WaveSpawnEntry("ZombiePiano", 450),    // پیانیست
-//                        new WaveSpawnEntry("ZombieIceAgeTroglobite", 600) // تروگلوبایت
-//                         Ranged (مهاجم دوربرد)
-                        new WaveSpawnEntry("ZombieIceAgeHunter", 500) // شکارچی
-//                        new WaveSpawnEntry("ZombieBeachOctopus", 800) // اختاپوس‌پرت‌کن
-//                      new WaveSpawnEntry("ZombieTombRaiser", 300)  // قبرساز
-//                        // SunStealer (دزد خورشید)
-//                        new WaveSpawnEntry("ZombieRa", 100),         // خورشید‌دزد
-//                        new WaveSpawnEntry("ZombieCrystalSkull", 500) // تورکویز
-                        // Deflector (دفع‌کننده)
-//                        new WaveSpawnEntry("ZombieDarkJuggler", 450) // ژانگولر
-//                        new WaveSpawnEntry("ZombieLostCityJane", 200) // چتردار
-//                        // Spawner (تولیدکننده)
-//                        new WaveSpawnEntry("ZombieGargantuar", 1500), // غول‌پیکر
-//                        new WaveSpawnEntry("ZombieDarkKing", 750)    // پادشاه
-//                        // Imp
-//                        new WaveSpawnEntry("ZombieImp", 100),
-//                        new WaveSpawnEntry("ZombieDarkImpDragon", 150),
-                        // Phasing (تغییر فاز)
-//                        new WaveSpawnEntry("ZombieNewspaper", 700),   // پیرمرد
-//                        new WaveSpawnEntry("ZombieModernAllStar", 1000) // آل‌استار
-//                        // Elemental (حساس به المان)
-//                        new WaveSpawnEntry("ZombieExplorer", 250),    // مشعل‌دار
-//                        new WaveSpawnEntry("ZombieProspector", 200)  // اکتشافگر
-//                        // Snorkel
-//                        new WaveSpawnEntry("ZombieBeachSnorkel", 200)
-//                        // Dodo Rider
-//                        new WaveSpawnEntry("ZombieIceAgeDodo", 600),
-//                        // Fisherman
-//                        new WaveSpawnEntry("ZombieBeachFisherman", 700),
-//                        // Wizard
-//                        new WaveSpawnEntry("ZombieWizard", 800)
-//                          new WaveSpawnEntry("ZombieDefault", 100)
+                new WaveSpawnEntry("ZombieDefault", 100),
+                new WaveSpawnEntry("ZombieArmor1", 200),
+                new WaveSpawnEntry("ZombieArmor2", 300),
+                new WaveSpawnEntry("ZombieArmor4", 400),
+                new WaveSpawnEntry("ZombieTombRaiser", 300),
+                new WaveSpawnEntry("ZombieRa", 100),
+                new WaveSpawnEntry("ZombieNewspaper", 450),
+                new WaveSpawnEntry("ZombieExplorer", 250)
         );
 
-        List<Wave> waves = Wave.generateWaves(3, 200, availableZombies, 60);
+        List<Wave> waves = Wave.generateWaves(3, 2000, availableZombies, 60);
 
         LevelSetup levelSetup = new NormalLevelSetup(rows, cols, waves);
         LoseCondition loseCondition = new NormalLose();
@@ -119,11 +86,19 @@ public class LevelFactory {
         int rows = 5;
         int cols = 9;
         List<WaveSpawnEntry> availableZombies = List.of(
-                new WaveSpawnEntry("ZombieDefault", 100)
+                new WaveSpawnEntry("ZombieDefault", 100),
+                new WaveSpawnEntry("ZombieArmor1", 200),
+                new WaveSpawnEntry("ZombieArmor2", 300),
+                new WaveSpawnEntry("ZombieArmor4", 400),
+                new WaveSpawnEntry("ZombieTombRaiser", 300),
+                new WaveSpawnEntry("ZombieRa", 100),
+                new WaveSpawnEntry("ZombieExplorer", 250),
+                new WaveSpawnEntry("ZombiePiano", 450)
         );
-        List<Wave> waves = Wave.generateWaves(5, 500, availableZombies, 60);
+        List<Wave> waves = Wave.generateWaves(4, 2000, availableZombies, 60);
         LevelSetup levelSetup = new DeadLineLevelSetup(rows, cols, 4, waves);
         LoseCondition loseCondition = new DeadLineLose(4);
+        System.out.println("if zombie pass deadLine (col = 4), you will lose");
         WinCondition winCondition = new NormalWin();
         AncientEgyptWorld world = new AncientEgyptWorld(
                 levelSetup,
@@ -140,11 +115,30 @@ public class LevelFactory {
         int rows = 5;
         int cols = 9;
         List<WaveSpawnEntry> availableZombies = List.of(
-                new WaveSpawnEntry("ZombieDefault", 100)
+                new WaveSpawnEntry("ZombieDefault", 100),
+                new WaveSpawnEntry("ZombieArmor1", 200),
+                new WaveSpawnEntry("ZombieArmor2", 300),
+                new WaveSpawnEntry("ZombieArmor4", 400),
+                new WaveSpawnEntry("ZombieTombRaiser", 300),
+                new WaveSpawnEntry("ZombieRa", 100),
+                new WaveSpawnEntry("ZombieExplorer", 250),
+                new WaveSpawnEntry("ZombieGargantuar", 700),
+                new WaveSpawnEntry("ZombieBarrelRoller", 500)
+
         );
-        List<Wave> waves = Wave.generateWaves(5, 200, availableZombies, 60);
+        List<Wave> waves = Wave.generateWaves(5, 2000, availableZombies, 60);
         List<PlantCard> plantCards = List.of(
-                new PlantCard(PlantType.PEASHOOTER, 0, 5)
+                new PlantCard(PlantType.PEASHOOTER, 0, 0),
+                new PlantCard(PlantType.PEA_POD, 0, 0),
+                new PlantCard(PlantType.WALL_NUT, 0, 0),
+                new PlantCard(PlantType.STARFRUIT, 0, 0),
+                new PlantCard(PlantType.ROTOBAGA, 0, 0),
+                new PlantCard(PlantType.CHERRY_BOMB, 0, 0),
+                new PlantCard(PlantType.MELON_PULT, 0, 0),
+                new PlantCard(PlantType.SQUASH, 0, 0),
+                new PlantCard(PlantType.JALAPENO, 0, 0),
+                new PlantCard(PlantType.SNOW_PEA, 0, 0),
+                new PlantCard(PlantType.REPEATER, 0, 0)
         );
         LevelSetup levelSetup = new ConveyorLevelSetup(rows, cols, waves, plantCards);
         LoseCondition loseCondition = new NormalLose();
@@ -187,13 +181,12 @@ public class LevelFactory {
         List<WaveSpawnEntry> availableZombies = List.of(
                 new WaveSpawnEntry("ZombieDefault", 100),
                 new WaveSpawnEntry("ZombieArmor1", 200),
-
-                // Snorkel
-                        new WaveSpawnEntry("ZombieBeachSnorkel", 250)
-                        // Fisherman
-//                        new WaveSpawnEntry("ZombieBeachFisherman", 700)
+                new WaveSpawnEntry("ZombieArmor2", 300),
+                new WaveSpawnEntry("ZombieLostCityJane", 200),
+                new WaveSpawnEntry("ZombieBeachSnorkel", 200),
+                new WaveSpawnEntry("ZombieBeachOctopus", 800)
         );
-        List<Wave> waves = Wave.generateWaves(5, 150, availableZombies, 5);
+        List<Wave> waves = Wave.generateWaves(3, 2000, availableZombies, 10);
         LevelSetup levelSetup = new BigWaveBeachLevelSetup(6, rows, cols, waves);
         LoseCondition loseCondition = new NormalLose();
         WinCondition winCondition = new NormalWin();
@@ -212,9 +205,14 @@ public class LevelFactory {
         int rows = 5;
         int cols = 9;
         List<WaveSpawnEntry> availableZombies = List.of(
-                new WaveSpawnEntry("ZombieDefault", 100)
+                new WaveSpawnEntry("ZombieDefault", 100),
+                new WaveSpawnEntry("ZombieArmor1", 200),
+                new WaveSpawnEntry("ZombieArmor4", 400),
+                new WaveSpawnEntry("ZombieBeachFisherman", 400),
+                new WaveSpawnEntry("ZombieBeachSnorkel", 200),
+                new WaveSpawnEntry("ZombieModernAllStar", 500)
         );
-        List<Wave> waves = Wave.generateWaves(5, 200, availableZombies, 60);
+        List<Wave> waves = Wave.generateWaves(4, 2000, availableZombies, 60);
         Map<Point, PlantType> protectedPlants = Map.of(
                 new Point(2, 1), PlantType.WALL_NUT,
                 new Point(4, 3), PlantType.SUNFLOWER,
@@ -239,9 +237,15 @@ public class LevelFactory {
         int rows = 5;
         int cols = 9;
         List<WaveSpawnEntry> availableZombies = List.of(
-                new WaveSpawnEntry("ZombieDefault", 100)
+                new WaveSpawnEntry("ZombieDefault", 100),
+                new WaveSpawnEntry("ZombieArmor2", 300),
+                new WaveSpawnEntry("ZombieArmor4", 400),
+                new WaveSpawnEntry("ZombieBeachFisherman", 400),
+                new WaveSpawnEntry("ZombieBeachSnorkel", 200),
+                new WaveSpawnEntry("ZombieBeachOctopus", 400),
+                new WaveSpawnEntry("ZombieArcade", 400)
         );
-        List<Wave> waves = Wave.generateWaves(5, 200, availableZombies, 60);
+        List<Wave> waves = Wave.generateWaves(5, 2000, availableZombies, 60);
         LevelSetup levelSetup = new NormalLevelSetup(rows, cols, waves);
         TimedWarLose loseCondition = new TimedWarLose(5000, 12);
         WinCondition winCondition = new TimedWarWin(loseCondition);
@@ -282,9 +286,14 @@ public class LevelFactory {
         int rows = 5;
         int cols = 9;
         List<WaveSpawnEntry> availableZombies = List.of(
-                new WaveSpawnEntry("ZombieDefault", 100)
+                new WaveSpawnEntry("ZombieDefault", 100),
+                new WaveSpawnEntry("ZombieArmor1", 200),
+                new WaveSpawnEntry("ZombieArmor4", 400),
+                new WaveSpawnEntry("ZombieDarkJuggler", 450),
+                new WaveSpawnEntry("ZombieWizard", 400),
+                new WaveSpawnEntry("ZombieDarkKing", 500)
         );
-        List<Wave> waves = Wave.generateWaves(5, 200, availableZombies, 60);
+        List<Wave> waves = Wave.generateWaves(3, 2000, availableZombies, 60);
         LevelSetup levelSetup = new NormalLevelSetup(rows, cols, waves);
         LoseCondition loseCondition = new NormalLose();
         WinCondition winCondition = new NormalWin();
@@ -305,9 +314,15 @@ public class LevelFactory {
         int rows = 5;
         int cols = 9;
         List<WaveSpawnEntry> availableZombies = List.of(
-                new WaveSpawnEntry("ZombieDefault", 100)
+                new WaveSpawnEntry("ZombieDefault", 100),
+                new WaveSpawnEntry("ZombieArmor1", 200),
+                new WaveSpawnEntry("ZombieArmor2", 300),
+                new WaveSpawnEntry("ZombieDarkImpDragon", 150),
+                new WaveSpawnEntry("ZombieDarkJuggler", 450),
+                new WaveSpawnEntry("ZombieWizard", 400),
+                new WaveSpawnEntry("ZombieDarkKing", 500)
         );
-        List<Wave> waves = Wave.generateWaves(5, 200, availableZombies, 60);
+        List<Wave> waves = Wave.generateWaves(4, 2000, availableZombies, 60);
         LevelSetup levelSetup = new NightOpsLevelSetup(rows, cols, waves);
         LoseCondition loseCondition = new NormalLose();
         WinCondition winCondition = new NormalWin();
@@ -328,9 +343,15 @@ public class LevelFactory {
         int rows = 5;
         int cols = 9;
         List<WaveSpawnEntry> availableZombies = List.of(
-                new WaveSpawnEntry("ZombieDefault", 100)
+                new WaveSpawnEntry("ZombieDefault", 100),
+                new WaveSpawnEntry("ZombieArmor1", 200),
+                new WaveSpawnEntry("ZombieArmor2", 300),
+                new WaveSpawnEntry("ZombieDarkArmor3", 450),
+                new WaveSpawnEntry("ZombieDarkJuggler", 450),
+                new WaveSpawnEntry("ZombieWizard", 400),
+                new WaveSpawnEntry("ZombieDarkKing", 500)
         );
-        List<Wave> waves = Wave.generateWaves(5, 200, availableZombies, 60);
+        List<Wave> waves = Wave.generateWaves(4, 2000, availableZombies, 60);
         LevelSetup levelSetup = new NormalLevelSetup(rows, cols, waves);
         LoseCondition loseCondition = new LoveYourPlantsLose(5);
         WinCondition winCondition = new NormalWin();
@@ -374,9 +395,16 @@ public class LevelFactory {
         int rows = 5;
         int cols = 9;
         List<WaveSpawnEntry> availableZombies = List.of(
-                new WaveSpawnEntry("ZombieDefault", 100)
+                new WaveSpawnEntry("ZombieDefault", 100),
+                new WaveSpawnEntry("ZombieArmor1", 200),
+                new WaveSpawnEntry("ZombieArmor2", 300),
+                new WaveSpawnEntry("ZombieArmor4", 400),
+                new WaveSpawnEntry("ZombieIceAgeDodo", 400),
+                new WaveSpawnEntry("ZombieIceAgeHunter", 300),
+                new WaveSpawnEntry("ZombieIceAgeTroglobite", 400)
+
         );
-        List<Wave> waves = Wave.generateWaves(5, 200, availableZombies, 60);
+        List<Wave> waves = Wave.generateWaves(3, 2000, availableZombies, 60);
         LevelSetup levelSetup = new NormalLevelSetup(rows, cols, waves);
         LoseCondition loseCondition = new NormalLose();
         WinCondition winCondition = new NormalWin();
@@ -395,9 +423,15 @@ public class LevelFactory {
         int rows = 5;
         int cols = 9;
         List<WaveSpawnEntry> availableZombies = List.of(
-                new WaveSpawnEntry("ZombieDefault", 100)
+                new WaveSpawnEntry("ZombieDefault", 100),
+                new WaveSpawnEntry("ZombieArmor1", 200),
+                new WaveSpawnEntry("ZombieArmor2", 300),
+                new WaveSpawnEntry("ZombieCrystalSkull", 400),
+                new WaveSpawnEntry("ZombieIceAgeDodo", 400),
+                new WaveSpawnEntry("ZombieIceAgeHunter", 300),
+                new WaveSpawnEntry("ZombieIceAgeTroglobite", 400)
         );
-        List<Wave> waves = Wave.generateWaves(5, 200, availableZombies, 60);
+        List<Wave> waves = Wave.generateWaves(4, 2000, availableZombies, 60);
         List<PlantCard> availablePlants = List.of(
                 new PlantCard(PlantType.PEASHOOTER, 100, 5)
         );
@@ -419,9 +453,15 @@ public class LevelFactory {
         int rows = 5;
         int cols = 9;
         List<WaveSpawnEntry> availableZombies = List.of(
-                new WaveSpawnEntry("ZombieDefault", 100)
+                new WaveSpawnEntry("ZombieDefault", 100),
+                new WaveSpawnEntry("ZombieArmor1", 200),
+                new WaveSpawnEntry("ZombieArmor2", 300),
+                new WaveSpawnEntry("ZombieCrystalSkull", 400),
+                new WaveSpawnEntry("ZombieIceAgeDodo", 400),
+                new WaveSpawnEntry("ZombieIceAgeHunter", 300),
+                new WaveSpawnEntry("ZombieProspector", 200)
         );
-        List<Wave> waves = Wave.generateWaves(5, 200, availableZombies, 60);
+        List<Wave> waves = Wave.generateWaves(5, 2000, availableZombies, 60);
         LevelSetup levelSetup = new NormalLevelSetup(rows, cols, waves);
         LoseCondition loseCondition = new NormalLose();
         WinCondition winCondition = new NormalWin();

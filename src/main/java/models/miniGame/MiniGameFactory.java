@@ -74,7 +74,7 @@ public class MiniGameFactory {
     private static GameWorld createVaseBreakerLevel1() {
         int rows = 5, cols = 9;
 
-        List<String> normalVaseZombies = List.of("ZombieDefault");
+        List<String> normalVaseZombies = List.of("ZombieDefault", "ZombieArmor1");
         List<String> giantVaseZombies = List.of("ZombieGargantuar");
         List<PlantType> possiblePlants = List.of(PlantType.PEASHOOTER, PlantType.WALL_NUT);
 
@@ -118,9 +118,10 @@ public class MiniGameFactory {
     private static GameWorld createVaseBreakerLevel3() {
         int rows = 5, cols = 9;
 
-        List<String> normalVaseZombies = List.of("ZombieArmor1", "ZombieWizard");
+        List<String> normalVaseZombies = List.of("ZombieArmor1", "ZombieWizard", "ZombieArmor2");
         List<String> giantVaseZombies = List.of("ZombieGargantuar", "ZombieDarkKing");
-        List<PlantType> possiblePlants = List.of(PlantType.PEASHOOTER, PlantType.WALL_NUT, PlantType.SNOW_PEA, PlantType.CHOMPER);
+        List<PlantType> possiblePlants = List.of(PlantType.PEASHOOTER, PlantType.WALL_NUT,
+                PlantType.SNOW_PEA, PlantType.CHOMPER);
 
         LevelSetup levelSetup = new VaseBreakerSetup(rows, cols, normalVaseZombies, giantVaseZombies, possiblePlants);
         LoseCondition loseCondition = new NormalLose();
@@ -141,7 +142,8 @@ public class MiniGameFactory {
         int rows = 5, cols = 9, redLineCol = 3;
 
         List<WaveSpawnEntry> zombies = List.of(
-                new WaveSpawnEntry("ZombieDefault", 100)
+                new WaveSpawnEntry("ZombieDefault", 100),
+                new WaveSpawnEntry("ZombieArmor1", 150)
 
         );
 
@@ -164,7 +166,8 @@ public class MiniGameFactory {
 
         List<WaveSpawnEntry> zombies = List.of(
                 new WaveSpawnEntry("ZombieDefault", 100),
-                new WaveSpawnEntry("ZombieArmor1", 150)
+                new WaveSpawnEntry("ZombieArmor1", 150),
+                new WaveSpawnEntry("ZombieArmor2", 150)
         );
 
         LevelSetup levelSetup = new BowlingSetup(rows, cols, redLineCol, zombies, 4, 250);
@@ -186,6 +189,7 @@ public class MiniGameFactory {
 
         List<WaveSpawnEntry> zombies = List.of(
                 new WaveSpawnEntry("ZombieArmor1", 150),
+                new WaveSpawnEntry("ZombieNewspaper", 200),
                 new WaveSpawnEntry("ZombieGargantuar", 400)
         );
 
@@ -204,7 +208,10 @@ public class MiniGameFactory {
 
     private static GameWorld createIZombieLevel1() {
         List<Zombie> availableZombies = List.of(
-                new ZombieFactory().createZombie("ZombieDefault")
+                new ZombieFactory().createZombie("ZombieArmor1"),
+                new ZombieFactory().createZombie("ZombieArmor2"),
+                new ZombieFactory().createZombie("ZombieArmor4"),
+                new ZombieFactory().createZombie("ZombieBarrelRoller")
         );
 
         LevelSetup levelSetup = new IZombieSetup(5, 9, availableZombies);
@@ -223,7 +230,8 @@ public class MiniGameFactory {
     private static GameWorld createIZombieLevel2() {
         List<Zombie> availableZombies = List.of(
                 new ZombieFactory().createZombie("ZombieDefault"),
-                new ZombieFactory().createZombie("ZombieArmor1")
+                new ZombieFactory().createZombie("ZombieArmor1"),
+                new ZombieFactory().createZombie("ZombieArmor3")
         );
 
         LevelSetup levelSetup = new IZombieSetup(5, 9, availableZombies);
@@ -242,7 +250,7 @@ public class MiniGameFactory {
     private static GameWorld createIZombieLevel3() {
         List<Zombie> availableZombies = List.of(
                 new ZombieFactory().createZombie("ZombieArmor1"),
-                new ZombieFactory().createZombie("ZombieGargantuar")
+                new ZombieFactory().createZombie("ZombieDarkImpDragon")
         );
 
         LevelSetup levelSetup = new IZombieSetup(5, 9, availableZombies);
@@ -302,7 +310,8 @@ public class MiniGameFactory {
         );
         List<WaveSpawnEntry> zombies = List.of(
                 new WaveSpawnEntry("ZombieDefault", 100),
-                new WaveSpawnEntry("ZombieArmor1", 150)
+                new WaveSpawnEntry("ZombieArmor1", 150),
+                new WaveSpawnEntry("ZombieArmor3", 200)
         );
 
         LevelSetup levelSetup = new BeghouledSetup(5, 9, plants, upgrades, 8, zombies);
