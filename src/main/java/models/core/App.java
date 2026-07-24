@@ -66,6 +66,9 @@ public class App {
     }
 
     public static String getArmoredZombieName(String id){
+        if (id == null) {
+            return "Regular Zombie";
+        }
         switch (id){
             case "ZombieArmor1":
                 return "ZombieConeHead";
@@ -81,6 +84,9 @@ public class App {
     }
 
     public static String getZombieId(String name){
+        if (name == null) {
+            return null;
+        }
         switch (name){
             case "ZombieConehead":
                 return "ZombieArmor1";
