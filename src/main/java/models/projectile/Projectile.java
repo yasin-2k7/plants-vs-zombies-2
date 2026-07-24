@@ -14,6 +14,9 @@ import models.projectile.strikeStrategies.CheckStrike;
 import models.world.Cell;
 import models.zombie.zombiesType.DeflectorZombie;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Projectile implements Resettable {
     private float x, y;
     private float originX, originY;
@@ -32,8 +35,8 @@ public class Projectile implements Resettable {
         double oldY = y;
         movementStrategy.move(this);
 
-        // بررسی برخورد پرتابه مستقیم با گیاهان (در صورت نیاز)
-        if (type != null && type.movement != null && type.movement.equals("STRAIGHT")) {
+        // بررسی برخورد پرتابه مستقیم با گیاهان
+        if (type != null && type.movement != null && type.movement.equals("STRAIGHT") && this.plantType == null) {
             Cell currentCell = App.getCurrentGame().getCellAt(x, y);
 
             if (currentCell != null && currentCell.getPlant() != null) {
@@ -72,14 +75,17 @@ public class Projectile implements Resettable {
             // بررسی دفاع زامبی در برابر پرتابه‌های لابلد (Lobbed)
             if (type != null && type.movement != null && type.movement.equals("LOBBED")) {
                 boolean areaDeflected = false;
-                for (Damageable activeZombie : App.getCurrentGame().getActiveTargets()) {
+
+                for (models.zombie.Zombie activeZombie : App.getCurrentGame().getActiveZombies()) {
                     if (activeZombie instanceof DeflectorZombie deflector && !deflector.isJuggler() && !deflector.isDead()) {
                         if (Math.abs(activeZombie.getX() - zombie.getX()) <= 150 && Math.abs(activeZombie.getY() - zombie.getY()) <= 150) {
                             areaDeflected = true;
+                            deflector.tryDeflect(this);
                             break;
                         }
                     }
                 }
+
                 if (areaDeflected) {
                     dead = true;
                     App.getCurrentGame().getProjectilesPool().release(this);
@@ -97,7 +103,8 @@ public class Projectile implements Resettable {
             }
 
             if (hitStrategy != null) {
-                hitStrategy.applyDamage(zombie, App.getCurrentGame().getActiveTargets(), this);
+                List<Damageable> validTargets = new ArrayList<>(App.getCurrentGame().getActiveZombies());
+                hitStrategy.applyDamage(zombie, validTargets, this);
             }
 
             pierce--;
@@ -107,7 +114,6 @@ public class Projectile implements Resettable {
                 return;
             }
         }
-
         if (movementStrategy.isDead(this)) {
             dead = true;
             App.getCurrentGame().getProjectilesPool().release(this);

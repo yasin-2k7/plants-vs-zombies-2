@@ -100,16 +100,16 @@ public abstract class Zombie implements Damageable {
     @Override
     public void takeDamage(int amount, String damageType) {
         if (isDead) return;
-        if (iceHealth > 0){
-            iceHealth -= damage;
-            if (iceHealth <= 0){
+        if (iceHealth > 0) {
+            iceHealth -= amount; // اصلاح شد: استفاده از مقدار دمیج دریافتی (amount) به جای فیلد damage زامبی
+            if (iceHealth <= 0) {
                 unfreeze();
             }
             return;
         }
         this.health -= amount;
         if (this.health <= 0) {
-                die();
+            die();
         }
     }
 

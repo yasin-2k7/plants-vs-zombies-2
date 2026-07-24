@@ -282,8 +282,6 @@ public abstract class GameWorld {
         activePlants.forEach(Plant::update);
         activeCollectables.forEach(Collectable::update);
 
-        activeZombies.forEach(Zombie::update);
-        activeProjectiles.forEach(Projectile::update);
         List<Zombie> zombieSnapshot = new ArrayList<>(activeZombies);
         zombieSnapshot.forEach(Zombie::update);
         List<Projectile> projectileSnapshot = new ArrayList<>(activeProjectiles);
@@ -361,6 +359,7 @@ public abstract class GameWorld {
     }
 
     private void handleWinCondition() {
+//        if (state == GameState.WON) return;
         if (!winCondition.checkWin(this)) return;
 
         state = GameState.WON;
