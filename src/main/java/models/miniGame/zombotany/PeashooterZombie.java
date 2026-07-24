@@ -1,8 +1,14 @@
 package models.miniGame.zombotany;
 
 import models.core.App;
+import models.enums.ProjectileType;
 import models.enums.Zombies;
 import models.plant.Plant;
+import models.projectile.Projectile;
+import models.projectile.hitStrategies.CombinedDamageStrategy;
+import models.projectile.movementStrategies.StraightMovementStrategy;
+import models.projectile.strikeStrategies.CheckStraightStrike;
+import models.projectile.strikeStrategies.CheckStrike;
 import models.world.GameWorld;
 import models.zombie.Zombie;
 
@@ -21,8 +27,19 @@ public class PeashooterZombie extends Zombie {
         int row = (int) (this.y / App.getCellHeight());
         Plant target = world.getNearestPlantInRow(row, this.x);
         if (target == null) return;
+        System.out.println("🎯 PeashooterZombie saw " + target.getClass().getSimpleName() +
+                " at row " + row + "! Shooting...");
 
-        target.takeDamage(damage);
+        Projectile pea = world.getProjectilesPool().acquire();
+
+        StraightMovementStrategy movement = new StraightMovementStrategy(-5f, 0, 0);
+        CombinedDamageStrategy hitStrategy = new CombinedDamageStrategy(this.damage, ProjectileType.PEA);
+
+        CheckStrike checkStrike = new CheckStraightStrike();
+        pea.reset(this.x - 20, this.y, hitStrategy, movement, checkStrike, ProjectileType.PEA);
+
+        world.addProjectile(pea);
+        System.out.println("🚀 Zombie Pea spawned at X: " + (this.x - 20) + ", Y: " + this.y);
     }
 
     @Override

@@ -41,9 +41,14 @@ public class Projectile implements Resettable {
 
             if (currentCell != null && currentCell.getPlant() != null) {
                 Plant plant = currentCell.getPlant();
+                System.out.println("💥 Zombie Pea hit " + plant.getClass().getSimpleName() + " for "
+                        + hitStrategy.getDamage() + " damage!");
+
                 if (plant.isFreeze()) {
-                    if (hitStrategy != null && "FIRE".equalsIgnoreCase(hitStrategy.getElement())) {
+                    if (hitStrategy.getElement().equalsIgnoreCase("FIRE")) {
                         plant.unfreeze();
+                    } else {
+                        plant.takeDamage(hitStrategy.getDamage());
                     }
                 } else {
                     if (hitStrategy != null) {
@@ -52,6 +57,7 @@ public class Projectile implements Resettable {
                             plant.increaseFrozenAmount();
                         }
                     }
+                    plant.takeDamage(hitStrategy.getDamage());
                 }
                 pierce--;
                 if (pierce == 0) {
@@ -61,7 +67,6 @@ public class Projectile implements Resettable {
                 }
             }
         }
-
         Damageable zombie = null;
         if (type != null && type.movement != null) {
             if (type.movement.equals("STRAIGHT")) {
@@ -70,7 +75,6 @@ public class Projectile implements Resettable {
                 zombie = strikeStrategy.strike(x, y, target);
             }
         }
-
         if (zombie != null) {
             // بررسی دفاع زامبی در برابر پرتابه‌های لابلد (Lobbed)
             if (type != null && type.movement != null && type.movement.equals("LOBBED")) {
@@ -93,7 +97,6 @@ public class Projectile implements Resettable {
                     return;
                 }
             }
-
             if (zombie instanceof DeflectorZombie deflector) {
                 if (deflector.isJuggler() && deflector.tryDeflect(this)) {
                     dead = true;
@@ -101,12 +104,10 @@ public class Projectile implements Resettable {
                     return;
                 }
             }
-
             if (hitStrategy != null) {
                 List<Damageable> validTargets = new ArrayList<>(App.getCurrentGame().getActiveZombies());
                 hitStrategy.applyDamage(zombie, validTargets, this);
             }
-
             pierce--;
             if (pierce == 0) {
                 dead = true;

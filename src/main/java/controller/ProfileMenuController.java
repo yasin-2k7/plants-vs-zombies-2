@@ -21,6 +21,7 @@ public class ProfileMenuController implements MenuController {
 
     public String changeUsername(String newUsername) {
         User user = App.getCurrentUser();
+        String oldUsername = user.getUsername();
 
         if (user.getUsername().equals(newUsername)) {
             return "new username and your username are similar.";
@@ -30,7 +31,7 @@ public class ProfileMenuController implements MenuController {
         if (!errors.isEmpty()) {
             return String.join("\n", errors);
         }
-        String oldUsername = user.getUsername();
+
         user.setUsername(newUsername);
 
 

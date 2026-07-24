@@ -96,12 +96,6 @@ public class Cell {
     }
 
     public String handlePlanting(PlantType type, boolean boost){
-        if (this.obstacle instanceof Grave grave && type == PlantType.GRAVE_BUSTER) {
-            grave.takeDamage(grave.getHealth(), "NORMAL");
-            this.obstacle = null;
-            this.plantable = true;
-            return null;
-        }
         if (!this.isPlantable()) {
             if (!(this.obstacle instanceof Grave && type == PlantType.GRAVE_BUSTER))
                 return "you cannot plant in that place!";

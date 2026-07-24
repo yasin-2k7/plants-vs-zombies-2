@@ -23,7 +23,7 @@ public class ConveyorMechanic implements Mechanic{
     @Override
     public void applyMechanic(GameWorld world) {
         long now = world.getCurrentTick();
-
+        now = now + 50;
         if(now - lastSpawnTick >= spawnInterval){
             List<PlantCard> conveyor = world.getConveyorBelt();
             if (conveyor != null) {

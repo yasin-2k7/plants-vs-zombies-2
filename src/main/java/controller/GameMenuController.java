@@ -6,26 +6,19 @@ import models.enums.CollectableType;
 import models.core.UserDataManager;
 import models.enums.PlantLayer;
 import models.enums.PlantType;
-import models.lawnMower.LawnMower;
-import models.lawnMower.LawnMowerManager;
-import models.miniGame.IZombie.Brain;
 import models.miniGame.beghouled.GridPosition;
 import models.miniGame.IZombie.IZombieLevel;
 import models.miniGame.beghouled.BeghouledMechanics;
 import models.miniGame.bowling.BowlingMechanics;
-import models.miniGame.vaseBreaker.SeedPacket;
-import models.miniGame.vaseBreaker.Vase;
 import models.miniGame.vaseBreaker.VaseBreakerLevel;
 import models.mupoint.MupointManager;
-import models.plant.Plant;
 import models.plant.card.ImitatorCard;
 import models.plant.card.PlantCard;
 import models.world.*;
+import models.world.levelSetup.DeadLineLevelSetup;
 import models.world.mechanics.NormalMechanic;
-import models.world.obstacles.*;
 import models.zombie.Zombie;
 import models.zombie.ZombieFactory;
-import models.zombie.wave.WaveManager;
 import view.terminalView.*;
 
 import java.util.List;
@@ -48,6 +41,8 @@ public class GameMenuController implements MenuController {
     public static void handleLosing(GameWorld gameWorld, MupointManager mupointManager) {
         if (gameWorld instanceof IZombieLevel) {
             GameMenuView.getInstance().showResult("You ran out of zombies and failed to eat all the brains! LOSER!!!");
+        } else if (gameWorld.getLevelSetup() instanceof DeadLineLevelSetup) {
+            GameMenuView.getInstance().showResult("Zombie passed deadLine; Loser!!!");
         } else {
             GameMenuView.getInstance().showResult("The zombie ate your brain; LOSER!!!");
         }
@@ -329,116 +324,12 @@ public class GameMenuController implements MenuController {
     }
 
     public void showMap() {
-        int currentWaveNum = 1;
-        int totalWaves = 1;
-        NormalMechanic normal = App.getCurrentGame().getMechanic(NormalMechanic.class);
-        if (normal != null && normal.getWaveManager() != null) {
-            WaveManager wm = normal.getWaveManager();
-            if (wm.getCurrentWave() != null) {
-                currentWaveNum = wm.getCurrentWave().getWaveNumber();
-            } else {
-                currentWaveNum = wm.getCurrentWaveIndex() + 1;
-            }
-            totalWaves = wm.getTotalWavesCount();
-        }
-        GameMenuView.getInstance().showResult("==================================================================================================");
-        String title = String.format(" WAVE: %d/%d  |  SUN: %d ☀️  |  PLANT FOOD: %d ⚡  |  STATUS: %s 🎮",
-                currentWaveNum, totalWaves, App.getCurrentGame().getSun(), App.getCurrentGame().getPlantFoods(), App.getCurrentGame().getState());
-        GameMenuView.getInstance().showResult(title);
-        GameMenuView.getInstance().showResult("==================================================================================================");
-
-        System.out.println("==================================================================================================");
-
-        boolean isVaseBreaker = App.getCurrentGame() instanceof VaseBreakerLevel;
-        VaseBreakerLevel vbLevel = isVaseBreaker ? (VaseBreakerLevel) App.getCurrentGame() : null;
-        boolean isIZombie = App.getCurrentGame() instanceof IZombieLevel;
-        IZombieLevel izLevel = isIZombie ? (IZombieLevel) App.getCurrentGame() : null;
-
-        for (int y = 0; y < App.getCurrentGame().getGrid().length; y++) {
-            StringBuilder rowBuilder = new StringBuilder();
-            String mowerSymbol = "    "; // تعریف یکتا و درست برای نماد ماشین چمن‌زن / مغز
-            if (isIZombie && izLevel != null) {
-                Brain brain = izLevel.getBrainAtRow(y);
-                if (brain != null && !brain.isEaten()) {
-                    mowerSymbol = "[🧠]";
-                }
-            } else {
-                LawnMowerManager lmManager = App.getCurrentGame().getLawnMowerManager();
-                if (lmManager != null && lmManager.isEnabled() && y < lmManager.getMowers().size()) {
-                    LawnMower mower = lmManager.getMowers().get(y);
-                    mowerSymbol = mower.isAlive() ? "[🚜]" : "[❌]";
-                }
-            }
-            rowBuilder.append(String.format("Row %d %s | ", y + 1, mowerSymbol));
-
-            for (int x = 0; x < App.getCurrentGame().getGrid()[0].length; x++) {
-                Cell cell = App.getCurrentGame().getGrid()[y][x];
-                String terrainSymbol = cell.getTerrain().getTerminalSymbol();
-                if (cell.getSlippingDir() == 1) {
-                    terrainSymbol = "🧊👇";
-                } else if (cell.getSlippingDir() == -1) {
-                    terrainSymbol = "🧊👆";
-                }
-
-                if (isVaseBreaker && vbLevel != null) {
-                    Vase vase = vbLevel.getVaseAt(y, x);
-                    SeedPacket seed = vbLevel.getSeedPacketAt(y, x);
-
-                    if (vase != null && !vase.isBroken()) {
-                        terrainSymbol = vase.getType().getSymbol();
-                    } else if (seed != null) {
-                        terrainSymbol = "🌱📦";
-                    }
-                }
-
-                if (cell.hasObstacle()) {
-                    Obstacle obs = cell.getObstacle();
-                    if (obs instanceof Grave grave) {
-                        switch (grave.getType()) {
-                            case SUN -> terrainSymbol = "🪦☀";
-                            case PLANT_FOOD -> terrainSymbol = "🪦⚡";
-                            default -> terrainSymbol = "🪦";
-                        }
-                    } else if (obs instanceof OctopusObstacle) {
-                        terrainSymbol = "🐙";
-                    } else if (obs instanceof IceBlock) {
-                        terrainSymbol = "🧊";
-                    } else if (obs instanceof BarrelObstacle) {
-                        terrainSymbol = "🛢️";
-                    } else {
-                        terrainSymbol = "🪨";
-                    }
-                }
-                String plantSymbol = "    ";
-                if (!cell.isEmpty()) {
-                    Plant plant = cell.getPlant();
-                    if (plant.isCat()) {
-                        plantSymbol = "🐱 ";
-                    } else {
-                        plantSymbol = plant.getType().getSymbol();
-                    }
-                }
-                String zombieString = "       ";
-                List<Zombie> zombiesInCell = Cell.getZombiesInCell(cell);
-                if (!zombiesInCell.isEmpty()) {
-                    Zombie firstZombie = zombiesInCell.getFirst();
-                    zombieString = String.format("Z(%.1f)", firstZombie.getX());
-                }
-                String terrain = String.format("[ %s | %-4s | %-7s ] | ", terrainSymbol, plantSymbol.trim(), zombieString.trim());
-                rowBuilder.append(terrain);
-            }
-            GameMenuView.getInstance().showResult(rowBuilder.toString());
-        }
-        GameMenuView.getInstance().showResult("==================================================================================================");
         GameDetailsDisplayController.showMap();
     }
 
     public void showPlantsStatus(){ GameDetailsDisplayController.showPlantsStatus();}
 
-    // متد showTileStatus فقط یک بار و به شکل درست تعریف شد
-    public void showTileStatus(float x, float y){
-        GameDetailsDisplayController.showTileStatus(x, y);
-    }
+    public void showTileStatus(float x, float y){ GameDetailsDisplayController.showTileStatus(x,y);}
 
     public void zombieInfo() {
         GameDetailsDisplayController.zombieInfo();
@@ -591,4 +482,6 @@ public class GameMenuController implements MenuController {
         }
         GameMenuView.getInstance().showResult(mechanics.throwBall(game, plantType, x, y));
     }
+
+
 }

@@ -1,6 +1,9 @@
 package models.world.levelSetup;
 
+import models.enums.PlantLayer;
 import models.enums.PlantType;
+import models.plant.Plant;
+import models.plant.factory.PlantFactory;
 import models.world.Cell;
 import models.world.GameWorld;
 import models.world.cellTerrains.LandTerrain;
@@ -42,7 +45,10 @@ public class SaveOurSeedsLevelSetup implements LevelSetup{
             int row = (int) entry.getKey().getY();
             int col = (int) entry.getKey().getX();
 
-            grid[row][col].handlePlanting(entry.getValue());
+            Plant plant = PlantFactory.createPlant(entry.getValue(), row, col, grid[row][col]);
+
+            grid[row][col].setPlant(plant, PlantLayer.MAIN);
+
 
         }
 
