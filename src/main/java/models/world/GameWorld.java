@@ -87,10 +87,12 @@ public abstract class GameWorld {
                      WinCondition winCondition, ArrayList<Mechanic> mechanics) {
         App.getCurrentUser().setGamesPlayed(App.getCurrentUser().getGamesPlayed()+1);
         UserDataManager.saveUser(App.getCurrentUser());
+
         this.levelSetup = levelSetup;
         this.loseConditions = loseConditions;
         this.winCondition = winCondition;
         this.mechanics = mechanics;
+
         this.activeZombies = new ArrayList<>();
         this.activePlants = new ArrayList<>();
         this.activeSuns = new ArrayList<>();
@@ -243,8 +245,16 @@ public abstract class GameWorld {
     private void updateAll(){
         activePlants.forEach(Plant::update);
         activeCollectables.forEach(Collectable::update);
-        activeZombies.forEach(Zombie::update);
-        activeProjectiles.forEach(Projectile::update);
+
+        List<Zombie> zombieSnapshot = new ArrayList<>(activeZombies);
+        zombieSnapshot.forEach(Zombie::update);
+        List<Projectile> projectileSnapshot = new ArrayList<>(activeProjectiles);
+        projectileSnapshot.forEach(Projectile::update);
+        if (!isConveyorMode) {
+            for (PlantCard card : plantLists) {
+                card.update();
+            }
+        }
         if (!isConveyorMode) for (PlantCard card : plantLists) card.update();
         for (Sun sun : activeSuns){
             if (sun.getProducer() == null && sun.isExpired()){

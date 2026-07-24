@@ -72,6 +72,7 @@ public class Projectile implements Resettable {
                     if (activeZombie instanceof DeflectorZombie deflector && !deflector.isJuggler() && !deflector.isDead()) {
                         if (Math.abs(activeZombie.getX() - zombie.getX()) <= 150 && Math.abs(activeZombie.getY() - zombie.getY()) <= 150) {
                             areaDeflected = true;
+                            deflector.tryDeflect(this);
                             break;
                         }
                     }
