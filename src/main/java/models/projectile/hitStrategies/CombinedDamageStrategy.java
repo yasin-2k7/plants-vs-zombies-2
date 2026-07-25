@@ -64,7 +64,8 @@ public class CombinedDamageStrategy implements HitStrategy {
     }
 
     public CombinedDamageStrategy changeDamage(int damage) {
-        return new CombinedDamageStrategy(damage, neighborDamage, radius, this.element, this.chillTime, this.poisonDamageOnTick, projectileType);
+        return new CombinedDamageStrategy(damage, neighborDamage, radius,
+                this.element, this.chillTime, this.poisonDamageOnTick, projectileType);
     }
 
     @Override

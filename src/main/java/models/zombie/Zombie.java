@@ -140,7 +140,8 @@ public abstract class Zombie implements Damageable {
         if (glowing) {
             Collectable plantFood = new Collectable(this.x, this.y, CollectableType.PLANT_FOOD);
             world.getActiveCollectables().add(plantFood);
-            GameMenuController.updateState("\uD83C\uDFC6The glowing zombie dropped a plant food at (" + (int) x + ", " + (int) y + ")");
+            GameMenuController.updateState(
+                    "\uD83C\uDFC6The glowing zombie dropped a plant food at (" + (int) x + ", " + (int) y + ")");
         }
 
         if (Math.random() < 0.10) {
@@ -154,11 +155,13 @@ public abstract class Zombie implements Damageable {
             }
             Collectable drop = new Collectable(this.x, this.y, type);
             world.getActiveCollectables().add(drop);
-            GameMenuController.updateState("\uD83C\uDFC6A zombie dropped a " + type.name().toLowerCase() + " at (" + (int) x + ", " + (int) y + ")");
+            GameMenuController.updateState("\uD83C\uDFC6A zombie dropped a " + type.name().toLowerCase() +
+                            " at (" + (int) x + ", " + (int) y + ")");
         }
 
         String displayName = (specificName != null) ? specificName : name.name();
-        GameMenuController.updateState("\uD83D\uDC80Zombie of type " + displayName + " is dead at (" + (int) x + ", " + (int) y + ")");
+        GameMenuController.updateState("\uD83D\uDC80Zombie of type " + displayName +
+                " is dead at (" + (int) x + ", " + (int) y + ")");
     }
 
     public void applySlow(int ticks, double factor, boolean canWorkInFrostbite) {

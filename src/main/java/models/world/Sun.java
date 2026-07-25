@@ -82,7 +82,8 @@ public class Sun implements Resettable {
     }
 
     @Override
-    public void reset(float x, float y, HitStrategy hitStrategy, MovementStrategy movementStrategy, CheckStrike checkStrike, ProjectileType type) {
+    public void reset(float x, float y, HitStrategy hitStrategy, MovementStrategy movementStrategy,
+                      CheckStrike checkStrike, ProjectileType type) {
         this.isCollected = false;
     }
 

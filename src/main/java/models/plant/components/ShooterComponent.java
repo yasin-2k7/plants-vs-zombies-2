@@ -43,7 +43,11 @@ public class ShooterComponent implements GameComponent {
     private CombinedDamageStrategy plantFoodStrategy;
     private AttackCallback attackCallback;
 
-    public ShooterComponent(ProjectileType bulletType, ProjectileType giantType, int shootingTime, int burstProjectileNumber, int burstProjectileNumberOnPlantFood, boolean hasGiant, Supplier<CombinedDamageStrategy> damageStrategy, CheckStrike strikeStrategy, int giantCount, int normalPierce, int giantPierce, int giantDamageFactor) {
+    public ShooterComponent(ProjectileType bulletType, ProjectileType giantType,
+                            int shootingTime, int burstProjectileNumber,
+                            int burstProjectileNumberOnPlantFood, boolean hasGiant,
+                            Supplier<CombinedDamageStrategy> damageStrategy, CheckStrike strikeStrategy,
+                            int giantCount, int normalPierce, int giantPierce, int giantDamageFactor) {
         this.bulletType = bulletType;
         this.giantType = giantType;
         this.shootingTime = shootingTime;
@@ -107,12 +111,14 @@ public class ShooterComponent implements GameComponent {
                 Projectile p = App.getCurrentGame().getProjectilesPool().acquire();
 
                 if (activePlantFood && projectilesLeftForShoot <= giantCount && hasGiant) {
-                    p.reset(owner.getX(), owner.getY() + movementStrategy.get().changeOriginY(), plantFoodStrategy, movementStrategy.get(), strikeStrategy, giantType);
+                    p.reset(owner.getX(), owner.getY() + movementStrategy.get().changeOriginY(),
+                            plantFoodStrategy, movementStrategy.get(), strikeStrategy, giantType);
                     if (giantPierce != 1) {
                         p.setPierce(giantPierce);
                     }
                 } else {
-                    p.reset(owner.getX(), owner.getY() + movementStrategy.get().changeOriginY(), damageStrategy.get(), movementStrategy.get(), strikeStrategy, bulletType);
+                    p.reset(owner.getX(), owner.getY() + movementStrategy.get().changeOriginY(),
+                            damageStrategy.get(), movementStrategy.get(), strikeStrategy, bulletType);
                     if (normalPierce != 1) {
                         p.setPierce(normalPierce);
                     }

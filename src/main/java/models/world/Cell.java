@@ -196,7 +196,8 @@ public class Cell {
         if (behavior != null && behavior.isStackable() && !isLayerEmpty(layer)) {
             Plant existingPlant = getPlant(layer);
             if (existingPlant.getType() == type) {
-                PlacementBehaviorComponent existingBehavior = existingPlant.getComponent(PlacementBehaviorComponent.class);
+                PlacementBehaviorComponent existingBehavior = existingPlant.getComponent(
+                        PlacementBehaviorComponent.class);
                 if (existingBehavior.tryIncrementStack()) {
                     ShooterComponent shooterComp = existingPlant.getComponent(ShooterComponent.class);
                     shooterComp.setBurstProjectileNumber(existingBehavior.getCurrentStack());

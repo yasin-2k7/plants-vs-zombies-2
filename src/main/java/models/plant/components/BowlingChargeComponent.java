@@ -26,7 +26,13 @@ public class BowlingChargeComponent implements GameComponent {
     private int shootingTimer = 0;
     private boolean activePlantFood;
     private int plantFoodProjectileCount = 0;
-    public BowlingChargeComponent(int shootingTime, CombinedDamageStrategy firstDamageStrategy, CombinedDamageStrategy secondDamageStrategy, CombinedDamageStrategy thirdDamageStrategy, Supplier<MovementStrategy> movementStrategy, CombinedDamageStrategy plantFoodDamageStrategy, int firstCharge, int secondCharge, int thirdCharge) {
+    public BowlingChargeComponent(int shootingTime,
+                                  CombinedDamageStrategy firstDamageStrategy,
+                                  CombinedDamageStrategy secondDamageStrategy,
+                                  CombinedDamageStrategy thirdDamageStrategy,
+                                  Supplier<MovementStrategy> movementStrategy,
+                                  CombinedDamageStrategy plantFoodDamageStrategy,
+                                  int firstCharge, int secondCharge, int thirdCharge) {
         this.shootingTime = shootingTime;
         damageStrategies[0] = firstDamageStrategy;
         damageStrategies[1] = secondDamageStrategy;
@@ -74,7 +80,8 @@ public class BowlingChargeComponent implements GameComponent {
                 bulbs[i].isReady = false;
                 shootingTimer = shootingTime;
                 Projectile p = App.getCurrentGame().getProjectilesPool().acquire();
-                p.reset(owner.getX(), owner.getY(), damageStrategies[i], movementStrategy.get(), strikeStrategy, bulbs[i].projectileType);
+                p.reset(owner.getX(), owner.getY(), damageStrategies[i],
+                        movementStrategy.get(), strikeStrategy, bulbs[i].projectileType);
                 App.getCurrentGame().getActiveProjectiles().add(p);
                 break;
             }
@@ -88,7 +95,8 @@ public class BowlingChargeComponent implements GameComponent {
             plantFoodProjectileCount--;
             shootingTimer = shootingTime;
             Projectile p = App.getCurrentGame().getProjectilesPool().acquire();
-            p.reset(owner.getX(), owner.getY(), plantFoodDamageStrategy, movementStrategy.get(), strikeStrategy, ProjectileType.SPECIAL_BULB);
+            p.reset(owner.getX(), owner.getY(), plantFoodDamageStrategy,
+                    movementStrategy.get(), strikeStrategy, ProjectileType.SPECIAL_BULB);
             App.getCurrentGame().getActiveProjectiles().add(p);
             if (plantFoodProjectileCount == 0) {
                 activePlantFood = false;

@@ -83,7 +83,8 @@ public class SpawnerZombie extends Zombie {
 
                 game.getActiveZombies().remove(z);
                 game.getActiveZombies().add(knight);
-                GameMenuController.updateState("King turned a zombie into a knight at (" + knight.getX() + ", " + knight.getY() + ")");
+                GameMenuController.updateState(
+                        "King turned a zombie into a knight at (" + knight.getX() + ", " + knight.getY() + ")");
                 break;
             }
         }

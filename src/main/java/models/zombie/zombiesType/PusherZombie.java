@@ -59,7 +59,8 @@ public class PusherZombie extends Zombie {
                 if ("ICEBLOCK".equals(objectName)) {
                     objectHealth = 0;
                 }
-                GameMenuController.updateState(objectName + " crushed plant at (" + plantHere.getX() + ", " + plantHere.getY() + ")");
+                GameMenuController.updateState(
+                        objectName + " crushed plant at (" + plantHere.getX() + ", " + plantHere.getY() + ")");
             }
             Cell frontCell = Cell.nextCell(zombieCell, game.getGrid());
             if (frontCell != null) {
@@ -70,7 +71,8 @@ public class PusherZombie extends Zombie {
                     if ("ICEBLOCK".equals(objectName)) {
                         objectHealth = 0;
                     }
-                    GameMenuController.updateState(objectName + " crushed plant at (" + plantFront.getX() + ", " + plantFront.getY() + ")");
+                    GameMenuController.updateState(
+                            objectName + " crushed plant at (" + plantFront.getX() + ", " + plantFront.getY() + ")");
                 }
             }
         }

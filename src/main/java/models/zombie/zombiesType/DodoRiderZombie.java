@@ -89,7 +89,8 @@ public class DodoRiderZombie extends Zombie {
                     Cell nextCell = game.getGrid()[row][col];
                     this.x = nextCell.getX();
                     this.y = nextCell.getY();
-                    GameMenuController.updateState("Dodo Rider flew over a " + type.name() + " at (" + cell.getX() + ", " + cell.getY() + ")");
+                    GameMenuController.updateState(
+                            "Dodo Rider flew over a " + type.name() + " at (" + cell.getX() + "," + cell.getY() + ")");
                 } else {
                     this.x -= App.getCellWidth();
                 }

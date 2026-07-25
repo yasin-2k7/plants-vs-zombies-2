@@ -15,7 +15,8 @@ public class PlantWhatYouGetLevelSetup implements LevelSetup {
     private int initialSun;
     private List<PlantCard> availablePlants;
 
-    public PlantWhatYouGetLevelSetup(int rows, int cols, List<Wave> waves, int initialSun, List<PlantCard> availablePlants) {
+    public PlantWhatYouGetLevelSetup(int rows, int cols, List<Wave> waves,
+                                     int initialSun, List<PlantCard> availablePlants) {
         this.rows = rows;
         this.cols = cols;
         this.waves = waves;

@@ -11,5 +11,6 @@ public interface Resettable {
 
     void reset(float x, float y);
 
-    void reset(float x, float y, HitStrategy hitStrategy, MovementStrategy movementStrategy, CheckStrike checkStrike, ProjectileType type);
+    void reset(float x, float y, HitStrategy hitStrategy,
+               MovementStrategy movementStrategy, CheckStrike checkStrike, ProjectileType type);
 }

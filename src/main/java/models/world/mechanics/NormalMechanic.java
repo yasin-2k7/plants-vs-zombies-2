@@ -21,11 +21,6 @@ public class NormalMechanic implements Mechanic {
     public void applyMechanic(GameWorld world) {
 
 
-//        int difficulty = App.getCurrentUser().getGameDifficulty();
-//        double decreaseFactor = DifficultyCalculator.decreaseFactor(difficulty);
-//        int adjustedInterval = (int) Math.round(zombieSpawnInterval * decreaseFactor);
-
-
         if (!waveManager.update()) {
             waveManager.spawnNextZombie(random.nextInt(world.getRows()), world);
         }

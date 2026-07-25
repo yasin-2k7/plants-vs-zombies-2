@@ -11,7 +11,7 @@ import models.world.obstacles.OctopusObstacle;
 import models.zombie.Zombie;
 
 public class RangedZombie extends Zombie {
-    private final int COOLDOWN_MAX = 120;
+    private final int cooldownMax = 120;
     private String projectileType;
     private int cooldown;
 
@@ -24,7 +24,6 @@ public class RangedZombie extends Zombie {
     public void throwProjectile() {
         GameWorld game = App.getCurrentGame();
         if (game == null) return;
-
         switch (projectileType) {
             case "SNOWBALL": {
                 int row = (int) (this.y / App.getCellHeight());
@@ -38,7 +37,6 @@ public class RangedZombie extends Zombie {
                 }
                 break;
             }
-
             case "OCTOPUS": {
                 Plant target = game.getNearestPlantInRow((int) (this.y / App.getCellHeight()), this.x - 10);
                 if (target != null && !target.isDead()) {
@@ -47,7 +45,8 @@ public class RangedZombie extends Zombie {
                         OctopusObstacle octopus = new OctopusObstacle(target.getX(), target.getY(), target, cell);
                         cell.setObstacle(octopus);
                         game.getActiveObstacles().add(octopus);
-                        GameMenuController.updateState("Octopus thrown at plant at (" + target.getX() + ", " + target.getY() + ")");
+                        GameMenuController.updateState(
+                                "Octopus thrown at plant at (" + target.getX() + ", " + target.getY() + ")");
                     } else {
                         // System.out.println("Cell already has an obstacle or cannot place octopus.");
                     }
@@ -69,9 +68,12 @@ public class RangedZombie extends Zombie {
                 Cell randomEmptyCell = game.getRandomEmptyCellInRowAfterColumn(row, this.x);
                 if (randomEmptyCell != null) {
                     game.createGrave((int) randomEmptyCell.getX(), (int) randomEmptyCell.getY());
-                    GameMenuController.updateState("Tomb Raiser threw a bone at (" + randomEmptyCell.getCol() + ", " + randomEmptyCell.getRow() + ")");
+                    GameMenuController.updateState(
+                            "Tomb Raiser threw a bone at (" +
+                            randomEmptyCell.getCol() + ", " + randomEmptyCell.getRow() + ")");
                 } else {
-                    GameMenuController.updateState("No empty cell in front of Tomb Raiser in row " + row + " to place grave.");
+                    GameMenuController.updateState(
+                            "No empty cell in front of Tomb Raiser in row " + row + " to place grave.");
                 }
                 break;
             }
@@ -84,7 +86,7 @@ public class RangedZombie extends Zombie {
         super.update();
         if (cooldown <= 0) {
             throwProjectile();
-            cooldown = COOLDOWN_MAX;
+            cooldown = cooldownMax;
         } else {
             cooldown--;
         }

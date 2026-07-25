@@ -56,7 +56,8 @@ public class LeaderboardMenuController implements MenuController {
         }
 
         List<User> sortedUsers = getSortedLeaderboard(UserDataManager.loadAllUsers(), sortField, ascending);
-        LeaderboardMenuView.getInstance().showResult("===============================================================================================\n" +
+        LeaderboardMenuView.getInstance().showResult(
+                "===============================================================================================\n" +
                 "                                \uD83C\uDFC6 LEADERBOARD \uD83C\uDFC6\n" +
                 "===============================================================================================\n" +
                 "| Rank | Username       | Last Stage         | Mini-Games | Daily Q. | Normal Q. | High Score |\n" +
@@ -65,11 +66,14 @@ public class LeaderboardMenuController implements MenuController {
         int i = 1;
         for (User user : sortedUsers) {
             String row = String.format("| %-4d | %-14s | %-17s | %-10d | %-8d | %-9d | %-10d |",
-                    i++, user.getUsername(), "SEASON " + user.getUnlockedChapter() + " - " + "LEVEL " + user.getUnlockedLevel(), user.getMiniGameLevels().size(), user.getDailyQuestsCount(), user.getNormalQuestsCount(), user.getMaxMupoint());
+                    i++, user.getUsername(), "SEASON " + user.getUnlockedChapter() +
+                            " - " + "LEVEL " + user.getUnlockedLevel(), user.getMiniGameLevels().size(),
+                    user.getDailyQuestsCount(), user.getNormalQuestsCount(), user.getMaxMupoint());
             LeaderboardMenuView.getInstance().showResult(row);
         }
 
-        LeaderboardMenuView.getInstance().showResult("===============================================================================================\n" +
+        LeaderboardMenuView.getInstance().showResult(
+                "===============================================================================================\n" +
                 "* Sorted by: " + sortField.name() + (ascending ? " (Ascending)" : " (Descending)"));
     }
 }

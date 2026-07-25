@@ -23,11 +23,14 @@ public class SunProducerComponent implements GameComponent {
     private int growTimeToReduce;
     private boolean isInstant;
 
-    public SunProducerComponent(int sunSize, int sunNumber, int productionTime, boolean doubleSunChance, boolean shroom, int sunNumberWithPlantFood, int growTimeToReduce) {
-        this(sunSize, sunNumber, productionTime, doubleSunChance, shroom, sunNumberWithPlantFood, growTimeToReduce, false);
+    public SunProducerComponent(int sunSize, int sunNumber, int productionTime, boolean doubleSunChance,
+                                boolean shroom, int sunNumberWithPlantFood, int growTimeToReduce) {
+        this(sunSize, sunNumber, productionTime, doubleSunChance, shroom, sunNumberWithPlantFood,
+                growTimeToReduce, false);
     }
 
-    public SunProducerComponent(int sunSize, int sunNumber, int productionTime, boolean doubleSunChance, boolean shroom, int sunNumberWithPlantFood, int growTimeToReduce, boolean isInstant) {
+    public SunProducerComponent(int sunSize, int sunNumber, int productionTime, boolean doubleSunChance,
+                                boolean shroom, int sunNumberWithPlantFood, int growTimeToReduce, boolean isInstant) {
         this.sunSize = sunSize;
         this.sunNumber = sunNumber;
         this.productionTime = productionTime;
@@ -85,7 +88,8 @@ public class SunProducerComponent implements GameComponent {
         Sun newSun = App.getCurrentGame().getSunsPool().acquire();
         newSun.reset(owner.getX(), owner.getY(), sunSize, this);
         App.getCurrentGame().getActiveSuns().add(newSun);
-        GameMenuController.updateState("plant " + owner.getType().name() + " produced a sun at (" + owner.getX() + ", " + owner.getY() + ")");
+        GameMenuController.updateState("plant " + owner.getType().name() +
+                " produced a sun at (" + owner.getX() + ", " + owner.getY() + ")");
         return newSun;
     }
 

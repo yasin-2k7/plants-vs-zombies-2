@@ -48,7 +48,10 @@ public class IZombieSetup implements LevelSetup {
                 Brain brain = new Brain(r, 10, r * 100 + 50);
                 level.getBrains().add(brain);
             }
-            PlantType[] possiblePlants = {PlantType.PEASHOOTER, PlantType.SNOW_PEA, PlantType.WALL_NUT, PlantType.SUNFLOWER};
+            PlantType[] possiblePlants = {PlantType.PEASHOOTER,
+                    PlantType.SNOW_PEA,
+                    PlantType.WALL_NUT,
+                    PlantType.SUNFLOWER};
             for (int r = 0; r < rows; r++) {
                 for (int c = 0; c < 5; c++) {
                     PlantType type = possiblePlants[random.nextInt(possiblePlants.length)];

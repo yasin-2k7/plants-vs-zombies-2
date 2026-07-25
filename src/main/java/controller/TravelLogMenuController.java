@@ -137,7 +137,8 @@ public class TravelLogMenuController implements MenuController {
 
             if (world.getLevelSetup().requirePlantSelection()) {
                 AppView.setCurrentScreen(PlantMenuView.getInstance());
-                GameMenuView.getInstance().showResult("Select your plants for " + selected.name() + " - Level " + level + "!");
+                GameMenuView.getInstance().showResult(
+                        "Select your plants for " + selected.name() + " - Level " + level + "!");
             } else {
                 AppView.setCurrentScreen(GameMenuView.getInstance());
                 GameMenuView.getInstance().showResult("Starting " + selected.name() + " - Level " + level + "!");

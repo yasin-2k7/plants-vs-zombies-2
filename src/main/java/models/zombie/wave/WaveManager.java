@@ -106,7 +106,8 @@ public class WaveManager {
         if (currentWave.isFlagWave() && game.isSandstormActive()) {
             int columnsForward = 1 + new Random().nextInt(4);
             spawnCol = Math.max(0, spawnCol - columnsForward);
-            GameMenuController.updateState("A zombie rides a sandstorm and enters " + columnsForward + " columns ahead!");
+            GameMenuController.updateState(
+                    "A zombie rides a sandstorm and enters " + columnsForward + " columns ahead!");
         }
 
         float x = spawnCol * App.getCellWidth();

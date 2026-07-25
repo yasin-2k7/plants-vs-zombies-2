@@ -26,7 +26,8 @@ public class LawnMower {
         if (!isActive && !isSpent) {
             this.isActive = true;
             this.isAlive = true;
-            GameMenuController.updateState("The lawn mower in the row " + row + "is triggered and killed these zombies:");
+            GameMenuController.updateState(
+                    "The lawn mower in the row " + row + "is triggered and killed these zombies:");
         }
     }
 

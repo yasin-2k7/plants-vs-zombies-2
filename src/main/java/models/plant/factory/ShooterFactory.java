@@ -134,7 +134,8 @@ public class ShooterFactory {
         int damage = level >= 2 ? 20 : 10;
         int health = level >= 3 ? 450 : 300;
         Plant p = new Plant(PlantType.ROTOBAGA, health, damage);
-        CombinedDamageStrategy combinedDamageStrategy = new CombinedDamageStrategy(damage, ProjectileType.ROTOBAGA_PROJECTILE);
+        CombinedDamageStrategy combinedDamageStrategy = new CombinedDamageStrategy(
+                damage, ProjectileType.ROTOBAGA_PROJECTILE);
         for (int i = 0; i < 4; i++) {
             ShooterComponent shooterComponent = new ShooterComponent(ProjectileType.ROTOBAGA_PROJECTILE,
                     null, 15, 1,
@@ -142,8 +143,11 @@ public class ShooterFactory {
                     new CheckStraightStrike(), 0, 1,
                     0, 0);
             final int finalI = i;
-            shooterComponent.getVisions().add(new RotatedVisionStrategy((float) (i * Math.PI / 2 + Math.PI / 4), App.getCellHeight(), 1000));
-            MovementStrategy movementStrategy = new StraightMovementStrategy((float) (5 * Math.cos(finalI * Math.PI / 2 + Math.PI / 4)), (float) (5 * Math.sin(finalI * Math.PI / 2 + Math.PI / 4)), 0);
+            shooterComponent.getVisions().add(new RotatedVisionStrategy(
+                    (float) (i * Math.PI / 2 + Math.PI / 4), App.getCellHeight(), 1000));
+            MovementStrategy movementStrategy = new StraightMovementStrategy(
+                    (float) (5 * Math.cos(finalI * Math.PI / 2 + Math.PI / 4)),
+                    (float) (5 * Math.sin(finalI * Math.PI / 2 + Math.PI / 4)), 0);
             shooterComponent.getMovementStrategies().add(() -> movementStrategy);
             p.addComponent(shooterComponent);
         }
@@ -183,8 +187,10 @@ public class ShooterFactory {
                     new CheckStraightStrike(), 0, 1,
                     0, 0);
             final int finalI = i;
-            newComponent.getVisions().add(new StraightVisionStrategy(1000 * (float) Math.cos(i * Math.PI), App.getCellHeight(), false));
-            MovementStrategy movementStrategy = new StraightMovementStrategy(5 * (float) Math.cos(finalI * Math.PI), 0, 0);
+            newComponent.getVisions().add(new StraightVisionStrategy(
+                    1000 * (float) Math.cos(i * Math.PI), App.getCellHeight(), false));
+            MovementStrategy movementStrategy = new StraightMovementStrategy(
+                    5 * (float) Math.cos(finalI * Math.PI), 0, 0);
             newComponent.getMovementStrategies().add(() -> movementStrategy);
             p.addComponent(newComponent);
         }
@@ -216,9 +222,12 @@ public class ShooterFactory {
         CombinedDamageStrategy first = new CombinedDamageStrategy(180 + damageAddition, ProjectileType.LARGE_BULB);
         CombinedDamageStrategy second = new CombinedDamageStrategy(120 + damageAddition, ProjectileType.MEDIUM_BULB);
         CombinedDamageStrategy third = new CombinedDamageStrategy(40 + damageAddition, ProjectileType.SMALL_BULB);
-        CombinedDamageStrategy special = new CombinedDamageStrategy(180 + damageAddition, 90 + damageAddition / 2, 100, ProjectileType.MEDIUM_BULB);
+        CombinedDamageStrategy special = new CombinedDamageStrategy(
+                180 + damageAddition, 90 + damageAddition / 2, 100, ProjectileType.MEDIUM_BULB);
         Plant p = new Plant(PlantType.BOWLING_BULB, 300, 0);
-        p.addComponent(new BowlingChargeComponent(20, first, second, third, () -> new BowlingMovementStrategy(5, 0), special, 2 - regenReduce, 5 - regenReduce, 10 - regenReduce));
+        p.addComponent(new BowlingChargeComponent(
+                20, first, second, third, () -> new BowlingMovementStrategy(
+                        5, 0), special, 2 - regenReduce, 5 - regenReduce, 10 - regenReduce));
         return p;
     }
 
@@ -275,7 +284,8 @@ public class ShooterFactory {
             int changeFactor = i == 1 ? 2 : 3;
             final float finalAngel = angel;
             newComponent.getVisions().add(new RotatedVisionStrategy(angel, App.getCellHeight(), 1000));
-            MovementStrategy movementStrategy = new StraightMovementStrategy((float) (5 * Math.cos(finalAngel)), (float) (5 * Math.sin(finalAngel)), 0);
+            MovementStrategy movementStrategy = new StraightMovementStrategy(
+                    (float) (5 * Math.cos(finalAngel)), (float) (5 * Math.sin(finalAngel)), 0);
             newComponent.getMovementStrategies().add(() -> movementStrategy);
             angel += (float) (changeFactor * Math.PI / 6);
         }
@@ -452,7 +462,8 @@ public class ShooterFactory {
         int damage = level >= 3 ? 110 : 80;
         int aoeDamage = level >= 4 ? 55 : 40;
         Plant p = new Plant(PlantType.MELON_PULT, 300, damage);
-        CombinedDamageStrategy combinedDamageStrategy = new CombinedDamageStrategy(damage, aoeDamage, 200, ProjectileType.MELON);
+        CombinedDamageStrategy combinedDamageStrategy = new CombinedDamageStrategy(
+                damage, aoeDamage, 200, ProjectileType.MELON);
         ShooterComponent newComponent = new ShooterComponent(ProjectileType.MELON,
                 ProjectileType.SPECIAL_MELON, 29, 1,
                 0, false, () -> combinedDamageStrategy,
@@ -469,7 +480,8 @@ public class ShooterFactory {
         int level = App.getCurrentUser().getUnlockedPlantsLevels().get(PlantType.WINTER_MELON);
         int aoeDamage = level >= 3 ? 55 : 40;
         Plant p = new Plant(PlantType.WINTER_MELON, 300, 80);
-        CombinedDamageStrategy combinedDamageStrategy = new CombinedDamageStrategy(80, aoeDamage, 200, ProjectileType.ICE_MELON);
+        CombinedDamageStrategy combinedDamageStrategy = new CombinedDamageStrategy(
+                80, aoeDamage, 200, ProjectileType.ICE_MELON);
         combinedDamageStrategy.setElement("ICE");
         ShooterComponent newComponent = new ShooterComponent(ProjectileType.ICE_MELON,
                 ProjectileType.SPECIAL_ICE_MELON, 29, 1,
@@ -488,7 +500,8 @@ public class ShooterFactory {
         int damage = level >= 2 ? 65 : 50;
         int radius = level >= 3 ? 250 : 200;
         Plant p = new Plant(PlantType.PEPPER_PULT, 300, damage);
-        CombinedDamageStrategy combinedDamageStrategy = new CombinedDamageStrategy(80, damage / 2, radius, ProjectileType.PEPPER);
+        CombinedDamageStrategy combinedDamageStrategy = new CombinedDamageStrategy(
+                80, damage / 2, radius, ProjectileType.PEPPER);
         combinedDamageStrategy.setElement("FIRE");
         ShooterComponent newComponent = new ShooterComponent(ProjectileType.PEPPER,
                 ProjectileType.SPECIAL_PEPPER, 29, 1,

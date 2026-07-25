@@ -86,7 +86,8 @@ public class SunStealerZombie extends Zombie {
                 Plant plant = cell.getPlant();
                 if (plant != null && !plant.isDead()) {
                     plant.die();
-                    GameMenuController.updateState("Laser destroyed plant at (" + plant.getX() + ", " + plant.getY() + ")");
+                    GameMenuController.updateState(
+                            "Laser destroyed plant at (" + plant.getX() + ", " + plant.getY() + ")");
                 }
             }
         }

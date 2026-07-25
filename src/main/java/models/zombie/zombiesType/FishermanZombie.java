@@ -66,7 +66,8 @@ public class FishermanZombie extends Zombie {
         target.setX((int) targetCell.getX());
         target.setY((int) targetCell.getY());
         target.setCell(targetCell);
-        GameMenuController.updateState("Fisherman pulled plant from (" + currentCell.getX() + ", " + currentCell.getY() +
+        GameMenuController.updateState("Fisherman pulled plant from (" +
+                currentCell.getX() + ", " + currentCell.getY() +
                 ") to (" + targetCell.getX() + ", " + targetCell.getY() + ")");
     }
 

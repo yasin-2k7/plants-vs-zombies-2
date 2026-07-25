@@ -98,17 +98,20 @@ public class GameDetailsDisplayController {
             }
             totalWaves = wm.getTotalWavesCount();
         }
-        GameMenuView.getInstance().showResult("==================================================================================================");
+        GameMenuView.getInstance().showResult(
+                "==================================================================================================");
         String title = String.format(" WAVE: %d/%d  |  SUN: %d ☀️  |  PLANT FOOD: %d ⚡  |  STATUS: %s 🎮",
-                currentWaveNum, totalWaves, App.getCurrentGame().getSun(), App.getCurrentGame().getPlantFoods(), App.getCurrentGame().getState());
+                currentWaveNum, totalWaves, App.getCurrentGame().getSun(),
+                App.getCurrentGame().getPlantFoods(), App.getCurrentGame().getState());
         GameMenuView.getInstance().showResult(title);
-        GameMenuView.getInstance().showResult("==================================================================================================");
+        GameMenuView.getInstance().showResult(
+                "==================================================================================================");
         boolean isIZombie = App.getCurrentGame() instanceof IZombieLevel;
         IZombieLevel izLevel = isIZombie ? (IZombieLevel) App.getCurrentGame() : null;
         for (int y = 0; y < App.getCurrentGame().getGrid().length; y++) {
             StringBuilder rowBuilder = new StringBuilder();
             String mowerSymbol = "    "; // پیش‌فرض خالی
-            if (isIZombie && izLevel != null) {
+            if (isIZombie) {
                 Brain brain = izLevel.getBrainAtRow(y);
                 if (brain != null && !brain.isEaten()) {
                     mowerSymbol = "[🧠]"; // اگر مغز موجود بود
@@ -127,14 +130,17 @@ public class GameDetailsDisplayController {
             }
             GameMenuView.getInstance().showResult(rowBuilder.toString());
         }
-        GameMenuView.getInstance().showResult("==================================================================================================");
+        GameMenuView.getInstance().showResult(
+                "==================================================================================================");
     }
 
     public static void showPlantsStatus() {
         if (App.getCurrentGame().isConveyorMode()) return;
         for (PlantCard card : App.getCurrentGame().getPlantLists()) {
-            String ticksRemaining = card.isReady() ? "" : " | ticks remaining: " + (card.getMaxCooldownTicks() - card.getCurrentCooldownTicks());
-            GameMenuView.getInstance().showResult(card.getType().name() + " | Cost: " + card.getSunCost() + " | is ready: " + card.isReady() + ticksRemaining);
+            String ticksRemaining = card.isReady() ?
+                    "" : " | ticks remaining: " + (card.getMaxCooldownTicks() - card.getCurrentCooldownTicks());
+            GameMenuView.getInstance().showResult(card.getType().name() +
+                    " | Cost: " + card.getSunCost() + " | is ready: " + card.isReady() + ticksRemaining);
         }
     }
 
@@ -158,12 +164,15 @@ public class GameDetailsDisplayController {
         for (PlantLayer layer : PlantLayer.values()) {
             Plant p = selectedCell.getPlant(layer);
             if (p != null) {
-                GameMenuView.getInstance().showResult(p.getType().name() + " | health: " + p.getHealth() + " | damage: " + p.getDamage());
+                GameMenuView.getInstance().showResult(p.getType().name() +
+                        " | health: " + p.getHealth() + " | damage: " + p.getDamage());
             }
         }
         GameMenuView.getInstance().showResult("zombies in this tile:");
         for (Zombie zombie : Cell.getZombiesInCells(List.of(selectedCell))) {
-            GameMenuView.getInstance().showResult(App.getArmoredZombieName(zombie.getSpecificName()) + " | health: " + zombie.getHealth() + " | damage: " + zombie.getDamage());
+            GameMenuView.getInstance().showResult(
+                    App.getArmoredZombieName(zombie.getSpecificName()) +
+                            " | health: " + zombie.getHealth() + " | damage: " + zombie.getDamage());
         }
     }
 

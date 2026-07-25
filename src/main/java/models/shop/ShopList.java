@@ -47,7 +47,8 @@ public class ShopList {
         PlantType randomPlant = unlockedPlants.get(new Random().nextInt(unlockedPlants.size()));
         int seedsToGive = 5 * count;
         user.addSeedPackets(randomPlant, seedsToGive);
-        return count + " Random Seed Packets bought successfully! Received " + seedsToGive + " seeds for " + randomPlant.name() + ".";
+        return count + " Random Seed Packets bought successfully! Received " +
+                seedsToGive + " seeds for " + randomPlant.name() + ".";
     }
 
     private String buySpecificSeedPacket(PlantType plantType, User user, int count, int totalGemCost) {
@@ -60,7 +61,8 @@ public class ShopList {
         user.spendGems(totalGemCost);
         int seedsToGive = 10 * count;
         user.addSeedPackets(plantType, seedsToGive);
-        return count + " Specific Seed Packets for " + plantType.name() + " bought successfully! Received " + seedsToGive + " seeds.";
+        return count + " Specific Seed Packets for " + plantType.name() +
+                " bought successfully! Received " + seedsToGive + " seeds.";
     }
 
     public String buy(String itemId, PlantType plantType, int count) {

@@ -65,7 +65,8 @@ public class SquareMeleeComponent implements GameComponent {
         int currentDmg = getCurrentDamage();
         int radius = (currentStage >= 3) ? 2 : 1;
 
-        List<Zombie> targets = Cell.getZombiesInCells(Cell.getNeighborCells(cell, App.getCurrentGame().getGrid(), radius));
+        List<Zombie> targets = Cell.getZombiesInCells(Cell.getNeighborCells(
+                cell, App.getCurrentGame().getGrid(), radius));
         for (Zombie zombie : targets) {
             zombie.takeDamage(currentDmg, "NORMAL");
         }
@@ -79,7 +80,8 @@ public class SquareMeleeComponent implements GameComponent {
         Cell cell = owner.getCell();
         if (cell != null) {
             int pfSlamDamage = 350;
-            List<Zombie> targets = Cell.getZombiesInCells(Cell.getNeighborCells(cell, App.getCurrentGame().getGrid(), 2));
+            List<Zombie> targets = Cell.getZombiesInCells(Cell.getNeighborCells(
+                    cell, App.getCurrentGame().getGrid(), 2));
             for (Zombie zombie : targets) {
                 zombie.takeDamage(pfSlamDamage, "NORMAL");
             }
