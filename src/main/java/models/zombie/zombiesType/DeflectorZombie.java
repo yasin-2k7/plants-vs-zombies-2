@@ -25,10 +25,6 @@ public class DeflectorZombie extends Zombie {
         this.originalSpeed = this.speed;
     }
 
-    public boolean isJuggler() {
-        return isJuggler;
-    }
-
     @Override
     public void update() {
         if (isDead) return;

@@ -435,7 +435,7 @@ public class ShooterFactory {
                 0, 0);
         newComponent.getVisions().add(new StraightVisionStrategy(1000, App.getCellHeight(), true));
         newComponent.getMovementStrategies().add(LobbedMovementStrategy::new);
-        newComponent.setAttackCallback(owner -> {
+        newComponent.setAttackCallback(_ -> {
             if (Math.random() < butterChance) {
                 newComponent.setBulletType(ProjectileType.BUTTER);
             } else {

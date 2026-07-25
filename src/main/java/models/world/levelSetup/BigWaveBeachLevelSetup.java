@@ -34,7 +34,7 @@ public class BigWaveBeachLevelSetup implements LevelSetup {
         WaveManager waveManager = new WaveManager(waves);
         game.addMechanic(new NormalMechanic(waveManager));
         game.addMechanic(new SunSpawnMechanic());
-        game.registerZombieKillListener(() -> waveManager.onZombieKilled(null));
+        game.registerZombieKillListener(() -> waveManager.onZombieKilled());
 
     }
 

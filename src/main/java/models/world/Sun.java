@@ -13,16 +13,11 @@ public class Sun implements Resettable {
     private float x, y;
     private float finalX, finalY;
     private int spawnTime;
-    private int amount;
     private boolean isCollected;
     private SunProducerComponent producer;
     private int size;
     private GameWorld game;
     private SunType type;
-
-    public int getAmount() {
-        return amount;
-    }
 
     public boolean isExpired() {
         if (y != finalY) {

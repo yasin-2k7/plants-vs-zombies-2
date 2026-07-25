@@ -117,11 +117,4 @@ public class PusherZombie extends Zombie {
         GameMenuController.updateState("Pianist switched a zombie to row " + (targetRow + 1));
     }
 
-    public int getObjectHealth() {
-        return objectHealth;
-    }
-
-    public String getObjectName() {
-        return objectName;
-    }
 }

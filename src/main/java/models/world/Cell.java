@@ -13,7 +13,6 @@ import models.quest.QuestStats;
 import models.world.cellTerrains.CellTerrain;
 import models.world.obstacles.Grave;
 import models.world.obstacles.Obstacle;
-import models.world.obstacles.OctopusObstacle;
 import models.zombie.Zombie;
 
 import java.util.ArrayList;
@@ -311,10 +310,6 @@ public class Cell {
         this.obstacle = null;
     }
 
-    public boolean canPlant(Plant plant) {
-        return this.plantable && terrain.canPlant(plant, this);
-    }
-
     public boolean isWater() {
         return terrain.isWater();
     }
@@ -333,16 +328,6 @@ public class Cell {
 
     public void setTerrain(CellTerrain terrain) {
         this.terrain = terrain;
-    }
-
-    public boolean blocksProjectile() {
-        if (hasObstacle() && obstacle.blocksProjectiles()) {
-            if (obstacle instanceof OctopusObstacle) {
-                return true;
-            }
-            return true;
-        }
-        return false;
     }
 
     public boolean isNecromancyPotential() {

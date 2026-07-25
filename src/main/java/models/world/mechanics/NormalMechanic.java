@@ -9,8 +9,6 @@ import java.util.Random;
 
 public class NormalMechanic implements Mechanic {
     private WaveManager waveManager;
-    private long lastZombieSpawnTime = 0;
-    private int zombieSpawnInterval;
     private Random random = new Random();
 
     public NormalMechanic(WaveManager waveManager) {
@@ -30,8 +28,8 @@ public class NormalMechanic implements Mechanic {
                 .filter(Zombie::isDead)
                 .toList();
 
-        for (Zombie zombie : deadZombies) {
-            waveManager.onZombieKilled(zombie);
+        for (Zombie _ : deadZombies) {
+            waveManager.onZombieKilled();
             world.notifyZombieKilled();
         }
 

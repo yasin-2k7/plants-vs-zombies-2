@@ -10,7 +10,7 @@ import models.zombie.ZombieFactory;
 public class SpawnerZombie extends Zombie {
     private boolean isGargantuar;
     private int spawnCooldown;
-    private int currentCooldown = 50;
+    private int currentCooldown;
     private boolean hasThrownImp;
 
     public SpawnerZombie(int health, double speed, int damage, boolean isGargantuar) {

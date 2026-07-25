@@ -47,7 +47,7 @@ public class ExplosiveFactory {
         ExplosivesComponent component = new ExplosivesComponent(
                 new ProximityTrigger(App.getCellWidth()),
                 new AreaDamageBehavior(damage, new CircularRange(0)), armTime);
-        component.setPlantFoodBehavior((owner, comp) -> {
+        component.setPlantFoodBehavior((_, comp) -> {
             comp.instantArm();
 
             List<Cell> emptyCells = App.getCurrentGame().findTwoEmptyCell(false);
@@ -71,7 +71,7 @@ public class ExplosiveFactory {
         ExplosivesComponent component = new ExplosivesComponent(
                 new ProximityTrigger(App.getCellWidth()),
                 new AreaDamageBehavior(damage, new CircularRange(1)), armTime);
-        component.setPlantFoodBehavior((owner, comp) -> {
+        component.setPlantFoodBehavior((_, comp) -> {
             comp.instantArm();
 
             List<Cell> emptyCells = App.getCurrentGame().findTwoEmptyCell(false);
@@ -106,7 +106,7 @@ public class ExplosiveFactory {
                 new AreaDamageBehavior(damage, new CircularRange(0)), 0);
         if (level >= 4) component.setLives(2);
         p.addComponent(component);
-        component.setPlantFoodBehavior((owner, comp) -> {
+        component.setPlantFoodBehavior((_, _) -> {
             List<Zombie> allZombies = new ArrayList<>(App.getCurrentGame().getActiveZombies());
             Collections.shuffle(allZombies);
             allZombies.stream()
@@ -154,7 +154,7 @@ public class ExplosiveFactory {
                 new ProximityTrigger(App.getCellWidth()),
                 new SingleTargetDamageBehavior(new CircularRange(0)), 0);
         if (level >= 3) component.setLives(2);
-        component.setPlantFoodBehavior((owner, comp) -> {
+        component.setPlantFoodBehavior((_, _) -> {
             List<Zombie> waterZombies = App.getCurrentGame().getActiveZombies().stream()
                     .filter(zombie -> {
                         Cell zombieCell = Cell.findZombieCell(LevelMenuController.getGameCells(), zombie);
@@ -177,7 +177,7 @@ public class ExplosiveFactory {
         ExplosivesComponent component = new ExplosivesComponent(
                 new ProximityTrigger(App.getCellWidth()),
                 new FreezeZombieBehavior(new CircularRange(0), freezeTime), 0);
-        component.setPlantFoodBehavior((owner, comp) -> {
+        component.setPlantFoodBehavior((_, _) -> {
             App.getCurrentGame().getActiveZombies()
                     .forEach(zombie -> zombie.freeze(40));
         });

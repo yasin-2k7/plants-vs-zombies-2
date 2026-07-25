@@ -87,8 +87,4 @@ public class SquareMeleeComponent implements GameComponent {
             }
         }
     }
-
-    public int getCurrentStage() {
-        return currentStage;
-    }
 }

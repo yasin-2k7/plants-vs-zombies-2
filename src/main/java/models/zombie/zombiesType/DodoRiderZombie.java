@@ -110,8 +110,4 @@ public class DodoRiderZombie extends Zombie {
             GameMenuController.updateState("Dodo Rider lost its mount!");
         }
     }
-
-    public boolean isRiding() {
-        return isRiding;
-    }
 }

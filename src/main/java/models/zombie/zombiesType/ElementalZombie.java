@@ -165,16 +165,4 @@ public class ElementalZombie extends Zombie {
             super.move();
         }
     }
-
-    public boolean isExplorer() {
-        return isExplorer;
-    }
-
-    public boolean isIgnited() {
-        return isIgnited;
-    }
-
-    public boolean hasExploded() {
-        return hasExploded;
-    }
 }

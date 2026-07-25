@@ -28,7 +28,7 @@ public class NormalLevelSetup implements LevelSetup {
         world.addMechanic(new NormalMechanic(waveManager));
         world.addMechanic(new SunSpawnMechanic());
 
-        world.registerZombieKillListener(() -> waveManager.onZombieKilled(null));
+        world.registerZombieKillListener(() -> waveManager.onZombieKilled());
     }
 
     @Override

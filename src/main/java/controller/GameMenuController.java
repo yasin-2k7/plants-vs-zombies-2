@@ -26,7 +26,7 @@ import view.terminalView.MainMenuView;
 import java.util.List;
 
 public class GameMenuController implements MenuController {
-    public static void handleWinning(GameWorld gameWorld, MupointManager mupointManager) {
+    public static void handleWinning(GameWorld gameWorld) {
         if (gameWorld instanceof IZombieLevel) {
             GameMenuView.getInstance().showResult("Delicious! You ate all the brains and WON the level! 🧠😋");
         } else {
@@ -206,8 +206,7 @@ public class GameMenuController implements MenuController {
     }
 
     public void selectPlant(PlantType type) {
-        List<PlantCard> gamePlants = App.getCurrentGame().isConveyorMode() ?
-                App.getCurrentGame().getConveyorBelt() : App.getCurrentGame().getPlantLists();
+        List<PlantCard> gamePlants = App.getCurrentGame().getPlantLists();
         PlantCard selectedCard = null;
         for (PlantCard card : gamePlants) {
             if (card.getType().equals(type)) {
@@ -239,8 +238,7 @@ public class GameMenuController implements MenuController {
 
     public void plantPlant(PlantType type, float x, float y) {
         PlantCard selectedCard = null;
-        List<PlantCard> gamePlants = App.getCurrentGame().isConveyorMode() ?
-                App.getCurrentGame().getConveyorBelt() : App.getCurrentGame().getPlantLists();
+        List<PlantCard> gamePlants = App.getCurrentGame().getPlantLists();
         for (PlantCard card : gamePlants) {
             if (card.getType().equals(type)) {
                 selectedCard = card;
@@ -283,13 +281,9 @@ public class GameMenuController implements MenuController {
         }
         if (error != null) GameMenuView.getInstance().showResult(error);
         else {
-            if (App.getCurrentGame().isConveyorMode()) {
-                App.getCurrentGame().getConveyorBelt().remove(card);
-            } else {
-                card.setReady(false);
-                App.getCurrentGame().setSun(App.getCurrentGame().getSun() - card.getSunCost());
+            card.setReady(false);
+            App.getCurrentGame().setSun(App.getCurrentGame().getSun() - card.getSunCost());
             }
-        }
     }
 
     public void removeCooldown() {

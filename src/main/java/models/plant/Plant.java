@@ -231,12 +231,6 @@ public class Plant implements Damageable {
 
     }
 
-    public void initAfterLoad() {
-        if (this.components == null) {
-            this.components = new ArrayList<>();
-        }
-    }
-
     public void setFire(boolean fire) {
         isFire = fire;
     }
