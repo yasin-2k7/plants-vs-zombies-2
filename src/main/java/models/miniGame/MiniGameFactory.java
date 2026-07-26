@@ -284,8 +284,10 @@ public class MiniGameFactory {
         List<WaveSpawnEntry> zombies = List.of(
                 new WaveSpawnEntry("ZombieDefault", 100)
         );
+        List<Wave> waves = Wave.generateWaves(6, 500, zombies, 10);
 
-        LevelSetup levelSetup = new BeghouledSetup(5, 9, plants, upgrades, 5, zombies);
+
+        LevelSetup levelSetup = new BeghouledSetup(5, 9, plants, upgrades, 5, zombies, waves);
         LoseCondition loseCondition = new NormalLose();
         WinCondition winCondition = new BeghouledWinCondition();
         winCondition.setCurrentLevel(MiniGameLevels.BEGHOULED_1);
@@ -313,8 +315,9 @@ public class MiniGameFactory {
                 new WaveSpawnEntry("ZombieArmor1", 150),
                 new WaveSpawnEntry("ZombieArmor3", 200)
         );
+        List<Wave> waves = Wave.generateWaves(6, 500, zombies, 10);
 
-        LevelSetup levelSetup = new BeghouledSetup(5, 9, plants, upgrades, 8, zombies);
+        LevelSetup levelSetup = new BeghouledSetup(5, 9, plants, upgrades, 8, zombies, waves);
         LoseCondition loseCondition = new NormalLose();
         WinCondition winCondition = new BeghouledWinCondition();
         winCondition.setCurrentLevel(MiniGameLevels.BEGHOULED_2);
@@ -343,8 +346,9 @@ public class MiniGameFactory {
                 new WaveSpawnEntry("ZombieArmor1", 150),
                 new WaveSpawnEntry("ZombieGargantuar", 400)
         );
+        List<Wave> waves = Wave.generateWaves(6, 500, zombies, 10);
 
-        LevelSetup levelSetup = new BeghouledSetup(5, 9, plants, upgrades, 12, zombies);
+        LevelSetup levelSetup = new BeghouledSetup(5, 9, plants, upgrades, 12, zombies, waves);
         LoseCondition loseCondition = new NormalLose();
         WinCondition winCondition = new BeghouledWinCondition();
         winCondition.setCurrentLevel(MiniGameLevels.BEGHOULED_3);

@@ -1,6 +1,9 @@
 package models.zombie.state;
 
+import models.core.App;
+import models.miniGame.beghouled.BeghouledMechanics;
 import models.plant.Plant;
+import models.world.GameWorld;
 import models.zombie.Zombie;
 
 public class EatingState implements ZombieState {
@@ -19,6 +22,12 @@ public class EatingState implements ZombieState {
 
             if (targetPlant.isDead()) {
                 zombie.setState(new WalkingState());
+                GameWorld world = App.getCurrentGame();
+                BeghouledMechanics beghouled = world.getMechanic(BeghouledMechanics.class);
+
+                if (beghouled != null) {
+                    beghouled.createCrater(world, targetPlant.getCell().getRow(), targetPlant.getCell().getCol());
+                }
             }
         } else {
             zombie.setState(new WalkingState());
