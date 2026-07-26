@@ -88,7 +88,7 @@ public class GameMenuController implements MenuController {
         GameMenuView.getInstance().showResult(count + " ticks later...");
         GameWorld game = App.getCurrentGame();
         for (int i = 0; i < count; i++) {
-            if (game.getState() == GameState.PLAYING) {
+            if (game != null && AppView.currentScreen instanceof GameMenuView && game.getState() == GameState.PLAYING) {
                 game.tick();
             } else return;
         }
