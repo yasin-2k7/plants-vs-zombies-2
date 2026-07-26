@@ -633,4 +633,19 @@ public abstract class GameWorld {
     public List<Obstacle> getActiveObstacles() {
         return activeObstacles;
     }
+    public WaveManager getWaveManager() {
+        NormalMechanic normal = getMechanic(NormalMechanic.class);
+        if (normal != null) {
+            return normal.getWaveManager();
+        }
+        return null;
+    }
+    public <T extends LoseCondition> T getLoseCondition(Class<T> type) {
+        if (loseConditions == null) return null;
+        return loseConditions.stream()
+                .filter(type::isInstance)
+                .map(type::cast)
+                .findFirst()
+                .orElse(null);
+    }
 }

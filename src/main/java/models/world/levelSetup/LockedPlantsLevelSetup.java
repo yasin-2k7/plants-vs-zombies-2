@@ -1,13 +1,18 @@
 package models.world.levelSetup;
 
+import models.core.App;
+import models.core.User;
 import models.enums.PlantType;
+import models.plant.card.PlantCardFactory;
+import models.world.ChapterWorld.FrostbiteCavesWorld;
 import models.world.GameWorld;
-import models.world.levelsSpecial.LockedPlantLevel;
 import models.world.mechanics.NormalMechanic;
 import models.world.mechanics.SunSpawnMechanic;
 import models.zombie.wave.Wave;
 import models.zombie.wave.WaveManager;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class LockedPlantsLevelSetup implements LevelSetup {
@@ -15,18 +20,14 @@ public class LockedPlantsLevelSetup implements LevelSetup {
     private int cols;
     private List<Wave> waves;
     private List<PlantType> lockedPlants;
-    private List<PlantType> forcedPlants;
+
 
     public LockedPlantsLevelSetup(int rows,
                                   int cols,
-                                  List<Wave> waves,
-                                  List<PlantType> lockedPlants,
-                                  List<PlantType> forcedPlants) {
+                                  List<Wave> waves) {
         this.rows = rows;
         this.cols = cols;
         this.waves = waves;
-        this.lockedPlants = lockedPlants;
-        this.forcedPlants = forcedPlants;
     }
 
 
@@ -35,8 +36,29 @@ public class LockedPlantsLevelSetup implements LevelSetup {
         world.setConveyorMode(false);
         buildGrid(world, rows, cols);
 
-        ((LockedPlantLevel) world).setLockedPlants(lockedPlants);
-        ((LockedPlantLevel) world).setForcedPlants(forcedPlants);
+        User user = App.getCurrentUser();
+        if(user != null && !user.getUnlockedPlantsLevels().isEmpty()){
+            List<PlantType> unlockedPlants = new ArrayList<>(user.getUnlockedPlantsLevels().keySet());
+
+            unlockedPlants.remove(PlantType.IMITATOR);
+
+            Collections.shuffle(unlockedPlants);
+
+            int countToLock = Math.min(3, unlockedPlants.size());
+            List<PlantType> randomLockedPlants = new ArrayList<>(unlockedPlants.subList(0, countToLock));
+
+            this.lockedPlants = randomLockedPlants;
+            if (world instanceof FrostbiteCavesWorld frostbiteWorld) {
+                frostbiteWorld.setLockedPlants(randomLockedPlants);
+            }
+
+            for (PlantType type : randomLockedPlants) {
+                int level = user.getUnlockedPlantsLevels().getOrDefault(type, 1);
+                world.getPlantLists().add(
+                        PlantCardFactory.createCard(type, level)
+                );
+            }
+        }
 
         WaveManager waveManager = new WaveManager(waves);
         world.addMechanic(new NormalMechanic(waveManager));

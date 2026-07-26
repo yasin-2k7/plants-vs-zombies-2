@@ -45,7 +45,7 @@ public class BeghouledSetup implements LevelSetup {
         waveManager.setRepeatForever(true);
         world.addMechanic(new NormalMechanic(waveManager));
 
-        world.registerZombieKillListener(() -> waveManager.onZombieKilled(null));
+        world.registerZombieKillListener(waveManager::onZombieKilled);
 
 
         mechanics.fillRandomPlants(world);

@@ -4,6 +4,8 @@ import models.core.App;
 import models.miniGame.beghouled.BeghouledMechanics;
 import models.plant.Plant;
 import models.world.GameWorld;
+import models.world.levelSetup.SaveOurSeedsLevelSetup;
+import models.world.loseCondition.SaveOurSeedsLose;
 import models.zombie.Zombie;
 
 public class EatingState implements ZombieState {
@@ -27,6 +29,23 @@ public class EatingState implements ZombieState {
 
                 if (beghouled != null) {
                     beghouled.createCrater(world, targetPlant.getCell().getRow(), targetPlant.getCell().getCol());
+                }
+
+                if(world.getLevelSetup() instanceof SaveOurSeedsLevelSetup setup){
+                    System.out.println("Level is SaveOurSeeds");
+
+                    boolean isProtected = setup.isProtectedPlant(targetPlant);
+                    System.out.println("Is plant protected? " + isProtected);
+
+                    if (isProtected) {
+                        SaveOurSeedsLose loseCondition = world.getLoseCondition(SaveOurSeedsLose.class);
+                        System.out.println("LoseCondition found? " + (loseCondition != null));
+
+                        if (loseCondition != null) {
+                            loseCondition.onProtectedPlantEaten();
+                            System.out.println("onProtectedPlantEaten() CALLED!");
+                        }
+                    }
                 }
             }
         } else {
