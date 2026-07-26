@@ -358,7 +358,9 @@ public class ShooterFactory {
         MovementStrategy movementStrategy = new StraightMovementStrategy(5, 0, 0);
         newComponent.getMovementStrategies().add(() -> movementStrategy);
         p.addComponent(newComponent);
-        p.addComponent(new LifespanComponent(PlantType.SEA_SHROOM, lifespan));
+        LifespanComponent lifespanComponent = new LifespanComponent(PlantType.SEA_SHROOM, lifespan);
+        if (App.getCurrentGame() != null) App.getCurrentGame().registerShroom(lifespanComponent);
+        p.addComponent(lifespanComponent);
         return p;
     }
 
@@ -378,7 +380,9 @@ public class ShooterFactory {
         MovementStrategy movementStrategy = new StraightMovementStrategy(5, 0, 0);
         newComponent.getMovementStrategies().add(() -> movementStrategy);
         p.addComponent(newComponent);
-        p.addComponent(new LifespanComponent(PlantType.PUFF_SHROOM, lifespan));
+        LifespanComponent lifespanComponent = new LifespanComponent(PlantType.PUFF_SHROOM, lifespan);
+        if (App.getCurrentGame() != null) App.getCurrentGame().registerShroom(lifespanComponent);
+        p.addComponent(lifespanComponent);
         return p;
     }
 

@@ -34,4 +34,10 @@ public class LifespanComponent implements GameComponent {
         }
     }
 
+    @Override
+    public void onDeath(Plant owner) {
+        if (App.getCurrentGame() != null){
+            App.getCurrentGame().unregisterPuffShroom(this);
+        }
+    }
 }
