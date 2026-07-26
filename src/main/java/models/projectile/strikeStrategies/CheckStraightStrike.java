@@ -9,20 +9,24 @@ public class CheckStraightStrike implements CheckStrike {
     @Override
     public Damageable strike(double x, double y, double oldX, double oldY) {
         for (Zombie zombie : App.getCurrentGame().getActiveZombies()) {
-            boolean xBetween = (zombie.getX() <= oldX && zombie.getX() >= x) || (zombie.getX() >= oldX && zombie.getX() <= x);
-            boolean yBetween = (zombie.getY() <= oldY && zombie.getY() >= y) || (zombie.getY() >= oldY && zombie.getY() <= y);
-            if (xBetween && yBetween) {
-                return zombie;
-            }
+            if (isBetween(x, y, oldX, oldY, zombie.getX(), zombie.getY())) return zombie;
         }
         for (Obstacle obstacle : App.getCurrentGame().getActiveObstacles()) {
-            boolean xBetween = (obstacle.getX() <= oldX && obstacle.getX() >= x) || (obstacle.getX() >= oldX && obstacle.getX() <= x);
-            boolean yBetween = (obstacle.getY() <= oldY && obstacle.getY() >= y) || (obstacle.getY() >= oldY && obstacle.getY() <= y);
-            if (xBetween && yBetween) {
+            if (isBetween(x, y, oldX, oldY, obstacle.getX(), obstacle.getY()))
                 return obstacle;
-            }
         }
         return null;
+    }
+
+    static boolean isBetween(double x, double y, double oldX, double oldY, float x2, float y2) {
+        boolean xBetween =
+                (x2 <= oldX && x2 >= x) || (x2 >= oldX && x2 <= x);
+        boolean yBetween =
+                (y2 <= oldY && y2 >= y) || (y2 >= oldY && y2 <= y);
+        if (xBetween && yBetween) {
+            return true;
+        }
+        return false;
     }
 
     @Override

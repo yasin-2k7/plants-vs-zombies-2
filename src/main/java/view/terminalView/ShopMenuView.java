@@ -42,7 +42,8 @@ public class ShopMenuView implements View {
                     case SHOP_BUY:
                         String itemId = matcher.group(1);
                         int count = Integer.parseInt(matcher.group(2));
-                        String plantTypeName = (matcher.groupCount() >= 3 && matcher.group(3) != null) ? matcher.group(3) : null;
+                        String plantTypeName =
+                                (matcher.groupCount() >= 3 && matcher.group(3) != null) ? matcher.group(3) : null;
                         System.out.println(controller.buyItem(itemId, count, plantTypeName));
                         return;
                     case MENU_EXIT:

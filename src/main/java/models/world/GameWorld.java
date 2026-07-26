@@ -47,7 +47,6 @@ public abstract class GameWorld {
     protected List<Obstacle> activeObstacles;
     protected List<Damageable> activeTargets;
     protected LawnMowerManager lawnMowerManager;
-    private long startTime;
     private GameState state;
     private int currentTick = 0;
     private Chapter currentChapter;
@@ -414,7 +413,7 @@ public abstract class GameWorld {
         }
         user.getQuestManager().checkAllQuests(user, true);
         user.getQuestStats().setLevelWon(true);
-        GameMenuController.handleWinning(this, mupointManager);
+        GameMenuController.handleWinning(this);
     }
 
     public boolean isGardenSymmetricExceptMiddleRow() {
@@ -505,21 +504,12 @@ public abstract class GameWorld {
         return currentTick;
     }
 
-    public long getElapsedTime() {
-        return System.currentTimeMillis() - startTime;
-    }
-
     public void addZombie(Zombie zombie) {
         activeZombies.add(zombie);
     }
 
     public void addGrave(Grave grave) {
         activeObstacles.add(grave);
-    }
-
-    public void addTarget() {
-        activeTargets.addAll(activeZombies);
-        activeTargets.addAll(activeObstacles);
     }
 
     public GenericObjectPool<Projectile> getProjectilesPool() {
@@ -538,10 +528,6 @@ public abstract class GameWorld {
         return plantLists;
     }
 
-    public void setPlantLists(List<PlantCard> plantLists) {
-        this.plantLists = plantLists;
-    }
-
     public <T extends Mechanic> T getMechanic(Class<T> type) {
         return mechanics.stream()
                 .filter(m -> type.isInstance(m))
@@ -556,10 +542,6 @@ public abstract class GameWorld {
 
     public void setPlantFoods(int plantFoods) {
         this.plantFoods = plantFoods;
-    }
-
-    public ArrayList<LoseCondition> getLoseConditions() {
-        return loseConditions;
     }
 
     public ArrayList<Mechanic> getMechanics() {
@@ -640,16 +622,6 @@ public abstract class GameWorld {
 
     public void setSelectedPlant(PlantType selectedPlant) {
         this.selectedPlant = selectedPlant;
-    }
-
-    public List<Grave> getActiveGrave() {
-        List<Grave> graves = new ArrayList<>();
-        for (Obstacle o : activeObstacles) {
-            if (o instanceof Grave) {
-                graves.add((Grave) o);
-            }
-        }
-        return graves;
     }
 
     public void addProjectile(Projectile projectile) {

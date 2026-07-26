@@ -10,7 +10,8 @@ public class KillEvent {
     private boolean bySplashDamage; // کشته شده با بمب/گیلاس/سیب‌زمینی
     private boolean plantEatenInLine; // آیا این زامبی موفق شده گیاهی رو بخوره؟
 
-    public KillEvent(Zombie zombie, long spawnTick, long deathTick, int simultaneousKills, boolean bySplashDamage, boolean plantEatenInLine) {
+    public KillEvent(Zombie zombie, long spawnTick, long deathTick,
+                     int simultaneousKills, boolean bySplashDamage, boolean plantEatenInLine) {
         this.zombie = zombie;
         this.spawnTick = spawnTick;
         this.deathTick = deathTick;

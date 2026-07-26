@@ -137,8 +137,8 @@ public class Plant implements Damageable {
             this.cell.findAndRemovePlant();
             this.cell = null;
         }
-        GameMenuController.updateState("Plant " + this.getType().name() +
-                " at (" + this.x + ", " + this.y + ") is destroyed.");
+        GameMenuController.updateState(
+                "Plant " + this.getType().name() + " at (" + this.x + ", " + this.y + ") is destroyed.");
     }
 
     public boolean isDead() {
@@ -229,12 +229,6 @@ public class Plant implements Damageable {
 
     public void destroy() {
 
-    }
-
-    public void initAfterLoad() {
-        if (this.components == null) {
-            this.components = new ArrayList<>();
-        }
     }
 
     public void setFire(boolean fire) {

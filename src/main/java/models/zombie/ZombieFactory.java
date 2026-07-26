@@ -135,7 +135,8 @@ public class ZombieFactory {
                         magnetic = true;
                     }
                 } else {
-                    LOGGER.warning("Armor properties not found for alias: " + alias + " (used in " + data.getClass().getName() + ")");
+                    LOGGER.warning("Armor properties not found for alias: " +
+                            alias + " (used in " + data.getClass().getName() + ")");
                 }
             }
             ArmoredZombie zombie = new ArmoredZombie(health, speed, eatDPS, totalArmorHealth, magnetic);

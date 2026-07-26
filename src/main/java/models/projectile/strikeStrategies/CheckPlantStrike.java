@@ -8,11 +8,8 @@ public class CheckPlantStrike implements CheckStrike {
     @Override
     public Damageable strike(double x, double y, double oldX, double oldY) {
         for (Plant plant : App.getCurrentGame().getActivePlants()) {
-            boolean xBetween = (plant.getX() <= oldX && plant.getX() >= x) || (plant.getX() >= oldX && plant.getX() <= x);
-            boolean yBetween = (plant.getY() <= oldY && plant.getY() >= y) || (plant.getY() >= oldY && plant.getY() <= y);
-            if (xBetween && yBetween) {
+            if (CheckStraightStrike.isBetween(x, y, oldX, oldY, plant.getX(), plant.getY()))
                 return plant;
-            }
         }
         return null;
     }

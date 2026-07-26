@@ -31,7 +31,8 @@ public class ExplosivesComponent implements GameComponent {
         this.isArmed = (armTime <= 0);
     }
 
-    public ExplosivesComponent(ExplosiveTrigger trigger, ExplosiveBehavior behavior, int armTime, int maxPostTriggerDelay) {
+    public ExplosivesComponent(ExplosiveTrigger trigger, ExplosiveBehavior behavior,
+                               int armTime, int maxPostTriggerDelay) {
         this.triggerStrategy = trigger;
         this.explosiveBehavior = behavior;
         this.armTimer = armTime;

@@ -23,7 +23,8 @@ public class TorchwoodComponent implements GameComponent {
     @Override
     public void update(Plant owner) {
         for (Projectile projectile : App.getCurrentGame().getActiveProjectiles()) {
-            if (Cell.findCell(projectile.getX(), projectile.getY(), LevelMenuController.getGameCells()) == owner.getCell()) {
+            if (Cell.findCell(projectile.getX(), projectile.getY(),
+                    LevelMenuController.getGameCells()) == owner.getCell()) {
                 if (projectile.getType().equals(ProjectileType.PEA)) {
                     projectile.setType(ProjectileType.FIRE_PEA);
                     projectile.getHitStrategy().setElement("FIRE");

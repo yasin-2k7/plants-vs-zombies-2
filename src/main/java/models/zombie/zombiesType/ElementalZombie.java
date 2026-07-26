@@ -63,8 +63,10 @@ public class ElementalZombie extends Zombie {
                         Plant plant = frontCell.getPlant();
                         if (plant != null && !plant.isDead()) {
                             plant.die();
-                            System.out.println("🔥Explorer burned plant at (" + plant.getX() + ", " + plant.getY() + ")");
-                            GameMenuController.updateState("Explorer burned plant at (" + plant.getX() + ", " + plant.getY() + ")");
+                            System.out.println("🔥Explorer burned plant at (" + plant.getX() +
+                                    ", " + plant.getY() + ")");
+                            GameMenuController.updateState("Explorer burned plant at (" + plant.getX() +
+                                    ", " + plant.getY() + ")");
                         }
                     }
                 }
@@ -162,17 +164,5 @@ public class ElementalZombie extends Zombie {
         } else {
             super.move();
         }
-    }
-
-    public boolean isExplorer() {
-        return isExplorer;
-    }
-
-    public boolean isIgnited() {
-        return isIgnited;
-    }
-
-    public boolean hasExploded() {
-        return hasExploded;
     }
 }

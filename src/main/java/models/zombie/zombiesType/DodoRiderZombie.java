@@ -89,7 +89,8 @@ public class DodoRiderZombie extends Zombie {
                     Cell nextCell = game.getGrid()[row][col];
                     this.x = nextCell.getX();
                     this.y = nextCell.getY();
-                    GameMenuController.updateState("Dodo Rider flew over a " + type.name() + " at (" + cell.getX() + ", " + cell.getY() + ")");
+                    GameMenuController.updateState(
+                            "Dodo Rider flew over a " + type.name() + " at (" + cell.getX() + "," + cell.getY() + ")");
                 } else {
                     this.x -= App.getCellWidth();
                 }
@@ -108,9 +109,5 @@ public class DodoRiderZombie extends Zombie {
             this.speed = this.originalSpeed * 0.6; // کندتر می‌شود
             GameMenuController.updateState("Dodo Rider lost its mount!");
         }
-    }
-
-    public boolean isRiding() {
-        return isRiding;
     }
 }

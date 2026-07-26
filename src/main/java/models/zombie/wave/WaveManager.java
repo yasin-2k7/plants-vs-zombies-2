@@ -18,7 +18,6 @@ public class WaveManager {
     private int totalZombiesInCurrentWave;
     private int killedZombiesInCurrentWave;
     private boolean levelCompleted;
-    private boolean firstWaveStarted;
 
     private boolean repeatForever = false;
 
@@ -29,7 +28,6 @@ public class WaveManager {
             this.currentWave = waves.get(0);
             this.totalZombiesInCurrentWave = currentWave.getTotalZombieCount();
             printWaveStartMessage(currentWave);
-            this.firstWaveStarted = true;
         } else {
             this.levelCompleted = true;
         }
@@ -106,7 +104,8 @@ public class WaveManager {
         if (currentWave.isFlagWave() && game.isSandstormActive()) {
             int columnsForward = 1 + new Random().nextInt(4);
             spawnCol = Math.max(0, spawnCol - columnsForward);
-            GameMenuController.updateState("A zombie rides a sandstorm and enters " + columnsForward + " columns ahead!");
+            GameMenuController.updateState(
+                    "A zombie rides a sandstorm and enters " + columnsForward + " columns ahead!");
         }
 
         float x = spawnCol * App.getCellWidth();
@@ -130,23 +129,17 @@ public class WaveManager {
         for (Zombie z : zombies) {
             if (!z.isDead()) {
                 z.die();
-                onZombieKilled(z);
+                onZombieKilled();
             }
         }
         GameMenuController.updateState("All zombies eliminated by nuke!");
     }
 
     // هر بار که یک زامبی کشته می‌شود این متد صدا زده می‌شود
-    public void onZombieKilled(Zombie zombie) {
+    public void onZombieKilled() {
         if (levelCompleted) return;
         killedZombiesInCurrentWave++;
 
-    }
-
-    // دریافت زامبی بعدی برای اسپاون (از موج جاری)
-    public WaveSpawnEntry getNextZombieToSpawn() {
-        if (levelCompleted || currentWave == null) return null;
-        return currentWave.getNextSpawn();
     }
 
     public boolean isLevelCompleted() {
@@ -155,14 +148,6 @@ public class WaveManager {
 
     public Wave getCurrentWave() {
         return currentWave;
-    }
-
-    public int getKilledZombiesInCurrentWave() {
-        return killedZombiesInCurrentWave;
-    }
-
-    public int getTotalZombiesInCurrentWave() {
-        return totalZombiesInCurrentWave;
     }
 
     public List<Wave> getWaves() {
@@ -177,20 +162,4 @@ public class WaveManager {
         return currentWaveIndex;
     }
 
-    public void startFirstWave() {
-        if (waves.isEmpty()) return;
-        this.currentWaveIndex = 0;
-        this.currentWave = waves.get(0);
-        this.totalZombiesInCurrentWave = currentWave.getTotalZombieCount();
-        this.killedZombiesInCurrentWave = 0;
-        this.levelCompleted = false;
-        printWaveStartMessage(currentWave);
-        this.firstWaveStarted = true;
-        if (App.getCurrentGame() != null) {
-            User user = App.getCurrentUser();
-            if (user != null && !user.getQuestStats().isFirstWaveStarted()) {
-                user.getQuestStats().setFirstWaveStartTime(System.currentTimeMillis());
-            }
-        }
-    }
 }

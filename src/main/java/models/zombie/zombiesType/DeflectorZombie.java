@@ -25,10 +25,6 @@ public class DeflectorZombie extends Zombie {
         this.originalSpeed = this.speed;
     }
 
-    public boolean isJuggler() {
-        return isJuggler;
-    }
-
     @Override
     public void update() {
         if (isDead) return;
@@ -39,7 +35,9 @@ public class DeflectorZombie extends Zombie {
 
             if (game != null) {
                 for (Projectile p : game.getActiveProjectiles()) {
-                    if (p.getType() != null && "STRAIGHT".equals(p.getType().movement) && !(p.getHitStrategy() instanceof PlantDamageStrategy)) {
+                    if (p.getType() != null &&
+                            "STRAIGHT".equals(p.getType().movement) &&
+                            !(p.getHitStrategy() instanceof PlantDamageStrategy)) {
                         if (Math.abs(p.getY() - this.y) < 50 && p.getX() < this.x && p.getX() > this.x - 250) {
                             approaching = true;
                             break;

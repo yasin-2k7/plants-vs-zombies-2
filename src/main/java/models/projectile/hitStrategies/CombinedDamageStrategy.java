@@ -64,14 +64,15 @@ public class CombinedDamageStrategy implements HitStrategy {
     }
 
     public CombinedDamageStrategy changeDamage(int damage) {
-        return new CombinedDamageStrategy(damage, neighborDamage, radius, this.element, this.chillTime, this.poisonDamageOnTick, projectileType);
+        return new CombinedDamageStrategy(damage, neighborDamage, radius,
+                this.element, this.chillTime, this.poisonDamageOnTick, projectileType);
     }
 
     @Override
     public void applyDamage(Damageable target, List<Damageable> allTargets, Projectile projectile) {
         String type = element != null ? element : "NORMAL";
         target.takeDamage(damage, type);
-        applySpecialDamage(target, projectile);
+        applySpecialDamage(target);
 
         if (target instanceof Zombie && projectile.getPlantType() != null) {
             ((Zombie) target).setKiller(projectile.getPlantType());
@@ -81,7 +82,7 @@ public class CombinedDamageStrategy implements HitStrategy {
             for (Damageable extraTarget : allTargets) {
                 if (extraTarget != target && projectile.distanceTo(extraTarget) <= radius) {
                     extraTarget.takeDamage(neighborDamage, type);
-                    applySpecialDamage(extraTarget, projectile);
+                    applySpecialDamage(extraTarget);
                     if (extraTarget instanceof Zombie && projectile.getPlantType() != null) {
                         ((Zombie) extraTarget).setKiller(projectile.getPlantType());
                     }
@@ -90,7 +91,7 @@ public class CombinedDamageStrategy implements HitStrategy {
         }
     }
 
-    private void applySpecialDamage(Damageable target, Projectile projectile) {
+    private void applySpecialDamage(Damageable target) {
         switch (element) {
             case "POISON":
                 if (target instanceof Zombie zombie) {
@@ -104,6 +105,11 @@ public class CombinedDamageStrategy implements HitStrategy {
             case "ICE":
                 if (target instanceof Zombie zombie) {
                     zombie.applySlow(chillTime, 0.5, false);
+                }
+                break;
+            case "STUN":
+                if (target instanceof Zombie zombie){
+                    zombie.disableFor(15);
                 }
                 break;
             case "FIRE":

@@ -36,7 +36,9 @@ public class RandomTargetPlantFood implements PlantFoodBehavior {
 
         for (Zombie zombie : selectedZombies) {
             Projectile p = App.getCurrentGame().getProjectilesPool().acquire();
-            p.reset(owner.getX(), owner.getY(), shooterComponent.getPlantFoodStrategy(), shooterComponent.getMovementStrategies().getFirst().get(), shooterComponent.getStrikeStrategy(), shooterComponent.getGiantType());
+            p.reset(owner.getX(), owner.getY(), shooterComponent.getPlantFoodStrategy(),
+                    shooterComponent.getMovementStrategies().getFirst().get(),
+                    shooterComponent.getStrikeStrategy(), shooterComponent.getGiantType());
             p.setTarget(zombie);
             App.getCurrentGame().getActiveProjectiles().add(p);
         }

@@ -23,7 +23,8 @@ public class BowlingMovementStrategy implements MovementStrategy {
 
     @Override
     public void move(Projectile projectile) {
-        Damageable zombie = projectile.getStrikeStrategy().strike(projectile.getX(), projectile.getY(), projectile.getX() - speedX * 5, projectile.getY() - speedY * 5);
+        Damageable zombie = projectile.getStrikeStrategy().strike(projectile.getX(),
+                projectile.getY(), projectile.getX() - speedX * 5, projectile.getY() - speedY * 5);
         int sign;
         if (zombie != null) {
             if (speedY == 0) {

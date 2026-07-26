@@ -27,7 +27,8 @@ public class BigWaveBeachWorld extends GameWorld {
     private int lastLowLyingCoastSpawnTick = 0;
     private Random random = new Random();
 
-    public BigWaveBeachWorld(LevelSetup levelSetup, ArrayList<LoseCondition> loseConditions, WinCondition winCondition, ArrayList<Mechanic> mechanics) {
+    public BigWaveBeachWorld(LevelSetup levelSetup, ArrayList<LoseCondition> loseConditions,
+                             WinCondition winCondition, ArrayList<Mechanic> mechanics) {
         super(levelSetup, loseConditions, winCondition, mechanics);
     }
 
@@ -72,7 +73,9 @@ public class BigWaveBeachWorld extends GameWorld {
                 for (Cell cell : cells) {
                     if (cell.isLowLyingCoast()) {
                         if (random.nextBoolean()) {
-                            Zombie zombie = random.nextBoolean() ? new ZombieFactory().createZombie("ZombieDefault") : new ZombieFactory().createZombie(App.getZombieId("ZombieConehead"));
+                            Zombie zombie = random.nextBoolean() ?
+                                    new ZombieFactory().createZombie("ZombieDefault") :
+                                    new ZombieFactory().createZombie(App.getZombieId("ZombieConehead"));
                             if (zombie != null) {
                                 zombie.setX(cell.getX());
                                 zombie.setY(cell.getY());

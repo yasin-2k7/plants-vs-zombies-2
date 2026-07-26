@@ -35,7 +35,6 @@ public abstract class Zombie implements Damageable {
     private int onPoisonTicksRemaining;
     private int poisonDamage;
     private int iceHealth = 0;
-    private boolean dropsReward;      // آیا این زامبی جایزه دارد؟
     private boolean glowing = false;
 
     private PlantType killerPlantType;
@@ -81,7 +80,7 @@ public abstract class Zombie implements Damageable {
         if (slowTicksRemaining > 0) {
             slowTicksRemaining--;
             if (slowTicksRemaining == 0) {
-                this.speed = originalSpeed;
+                resetSpeed();
             }
         }
 
@@ -140,7 +139,8 @@ public abstract class Zombie implements Damageable {
         if (glowing) {
             Collectable plantFood = new Collectable(this.x, this.y, CollectableType.PLANT_FOOD);
             world.getActiveCollectables().add(plantFood);
-            GameMenuController.updateState("\uD83C\uDFC6The glowing zombie dropped a plant food at (" + (int) x + ", " + (int) y + ")");
+            GameMenuController.updateState(
+                    "\uD83C\uDFC6The glowing zombie dropped a plant food at (" + (int) x + ", " + (int) y + ")");
         }
 
         if (Math.random() < 0.10) {
@@ -154,11 +154,13 @@ public abstract class Zombie implements Damageable {
             }
             Collectable drop = new Collectable(this.x, this.y, type);
             world.getActiveCollectables().add(drop);
-            GameMenuController.updateState("\uD83C\uDFC6A zombie dropped a " + type.name().toLowerCase() + " at (" + (int) x + ", " + (int) y + ")");
+            GameMenuController.updateState("\uD83C\uDFC6A zombie dropped a " + type.name().toLowerCase() +
+                            " at (" + (int) x + ", " + (int) y + ")");
         }
 
         String displayName = (specificName != null) ? specificName : name.name();
-        GameMenuController.updateState("\uD83D\uDC80Zombie of type " + displayName + " is dead at (" + (int) x + ", " + (int) y + ")");
+        GameMenuController.updateState("\uD83D\uDC80Zombie of type " + displayName +
+                " is dead at (" + (int) x + ", " + (int) y + ")");
     }
 
     public void applySlow(int ticks, double factor, boolean canWorkInFrostbite) {
@@ -298,32 +300,12 @@ public abstract class Zombie implements Damageable {
         this.iceHealth = iceHealth;
     }
 
-    public void addArmorType(String type) {
-        this.armorTypes.add(type);
-    }
-
     public List<String> getArmorTypes() {
         return armorTypes;
     }
 
-    public boolean isPusher() {
-        return false;
-    }
-
-    public boolean isDropsReward() {
-        return dropsReward;
-    }
-
-    public void setDropsReward(boolean dropsReward) {
-        this.dropsReward = dropsReward;
-    }
-
     public long getSpawnTick() {
         return spawnTick;
-    }
-
-    public void setSpawnTick(long spawnTick) {
-        this.spawnTick = spawnTick;
     }
 
     public boolean hasEatenPlant() {
@@ -350,10 +332,6 @@ public abstract class Zombie implements Damageable {
     public void eatBrainAndLeave() {
         this.isDead = true;
         System.out.println("Zombie ate the brain and successfully left the board!");
-    }
-
-    public boolean isGlowing() {
-        return glowing;
     }
 
     public void setGlowing(boolean glowing) {

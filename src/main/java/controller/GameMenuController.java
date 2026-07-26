@@ -26,11 +26,12 @@ import view.terminalView.MainMenuView;
 import java.util.List;
 
 public class GameMenuController implements MenuController {
-    public static void handleWinning(GameWorld gameWorld, MupointManager mupointManager) {
+    public static void handleWinning(GameWorld gameWorld) {
         if (gameWorld instanceof IZombieLevel) {
             GameMenuView.getInstance().showResult("Delicious! You ate all the brains and WON the level! 🧠😋");
         } else {
-            GameMenuView.getInstance().showResult("Dear humanz, zis is not done yet; we will come back to eat your brainz, humanz.");
+            GameMenuView.getInstance().showResult(
+                    "Dear humanz, zis is not done yet; we will come back to eat your brainz, humanz.");
         }
         if (gameWorld.isWillUnlockLevel()) {
             App.getCurrentUser().unlockLevel();
@@ -87,7 +88,7 @@ public class GameMenuController implements MenuController {
         GameMenuView.getInstance().showResult(count + " ticks later...");
         GameWorld game = App.getCurrentGame();
         for (int i = 0; i < count; i++) {
-            if (game.getState() == GameState.PLAYING) {
+            if (game != null && AppView.currentScreen instanceof GameMenuView && game.getState() == GameState.PLAYING) {
                 game.tick();
             } else return;
         }
@@ -152,20 +153,24 @@ public class GameMenuController implements MenuController {
                 switch (collectable.getType()) {
                     case POT:
                         App.getCurrentUser().setPot(App.getCurrentUser().getPot() + 1);
-                        GameMenuView.getInstance().showResult("pot collected. now you have " + App.getCurrentUser().getPot() + " pots.");
+                        GameMenuView.getInstance().showResult(
+                                "pot collected. now you have " + App.getCurrentUser().getPot() + " pots.");
                         break;
                     case COIN:
                         App.getCurrentUser().setCoins(App.getCurrentUser().getCoins() + 10);
-                        GameMenuView.getInstance().showResult("coin collected. now you have " + App.getCurrentUser().getCoins() + " coins.");
+                        GameMenuView.getInstance().showResult(
+                                "coin collected. now you have " + App.getCurrentUser().getCoins() + " coins.");
                         break;
                     case DIAMOND:
                         App.getCurrentUser().setGems(App.getCurrentUser().getGems() + 1);
-                        GameMenuView.getInstance().showResult("gem collected. now you have " + App.getCurrentUser().getGems() + " gems.");
+                        GameMenuView.getInstance().showResult(
+                                "gem collected. now you have " + App.getCurrentUser().getGems() + " gems.");
                         break;
                     case PLANT_FOOD:
                         if (App.getCurrentGame().getPlantFoods() < 3) {
                             App.getCurrentGame().setPlantFoods(App.getCurrentGame().getPlantFoods() + 1);
-                            GameMenuView.getInstance().showResult("plant food collected. now you have " + App.getCurrentGame().getPlantFoods() + " plant foods.");
+                            GameMenuView.getInstance().showResult("plant food collected. now you have " +
+                                    App.getCurrentGame().getPlantFoods() + " plant foods.");
                         } else {
                             GameMenuView.getInstance().showResult("not enough space!");
                         }
@@ -201,8 +206,7 @@ public class GameMenuController implements MenuController {
     }
 
     public void selectPlant(PlantType type) {
-        List<PlantCard> gamePlants = App.getCurrentGame().isConveyorMode() ?
-                App.getCurrentGame().getConveyorBelt() : App.getCurrentGame().getPlantLists();
+        List<PlantCard> gamePlants = App.getCurrentGame().getPlantLists();
         PlantCard selectedCard = null;
         for (PlantCard card : gamePlants) {
             if (card.getType().equals(type)) {
@@ -234,8 +238,7 @@ public class GameMenuController implements MenuController {
 
     public void plantPlant(PlantType type, float x, float y) {
         PlantCard selectedCard = null;
-        List<PlantCard> gamePlants = App.getCurrentGame().isConveyorMode() ?
-                App.getCurrentGame().getConveyorBelt() : App.getCurrentGame().getPlantLists();
+        List<PlantCard> gamePlants = App.getCurrentGame().getPlantLists();
         for (PlantCard card : gamePlants) {
             if (card.getType().equals(type)) {
                 selectedCard = card;
@@ -278,13 +281,9 @@ public class GameMenuController implements MenuController {
         }
         if (error != null) GameMenuView.getInstance().showResult(error);
         else {
-            if (App.getCurrentGame().isConveyorMode()) {
-                App.getCurrentGame().getConveyorBelt().remove(card);
-            } else {
-                card.setReady(false);
-                App.getCurrentGame().setSun(App.getCurrentGame().getSun() - card.getSunCost());
+            card.setReady(false);
+            App.getCurrentGame().setSun(App.getCurrentGame().getSun() - card.getSunCost());
             }
-        }
     }
 
     public void removeCooldown() {
@@ -459,7 +458,8 @@ public class GameMenuController implements MenuController {
         if (error != null) {
             GameMenuView.getInstance().showResult(error);
         } else {
-            GameMenuView.getInstance().showResult("Swap successful! Score: " + mechanics.getScore() + "/" + mechanics.getTargetScore());
+            GameMenuView.getInstance().showResult(
+                    "Swap successful! Score: " + mechanics.getScore() + "/" + mechanics.getTargetScore());
         }
     }
 
