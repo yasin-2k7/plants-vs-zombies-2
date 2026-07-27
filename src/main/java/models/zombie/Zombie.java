@@ -48,7 +48,7 @@ public abstract class Zombie implements Damageable {
         this.name = name;
         this.health = health;
         this.maxHealth = health;
-        this.speed = speed * 15;
+        this.speed = speed * 10;
         this.damage = damage / 10;
         this.currentState = new WalkingState();
     }

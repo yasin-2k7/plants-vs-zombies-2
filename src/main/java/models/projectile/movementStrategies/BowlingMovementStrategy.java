@@ -10,10 +10,11 @@ public class BowlingMovementStrategy implements MovementStrategy {
     float speedX;
     float speedY;
     Random random = new Random();
+    private Damageable lastHitTarget = null;
 
     public BowlingMovementStrategy(float speedX, float speedY) {
-        this.speedX = speedX;
-        this.speedY = speedY;
+        this.speedX = speedX*12;
+        this.speedY = speedY*12;
     }
 
     @Override
@@ -23,14 +24,23 @@ public class BowlingMovementStrategy implements MovementStrategy {
 
     @Override
     public void move(Projectile projectile) {
-        Damageable zombie = projectile.getStrikeStrategy().strike(projectile.getX(),
-                projectile.getY(), projectile.getX() - speedX * 5, projectile.getY() - speedY * 5);
-        int sign;
-        if (zombie != null) {
+        if (projectile.getY() >= (App.getFirstCellY() + App.getCellHeight() * 5) && speedY > 0) {
+            speedY *= -1;
+        } else if (projectile.getY() <= App.getFirstCellY() && speedY < 0) {
+            speedY *= -1;
+        }
+        projectile.setX(projectile.getX() + (speedX));
+        projectile.setY(projectile.getY() + (speedY));
+    }
+
+    public void onHit(Damageable target) {
+        if (target != null && target != lastHitTarget) {
+            lastHitTarget = target;
+            int sign;
             if (speedY == 0) {
-                if (zombie.getY() == App.getFirstCellY() + App.getCellHeight() / 2) {
+                if (target.getY() == App.getFirstCellY() + App.getCellHeight() / 2.0f) {
                     sign = 1;
-                } else if (zombie.getY() == App.getFirstCellY() + 9 * App.getCellHeight() / 2) {
+                } else if (target.getY() == App.getFirstCellY() + 9 * App.getCellHeight() / 2.0f) {
                     sign = -1;
                 } else {
                     sign = random.nextInt(2) * 2 - 1;
@@ -40,13 +50,7 @@ public class BowlingMovementStrategy implements MovementStrategy {
             } else {
                 speedY *= -1;
             }
-        } else if (projectile.getY() >= (App.getFirstCellY() + App.getCellHeight() * 5) && speedY > 0) {
-            speedY *= -1;
-        } else if (projectile.getY() <= App.getFirstCellY() && speedY < 0) {
-            speedY *= -1;
         }
-        projectile.setX(projectile.getX() + (speedX * 5));
-        projectile.setY(projectile.getY() + (speedY * 5));
     }
 
     @Override

@@ -82,6 +82,7 @@ public class BowlingChargeComponent implements GameComponent {
                 Projectile p = App.getCurrentGame().getProjectilesPool().acquire();
                 p.reset(owner.getX(), owner.getY(), damageStrategies[i],
                         movementStrategy.get(), strikeStrategy, bulbs[i].projectileType);
+                p.setPierce(1000);
                 App.getCurrentGame().getActiveProjectiles().add(p);
                 break;
             }

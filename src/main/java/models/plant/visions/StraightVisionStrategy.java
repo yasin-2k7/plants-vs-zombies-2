@@ -63,10 +63,4 @@ public class StraightVisionStrategy implements VisionStrategy {
         }
     }
 
-    @Override
-    public boolean isOutOfRange(Projectile projectile) {
-        return (!VisionStrategy.isBetween(projectile.getX(), projectile.getOriginX(),
-                projectile.getOriginX() + range) || !VisionStrategy.isBetween(projectile.getY(),
-                projectile.getOriginY() - width / 2, projectile.getOriginY() + width / 2));
-    }
 }

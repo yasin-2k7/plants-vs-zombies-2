@@ -46,6 +46,7 @@ public class Projectile implements Resettable {
     }
 
     public void update() {
+        System.out.println(hitStrategy.getDamage());
         double oldX = x;
         double oldY = y;
         movementStrategy.move(this);
@@ -122,6 +123,7 @@ public class Projectile implements Resettable {
         originX = x;
         originY = y;
         this.hitStrategy = hitStrategy;
+        this.hitStrategy.resetState();
         this.movementStrategy = movementStrategy;
         this.strikeStrategy = checkStrike;
         this.type = type;
@@ -172,10 +174,6 @@ public class Projectile implements Resettable {
         return originY;
     }
 
-    public CheckStrike getStrikeStrategy() {
-        return strikeStrategy;
-    }
-
     public void setTarget(Damageable target) {
         this.target = target;
         if (target != null) {
@@ -192,10 +190,6 @@ public class Projectile implements Resettable {
         return hitStrategy;
     }
 
-    public void setHitStrategy(HitStrategy hitStrategy) {
-        this.hitStrategy = hitStrategy;
-    }
-
     public float getTargetX() {
         return targetX;
     }
@@ -206,6 +200,10 @@ public class Projectile implements Resettable {
 
     public PlantType getPlantType() {
         return plantType;
+    }
+
+    public MovementStrategy getMovementStrategy() {
+        return movementStrategy;
     }
 
     public void setPlantType(PlantType plantType) {

@@ -4,6 +4,7 @@ import models.Damageable;
 import models.enums.ProjectileType;
 import models.plant.Plant;
 import models.projectile.Projectile;
+import models.projectile.movementStrategies.BowlingMovementStrategy;
 import models.world.obstacles.IceBlock;
 import models.zombie.Zombie;
 
@@ -17,6 +18,7 @@ public class CombinedDamageStrategy implements HitStrategy {
     private int chillTime = 50;
     private int poisonDamageOnTick = 5;
     private ProjectileType projectileType;
+    private Damageable lastTarget = null;
 
     private CombinedDamageStrategy(int damage, int neighborDamage, float radius,
                                    String element, int chillTime, int poisonDamageOnTick,
@@ -71,7 +73,12 @@ public class CombinedDamageStrategy implements HitStrategy {
     @Override
     public void applyDamage(Damageable target, List<Damageable> allTargets, Projectile projectile) {
         String type = element != null ? element : "NORMAL";
+        if (target == lastTarget) return;
+        if (projectile.getMovementStrategy() instanceof BowlingMovementStrategy bowlingMove) {
+            bowlingMove.onHit(target);
+        }
         target.takeDamage(damage, type);
+        lastTarget = target;
         applySpecialDamage(target);
 
         if (target instanceof Zombie && projectile.getPlantType() != null) {
@@ -135,6 +142,11 @@ public class CombinedDamageStrategy implements HitStrategy {
     @Override
     public void increaseDamage(int factor) {
         damage *= factor;
+    }
+
+    @Override
+    public void resetState() {
+        lastTarget = null;
     }
 
     @Override

@@ -10,6 +10,4 @@ public interface VisionStrategy {
     }
 
     Damageable findZombie(Plant owner);
-
-    boolean isOutOfRange(Projectile projectile);
 }

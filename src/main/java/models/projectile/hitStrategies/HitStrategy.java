@@ -17,5 +17,7 @@ public interface HitStrategy {
 
     void increaseDamage(int factor);
 
+    void resetState();
+
     void applyDamage(Plant plant, Projectile projectile);
 }
