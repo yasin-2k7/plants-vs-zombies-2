@@ -13,6 +13,7 @@ import models.zombie.wave.Wave;
 import models.zombie.wave.WaveManager;
 
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -21,6 +22,8 @@ public class SaveOurSeedsLevelSetup implements LevelSetup {
     private int cols;
     private List<Wave> waves;
     private Map<Point, PlantType> protectedPlants;
+
+    private final List<Plant> protectedPlantInstances = new ArrayList<>();
 
     public SaveOurSeedsLevelSetup(int rows, int cols, List<Wave> waves, Map<Point, PlantType> protectedPlants) {
         this.rows = rows;
@@ -46,6 +49,7 @@ public class SaveOurSeedsLevelSetup implements LevelSetup {
             int col = (int) entry.getKey().getX();
 
             Plant plant = PlantFactory.createPlant(entry.getValue(), row, col, grid[row][col]);
+            protectedPlantInstances.add(plant);
 
             grid[row][col].setPlant(plant, PlantLayer.MAIN);
 
@@ -60,5 +64,9 @@ public class SaveOurSeedsLevelSetup implements LevelSetup {
     @Override
     public boolean requirePlantSelection() {
         return false;
+    }
+
+    public boolean isProtectedPlant(Plant plant) {
+        return plant != null && protectedPlantInstances.contains(plant);
     }
 }

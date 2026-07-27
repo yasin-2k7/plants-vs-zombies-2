@@ -2,9 +2,11 @@ package controller;
 
 import models.core.App;
 import models.core.User;
+import models.enums.PlantFamily;
 import models.enums.PlantType;
 import models.plant.card.PlantCard;
 import models.plant.card.PlantCardFactory;
+import models.world.levelSetup.PlantWhatYouGetLevelSetup;
 import view.terminalView.AppView;
 import view.terminalView.GameMenuView;
 
@@ -22,6 +24,7 @@ public class PlantMenuController implements MenuController {
     }
 
     public void reset() {
+        selectedPlants.clear();
         maxSlots = 8 - App.getCurrentGame().getPlantLists().size();
         numberOfLockedPlantsInList = App.getCurrentGame().getPlantLists().size();
         this.imitatorTarget = null;
@@ -39,10 +42,26 @@ public class PlantMenuController implements MenuController {
         User user = App.getCurrentUser();
         if (user == null) return "Error: No user logged in.";
 
-        StringBuilder sb = new StringBuilder("Available plants (unlocked):\n");
+        StringBuilder sb = new StringBuilder("Available plants:\n");
+
+        List<PlantCard> preSelectedCards = App.getCurrentGame().getPlantLists();
+
         for (PlantType type : user.getUnlockedPlantsLevels().keySet()) {
-            sb.append(" - ").append(type.name()).append("\n");
+            sb.append(" - ").append(type.name());
+
+            boolean isLockedByLevel = preSelectedCards.stream()
+                    .anyMatch(card -> card.getType() == type);
+
+            if (isLockedByLevel) {
+                sb.append(" [LOCKED]");
+            }
+            else if (selectedPlants.contains(type)) {
+                sb.append(" [SELECTED]");
+            }
+
+            sb.append("\n");
         }
+
         return sb.toString();
     }
 
@@ -76,8 +95,17 @@ public class PlantMenuController implements MenuController {
             }
         }
 
-        if (selectedPlants.contains(type) || gameHasThisCard) {
+        if (gameHasThisCard) {
+            return "Error: This plant is locked for this level!";
+        }
+
+        if (selectedPlants.contains(type)) {
             return "Error: Plant already selected.";
+        }
+
+        if(type.family == PlantFamily.SUN_PRODUCER &&
+                App.getCurrentGame().getLevelSetup() instanceof PlantWhatYouGetLevelSetup){
+            return "you cant choose sun producer plant in this level";
         }
 
         selectedPlants.add(type);

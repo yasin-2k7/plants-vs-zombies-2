@@ -20,18 +20,37 @@ public class WaveManager {
     private boolean levelCompleted;
 
     private boolean repeatForever = false;
+    private boolean wavesStarted = true;
 
     public WaveManager(List<Wave> waves) {
+        this(waves, true);
+    }
+
+    public WaveManager(List<Wave> waves, boolean autoStart) {
         this.waves = waves;
         this.currentWaveIndex = 0;
+        this.wavesStarted = autoStart;
         if (!waves.isEmpty()) {
             this.currentWave = waves.get(0);
             this.totalZombiesInCurrentWave = currentWave.getTotalZombieCount();
-            printWaveStartMessage(currentWave);
+            if (autoStart) {
+                printWaveStartMessage(currentWave);
+            }
         } else {
             this.levelCompleted = true;
         }
         this.killedZombiesInCurrentWave = 0;
+    }
+
+    public void startWaves() {
+        if (wavesStarted || levelCompleted) return;
+        this.wavesStarted = true;
+        if (currentWave != null) {
+            printWaveStartMessage(currentWave);
+        }
+    }
+    public boolean isWavesStarted() {
+        return wavesStarted;
     }
 
     public void setRepeatForever(boolean repeatForever) {
@@ -48,8 +67,7 @@ public class WaveManager {
     }
 
     public boolean update() {
-        if (levelCompleted) return false;
-        if (currentWave == null) return false;
+        if (!wavesStarted || levelCompleted || currentWave == null) return false;
         if (currentWave.isFinishedSpawning()) {
             if (killedZombiesInCurrentWave >= totalZombiesInCurrentWave * 0.75) {
                 goToNextWave();
@@ -80,7 +98,7 @@ public class WaveManager {
 
     // متد اسپاون زامبی
     public void spawnNextZombie(int lane, GameWorld game) {
-        if (levelCompleted || currentWave == null) return;
+        if (!wavesStarted || levelCompleted || currentWave == null) return;
         WaveSpawnEntry entry = currentWave.getNextSpawn();
         if (entry == null) return;
 

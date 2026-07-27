@@ -142,6 +142,8 @@ public class GameMenuView implements View {
                         controller.showPlantFoodsCount();
                         return;
                     case START_ZOMBIE_WAVES:
+                        String result = controller.startWaves();
+                        System.out.println(result);
                         return;
 
                     case BREAK_VASE:

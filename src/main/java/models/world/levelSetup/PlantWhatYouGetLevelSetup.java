@@ -12,15 +12,12 @@ public class PlantWhatYouGetLevelSetup implements LevelSetup {
     private int rows;
     private int cols;
     private List<Wave> waves;
-    private int initialSun;
     private List<PlantCard> availablePlants;
 
-    public PlantWhatYouGetLevelSetup(int rows, int cols, List<Wave> waves,
-                                     int initialSun, List<PlantCard> availablePlants) {
+    public PlantWhatYouGetLevelSetup(int rows, int cols, List<Wave> waves, List<PlantCard> availablePlants) {
         this.rows = rows;
         this.cols = cols;
         this.waves = waves;
-        this.initialSun = initialSun;
         this.availablePlants = availablePlants;
     }
 
@@ -30,7 +27,7 @@ public class PlantWhatYouGetLevelSetup implements LevelSetup {
         buildGrid(world, rows, cols);
         world.setSun(800);
 
-        WaveManager waveManager = new WaveManager(waves);
+        WaveManager waveManager = new WaveManager(waves, false);
         world.addMechanic(new NormalMechanic(waveManager));
         world.setPlantingPhase(true);
     }
@@ -39,4 +36,6 @@ public class PlantWhatYouGetLevelSetup implements LevelSetup {
     public boolean requirePlantSelection() {
         return true;
     }
+
+
 }

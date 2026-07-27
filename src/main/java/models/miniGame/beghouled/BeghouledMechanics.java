@@ -304,6 +304,7 @@ public class BeghouledMechanics implements Mechanic {
         Cell cell = world.getGrid()[row][col];
         cell.findAndRemovePlant();
         cell.setPlantable(false);
+        System.out.println("zombie made a crater");
     }
 
 

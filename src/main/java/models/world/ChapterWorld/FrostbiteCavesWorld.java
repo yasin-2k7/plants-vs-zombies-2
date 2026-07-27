@@ -2,6 +2,7 @@ package models.world.ChapterWorld;
 
 import controller.GameMenuController;
 import models.core.App;
+import models.enums.PlantType;
 import models.world.Cell;
 import models.world.GameWorld;
 import models.world.levelSetup.LevelSetup;
@@ -20,6 +21,9 @@ public class FrostbiteCavesWorld extends GameWorld {
     private final int icyWindTicks = 250;
     private int lastIcyWindTick = 0;
     private Random random = new Random();
+
+    private List<PlantType> lockedPlants;
+
 
     public FrostbiteCavesWorld(LevelSetup levelSetup, ArrayList<LoseCondition> loseConditions,
                                WinCondition winCondition, ArrayList<Mechanic> mechanics) {
@@ -103,4 +107,9 @@ public class FrostbiteCavesWorld extends GameWorld {
         }
 
     }
+    public void setLockedPlants(List<PlantType> lockedPlants) {
+        this.lockedPlants = lockedPlants;
+    }
+
+
 }

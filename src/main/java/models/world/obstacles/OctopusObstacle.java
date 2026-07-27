@@ -1,5 +1,6 @@
 package models.world.obstacles;
 
+import controller.GameMenuController;
 import models.plant.Plant;
 import models.world.Cell;
 
@@ -8,11 +9,11 @@ public class OctopusObstacle extends Obstacle {
     private Cell cell;
 
     public OctopusObstacle(float x, float y, Plant targetPlant, Cell cell) {
-        super(x, y, 200); // جان اختاپوس ۲۰۰ است
+        super(x, y, 200);
         this.targetPlant = targetPlant;
         this.cell = cell;
         if (targetPlant != null) {
-            targetPlant.setDisabled(true); // متوقف کردن کامل گیاه
+            targetPlant.setDisabled(true);
         }
     }
 
@@ -34,7 +35,11 @@ public class OctopusObstacle extends Obstacle {
     @Override
     public void die() {
         if (targetPlant != null && !targetPlant.isDead()) {
-            targetPlant.setDisabled(false); // آزاد شدن گیاه پس از نابودی اختاپوس
+            targetPlant.setDisabled(false);
+            GameMenuController.updateState("Octopus destroyed, plant at (" +
+                    targetPlant.getX() + ", " + targetPlant.getY() + ") is free!");
+        } else {
+            GameMenuController.updateState("Octopus destroyed at (" + x + ", " + y + ")");
         }
         if (cell != null) {
             cell.removeObstacle();

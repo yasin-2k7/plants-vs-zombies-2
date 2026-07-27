@@ -44,31 +44,6 @@ public class SnorkelZombie extends Zombie {
         super.update();
     }
 
-    @Override
-    public void takeDamage(int amount, String damageType) {
-        if (isDead) return;
-
-        GameWorld game = App.getCurrentGame();
-        if (game != null) {
-            int col = (int) (this.x / App.getCellWidth());
-            int row = (int) (this.y / App.getCellHeight());
-            boolean inWater = false;
-            if (row >= 0 && row < game.getRows() && col >= 0 && col < game.getCols()) {
-                Cell cell = game.getGrid()[row][col];
-                if (cell != null) {
-                    inWater = cell.isWater();
-                }
-            }
-            if (inWater && !(this.getCurrentState() instanceof EatingState)) {
-                if (!"LOBBER".equalsIgnoreCase(damageType)) {
-                    return;
-                }
-            }
-        }
-
-        super.takeDamage(amount, damageType);
-    }
-
     public boolean isUnderwater() {
         return underwater;
     }

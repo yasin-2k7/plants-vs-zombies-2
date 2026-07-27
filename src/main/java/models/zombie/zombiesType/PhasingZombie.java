@@ -9,7 +9,7 @@ public class PhasingZombie extends Zombie {
     private boolean isPhaseChanged;
     private boolean isNewspaper; // true: newspaper, false: all-star
     private int shieldHealth;
-    private boolean hasKilledPlant; // برای آل‌استار
+    private boolean hasKilledPlant;
 
     public PhasingZombie(int health, double speed, int damage, int shieldHealth, boolean isNewspaper) {
         super(Zombies.PHASING, health, speed, damage);
@@ -45,9 +45,8 @@ public class PhasingZombie extends Zombie {
     private void triggerPhaseChange() {
         this.isPhaseChanged = true;
         if (isNewspaper) {
-            // نیوزپیپر عصبانی می‌شود
-            this.speed = this.originalSpeed * 3.0;
-            this.damage = (int) (this.damage * 2);
+            this.speed = this.originalSpeed * 10.0;
+            this.damage = (int) (this.damage * 3);
             GameMenuController.updateState("Newspaper is angry! Speed and damage increased.");
         }
     }
@@ -58,16 +57,13 @@ public class PhasingZombie extends Zombie {
 
         boolean wasEating = (this.currentState instanceof EatingState);
 
-        super.update(); // حرکت و خوردن معمولی
+        super.update();
 
-        // مدیریت آل‌استار: پس از کشتن گیاه، کند می‌شود
         if (!isNewspaper && !hasKilledPlant) {
-            // اگر قبل از به‌روزرسانی در حالت خوردن بود و اکنون نیست، یعنی گیاه را کشته است
             if (wasEating && !(this.currentState instanceof EatingState)) {
                 hasKilledPlant = true;
-                // کند شدن
                 this.speed = this.originalSpeed * 0.3;
-                this.damage = 20; //برگشت به آسیب عادی
+                this.damage = 20;
                 GameMenuController.updateState("All-Star killed a plant and slowed down.");
             }
         }

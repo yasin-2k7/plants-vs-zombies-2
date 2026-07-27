@@ -57,15 +57,16 @@ public class LevelFactory {
         int rows = 5;
         int cols = 9;
         List<WaveSpawnEntry> availableZombies = List.of(
-                new WaveSpawnEntry("ZombieDefault", 100),
-                new WaveSpawnEntry("ZombieArmor1", 200),
-                new WaveSpawnEntry("ZombieArmor2", 300),
-                new WaveSpawnEntry("ZombieArmor4", 400),
-                new WaveSpawnEntry("ZombieTombRaiser", 300),
-                new WaveSpawnEntry("ZombieRa", 100),
-                new WaveSpawnEntry("ZombieNewspaper", 450),
-                new WaveSpawnEntry("ZombieExplorer", 250)
-        );
+//                new WaveSpawnEntry("ZombieDefault", 100),
+//                new WaveSpawnEntry("ZombieArmor1", 200),
+//                new WaveSpawnEntry("ZombieArmor2", 300),
+//                new WaveSpawnEntry("ZombieArmor4", 400),
+//                new WaveSpawnEntry("ZombieTombRaiser", 300),
+//                new WaveSpawnEntry("ZombieRa", 100),
+//                new WaveSpawnEntry("ZombieNewspaper", 450),
+//                new WaveSpawnEntry("ZombieExplorer", 250)
+                new WaveSpawnEntry("ZombieGargantuar", 700)
+                );
 
         List<Wave> waves = Wave.generateWaves(3, 2000, availableZombies, 60);
 
@@ -187,7 +188,7 @@ public class LevelFactory {
                 new WaveSpawnEntry("ZombieLostCityJane", 200),
                 new WaveSpawnEntry("ZombieBeachSnorkel", 200),
                 new WaveSpawnEntry("ZombieBeachOctopus", 800)
-        );
+                );
         List<Wave> waves = Wave.generateWaves(3, 2000, availableZombies, 10);
         LevelSetup levelSetup = new BigWaveBeachLevelSetup(6, rows, cols, waves);
         LoseCondition loseCondition = new NormalLose();
@@ -437,7 +438,7 @@ public class LevelFactory {
         List<PlantCard> availablePlants = List.of(
                 new PlantCard(PlantType.PEASHOOTER, 100, 5)
         );
-        LevelSetup levelSetup = new PlantWhatYouGetLevelSetup(rows, cols, waves, 500, availablePlants);
+        LevelSetup levelSetup = new PlantWhatYouGetLevelSetup(rows, cols, waves, availablePlants);
         LoseCondition loseCondition = new NormalLose();
         WinCondition winCondition = new NormalWin();
         FrostbiteCavesWorld world = new FrostbiteCavesWorld(
@@ -464,7 +465,7 @@ public class LevelFactory {
                 new WaveSpawnEntry("ZombieProspector", 200)
         );
         List<Wave> waves = Wave.generateWaves(5, 2000, availableZombies, 60);
-        LevelSetup levelSetup = new NormalLevelSetup(rows, cols, waves);
+        LevelSetup levelSetup = new LockedPlantsLevelSetup(rows, cols, waves);
         LoseCondition loseCondition = new NormalLose();
         WinCondition winCondition = new NormalWin();
         FrostbiteCavesWorld world = new FrostbiteCavesWorld(
