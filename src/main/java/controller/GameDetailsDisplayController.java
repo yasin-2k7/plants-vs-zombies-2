@@ -13,6 +13,7 @@ import models.plant.Plant;
 import models.plant.card.PlantCard;
 import models.world.Cell;
 import models.world.mechanics.NormalMechanic;
+import models.world.obstacles.BarrelObstacle;
 import models.world.obstacles.Grave;
 import models.world.obstacles.IceBlock;
 import models.world.obstacles.Obstacle;
@@ -63,6 +64,8 @@ public class GameDetailsDisplayController {
                 terrainSymbol = "🐙";
             } else if (obs instanceof IceBlock) {
                 terrainSymbol = "🧊";
+            } else if (obs instanceof BarrelObstacle) {
+                terrainSymbol = "🛢️";
             } else {
                 terrainSymbol = "🪨";
             }
@@ -210,9 +213,7 @@ public class GameDetailsDisplayController {
                 return "shoulderArmor: " + armoredZombie.getArmorHealth();
             }
         }
-        // برای سایر زامبی‌های زره‌دار
         String type = armoredZombie.getArmorTypes().isEmpty() ? "unknown" : armoredZombie.getArmorTypes().get(0);
         return type + ": " + armoredZombie.getArmorHealth();
     }
-
 }

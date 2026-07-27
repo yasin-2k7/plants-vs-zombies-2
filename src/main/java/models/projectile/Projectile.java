@@ -12,7 +12,10 @@ import models.projectile.hitStrategies.PlantDamageStrategy;
 import models.projectile.movementStrategies.MovementStrategy;
 import models.projectile.strikeStrategies.CheckStrike;
 import models.world.Cell;
+import models.world.GameWorld;
+import models.world.obstacles.Obstacle;
 import models.zombie.zombiesType.DeflectorZombie;
+import models.zombie.zombiesType.SnorkelZombie;
 
 public class Projectile implements Resettable {
     private float x, y;
@@ -49,6 +52,20 @@ public class Projectile implements Resettable {
         double oldX = x;
         double oldY = y;
         movementStrategy.move(this);
+
+        GameWorld game = App.getCurrentGame();
+        if (game != null) {
+            Cell cell = game.getCellAt(this.x, this.y);
+            if (cell != null && cell.hasObstacle() && cell.getObstacle().blocksProjectiles()) {
+                Obstacle obstacle = cell.getObstacle();
+                obstacle.takeDamage(hitStrategy.getDamage(), hitStrategy.getElement());
+                if (!obstacle.isDestroyed()) {
+                    dead = true;
+                    return;
+                }
+            }
+        }
+
         if (hitStrategy instanceof PlantDamageStrategy) {
             checkProjectilesTowardPlants(oldX, oldY);
             return;
@@ -58,7 +75,6 @@ public class Projectile implements Resettable {
 
             //  برخورد تیر مستقیم گیاهان به گیاهان یخ‌زده
             if (type.movement.equals("STRAIGHT") && !(hitStrategy instanceof PlantDamageStrategy)) {
-                models.world.GameWorld game = App.getCurrentGame();
                 if (game != null) {
                     Cell currentCell = game.getCellAt(this.x, this.y);
                     if (currentCell != null && currentCell.getPlant() != null) {
@@ -82,6 +98,13 @@ public class Projectile implements Resettable {
                 zombie = strikeStrategy.strike(x, y, target);
             }
         }
+
+        if (zombie != null && zombie instanceof SnorkelZombie snorkel) {
+            if (snorkel.isUnderwater() && type != null && "STRAIGHT".equals(type.movement)) {
+                zombie = null;
+            }
+        }
+
         if (zombie != null) {
             if (zombie instanceof DeflectorZombie deflector) {
                 if (deflector.tryDeflect(this)) {

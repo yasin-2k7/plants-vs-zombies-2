@@ -624,4 +624,5 @@ public abstract class GameWorld {
     public List<Obstacle> getActiveObstacles() {
         return activeObstacles;
     }
+    public List<PlantCard> getConveyorBelt() {return plantLists;}
 }

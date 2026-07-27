@@ -8,6 +8,6 @@ public class BarrelObstacle extends Obstacle {
 
     @Override
     public boolean blocksProjectiles() {
-        return true; // تیرها از آن عبور نمی‌کنند
+        return true;
     }
 }

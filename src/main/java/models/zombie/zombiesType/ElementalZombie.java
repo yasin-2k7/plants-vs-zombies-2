@@ -94,11 +94,11 @@ public class ElementalZombie extends Zombie {
         this.originalSpeed = -Math.abs(this.originalSpeed);
 
         System.out.println("🧨Prospector exploded and teleported to the left end of the row.");
-        int cols = game.getCols();
-        float newX = cols * App.getCellWidth() - App.getCellWidth() / 2;
-        this.x = newX;
-        this.speed = Math.abs(this.speed);
-        GameMenuController.updateState("Prospector exploded and teleported to the right end of the row.");
+//        int cols = game.getCols();
+//        float newX = cols * App.getCellWidth() - App.getCellWidth() / 2;
+//        this.x = newX;
+//        this.speed = Math.abs(this.speed);
+//        GameMenuController.updateState("Prospector exploded and teleported to the right end of the row.");
     }
 
     public void extinguish() {

@@ -51,6 +51,7 @@ public abstract class Zombie implements Damageable {
         this.speed = speed * 15;
         this.damage = damage / 10;
         this.currentState = new WalkingState();
+        this.originalSpeed = this.speed;
     }
 
     public Zombie(Zombies name, int health, double speed, int damage, GameWorld world) {
@@ -63,6 +64,7 @@ public abstract class Zombie implements Damageable {
         this.speed = speed * 15;
         this.damage = damage / 10;
         this.currentState = new WalkingState();
+        this.originalSpeed = this.speed;
     }
 
     public void update() {
@@ -198,6 +200,9 @@ public abstract class Zombie implements Damageable {
     }
 
     public void resetSpeed() {
+        if (originalSpeed == 0) {
+            originalSpeed = this.speed;
+        }
         this.speed = originalSpeed;
         this.slowTicksRemaining = 0;
         this.slowFactor = 1.0;

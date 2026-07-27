@@ -183,6 +183,11 @@ public class Cell {
             if (!(this.obstacle instanceof Grave && type == PlantType.GRAVE_BUSTER))
                 return "you cannot plant in that place!";
         }
+        if (this.obstacle instanceof Grave grave && type == PlantType.GRAVE_BUSTER) {
+            grave.releaseContent();
+            this.obstacle = null;
+            this.plantable = true;
+        }
         Plant newPlant = PlantFactory.createPlant(type, (int) x, (int) y, this);
         if (boost) newPlant.setPlantFoodInStart(true);
         if (((this.obstacle instanceof Grave) != (type == PlantType.GRAVE_BUSTER))

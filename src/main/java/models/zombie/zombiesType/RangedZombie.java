@@ -10,6 +10,8 @@ import models.world.obstacles.Grave;
 import models.world.obstacles.OctopusObstacle;
 import models.zombie.Zombie;
 
+import java.util.List;
+
 public class RangedZombie extends Zombie {
     private final int cooldownMax = 120;
     private String projectileType;
@@ -55,25 +57,16 @@ public class RangedZombie extends Zombie {
             }
 
             case "BONE": {
-                int row = (int) (this.y / App.getCellHeight());
-                long graveCountInRow = game.getActiveObstacles().stream()
-                        .filter(g -> g instanceof Grave grave && grave.getRow() == row)
-                        .count();
-
-                if (graveCountInRow >= 3) {
-                    GameMenuController.updateState("Row " + row + " already has 3 graves, skipping.");
-                    break;
-                }
-
-                Cell randomEmptyCell = game.getRandomEmptyCellInRowAfterColumn(row, this.x);
-                if (randomEmptyCell != null) {
-                    game.createGrave((int) randomEmptyCell.getX(), (int) randomEmptyCell.getY());
-                    GameMenuController.updateState(
-                            "Tomb Raiser threw a bone at (" +
-                            randomEmptyCell.getCol() + ", " + randomEmptyCell.getRow() + ")");
+                List<Cell> targetCells = game.findTwoEmptyCell(false);
+                if (!targetCells.isEmpty()) {
+                    for (Cell cell : targetCells) {
+                        game.createGrave((int) cell.getX(), (int) cell.getY());
+                        GameMenuController.updateState(
+                                "Tomb Raiser threw a bone at (" +
+                                        cell.getCol() + ", " + cell.getRow() + ")");
+                    }
                 } else {
-                    GameMenuController.updateState(
-                            "No empty cell in front of Tomb Raiser in row " + row + " to place grave.");
+                    GameMenuController.updateState("No empty cell on the board to place grave.");
                 }
                 break;
             }
