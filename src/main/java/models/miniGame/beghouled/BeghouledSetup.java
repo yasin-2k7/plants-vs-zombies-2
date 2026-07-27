@@ -17,16 +17,18 @@ public class BeghouledSetup implements LevelSetup {
     private final List<PlantUpgrade> upgrades;
     private final int targetScore;
     private final List<WaveSpawnEntry> availableZombies;
+    private List<Wave> waves;
 
     public BeghouledSetup(int rows, int cols, List<PlantType> availablePlantTypes,
                           List<PlantUpgrade> upgrades, int targetScore,
-                          List<WaveSpawnEntry> availableZombies) {
+                          List<WaveSpawnEntry> availableZombies, List<Wave> waves) {
         this.rows = rows;
         this.cols = cols;
         this.availablePlantTypes = availablePlantTypes;
         this.upgrades = upgrades;
         this.targetScore = targetScore;
         this.availableZombies = availableZombies;
+        this.waves = waves;
     }
 
 
@@ -38,10 +40,12 @@ public class BeghouledSetup implements LevelSetup {
         BeghouledMechanics mechanics = new BeghouledMechanics(availablePlantTypes, upgrades, targetScore);
         world.addMechanic(mechanics);
 
-        List<Wave> waves = Wave.generateWaves(20, 200, availableZombies, 40);
+
         WaveManager waveManager = new WaveManager(waves);
         waveManager.setRepeatForever(true);
         world.addMechanic(new NormalMechanic(waveManager));
+
+        world.registerZombieKillListener(waveManager::onZombieKilled);
 
 
         mechanics.fillRandomPlants(world);

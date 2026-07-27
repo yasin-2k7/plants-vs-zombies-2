@@ -16,9 +16,11 @@ import models.plant.card.ImitatorCard;
 import models.plant.card.PlantCard;
 import models.world.*;
 import models.world.levelSetup.DeadLineLevelSetup;
+import models.world.levelSetup.PlantWhatYouGetLevelSetup;
 import models.world.mechanics.NormalMechanic;
 import models.zombie.Zombie;
 import models.zombie.ZombieFactory;
+import models.zombie.wave.WaveManager;
 import view.terminalView.AppView;
 import view.terminalView.GameMenuView;
 import view.terminalView.MainMenuView;
@@ -47,7 +49,7 @@ public class GameMenuController implements MenuController {
         } else if (gameWorld.getLevelSetup() instanceof DeadLineLevelSetup) {
             GameMenuView.getInstance().showResult("Zombie passed deadLine; Loser!!!");
         } else {
-            GameMenuView.getInstance().showResult("The zombie ate your brain; LOSER!!!");
+            GameMenuView.getInstance().showResult("LOSER!!!");
         }
         User user = App.getCurrentUser();
         if (user != null && mupointManager != null) {
@@ -88,7 +90,7 @@ public class GameMenuController implements MenuController {
         GameMenuView.getInstance().showResult(count + " ticks later...");
         GameWorld game = App.getCurrentGame();
         for (int i = 0; i < count; i++) {
-            if (game.getState() == GameState.PLAYING) {
+            if (game != null && AppView.currentScreen instanceof GameMenuView && game.getState() == GameState.PLAYING) {
                 game.tick();
             } else return;
         }
@@ -499,5 +501,16 @@ public class GameMenuController implements MenuController {
         GameMenuView.getInstance().showResult(mechanics.throwBall(game, plantType, x, y));
     }
 
-
+    public String startWaves(){
+        if(!(App.getCurrentGame().getLevelSetup() instanceof PlantWhatYouGetLevelSetup)){
+            return "this command is for Plant What You Get Level";
+        }
+        WaveManager waveManager = App.getCurrentGame().getWaveManager();
+        if (waveManager.isWavesStarted()) {
+            return "Error: Zombie waves have already started!";
+        }
+        App.getCurrentGame().setPlantingPhase(true);
+        waveManager.startWaves();
+        return "Zombie waves started!";
+    }
 }

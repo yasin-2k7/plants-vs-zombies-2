@@ -56,6 +56,7 @@ public abstract class GameWorld {
     private ArrayList<LoseCondition> loseConditions;
     private WinCondition winCondition;
     private ArrayList<Mechanic> mechanics;
+    private List<PlantCard> conveyorBelt;
     private List<PlantCard> plantLists;
     private boolean isConveyorMode;
     private GenericObjectPool<Sun> sunsPool = new GenericObjectPool<>(Sun::new);
@@ -519,6 +520,10 @@ public abstract class GameWorld {
         mechanics.add(mechanic);
     }
 
+    public List<PlantCard> getConveyorBelt() {
+        return conveyorBelt;
+    }
+
     public List<PlantCard> getPlantLists() {
         return plantLists;
     }
@@ -603,6 +608,10 @@ public abstract class GameWorld {
         this.willUnlockLevel = willUnlockLevel;
     }
 
+    public boolean isPlantSelected() {
+        return isPlantSelected;
+    }
+
     public void setPlantSelected(boolean plantSelected) {
         isPlantSelected = plantSelected;
     }
@@ -624,5 +633,19 @@ public abstract class GameWorld {
     public List<Obstacle> getActiveObstacles() {
         return activeObstacles;
     }
-    public List<PlantCard> getConveyorBelt() {return plantLists;}
+    public WaveManager getWaveManager() {
+        NormalMechanic normal = getMechanic(NormalMechanic.class);
+        if (normal != null) {
+            return normal.getWaveManager();
+        }
+        return null;
+    }
+    public <T extends LoseCondition> T getLoseCondition(Class<T> type) {
+        if (loseConditions == null) return null;
+        return loseConditions.stream()
+                .filter(type::isInstance)
+                .map(type::cast)
+                .findFirst()
+                .orElse(null);
+    }
 }
