@@ -14,6 +14,7 @@ import models.zombie.wave.WaveSpawnEntry;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class MuPointLevel {
     public static GameWorld createMuPointLevel() {
@@ -21,10 +22,14 @@ public class MuPointLevel {
         int cols = 9;
 
         List<WaveSpawnEntry> availableZombies = List.of(
-                new WaveSpawnEntry("ZombieDefault", 100)
+                new WaveSpawnEntry("ZombieDefault", 100),
+                new WaveSpawnEntry("ZombieArmor1", 200),
+                new WaveSpawnEntry("ZombieArmor2", 300),
+                new WaveSpawnEntry("ZombieGargantuar", 600)
         );
 
-        List<Wave> waves = Wave.generateWaves(5, 200, availableZombies, 60);
+        List<Wave> waves = Wave.generateWaves(5, 200,
+                availableZombies, 60, new Random(10));
 
         LevelSetup levelSetup = new NormalLevelSetup(rows, cols, waves);
         LoseCondition loseCondition = new NormalLose();

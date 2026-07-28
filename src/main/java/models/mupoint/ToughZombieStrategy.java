@@ -7,6 +7,6 @@ public class ToughZombieStrategy implements ScoreStrategy {
         if (maxHealth >= 1000) {
             return maxHealth / 10;
         }
-        return 10;
+        return 0;
     }
 }

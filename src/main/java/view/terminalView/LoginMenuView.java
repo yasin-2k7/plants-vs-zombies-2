@@ -63,6 +63,7 @@ public class LoginMenuView implements View {
                     case MENU_ENTER:
                         if (App.getCurrentUser() != null) {
                             controller.changeMenu();
+                            System.out.println("Entering Main Menu...");
                         } else {
                             System.out.println("You should login first");
                         }

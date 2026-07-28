@@ -65,6 +65,7 @@ public abstract class GameWorld {
     private boolean isPlantSelected = false;
     private PlantType selectedPlant = null;
     private boolean plantingPhase = false;
+    private int currentBatchKills = 1;
 
     public GameWorld(LevelSetup levelSetup, ArrayList<LoseCondition> loseConditions,
                      WinCondition winCondition, ArrayList<Mechanic> mechanics) {
@@ -202,6 +203,9 @@ public abstract class GameWorld {
 
     public void addSunToPlayer(int amount) {
         currentSun += amount;
+        if (this.mupointManager != null) {
+            this.mupointManager.checkSunMilestones();
+        }
     }
 
     private void processZombieDeath(Zombie zombie) {
@@ -234,7 +238,7 @@ public abstract class GameWorld {
 
     public void processZombieDeathMu(Zombie zombie) {
         if (this.mupointManager != null) {
-            int simultaneousKills = (int) activeZombies.stream().filter(Zombie::isDead).count();
+            int simultaneousKills = this.currentBatchKills;
             boolean isSplashDamage = false;
             if (zombie.getKillerPlantType() != null) {
                 PlantType killer = zombie.getKillerPlantType();
@@ -255,11 +259,15 @@ public abstract class GameWorld {
     }
 
     private void cleanupDeadZombies() {
+        int totalDead = (int) activeZombies.stream().filter(Zombie::isDead).count();
+        boolean isFirst = true;
         Iterator<Zombie> zombieIterator = activeZombies.iterator();
         while (zombieIterator.hasNext()) {
             Zombie zombie = zombieIterator.next();
             if (zombie.isDead()) {
+                this.currentBatchKills = isFirst ? totalDead : 1;
                 processZombieDeath(zombie);
+                isFirst = false;
                 zombieIterator.remove();
             }
         }
@@ -324,6 +332,7 @@ public abstract class GameWorld {
         if (state != GameState.PLAYING) return;
         currentTick++;
         updateAll();
+        cleanupDeadZombies();
         removeIfDead();
         for (Cell[] row : grid) {
             for (Cell cell : row) {
@@ -345,7 +354,6 @@ public abstract class GameWorld {
                 }
             }
         }
-        cleanupDeadZombies();
         for (Mechanic mechanic : mechanics) {
             mechanic.applyMechanic(this);
         }
@@ -441,6 +449,9 @@ public abstract class GameWorld {
 
     public void setSun(int sun) {
         currentSun = sun;
+        if (this.mupointManager != null) {
+            this.mupointManager.checkSunMilestones();
+        }
     }
 
     public List<Plant> getActivePlants() {

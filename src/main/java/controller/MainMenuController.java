@@ -38,11 +38,12 @@ public class MainMenuController implements MenuController {
 
                 AppView.setCurrentScreen(PlantMenuView.getInstance());
                 PlantMenuView.getInstance().getController().reset();
+                return "Entering Mu Point...";
 
             case "leaderboard":
                 AppView.setCurrentScreen(LeaderboardMenuView.getInstance());
                 LeaderboardMenuView.getInstance().showLeaderboard();
-                return "";
+                return "Entering Leaderboard...";
             default:
                 return "Invalid menu name.";
         }
