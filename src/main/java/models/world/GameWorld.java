@@ -278,10 +278,10 @@ public abstract class GameWorld {
     private void updateAll() {
         activePlants.forEach(Plant::update);
         activeCollectables.forEach(Collectable::update);
-        List<Zombie> zombieSnapshot = new ArrayList<>(activeZombies);
-        zombieSnapshot.forEach(Zombie::update);
         List<Projectile> projectileSnapshot = new ArrayList<>(activeProjectiles);
         projectileSnapshot.forEach(Projectile::update);
+        List<Zombie> zombieSnapshot = new ArrayList<>(activeZombies);
+        zombieSnapshot.forEach(Zombie::update);
         if (!isConveyorMode) {
             for (PlantCard card : plantLists) {
                 card.update();
@@ -336,9 +336,6 @@ public abstract class GameWorld {
         updateAll();
         cleanupDeadZombies();
         removeIfDead();
-        for (Projectile projectile : activeProjectiles) {
-            System.out.println(projectile.getX());
-        }
         for (Cell[] row : grid) {
             for (Cell cell : row) {
                 if (cell.hasObstacle()) {

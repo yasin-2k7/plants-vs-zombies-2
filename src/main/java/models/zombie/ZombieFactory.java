@@ -50,8 +50,7 @@ public class ZombieFactory {
             case "ZombieRaProps" -> new SunStealerZombie(health, speed, eatDPS, true);
             case "ZombieCrystalSkullProps" -> new SunStealerZombie(health, speed, eatDPS, false);
             case "ZombieExplorerProps" -> new ElementalZombie(health, speed, eatDPS, true);
-            case "ZombieProspectorProps" ->
-                    new ElementalZombie(health, speed, eatDPS, false); // false = Prospector
+            case "ZombieProspectorProps" -> new ElementalZombie(health, speed, eatDPS, false);
             case "ZombieIceAgeHunterProps" -> new RangedZombie(health, speed, eatDPS, "SNOWBALL");
             case "ZombieBeachOctopusProps" -> new RangedZombie(health, speed, eatDPS, "OCTOPUS");
             case "ZombieTombRaiserProps" -> new RangedZombie(health, speed, eatDPS, "BONE");
@@ -70,6 +69,8 @@ public class ZombieFactory {
             case "ZombieBeachSnorkelProps" -> new SnorkelZombie(health, speed, eatDPS);
             case "ZombieImpProps" -> new ImpZombie(health, speed, eatDPS, false);
             case "ZombieDarkImpDragonProps" -> new ImpZombie(health, speed, eatDPS, true);
+            case "ZombieBarrelRollerProps" -> new BarrelRollerZombie(health, speed, eatDPS, 200);
+            case "ZombieTurquoiseProps" -> new SunStealerZombie(health, speed, eatDPS, false);
             default -> buildBasicZombie(health, eatDPS, speed, data);
         };
     }

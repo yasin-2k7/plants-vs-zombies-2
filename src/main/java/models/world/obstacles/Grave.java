@@ -63,8 +63,10 @@ public class Grave extends Obstacle {
             GameMenuController.updateState("A grave released 50 suns!");
         } else if (type == GraveType.PLANT_FOOD) {
             if (game.getPlantFoods() < 3) {
-                game.getActiveCollectables().add(new Collectable(x, y, CollectableType.PLANT_FOOD));
+                game.setPlantFoods(game.getPlantFoods() + 1);
                 GameMenuController.updateState("A grave released a plant food!");
+            } else {
+                GameMenuController.updateState("Plant food inventory is full, grave released nothing.");
             }
         }
         isCollected = true;

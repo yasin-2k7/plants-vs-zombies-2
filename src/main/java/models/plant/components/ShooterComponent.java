@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.function.Supplier;
 
 public class ShooterComponent implements GameComponent {
-    private static final int BURST_DELAY_MAX = 3;
+    private static final int BURST_DELAY_MAX = 1;
     private final int shootingTime;
     public PlantFoodBehavior plantFoodBehavior;
     Damageable target = null;

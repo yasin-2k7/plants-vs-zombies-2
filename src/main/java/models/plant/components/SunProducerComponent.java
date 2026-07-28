@@ -36,6 +36,7 @@ public class SunProducerComponent implements GameComponent {
         this.productionTime = productionTime;
         this.doubleSunChance = doubleSunChance;
         this.shroom = shroom;
+        this.checkShroomSize = shroom;
         this.sunNumberWithPlantFood = sunNumberWithPlantFood;
         this.growTimeToReduce = growTimeToReduce;
         this.isInstant = isInstant;
@@ -56,7 +57,7 @@ public class SunProducerComponent implements GameComponent {
             }
         }
 
-        if (lastProductionTicks >= productionTime * 10) {
+        if (lastProductionTicks >= productionTime * 10 || isInstant) {
             enable = false;
             lastProductionTicks = 0;
             for (int i = 0; i < sunNumber; i++) {

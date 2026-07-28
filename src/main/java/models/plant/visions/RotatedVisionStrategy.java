@@ -47,11 +47,4 @@ public class RotatedVisionStrategy implements VisionStrategy {
         return null;
     }
 
-    @Override
-    public boolean isOutOfRange(Projectile projectile) {
-        float xRel = projectile.getX() - projectile.getOriginX();
-        float yRel = projectile.getY() - projectile.getOriginY();
-        double xPrime = xRel * Math.cos(angle) + yRel * Math.sin(angle);
-        return xPrime > range;
-    }
 }

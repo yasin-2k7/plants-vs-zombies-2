@@ -31,6 +31,11 @@ public class PlantDamageStrategy implements HitStrategy {
     }
 
     @Override
+    public void resetState() {
+
+    }
+
+    @Override
     public void applyDamage(Plant target, Projectile projectile) {
         target.takeDamage(damage, (Zombie) null);
 

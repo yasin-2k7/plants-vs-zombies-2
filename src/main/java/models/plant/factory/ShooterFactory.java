@@ -1,5 +1,6 @@
 package models.plant.factory;
 
+import controller.LevelMenuController;
 import models.core.App;
 import models.enums.PlantLayer;
 import models.enums.PlantType;
@@ -9,6 +10,8 @@ import models.plant.components.BowlingChargeComponent;
 import models.plant.components.LifespanComponent;
 import models.plant.components.PlacementBehaviorComponent;
 import models.plant.components.ShooterComponent;
+import models.plant.components.shooterPlantFoodBehaviors.BurstPlantFood;
+import models.plant.components.shooterPlantFoodBehaviors.PlantFoodBehavior;
 import models.plant.components.shooterPlantFoodBehaviors.RandomTargetPlantFood;
 import models.plant.components.shooterPlantFoodBehaviors.ThreepeaterPlantFood;
 import models.plant.visions.RotatedVisionStrategy;
@@ -20,6 +23,8 @@ import models.projectile.movementStrategies.MovementStrategy;
 import models.projectile.movementStrategies.StraightMovementStrategy;
 import models.projectile.strikeStrategies.CheckLobbedStrike;
 import models.projectile.strikeStrategies.CheckStraightStrike;
+import models.world.Cell;
+import models.zombie.Zombie;
 
 import java.util.Map;
 import java.util.function.Supplier;
@@ -125,6 +130,16 @@ public class ShooterFactory {
         newComponent.getVisions().add(new StraightVisionStrategy(1000, App.getCellHeight(), false));
         MovementStrategy movementStrategy = new StraightMovementStrategy(5, 0, 0);
         newComponent.getMovementStrategies().add(() -> movementStrategy);
+        newComponent.setPlantFoodBehavior(new PlantFoodBehavior() {
+            @Override
+            public void activate(Plant owner, ShooterComponent shooterComponent) {
+                for (Zombie zombie : Cell.getZombiesInCells(Cell.getCellsInRow(p.getCell(),
+                        LevelMenuController.getGameCells()))){
+                    zombie.freeze(20);
+                    BurstPlantFood.INSTANCE.activate(p, newComponent);
+                }
+            }
+        });
         p.addComponent(newComponent);
         return p;
     }
@@ -144,7 +159,7 @@ public class ShooterFactory {
                     0, 0);
             final int finalI = i;
             shooterComponent.getVisions().add(new RotatedVisionStrategy(
-                    (float) (i * Math.PI / 2 + Math.PI / 4), App.getCellHeight(), 1000));
+                    (float) (i * Math.PI / 2 + Math.PI / 4), 100, 1000));
             MovementStrategy movementStrategy = new StraightMovementStrategy(
                     (float) (5 * Math.cos(finalI * Math.PI / 2 + Math.PI / 4)),
                     (float) (5 * Math.sin(finalI * Math.PI / 2 + Math.PI / 4)), 0);
@@ -217,7 +232,7 @@ public class ShooterFactory {
 
     private static Plant buildBowlingBulb() {
         int level = App.getCurrentUser().getUnlockedPlantsLevels().get(PlantType.BOWLING_BULB);
-        int regenReduce = level >= 2 ? 1 : 0;
+        int regenReduce = level >= 2 ? 10 : 0;
         int damageAddition = level >= 3 ? 15 : 0;
         CombinedDamageStrategy first = new CombinedDamageStrategy(180 + damageAddition, ProjectileType.LARGE_BULB);
         CombinedDamageStrategy second = new CombinedDamageStrategy(120 + damageAddition, ProjectileType.MEDIUM_BULB);
@@ -227,7 +242,7 @@ public class ShooterFactory {
         Plant p = new Plant(PlantType.BOWLING_BULB, 300, 0);
         p.addComponent(new BowlingChargeComponent(
                 20, first, second, third, () -> new BowlingMovementStrategy(
-                        5, 0), special, 2 - regenReduce, 5 - regenReduce, 10 - regenReduce));
+                        5, 0), special, 100 - regenReduce, 50 - regenReduce, 20 - regenReduce));
         return p;
     }
 
