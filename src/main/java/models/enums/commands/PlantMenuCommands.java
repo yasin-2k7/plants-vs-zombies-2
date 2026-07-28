@@ -9,7 +9,7 @@ public enum PlantMenuCommands {
     MENU_EXIT("^menu\\s+exit$"),
     SHOW_ALL_PLANTS("^show\\s+all\\s+plants$"),
     SHOW_AVAILABLE_PLANTS("^show\\s+available\\s+plants$"),
-    ADD_PLANT("^add\\s+plant\\s+-t\\s+(\\w+)$"),
+    ADD_PLANT("^add\\s+plant\\s+-t\\s+(\\w+)(?:\\s+(\\w+))?$"),
     REMOVE_PLANT("^remove\\s+plant\\s+-t\\s+(\\w+)$"),
     BOOST_PLANT("^boost\\s+plant\\s+-t\\s+(\\w+)$"),
     START_GAME("^start\\s+game$");

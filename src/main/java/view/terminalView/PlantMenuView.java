@@ -40,7 +40,13 @@ public class PlantMenuView implements View {
                         System.out.println(controller.showAvailablePlants());
                         return;
                     case ADD_PLANT:
-                        System.out.println(controller.addPlant(matcher.group(1)));
+                        String targetType = matcher.group(2);
+                        if (targetType != null){
+                            System.out.println(controller.addPlant(matcher.group(1),
+                                    matcher.group(2)));
+                        } else {
+                            System.out.println(controller.addPlant(matcher.group(1)));
+                        }
                         return;
                     case REMOVE_PLANT:
                         System.out.println(controller.removePlant(matcher.group(1)));
