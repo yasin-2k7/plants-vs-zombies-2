@@ -2,10 +2,12 @@ package models.plant.factory;
 
 import controller.LevelMenuController;
 import models.core.App;
+
 import models.enums.PlantLayer;
 import models.enums.PlantType;
 import models.plant.Plant;
 import models.plant.components.ExplosivesComponent;
+import models.plant.components.PlacementBehaviorComponent;
 import models.plant.components.explosionRanges.CircularRange;
 import models.plant.components.explosionRanges.LineRange;
 import models.plant.components.explosiveBehaviors.*;
@@ -43,7 +45,7 @@ public class ExplosiveFactory {
         int level = App.getCurrentUser().getUnlockedPlantsLevels().get(PlantType.POTATO_MINE);
         int armTime = level >= 2 ? 120 : 150;
         int damage = level >= 4 ? 2400 : 1800;
-        Plant p = new Plant(PlantType.POTATO_MINE, 1000, damage);
+        Plant p = new Plant(PlantType.POTATO_MINE, 300, damage);
         ExplosivesComponent component = new ExplosivesComponent(
                 new ProximityTrigger(App.getCellWidth()),
                 new AreaDamageBehavior(damage, new CircularRange(0)), armTime);
@@ -53,10 +55,9 @@ public class ExplosiveFactory {
             List<Cell> emptyCells = App.getCurrentGame().findTwoEmptyCell(false);
 
             for (Cell cell : emptyCells) {
-                Plant cloneMine = buildPotatoMine();
-                cloneMine.getComponent(ExplosivesComponent.class).instantArm();
-                cloneMine.getComponent(ExplosivesComponent.class).setPlantFoodBehavior(null);
-                cell.setPlant(cloneMine, PlantLayer.MAIN);
+                cell.handlePlanting(PlantType.POTATO_MINE);
+                cell.getPlant().getComponent(ExplosivesComponent.class).instantArm();
+                cell.getPlant().getComponent(ExplosivesComponent.class).setPlantFoodBehavior(null);
             }
         });
         p.addComponent(component);
@@ -67,7 +68,7 @@ public class ExplosiveFactory {
         int level = App.getCurrentUser().getUnlockedPlantsLevels().get(PlantType.PRIMAL_POTATO_MINE);
         int armTime = level >= 2 ? 40 : 50;
         int damage = level >= 4 ? 2800 : 2400;
-        Plant p = new Plant(PlantType.PRIMAL_POTATO_MINE, 1000, damage);
+        Plant p = new Plant(PlantType.PRIMAL_POTATO_MINE, 300, damage);
         ExplosivesComponent component = new ExplosivesComponent(
                 new ProximityTrigger(App.getCellWidth()),
                 new AreaDamageBehavior(damage, new CircularRange(1)), armTime);
@@ -77,10 +78,9 @@ public class ExplosiveFactory {
             List<Cell> emptyCells = App.getCurrentGame().findTwoEmptyCell(false);
 
             for (Cell cell : emptyCells) {
-                Plant cloneMine = buildPotatoMine();
-                cloneMine.getComponent(ExplosivesComponent.class).instantArm();
-                cloneMine.getComponent(ExplosivesComponent.class).setPlantFoodBehavior(null);
-                cell.setPlant(cloneMine, PlantLayer.MAIN);
+                cell.handlePlanting(PlantType.PRIMAL_POTATO_MINE);
+                cell.getPlant().getComponent(ExplosivesComponent.class).instantArm();
+                cell.getPlant().getComponent(ExplosivesComponent.class).setPlantFoodBehavior(null);
             }
         });
         p.addComponent(component);
@@ -111,7 +111,7 @@ public class ExplosiveFactory {
             Collections.shuffle(allZombies);
             allZombies.stream()
                     .limit(2)
-                    .forEach(Zombie::die);
+                    .forEach(zombie -> zombie.takeDamage(damage, "NORMAL"));
         });
         return p;
     }
@@ -119,7 +119,7 @@ public class ExplosiveFactory {
     private static Plant buildGrapeshot() {
         int level = App.getCurrentUser().getUnlockedPlantsLevels().get(PlantType.GRAPESHOT);
         int damage = level >= 2 ? 2400 : 1800;
-        int bounceMax = level >= 3 ? 4 : 3;
+        int bounceMax = level >= 3 ? 5 : 4;
         Plant p = new Plant(PlantType.GRAPESHOT, 1000, damage);
         p.addComponent(new ExplosivesComponent(InstantTrigger.INSTANCE,
                 new CompositeBehavior(new AreaDamageBehavior(
@@ -134,6 +134,7 @@ public class ExplosiveFactory {
         p.addComponent(new ExplosivesComponent(InstantTrigger.INSTANCE,
                 new CompositeBehavior(new AreaDamageBehavior(damage, LineRange.INSTANCE),
                         new MeltIceBehavior(LineRange.INSTANCE)), 0));
+        p.setFire(true);
         return p;
     }
 
@@ -167,6 +168,7 @@ public class ExplosiveFactory {
                     .forEach(Zombie::die);
         });
         p.addComponent(component);
+        p.addComponent(new PlacementBehaviorComponent(PlantLayer.MAIN, false, 0, true));
         return p;
     }
 
@@ -203,8 +205,10 @@ public class ExplosiveFactory {
         ExplosivesComponent component = new ExplosivesComponent(InstantTrigger.INSTANCE,
                 new MeltIceBehavior(new CircularRange(radius)), 0);
         if (level >= 4) {
-            component.scheduleDelayedBehavior(new AreaDamageBehavior(100, new CircularRange(1)), 20);
+            component.scheduleDelayedBehavior(new AreaDamageBehavior(100, new CircularRange(1)));
         }
+        p.addComponent(component);
+        p.setFire(true);
         return p;
     }
 
@@ -215,7 +219,7 @@ public class ExplosiveFactory {
         ExplosivesComponent component = new ExplosivesComponent(
                 InstantTrigger.INSTANCE, new RemoveGraveBehavior(), 0, delay);
         if (level >= 4) {
-            component.scheduleDelayedBehavior(new AreaDamageBehavior(100, new CircularRange(1)), delay);
+            component.scheduleDelayedBehavior(new AreaDamageBehavior(100, new CircularRange(1)));
         }
         p.addComponent(component);
         return p;

@@ -169,6 +169,7 @@ public class GameDetailsDisplayController {
             if (p != null) {
                 GameMenuView.getInstance().showResult(p.getType().name() +
                         " | health: " + p.getHealth() + " | damage: " + p.getDamage());
+                if (p.isFreeze()) GameMenuView.getInstance().showResult("ICE health: " + p.getIceHealth());
             }
         }
         GameMenuView.getInstance().showResult("zombies in this tile:");
@@ -198,6 +199,8 @@ public class GameDetailsDisplayController {
                 GameMenuView.getInstance().showResult("        slowed " + zombie.getSlowTicksRemaining());
             if (zombie.getIceHealth() > 0)
                 GameMenuView.getInstance().showResult("        ice health " + zombie.getIceHealth());
+            if (zombie.getOnPoisonTicksRemaining() > 0)
+                GameMenuView.getInstance().showResult("        poisoned " + zombie.getOnPoisonTicksRemaining());
             GameMenuView.getInstance().showResult("");
         }
     }

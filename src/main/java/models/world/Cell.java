@@ -12,6 +12,7 @@ import models.plant.factory.PlantFactory;
 import models.quest.QuestStats;
 import models.world.cellTerrains.CellTerrain;
 import models.world.obstacles.Grave;
+import models.world.obstacles.IceBlock;
 import models.world.obstacles.Obstacle;
 import models.zombie.Zombie;
 
@@ -32,6 +33,7 @@ public class Cell {
     private CellTerrain terrain;
     private boolean lowLyingCoast;
     private int slippingDir = 0;
+    private int craterTime = 0;
 
     private boolean plantable = true;
     private boolean necromancyPotential = false;
@@ -44,6 +46,12 @@ public class Cell {
         x = (col) * App.getCellWidth() + App.getCellWidth() / 2;
         y = (row) * App.getCellHeight() + App.getCellHeight() / 2;
         this.terrain = initialTerrain;
+    }
+
+    public void update(){
+        if (craterTime > 0){
+            craterTime--;
+        }
     }
 
     public static Cell findCell(float x, float y, Cell[][] grid) {
@@ -178,11 +186,12 @@ public class Cell {
         return basePlant == null && mainPlant == null && shieldPlant == null;
     }
 
-    public String handlePlanting(PlantType type, boolean boost) {
+    private Plant checkPlantable(PlantType type, boolean boost){
         if (!this.isPlantable()) {
             if (!(this.obstacle instanceof Grave && type == PlantType.GRAVE_BUSTER))
-                return "you cannot plant in that place!";
+                return null;
         }
+        if (craterTime > 0) return null;
         if (this.obstacle instanceof Grave grave && type == PlantType.GRAVE_BUSTER) {
             grave.releaseContent();
             this.obstacle = null;
@@ -193,8 +202,14 @@ public class Cell {
         if (((this.obstacle instanceof Grave) != (type == PlantType.GRAVE_BUSTER))
                 || !(this.terrain.canPlant(newPlant, this))
                 || (this.hasIcyZombie())) {
-            return "you cannot plant in that place!";
+            return null;
         }
+        return newPlant;
+    }
+
+    public String handlePlanting(PlantType type, boolean boost) {
+        Plant newPlant = checkPlantable(type, boost);
+        if (newPlant == null) return "you cannot plant in that place!";
         PlacementBehaviorComponent behavior = newPlant.getComponent(PlacementBehaviorComponent.class);
         PlantLayer layer = (behavior != null) ? behavior.getTargetLayer() : PlantLayer.MAIN;
         if (behavior != null && behavior.isStackable() && !isLayerEmpty(layer)) {
@@ -211,8 +226,9 @@ public class Cell {
                 }
             }
         }
-        if (isLayerEmpty(layer)) {
-            setPlant(newPlant, layer);
+
+        if (isLayerEmpty(layer) || type == PlantType.HOT_POTATO) {
+            if (type != PlantType.HOT_POTATO) setPlant(newPlant, layer);
             App.getCurrentGame().getActivePlants().add(newPlant);
             User user = App.getCurrentUser();
             if (user != null) {
@@ -366,6 +382,10 @@ public class Cell {
 
     public void setSlippingDir(int slippingDir) {
         this.slippingDir = slippingDir;
+    }
+
+    public void setCraterTime(int craterTime) {
+        this.craterTime = craterTime;
     }
 
     public boolean hasIcyZombie() {

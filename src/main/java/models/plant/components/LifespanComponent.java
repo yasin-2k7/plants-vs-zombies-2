@@ -30,7 +30,7 @@ public class LifespanComponent implements GameComponent {
     public void update(Plant owner) {
         timer++;
         if (timer >= maxLifeTime) {
-            owner.destroy();
+            owner.die();
         }
     }
 

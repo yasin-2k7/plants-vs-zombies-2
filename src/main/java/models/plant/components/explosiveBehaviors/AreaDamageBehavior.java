@@ -4,6 +4,7 @@ import models.core.App;
 import models.plant.Plant;
 import models.plant.components.explosionRanges.ExplosionRange;
 import models.world.Cell;
+import models.world.obstacles.Obstacle;
 import models.zombie.Zombie;
 
 import java.util.DoubleSummaryStatistics;
@@ -35,6 +36,11 @@ public class AreaDamageBehavior implements ExplosiveBehavior {
         for (Zombie zombie : App.getCurrentGame().getActiveZombies()) {
             if (zombie.getY() <= maxY && zombie.getY() >= minY && zombie.getX() <= maxX && zombie.getX() >= minX) {
                 zombie.takeDamage(damage, "NORMAL");
+            }
+        }
+        for (Obstacle obstacle : App.getCurrentGame().getActiveObstacles()) {
+            if (obstacle.getY() <= maxY && obstacle.getY() >= minY && obstacle.getX() <= maxX && obstacle.getX() >= minX) {
+                obstacle.takeDamage(damage, "NORMAL");
             }
         }
     }

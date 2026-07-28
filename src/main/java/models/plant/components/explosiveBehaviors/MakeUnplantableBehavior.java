@@ -18,7 +18,7 @@ public class MakeUnplantableBehavior implements ExplosiveBehavior {
         List<Cell> affectedCells = range.getCells(owner);
 
         for (Cell cell : affectedCells) {
-            cell.setPlantable(false);
+            cell.setCraterTime(300);
         }
     }
 }

@@ -28,6 +28,7 @@ public class Plant implements Damageable {
     private boolean freeze = false;
     private int iceHealth = 0;
     private boolean isFire = false;
+    private int warmRadius = 1;
     private boolean plantFoodInStart = false;
 
     public Plant(PlantType type, int health, int damage) {
@@ -56,9 +57,6 @@ public class Plant implements Damageable {
             plantFoodInStart = false;
         }
         for (GameComponent comp : components) {
-            if (type == PlantType.SUN_BEAN && comp instanceof SunProducerComponent) {
-                continue;
-            }
             comp.update(this);
         }
         if (isFire) {
@@ -67,8 +65,9 @@ public class Plant implements Damageable {
     }
 
     private void checkFire() {
-        List<Cell> neighborCells = Cell.getNeighborCells(cell, App.getCurrentGame().getGrid(), 1);
+        List<Cell> neighborCells = Cell.getNeighborCells(cell, App.getCurrentGame().getGrid(), warmRadius);
         for (Cell cell1 : neighborCells) {
+            if (cell1.getPlant() == null) continue;
             if (cell1.getPlant().freeze) {
                 cell1.getPlant().iceHealth -= 6;
                 if (cell1.getPlant().iceHealth <= 0) {
@@ -214,6 +213,7 @@ public class Plant implements Damageable {
     }
 
     public void activatePlantFood() {
+        GameMenuController.updateState("plant food is activated on " + type);
         for (GameComponent component : components) {
             component.activatePlantFood(this);
         }
@@ -227,10 +227,6 @@ public class Plant implements Damageable {
         this.health = health;
     }
 
-    public void destroy() {
-
-    }
-
     public void setFire(boolean fire) {
         isFire = fire;
     }
@@ -241,6 +237,14 @@ public class Plant implements Damageable {
 
     public void setPlantFoodInStart(boolean plantFoodInStart) {
         this.plantFoodInStart = plantFoodInStart;
+    }
+
+    public int getIceHealth() {
+        return iceHealth;
+    }
+
+    public void setWarmRadius(int warmRadius) {
+        this.warmRadius = warmRadius;
     }
 
     public boolean isCat() {
