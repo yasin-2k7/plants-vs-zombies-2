@@ -411,7 +411,7 @@ public class MiniGameFactory {
         );
 
         LevelSetup levelSetup = new NormalLevelSetup(5, 9,
-                Wave.generateWaves(5, 400, zombies, 40));
+                Wave.generateWaves(5, 400, zombies, 20));
         LoseCondition loseCondition = new NormalLose();
         WinCondition winCondition = new NormalWin();
         winCondition.setCurrentLevel(MiniGameLevels.ZOMBOTANY_3);

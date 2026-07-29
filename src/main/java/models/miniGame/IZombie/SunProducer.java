@@ -41,14 +41,7 @@ public class SunProducer extends Zombie {
 
     @Override
     public void takeDamage(int amount, String damageType) {
-        if (isDead) return;
-        if (health > 0) {
-            health -= amount;
-            if (health < 0) health = 0;
-            this.isDead = true;
-        } else {
-            super.takeDamage(amount, damageType);
-        }
+        super.takeDamage(amount, damageType);
     }
 
     @Override
