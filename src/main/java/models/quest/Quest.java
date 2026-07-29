@@ -12,7 +12,7 @@ public abstract class Quest implements Comparable<Quest> {
     private boolean isCompleted;
     private Reward reward;
     private transient Predicate<QuestStats> condition;
-    private boolean endGameDependent; // NEW
+    private boolean endGameDependent;
 
     public Quest(String id, String description, QuestPriority priority,
                  Predicate<QuestStats> condition, Reward reward, boolean endGameDependent) {

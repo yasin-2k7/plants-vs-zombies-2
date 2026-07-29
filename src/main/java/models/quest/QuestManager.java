@@ -18,6 +18,7 @@ public class QuestManager {
 
     public void checkAllQuests(User user, boolean isGameEnded) {
         QuestStats stats = user.getQuestStats();
+        Collections.sort(activeQuests);
         Iterator<Quest> iterator = activeQuests.iterator();
         while (iterator.hasNext()) {
             Quest quest = iterator.next();
@@ -151,11 +152,6 @@ public class QuestManager {
 
     private List<Chapter> getAvailableChapters(User user) {
         return Arrays.asList(Chapter.values());
-    }
-
-    public List<Quest> getSortedActiveQuests() {
-        Collections.sort(activeQuests);
-        return activeQuests;
     }
 
     public void addQuest(Quest quest) {

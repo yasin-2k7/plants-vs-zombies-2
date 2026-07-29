@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Random;
 
 public class PusherZombie extends Zombie {
-    private static final int ROW_SWITCH_INTERVAL = 50; // هر ۵۰ تیک یک بار
+    private static final int ROW_SWITCH_INTERVAL = 50;
     private String objectName;
     private int objectHealth;
     private int rowSwitchCooldown = 0;

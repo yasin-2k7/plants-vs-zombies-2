@@ -86,7 +86,7 @@ public class QuestFactory {
         String desc = "Finish a level with exactly 0 sun remaining";
         Predicate<QuestStats> condition = stats -> stats.getFinalSunCount() == 0;
         Reward reward = new CurrencyReward(0, 200);
-        return new EpicChallengeQuest(id, desc, condition, reward);
+        return new EpicChallengeQuest(id, desc, condition, reward, true);
     }
 
     // 7. سرعت عمل (Main)
@@ -131,7 +131,7 @@ public class QuestFactory {
         Predicate<QuestStats> condition = stats ->
                 stats.isOnlyFamilyKills() &&
                         stats.getExclusiveFamilyUsed() == family &&
-                        stats.getTotalZombiesKilled() >= 10; // حداقل ۱۰ کشته
+                        stats.getTotalZombiesKilled() >= 10;
         Reward reward = new CurrencyReward(1000, 0);
         return new DailyQuest(id, desc, QuestPriority.MEDIUM, condition, reward);
     }
@@ -144,7 +144,7 @@ public class QuestFactory {
         Predicate<QuestStats> condition = stats ->
                 stats.isLevelWon() && !stats.getFamiliesUsedInLevel().contains(family);
         Reward reward = new CurrencyReward(0, 100);
-        return new DailyQuest(id, desc, QuestPriority.HIGH, condition, reward);
+        return new DailyQuest(id, desc, QuestPriority.HIGH, condition, reward, true);
     }
 
     // 12. شب یا صبح (Epic)
@@ -154,13 +154,9 @@ public class QuestFactory {
         String desc = "Finish a day level using only mushroom plants (night plants)";
         Predicate<QuestStats> condition = stats -> {
             if (!stats.isLevelWon()) return false;
-            // بررسی اینکه مرحله روز باشد (نه شب)
             GameWorld game = App.getCurrentGame();
             if (game == null) return false;
-            // بررسی اینکه مرحله روز است (نه Dark Ages که شب است)
-            // و نه حالت شب در سایر مراحل
             if (game instanceof DarkAgesWorld) return false;
-            // همه گیاهان کاشته شده باید قارچ باشند
             return stats.getTotalPlantsUsedInLevel() > 0 &&
                     stats.getTotalPlantsUsedInLevel() == stats.getMushroomPlantsUsedInLevel();
         };
@@ -175,7 +171,7 @@ public class QuestFactory {
         String desc = "Win 5 consecutive levels with maximum difficulty (level 5)";
         Predicate<QuestStats> condition = stats -> stats.getConsecutiveWinsMaxDifficulty() >= 5;
         Reward reward = new CurrencyReward(5000, 0);
-        return new DailyQuest(id, desc, QuestPriority.MEDIUM, condition, reward);
+        return new DailyQuest(id, desc, QuestPriority.MEDIUM, condition, reward, true);
     }
 
     // 14. تقریبا پیروز (Daily)
@@ -230,7 +226,7 @@ public class QuestFactory {
         Predicate<QuestStats> condition = stats ->
                 stats.isLevelWon() && stats.getEmptyRowsInLevel().contains(n);
         Reward reward = new CurrencyReward(0, 20);
-        return new DailyQuest(id, desc, QuestPriority.HIGH, condition, reward);
+        return new DailyQuest(id, desc, QuestPriority.HIGH, condition, reward, true);
     }
 
     // 19. صلیب بی دفاع (Daily)
@@ -252,7 +248,7 @@ public class QuestFactory {
         String id = "epic_lawnmower_time_" + n + "_" + date;
         String desc = "Kill at least " + n + " zombies using lawnmowers";
         Predicate<QuestStats> condition = stats -> stats.getLawnmowerKills() >= n;
-        Reward reward = new CurrencyReward(0, n); // n الماس
+        Reward reward = new CurrencyReward(0, n);
         return new EpicChallengeQuest(id, desc, condition, reward);
     }
 }

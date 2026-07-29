@@ -18,10 +18,6 @@ public class ArmorProperties {
         return aliases;
     }
 
-    public String getObjclass() {
-        return objclass;
-    }
-
     public ArmorData getObjdata() {
         return objdata;
     }

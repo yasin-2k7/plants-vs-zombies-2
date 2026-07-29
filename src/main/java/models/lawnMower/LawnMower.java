@@ -19,7 +19,7 @@ public class LawnMower {
         this.row = row;
         this.isActive = false;
         this.isSpent = false;
-        this.positionX = 0.0; // مختصات ابتدای ردیف
+        this.positionX = 0.0;
     }
 
     public void activate() {
@@ -31,7 +31,7 @@ public class LawnMower {
         }
     }
 
-    public void checkCollision(Zombie firstZombieInRow) { //برخورد
+    public void checkCollision(Zombie firstZombieInRow) {
         if (firstZombieInRow != null && firstZombieInRow.getX() <= 0) {
             if (!isActive && !isSpent) {
                 activate();
@@ -39,15 +39,13 @@ public class LawnMower {
         }
     }
 
-    // متد نابود کردن زامبی‌ها هنگام عبور
-    // در LawnMower.mowZombies:
     public void mowZombies(List<Zombie> zombiesInRow) {
         if (!isActive) return;
 
         for (Zombie z : zombiesInRow) {
             if (!z.isDead() && z.getX() <= this.positionX) {
                 if (!z.isBoss()) {
-                    z.setKiller(null);  // چمن‌زن توسط گیاه کشته نشده
+                    z.setKiller(null);
                     z.takeDamage(99999, "MOWER");
 
                     User user = App.getCurrentUser();
@@ -72,7 +70,6 @@ public class LawnMower {
     }
 
     public boolean isOutOfBounds() {
-        // فرض می‌کنیم عرض صفحه بازی ۱۰۰۰ پیکسل است
         return positionX > 1000.0;
     }
 

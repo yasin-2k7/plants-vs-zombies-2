@@ -7,7 +7,7 @@ import models.zombie.state.EatingState;
 
 public class PhasingZombie extends Zombie {
     private boolean isPhaseChanged;
-    private boolean isNewspaper; // true: newspaper, false: all-star
+    private boolean isNewspaper;
     private int shieldHealth;
     private boolean hasKilledPlant;
 
