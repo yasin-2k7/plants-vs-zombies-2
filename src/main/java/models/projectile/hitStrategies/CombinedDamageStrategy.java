@@ -18,7 +18,6 @@ public class CombinedDamageStrategy implements HitStrategy {
     private int chillTime = 50;
     private int poisonDamageOnTick = 5;
     private ProjectileType projectileType;
-    private Damageable lastTarget = null;
 
     private CombinedDamageStrategy(int damage, int neighborDamage, float radius,
                                    String element, int chillTime, int poisonDamageOnTick,
@@ -73,12 +72,12 @@ public class CombinedDamageStrategy implements HitStrategy {
     @Override
     public void applyDamage(Damageable target, List<Damageable> allTargets, Projectile projectile) {
         String type = element != null ? element : "NORMAL";
-        if (target == lastTarget) return;
+        if (projectile.getLastTarget().contains(target)) return;
         if (projectile.getMovementStrategy() instanceof BowlingMovementStrategy bowlingMove) {
-            bowlingMove.onHit(target);
+            bowlingMove.onHit(target, projectile);
         }
         target.takeDamage(damage, type);
-        lastTarget = target;
+        projectile.addTarget(target);
         applySpecialDamage(target);
 
         if (target instanceof Zombie && projectile.getPlantType() != null) {
@@ -144,10 +143,7 @@ public class CombinedDamageStrategy implements HitStrategy {
         damage *= factor;
     }
 
-    @Override
-    public void resetState() {
-        lastTarget = null;
-    }
+
 
     @Override
     public void applyDamage(Plant plant, Projectile projectile) {

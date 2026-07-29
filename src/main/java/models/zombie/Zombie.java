@@ -183,7 +183,7 @@ public abstract class Zombie implements Damageable {
     }
 
     public void makePoisoned(int damageOnTick) {
-        onPoisonTicksRemaining = 7;
+        onPoisonTicksRemaining = 5;
         poisonDamage = damageOnTick;
     }
 
@@ -332,6 +332,10 @@ public abstract class Zombie implements Damageable {
     @Override
     public void takeDamage(int damage, Zombie zombie) {
 
+    }
+
+    public int getOnPoisonTicksRemaining() {
+        return onPoisonTicksRemaining;
     }
 
     public void eatBrainAndLeave() {

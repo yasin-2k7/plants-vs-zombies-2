@@ -16,6 +16,7 @@ import models.plant.components.shooterPlantFoodBehaviors.RandomTargetPlantFood;
 import models.plant.components.shooterPlantFoodBehaviors.ThreepeaterPlantFood;
 import models.plant.visions.RotatedVisionStrategy;
 import models.plant.visions.StraightVisionStrategy;
+import models.projectile.Projectile;
 import models.projectile.hitStrategies.CombinedDamageStrategy;
 import models.projectile.movementStrategies.BowlingMovementStrategy;
 import models.projectile.movementStrategies.LobbedMovementStrategy;
@@ -280,6 +281,7 @@ public class ShooterFactory {
         MovementStrategy movementStrategy = new StraightMovementStrategy(5, 0, 0);
         newComponent.getMovementStrategies().add(() -> movementStrategy);
         p.addComponent(newComponent);
+        p.setFire(true);
         return p;
     }
 
@@ -370,12 +372,18 @@ public class ShooterFactory {
                 new CheckStraightStrike(), 0, 1,
                 0, 0);
         newComponent.getVisions().add(new StraightVisionStrategy(range, App.getCellHeight(), false));
-        MovementStrategy movementStrategy = new StraightMovementStrategy(5, 0, 0);
+        MovementStrategy movementStrategy = new StraightMovementStrategy(5, 0, 0){
+            @Override
+            public boolean isDead(Projectile projectile) {
+                return projectile.getX() > p.getX()+range || projectile.getX() < 0 || projectile.getY() > 1000 || projectile.getY() < 0;
+            }
+        };
         newComponent.getMovementStrategies().add(() -> movementStrategy);
         p.addComponent(newComponent);
         LifespanComponent lifespanComponent = new LifespanComponent(PlantType.SEA_SHROOM, lifespan);
         if (App.getCurrentGame() != null) App.getCurrentGame().registerShroom(lifespanComponent);
         p.addComponent(lifespanComponent);
+        p.addComponent(new PlacementBehaviorComponent(PlantLayer.MAIN, false, 0, true));
         return p;
     }
 
@@ -392,7 +400,12 @@ public class ShooterFactory {
                 new CheckStraightStrike(), 0, 1,
                 0, 0);
         newComponent.getVisions().add(new StraightVisionStrategy(range, App.getCellHeight(), false));
-        MovementStrategy movementStrategy = new StraightMovementStrategy(5, 0, 0);
+        MovementStrategy movementStrategy = new StraightMovementStrategy(5, 0, 0){
+            @Override
+            public boolean isDead(Projectile projectile) {
+                return projectile.getX() > p.getX()+range || projectile.getX() < 0 || projectile.getY() > 1000 || projectile.getY() < 0;
+            }
+        };
         newComponent.getMovementStrategies().add(() -> movementStrategy);
         p.addComponent(newComponent);
         LifespanComponent lifespanComponent = new LifespanComponent(PlantType.PUFF_SHROOM, lifespan);
@@ -416,7 +429,12 @@ public class ShooterFactory {
         plantFoodStrategy.setElement("MOVE");
         newComponent.setPlantFoodStrategy(plantFoodStrategy);
         newComponent.getVisions().add(new StraightVisionStrategy(range, App.getCellHeight(), false));
-        MovementStrategy movementStrategy = new StraightMovementStrategy(10, 0, 0);
+        MovementStrategy movementStrategy = new StraightMovementStrategy(5, 0, 0){
+            @Override
+            public boolean isDead(Projectile projectile) {
+                return projectile.getX() > p.getX()+range || projectile.getX() < 0 || projectile.getY() > 1000 || projectile.getY() < 0;
+            }
+        };
         newComponent.getMovementStrategies().add(() -> movementStrategy);
         p.addComponent(newComponent);
         return p;
@@ -433,7 +451,7 @@ public class ShooterFactory {
                 ProjectileType.SPECIAL_CABBAGE, shootingTime, 1,
                 0, false, () -> combinedDamageStrategy,
                 new CheckLobbedStrike(), 0, 1,
-                0, 2);
+                0, 5);
         newComponent.getVisions().add(new StraightVisionStrategy(1000, App.getCellHeight(), true));
         newComponent.getMovementStrategies().add(LobbedMovementStrategy::new);
         newComponent.setPlantFoodBehavior(new RandomTargetPlantFood(6));
@@ -443,13 +461,13 @@ public class ShooterFactory {
 
     private static Plant buildKernelPult() {
         int level = App.getCurrentUser().getUnlockedPlantsLevels().get(PlantType.KERNEL_PULT);
-        float butterChance = level >= 2 ? 0.25f : 0.2f;
+        float butterChance = level >= 2 ? 0.35f : 0.3f;
         int damageAddition = level >= 3 ? 10 : 0;
         int health = level >= 4 ? 450 : 300;
         Plant p = new Plant(PlantType.KERNEL_PULT, health, 0);
         ShooterComponent newComponent = new ShooterComponent(ProjectileType.KERNEL,
                 ProjectileType.BUTTER, 29, 1,
-                0, false, null,
+                0, false, () -> new CombinedDamageStrategy(20 + damageAddition, ProjectileType.KERNEL),
                 new CheckLobbedStrike(), 0, 1,
                 0, 0);
         newComponent.getVisions().add(new StraightVisionStrategy(1000, App.getCellHeight(), true));
@@ -482,12 +500,12 @@ public class ShooterFactory {
         int aoeDamage = level >= 4 ? 55 : 40;
         Plant p = new Plant(PlantType.MELON_PULT, 300, damage);
         CombinedDamageStrategy combinedDamageStrategy = new CombinedDamageStrategy(
-                damage, aoeDamage, 200, ProjectileType.MELON);
+                damage, aoeDamage, 150, ProjectileType.MELON);
         ShooterComponent newComponent = new ShooterComponent(ProjectileType.MELON,
                 ProjectileType.SPECIAL_MELON, 29, 1,
                 0, false, () -> combinedDamageStrategy,
                 new CheckLobbedStrike(), 0, 1,
-                0, 2);
+                0, 4);
         newComponent.getVisions().add(new StraightVisionStrategy(1000, App.getCellHeight(), true));
         newComponent.getMovementStrategies().add(LobbedMovementStrategy::new);
         newComponent.setPlantFoodBehavior(new RandomTargetPlantFood(6));
@@ -500,13 +518,13 @@ public class ShooterFactory {
         int aoeDamage = level >= 3 ? 55 : 40;
         Plant p = new Plant(PlantType.WINTER_MELON, 300, 80);
         CombinedDamageStrategy combinedDamageStrategy = new CombinedDamageStrategy(
-                80, aoeDamage, 200, ProjectileType.ICE_MELON);
+                80, aoeDamage, 150, ProjectileType.ICE_MELON);
         combinedDamageStrategy.setElement("ICE");
         ShooterComponent newComponent = new ShooterComponent(ProjectileType.ICE_MELON,
                 ProjectileType.SPECIAL_ICE_MELON, 29, 1,
                 0, false, () -> combinedDamageStrategy,
                 new CheckLobbedStrike(), 0, 1,
-                0, 2);
+                0, 4);
         newComponent.getVisions().add(new StraightVisionStrategy(1000, App.getCellHeight(), true));
         newComponent.getMovementStrategies().add(LobbedMovementStrategy::new);
         newComponent.setPlantFoodBehavior(new RandomTargetPlantFood(6));
@@ -517,20 +535,21 @@ public class ShooterFactory {
     private static Plant buildPepperPult() {
         int level = App.getCurrentUser().getUnlockedPlantsLevels().get(PlantType.PEPPER_PULT);
         int damage = level >= 2 ? 65 : 50;
-        int radius = level >= 3 ? 250 : 200;
         Plant p = new Plant(PlantType.PEPPER_PULT, 300, damage);
         CombinedDamageStrategy combinedDamageStrategy = new CombinedDamageStrategy(
-                80, damage / 2, radius, ProjectileType.PEPPER);
+                80, damage / 2, 150, ProjectileType.PEPPER);
         combinedDamageStrategy.setElement("FIRE");
         ShooterComponent newComponent = new ShooterComponent(ProjectileType.PEPPER,
                 ProjectileType.SPECIAL_PEPPER, 29, 1,
                 0, false, () -> combinedDamageStrategy,
                 new CheckLobbedStrike(), 0, 1,
-                0, 2);
+                0, 4);
         newComponent.getVisions().add(new StraightVisionStrategy(1000, App.getCellHeight(), true));
         newComponent.getMovementStrategies().add(LobbedMovementStrategy::new);
         newComponent.setPlantFoodBehavior(new RandomTargetPlantFood(6));
         p.addComponent(newComponent);
+        if (level >= 3) p.setWarmRadius(2);
+        p.setFire(true);
         return p;
     }
 }

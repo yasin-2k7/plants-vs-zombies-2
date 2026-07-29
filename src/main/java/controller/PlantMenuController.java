@@ -77,7 +77,8 @@ public class PlantMenuController implements MenuController {
         }
 
         if (type == PlantType.IMITATOR) {
-            return "Error: Please specify target plant for Imitator (e.g., add plant imitator peashooter).";
+            return "Error: Please specify target plant for Imitator (e.g., add plant -t imitator " +
+                    "peashooter).";
         }
 
         if (!user.getUnlockedPlantsLevels().containsKey(type)) {

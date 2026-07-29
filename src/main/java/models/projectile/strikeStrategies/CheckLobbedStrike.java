@@ -2,9 +2,11 @@ package models.projectile.strikeStrategies;
 
 import models.Damageable;
 
+import java.util.List;
+
 public class CheckLobbedStrike implements CheckStrike {
     @Override
-    public Damageable strike(double x, double y, double oldX, double oldY) {
+    public Damageable strike(double x, double y, double oldX, double oldY, List<Damageable> lastTargets) {
         return null;
     }
 

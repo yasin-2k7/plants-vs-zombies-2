@@ -46,7 +46,6 @@ public abstract class GameWorld {
     protected List<Sun> activeSuns;
     protected List<Projectile> activeProjectiles;
     protected List<Obstacle> activeObstacles;
-    protected List<Damageable> activeTargets;
     protected LawnMowerManager lawnMowerManager;
     private GameState state;
     private int currentTick = 0;
@@ -85,7 +84,6 @@ public abstract class GameWorld {
         this.activeProjectiles = new ArrayList<>();
         this.activeCollectables = new ArrayList<>();
         this.activeObstacles = new ArrayList<>();
-        this.activeTargets = new ArrayList<>();
         this.lawnMowerManager = new LawnMowerManager();
         this.sunsPool = new GenericObjectPool<>(Sun::new);
         currentSun = 50;
@@ -296,11 +294,6 @@ public abstract class GameWorld {
         projectileSnapshot.forEach(Projectile::update);
         List<Zombie> zombieSnapshot = new ArrayList<>(activeZombies);
         zombieSnapshot.forEach(Zombie::update);
-        if (!isConveyorMode) {
-            for (PlantCard card : plantLists) {
-                card.update();
-            }
-        }
         if (!isConveyorMode) for (PlantCard card : plantLists) card.update();
         for (Sun sun : activeSuns) {
             if (sun.getProducer() == null && sun.isExpired()) {
@@ -308,6 +301,11 @@ public abstract class GameWorld {
             }
         }
         lawnMowerManager.updateMowers(activeZombies);
+        for (Cell[] cells : grid){
+            for (Cell cell : cells){
+                cell.update();
+            }
+        }
     }
 
     private void removeIfDead() {
@@ -508,10 +506,6 @@ public abstract class GameWorld {
 
     public List<Zombie> getActiveZombies() {
         return activeZombies;
-    }
-
-    public List<Damageable> getActiveTargets() {
-        return activeTargets;
     }
 
     public List<Projectile> getActiveProjectiles() {

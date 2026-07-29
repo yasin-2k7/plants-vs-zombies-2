@@ -10,7 +10,6 @@ public class BowlingMovementStrategy implements MovementStrategy {
     float speedX;
     float speedY;
     Random random = new Random();
-    private Damageable lastHitTarget = null;
 
     public BowlingMovementStrategy(float speedX, float speedY) {
         this.speedX = speedX*12;
@@ -33,9 +32,8 @@ public class BowlingMovementStrategy implements MovementStrategy {
         projectile.setY(projectile.getY() + (speedY));
     }
 
-    public void onHit(Damageable target) {
-        if (target != null && target != lastHitTarget) {
-            lastHitTarget = target;
+    public void onHit(Damageable target, Projectile projectile) {
+        if (target != null && !projectile.getLastTarget().contains(target)) {
             int sign;
             if (speedY == 0) {
                 if (target.getY() == App.getFirstCellY() + App.getCellHeight() / 2.0f) {

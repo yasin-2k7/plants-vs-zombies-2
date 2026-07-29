@@ -1,5 +1,6 @@
 package models.plant.components;
 
+import models.enums.PlantType;
 import models.plant.GameComponent;
 import models.plant.Plant;
 import models.plant.components.explosiveBehaviors.ExplosiveBehavior;
@@ -9,7 +10,7 @@ import models.world.Cell;
 public class ExplosivesComponent implements GameComponent {
     private ExplosiveBehavior explosiveBehavior;
     private ExplosiveTrigger triggerStrategy;
-    private int postTriggerDelay = 10;
+    private int postTriggerDelay = 7;
     private int maxPostTriggerDelay = 7;
     private boolean isArmed;
     private boolean isTriggered = false;
@@ -22,7 +23,6 @@ public class ExplosivesComponent implements GameComponent {
 
 
     private ExplosiveBehavior delayedBehavior;
-    private int delayTicksLeft = -2;
 
     public ExplosivesComponent(ExplosiveTrigger trigger, ExplosiveBehavior behavior, int armTime) {
         this.triggerStrategy = trigger;
@@ -60,7 +60,11 @@ public class ExplosivesComponent implements GameComponent {
                     postTriggerDelay = maxPostTriggerDelay;
                     isTriggered = false;
                 } else {
-                    owner.getCell().findAndRemovePlant();
+                    if (delayedBehavior != null) {
+                        delayedBehavior.execute(owner);
+                    }
+                    if (owner.getType() == PlantType.HOT_POTATO) owner.setCell(null);
+                    owner.die();
                 }
             }
             return;
@@ -69,15 +73,6 @@ public class ExplosivesComponent implements GameComponent {
         if (triggerStrategy.shouldTrigger(owner, this)) {
             isTriggered = true;
         }
-        if (delayTicksLeft > 0) {
-            delayTicksLeft--;
-            if (delayTicksLeft == 0) {
-                delayedBehavior.execute(owner);
-                delayTicksLeft = -1;
-                owner.getCell().findAndRemovePlant();
-            }
-        }
-
     }
 
     @Override
@@ -87,9 +82,8 @@ public class ExplosivesComponent implements GameComponent {
         }
     }
 
-    public void scheduleDelayedBehavior(ExplosiveBehavior behavior, int ticks) {
+    public void scheduleDelayedBehavior(ExplosiveBehavior behavior) {
         this.delayedBehavior = behavior;
-        this.delayTicksLeft = ticks;
     }
 
     public void setLives(int lives) {

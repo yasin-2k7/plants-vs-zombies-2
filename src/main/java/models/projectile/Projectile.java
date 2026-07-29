@@ -9,13 +9,18 @@ import models.plant.components.SunProducerComponent;
 import models.pool.Resettable;
 import models.projectile.hitStrategies.HitStrategy;
 import models.projectile.hitStrategies.PlantDamageStrategy;
+import models.projectile.movementStrategies.BouncingStrategy;
 import models.projectile.movementStrategies.MovementStrategy;
 import models.projectile.strikeStrategies.CheckStrike;
 import models.world.Cell;
 import models.world.GameWorld;
-import models.world.obstacles.Obstacle;
+import models.world.obstacles.Grave;
 import models.zombie.zombiesType.DeflectorZombie;
 import models.zombie.zombiesType.SnorkelZombie;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Stream;
 
 public class Projectile implements Resettable {
     private float x, y;
@@ -29,11 +34,12 @@ public class Projectile implements Resettable {
     private int pierce;
     private boolean dead = false;
     private PlantType plantType;
+    private List<Damageable> lastTargets = new ArrayList<>();
 
     void checkProjectilesTowardPlants(double oldX, double oldY) {
         Damageable plantTarget = null;
         if (type != null && type.movement != null) {
-            plantTarget = strikeStrategy.strike(x, y, oldX, oldY);
+            plantTarget = strikeStrategy.strike(x, y, oldX, oldY, null);
         }
 
         if (plantTarget instanceof Plant plant) {
@@ -49,23 +55,22 @@ public class Projectile implements Resettable {
     }
 
     public void update() {
-        System.out.println(hitStrategy.getDamage());
         double oldX = x;
         double oldY = y;
         movementStrategy.move(this);
 
         GameWorld game = App.getCurrentGame();
-        if (game != null) {
-            Cell cell = game.getCellAt(this.x, this.y);
-            if (cell != null && cell.hasObstacle() && cell.getObstacle().blocksProjectiles()) {
-                Obstacle obstacle = cell.getObstacle();
-                obstacle.takeDamage(hitStrategy.getDamage(), hitStrategy.getElement());
-                if (!obstacle.isDestroyed()) {
-                    dead = true;
-                    return;
-                }
-            }
-        }
+//        if (game != null) {
+//            Cell cell = game.getCellAt(this.x, this.y);
+//            if (cell != null && cell.hasObstacle() && cell.getObstacle().blocksProjectiles()) {
+//                Obstacle obstacle = cell.getObstacle();
+//                obstacle.takeDamage(hitStrategy.getDamage(), hitStrategy.getElement());
+//                if (!obstacle.isDestroyed()) {
+//                    dead = true;
+//                    return;
+//                }
+//            }
+//        }
 
         if (hitStrategy instanceof PlantDamageStrategy) {
             checkProjectilesTowardPlants(oldX, oldY);
@@ -94,7 +99,7 @@ public class Projectile implements Resettable {
             }
 
             if (type.movement.equals("STRAIGHT")) {
-                zombie = strikeStrategy.strike(x, y, oldX, oldY);
+                zombie = strikeStrategy.strike(x, y, oldX, oldY, lastTargets);
             } else if (type.movement.equals("LOBBED")) {
                 zombie = strikeStrategy.strike(x, y, target);
             }
@@ -114,7 +119,10 @@ public class Projectile implements Resettable {
                 }
             }
             if (hitStrategy != null) {
-                hitStrategy.applyDamage(zombie, App.getCurrentGame().getActiveTargets(), this);
+                hitStrategy.applyDamage(zombie, Stream.concat(
+                        App.getCurrentGame().getActiveZombies().stream(),
+                        App.getCurrentGame().getActiveObstacles().stream().filter(Grave.class::isInstance)
+                ).toList(), this);
             }
             pierce--;
             if (pierce == 0) {
@@ -146,7 +154,7 @@ public class Projectile implements Resettable {
         originX = x;
         originY = y;
         this.hitStrategy = hitStrategy;
-        this.hitStrategy.resetState();
+        lastTargets.clear();
         this.movementStrategy = movementStrategy;
         this.strikeStrategy = checkStrike;
         this.type = type;
@@ -203,6 +211,14 @@ public class Projectile implements Resettable {
             targetX = target.getX();
             targetY = target.getY();
         }
+    }
+
+    public List<Damageable> getLastTarget() {
+        return lastTargets;
+    }
+
+    public void addTarget(Damageable lastTarget) {
+        this.lastTargets.add(lastTarget);
     }
 
     public boolean isDead() {
