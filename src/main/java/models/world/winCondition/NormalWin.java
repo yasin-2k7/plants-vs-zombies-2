@@ -13,7 +13,11 @@ public class NormalWin implements WinCondition {
     public boolean checkWin(GameWorld game) {
         NormalMechanic mechanic = game.getMechanic(NormalMechanic.class);
         if (mechanic.getWaveManager().isLevelCompleted() && game.getActiveZombies().isEmpty()) {
-            if (currentLevel != null) App.getCurrentUser().getMiniGameLevels().add(currentLevel);
+            if (currentLevel != null){
+                App.getCurrentUser().getMiniGameLevels().add(currentLevel);
+                if (currentLevel.level != 3) App.getCurrentUser().notifyMinigameUnlocked(
+                        currentLevel.miniGame.name() + " " + (currentLevel.level+1));
+            }
 
             UserDataManager.saveUser(App.getCurrentUser());
         }

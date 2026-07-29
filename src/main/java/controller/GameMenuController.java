@@ -49,7 +49,8 @@ public class GameMenuController implements MenuController {
             if (currentLevelPoints > user.getMaxMupoint()) {
                 user.updateMupointRecord(currentLevelPoints);
                 UserDataManager.saveUser(user);
-                GameMenuView.getInstance().showResult("New High Score! Updated Mupoint record to: " + currentLevelPoints);
+                GameMenuView.getInstance().showResult("New High Score! " +
+                        "Updated Mupoint record to: " + currentLevelPoints);
             }
         }
         AppView.setCurrentScreen(MainMenuView.getInstance());
@@ -74,7 +75,8 @@ public class GameMenuController implements MenuController {
             if (currentLevelPoints > user.getMaxMupoint()) {
                 user.updateMupointRecord(currentLevelPoints);
                 UserDataManager.saveUser(user);
-                GameMenuView.getInstance().showResult("New High Score! Updated Mupoint record to: " + currentLevelPoints);
+                GameMenuView.getInstance().showResult("New High Score! " +
+                        "Updated Mupoint record to: " + currentLevelPoints);
             }
         }
         AppView.setCurrentScreen(MainMenuView.getInstance());

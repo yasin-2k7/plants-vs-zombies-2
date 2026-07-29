@@ -3,6 +3,7 @@ package controller;
 import models.core.App;
 import models.core.User;
 import models.miniGame.MiniGameFactory;
+import models.miniGame.MiniGameLevels;
 import models.miniGame.MiniGames;
 import models.quest.Quest;
 import models.quest.QuestPriority;
@@ -128,6 +129,18 @@ public class TravelLogMenuController implements MenuController {
         if (selected == null) {
             GameMenuView.getInstance().showResult("Invalid minigame name. Available: beghouled, bowling, vasebreaker," +
                     " izombie, zombotany.");
+            return;
+        }
+
+        boolean isUnlocked = false;
+        if (level != 1){
+            for (MiniGameLevels miniGameLevels : App.getCurrentUser().getMiniGameLevels()){
+                if (miniGameLevels.miniGame == selected && miniGameLevels.level == level-1) isUnlocked = true;
+                break;
+            }
+        }
+        if (!isUnlocked){
+            GameMenuView.getInstance().showResult("this mini game is locked!");
             return;
         }
 
