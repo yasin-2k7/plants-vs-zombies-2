@@ -77,7 +77,7 @@ public class WallNutFactory {
             @Override
             public int onTakeDamage(Plant owner, int damageAmount, Zombie attacker) {
                 attacker.takeDamage(owner.getDamage(), "NORMAL");
-                return 0;
+                return damageAmount;
             }
 
             @Override
@@ -131,6 +131,7 @@ public class WallNutFactory {
                             ExplosivesComponent explosivesComponent = new ExplosivesComponent(InstantTrigger.INSTANCE,
                                     new AreaDamageBehavior(damage, new CircularRange(1)), 0);
                             explosivesComponent.setPostTriggerDelay(0);
+                            explosivesComponent.update(owner);
                             explosivesComponent.update(owner);
                         }
                     });
@@ -191,7 +192,8 @@ public class WallNutFactory {
             public int onTakeDamage(Plant owner, int damageAmount, Zombie attacker) {
                 Sun sun = App.getCurrentGame().getSunsPool().acquire();
                 sun.reset(owner.getX(), owner.getY(), sunSize, null);
-                return 0;
+                App.getCurrentGame().addSunToPlayer(sunSize);
+                return damageAmount;
             }
         });
         return p;
