@@ -31,14 +31,10 @@ public class EatingState implements ZombieState {
                 }
 
                 if(world.getLevelSetup() instanceof SaveOurSeedsLevelSetup setup){
-                    System.out.println("Level is SaveOurSeeds");
-
                     boolean isProtected = setup.isProtectedPlant(targetPlant);
-                    System.out.println("Is plant protected? " + isProtected);
 
                     if (isProtected) {
                         SaveOurSeedsLose loseCondition = world.getLoseCondition(SaveOurSeedsLose.class);
-                        System.out.println("LoseCondition found? " + (loseCondition != null));
 
                         if (loseCondition != null) {
                             loseCondition.onProtectedPlantEaten();
