@@ -127,10 +127,10 @@ public class User {
     }
 
     public void initQuests() {
-        questManager.generateMainQuests(this);
-        questManager.generateEpicQuests(this);
+        questManager.generateMainQuests();
+        questManager.generateEpicQuests();
         questManager.resetDailyIfNeeded(this);
-        questManager.generateDailyQuests(this);
+        questManager.generateDailyQuests();
 
         for (Quest q : questManager.getActiveQuests()) {
             if (completedQuestIds.contains(q.getId())) {
@@ -193,12 +193,6 @@ public class User {
         return true;
     }
 
-    public void unlockNewPlant() {
-    }
-
-    public void advanceLevel() {
-    }
-
     public HashMap<PlantType, Integer> getUnlockedPlantsLevels() {
         return unlockedPlantsLevels;
     }
@@ -209,11 +203,6 @@ public class User {
 
     public void addBoost(PlantType type) {
         plantBoosts.put(type, true);
-        save();
-    }
-
-    public void useBoost(PlantType type) {
-        plantBoosts.put(type, false);
         save();
     }
 
@@ -252,15 +241,6 @@ public class User {
         this.plantFoods += count;
         save();
         return true;
-    }
-
-    public boolean usePlantFood() {
-        if (this.plantFoods > 0) {
-            this.plantFoods--;
-            save();
-            return true;
-        }
-        return false;
     }
 
     public GreenHouse getGreenhouse() {
@@ -443,10 +423,6 @@ public class User {
 
     public QuestStats getQuestStats() {
         return questStats;
-    }
-
-    public Set<String> getCompletedQuestIds() {
-        return completedQuestIds;
     }
 
     public void addCompletedQuest(String questId) {

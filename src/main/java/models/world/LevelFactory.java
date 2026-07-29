@@ -66,9 +66,7 @@ public class LevelFactory {
                 new WaveSpawnEntry("ZombieNewspaper", 450),
                 new WaveSpawnEntry("ZombieExplorer", 250)
         );
-
         List<Wave> waves = Wave.generateWaves(3, 2000, availableZombies, 60);
-
         LevelSetup levelSetup = new NormalLevelSetup(rows, cols, waves);
         LoseCondition loseCondition = new NormalLose();
         WinCondition winCondition = new NormalWin();
@@ -355,7 +353,7 @@ public class LevelFactory {
         );
         List<Wave> waves = Wave.generateWaves(4, 2000, availableZombies, 60);
         LevelSetup levelSetup = new NormalLevelSetup(rows, cols, waves);
-        LoseCondition loseCondition = new LoveYourPlantsLose(5);
+        LoveYourPlantsLose loseCondition = new LoveYourPlantsLose(5);
         WinCondition winCondition = new NormalWin();
         ArrayList<Mechanic> mechanics = new ArrayList<>();
         mechanics.add(new DarkAgesMechanic());
@@ -365,6 +363,7 @@ public class LevelFactory {
                 winCondition,
                 mechanics
         );
+        loseCondition.setGameListener(world);
         world.setCurrentChapter(Chapter.DARK_AGES);
         world.setWillUnlockLevel(true);
         return world;

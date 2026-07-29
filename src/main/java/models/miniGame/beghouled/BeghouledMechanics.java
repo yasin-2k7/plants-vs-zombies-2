@@ -316,7 +316,4 @@ public class BeghouledMechanics implements Mechanic {
         return targetScore;
     }
 
-    public Set<GridPosition> getCraters() {
-        return craters;
-    }
 }

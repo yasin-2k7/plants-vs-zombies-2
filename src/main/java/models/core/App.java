@@ -1,20 +1,15 @@
 package models.core;
 
-import controller.MenuController;
 import models.greenhouse.GreenHouse;
 import models.plant.factory.PlantFactory;
 import models.world.GameWorld;
-import view.View;
 
 public class App {
     private static final PlantFactory FACTORY = new PlantFactory();
     private static final float CELL_HEIGHT = 100;
     private static final float CELL_WIDTH = 100;
-    private static final float FIRST_CELL_X = 0;
     private static final float FIRST_CELL_Y = 0;
     private static User currentUser;
-    private static MenuController currentMenu;
-    private static View currentScreen;
     private static GameWorld currentGame;
 
     public static User getCurrentUser() {
@@ -23,10 +18,6 @@ public class App {
 
     public static void setCurrentUser(User currentUser) {
         App.currentUser = currentUser;
-    }
-
-    public static MenuController getCurrentMenu() {
-        return currentMenu;
     }
 
     public static GameWorld getCurrentGame() {
@@ -45,10 +36,6 @@ public class App {
         return CELL_WIDTH;
     }
 
-    public static float getFirstCellX() {
-        return FIRST_CELL_X;
-    }
-
     public static float getFirstCellY() {
         return FIRST_CELL_Y;
     }
@@ -60,10 +47,6 @@ public class App {
     public static GreenHouse getGreenhouse() {
         if (currentUser == null) return null;
         return currentUser.getGreenhouse();
-    }
-
-    public static View getCurrentScreen() {
-        return currentScreen;
     }
 
     public static String getArmoredZombieName(String id) {

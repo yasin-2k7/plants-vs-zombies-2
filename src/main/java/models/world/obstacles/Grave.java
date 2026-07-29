@@ -2,8 +2,6 @@ package models.world.obstacles;
 
 import controller.GameMenuController;
 import models.core.App;
-import models.enums.CollectableType;
-import models.world.Collectable;
 import models.world.GameWorld;
 
 public class Grave extends Obstacle {
@@ -30,13 +28,6 @@ public class Grave extends Obstacle {
         return type;
     }
 
-    public boolean isCollected() {
-        return isCollected;
-    }
-
-    public void setCollected(boolean collected) {
-        isCollected = collected;
-    }
 
     public boolean blocksProjectiles() {
         return !isDestroyed;

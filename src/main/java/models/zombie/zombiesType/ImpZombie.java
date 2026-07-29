@@ -5,18 +5,15 @@ import models.zombie.Zombie;
 
 public class ImpZombie extends Zombie {
     private boolean isDragon;
-    private boolean isThrown;
 
     public ImpZombie(int health, double speed, int damage, boolean isDragon) {
         super(Zombies.IMP, health, speed, damage);
         this.isDragon = isDragon;
-        this.isThrown = false;
     }
 
     public void throwImp(float targetX, float targetY) {
         this.x = targetX;
         this.y = targetY;
-        this.isThrown = true;
     }
 
     @Override
@@ -30,11 +27,5 @@ public class ImpZombie extends Zombie {
         super.takeDamage(amount, damageType);
     }
 
-    public boolean isDragon() {
-        return isDragon;
-    }
 
-    public boolean isThrown() {
-        return isThrown;
-    }
 }

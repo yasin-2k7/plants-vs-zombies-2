@@ -12,23 +12,10 @@ import java.util.Set;
 public class QuestStats {
     private int sunsCollectedToday;
     private int zombiesKilledToday;
-    private int explosivesUsedToday;
-    private boolean usedSymmetryToday;
     private LocalDate lastResetDate;
 
     private int totalZombiesKilled;
-    private int chaptersCleared;
-    private int consecutiveWins;
 
-    private int sunsInCurrentLevel;
-    private int zombiesKilledInLevel;
-    private boolean noLawnmowerUsed;
-    private boolean noCactusUsed;
-    private int mushroomNightCount;
-    private int columnsUsed;
-    private int rowsUsed;
-    private int emptyRowsAndCols;
-    private int frozenZombiesKilled;
     private Map<PlantType, Integer> zombiesKilledByPlant = new HashMap<>();
     private Map<String, Integer> zombiesKilledByFamily = new HashMap<>();
     private int sunProducerPlantsInLevel;
@@ -69,8 +56,6 @@ public class QuestStats {
     public void resetDailyStats() {
         this.sunsCollectedToday = 0;
         this.zombiesKilledToday = 0;
-        this.explosivesUsedToday = 0;
-        this.usedSymmetryToday = false;
         this.lastResetDate = LocalDate.now();
         this.explosivePlantsUsedInLevel = 0;
         this.symmetryAchieved = false;
@@ -83,15 +68,6 @@ public class QuestStats {
     }
 
     public void resetLevelStats() {
-        this.sunsInCurrentLevel = 0;
-        this.zombiesKilledInLevel = 0;
-        this.noLawnmowerUsed = true;
-        this.noCactusUsed = true;
-        this.mushroomNightCount = 0;
-        this.columnsUsed = 0;
-        this.rowsUsed = 0;
-        this.emptyRowsAndCols = 0;
-        this.frozenZombiesKilled = 0;
         this.sunProducerPlantsInLevel = 0;
         this.zombiesKilledByPlant.clear();
         this.zombiesKilledByFamily.clear();
@@ -120,9 +96,6 @@ public class QuestStats {
         this.sunsCollectedToday += amount;
     }
 
-    public int getZombiesKilledToday() {
-        return zombiesKilledToday;
-    }
 
     public void addZombiesKilledToday(int amount) {
         this.zombiesKilledToday += amount;
@@ -290,6 +263,7 @@ public class QuestStats {
     public void incrementZombiesKilledInFirstColumnWithoutMower() {
         this.zombiesKilledInFirstColumnWithoutMower++;
     }
+
 
     public int getSunProducerPlantsInLevel() {
         return sunProducerPlantsInLevel;

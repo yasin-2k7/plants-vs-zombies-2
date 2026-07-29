@@ -10,6 +10,10 @@ public class LoveYourPlantsLose implements LoseCondition {
         this.maxLosses = maxLosses;
     }
 
+    public void setGameListener(GameWorld gameWorld){
+        gameWorld.registerPlantEatenListener(this::onPlantEaten);
+    }
+
     public void onPlantEaten() {
         currentLosses++;
     }

@@ -38,7 +38,4 @@ public class PlantFactory {
         return newPlant;
     }
 
-    public static boolean isPlantSupported(PlantType type) {
-        return REGISTRY.containsKey(type);
-    }
 }

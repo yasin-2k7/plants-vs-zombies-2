@@ -63,25 +63,18 @@ public class GameMenuController implements MenuController {
         App.setCurrentGame(null);
         App.getCurrentUser().getPlantBoosts().clear();
     }
-
     public static void updateState(String state) {
         GameMenuView.getInstance().showResult(state);
     }
-
     @Override
-    public void changeMenu() {
-    }
-
+    public void changeMenu() {}
     @Override
     public void exitMenu() {
         App.setCurrentGame(null);
         App.getCurrentUser().getPlantBoosts().clear();
         AppView.setCurrentScreen(MainMenuView.getInstance());
     }
-
-    public void showCurrentMenu() {
-        GameMenuView.getInstance().showResult("Current menu: game menu");
-    }
+    public void showCurrentMenu() {GameMenuView.getInstance().showResult("Current menu: game menu");}
 
     public void advanceTime(int count) {
         if (count <= 0) {
@@ -224,12 +217,10 @@ public class GameMenuController implements MenuController {
         App.getCurrentGame().setPlantSelected(true);
         App.getCurrentGame().setSelectedPlant(selectedCard.getType());
     }
-
     public void unselectPlant() {
         App.getCurrentGame().setSelectedPlant(null);
         App.getCurrentGame().setPlantSelected(false);
     }
-
     public void plantSelectedPlant(float x, float y) {
         if (App.getCurrentGame().getSelectedPlant() == null) {
             GameMenuView.getInstance().showResult("select a plant first!");
@@ -256,9 +247,7 @@ public class GameMenuController implements MenuController {
         plantPlant(selectedCard, x, y);
     }
 
-    private Cell findCellAt(GameWorld game, float x, float y) {
-        return Cell.findCell(x, y, game.getGrid());
-    }
+    private Cell findCellAt(GameWorld game, float x, float y) {return Cell.findCell(x, y, game.getGrid());}
 
     public void plantPlant(PlantCard card, float x, float y) {
         if (App.getCurrentGame().getSun() < card.getSunCost()) {
@@ -304,11 +293,9 @@ public class GameMenuController implements MenuController {
             GameMenuView.getInstance().showResult("there is no plant in that place!");
         }
     }
-
     public void showPlantFoodsCount() {
         GameDetailsDisplayController.showPlantFoodsCount();
     }
-
     public void feedPlant(float x, float y) {
         if (App.getCurrentGame().getPlantFoods() <= 0) {
             GameMenuView.getInstance().showResult("you have not any plant foods!");
@@ -342,15 +329,10 @@ public class GameMenuController implements MenuController {
     public void showMap() {
         GameDetailsDisplayController.showMap();
     }
-
     public void showPlantsStatus() {
         GameDetailsDisplayController.showPlantsStatus();
     }
-
-    public void showTileStatus(float x, float y) {
-        GameDetailsDisplayController.showTileStatus(x, y);
-    }
-
+    public void showTileStatus(float x, float y) {GameDetailsDisplayController.showTileStatus(x, y);}
     public void zombieInfo() {
         GameDetailsDisplayController.zombieInfo();
     }
@@ -373,11 +355,9 @@ public class GameMenuController implements MenuController {
         }
         zombie.setX(x);
         zombie.setY(newY);
-
         App.getCurrentGame().getActiveZombies().add(zombie);
         GameMenuView.getInstance().showResult("Spawned " + type + " at (" + x + ", " + newY + ")");
     }
-
     //miniGames
     public void breakVase(int row, int col) {
         GameWorld game = App.getCurrentGame();
@@ -512,7 +492,7 @@ public class GameMenuController implements MenuController {
         if (waveManager.isWavesStarted()) {
             return "Error: Zombie waves have already started!";
         }
-        App.getCurrentGame().setPlantingPhase(true);
+        App.getCurrentGame().setPlantingPhase(false);
         waveManager.startWaves();
         return "Zombie waves started!";
     }

@@ -5,7 +5,6 @@ import models.enums.ProjectileType;
 import models.plant.Plant;
 import models.projectile.Projectile;
 import models.projectile.movementStrategies.BowlingMovementStrategy;
-import models.world.obstacles.IceBlock;
 import models.zombie.Zombie;
 
 import java.util.List;
@@ -124,8 +123,6 @@ public class CombinedDamageStrategy implements HitStrategy {
                         zombie.setIceHealth(0);
                     }
                     zombie.unfreeze();
-                } else if (target instanceof IceBlock) {
-                    target.takeDamage(600, "FIRE");
                 }
                 break;
             case "MOVE":

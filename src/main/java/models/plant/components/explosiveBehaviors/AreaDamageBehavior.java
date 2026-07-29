@@ -39,7 +39,8 @@ public class AreaDamageBehavior implements ExplosiveBehavior {
             }
         }
         for (Obstacle obstacle : App.getCurrentGame().getActiveObstacles()) {
-            if (obstacle.getY() <= maxY && obstacle.getY() >= minY && obstacle.getX() <= maxX && obstacle.getX() >= minX) {
+            if (obstacle.getY() <= maxY && obstacle.getY() >= minY &&
+                    obstacle.getX() <= maxX && obstacle.getX() >= minX) {
                 obstacle.takeDamage(damage, "NORMAL");
             }
         }

@@ -37,11 +37,5 @@ public class ArmoredZombie extends Zombie {
         return armorHealth;
     }
 
-    public void setArmorHealth(int armorHealth) {
-        this.armorHealth = armorHealth;
-    }
 
-    public boolean isMagnetic() {
-        return isMagnetic;
-    }
 }

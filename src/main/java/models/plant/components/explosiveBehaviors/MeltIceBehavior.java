@@ -3,7 +3,7 @@ package models.plant.components.explosiveBehaviors;
 import models.plant.Plant;
 import models.plant.components.explosionRanges.ExplosionRange;
 import models.world.Cell;
-import models.world.obstacles.IceBlock;
+import models.zombie.Zombie;
 
 import java.util.List;
 
@@ -20,11 +20,13 @@ public class MeltIceBehavior implements ExplosiveBehavior {
         List<Cell> affectedCells = area.getCells(owner);
 
         for (Cell cell : affectedCells) {
-            if (cell.hasObstacle() && cell.getObstacle() instanceof IceBlock) {
-                cell.removeObstacle();
-            }
             if (!cell.isEmpty() && cell.getPlant().isFreeze()) {
                 cell.getPlant().unfreeze();
+            }
+            for (Zombie zombie : Cell.getZombiesInCell(cell)){
+                if (zombie.getIceHealth() > 0){
+                    zombie.unfreeze();
+                }
             }
         }
     }

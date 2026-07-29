@@ -15,7 +15,6 @@ import java.util.*;
 public class PlantMenuController implements MenuController {
     private Set<PlantType> selectedPlants = new HashSet<>();
     private int maxSlots = 8;
-    private int numberOfLockedPlantsInList = 0;
     private Map<PlantType, Boolean> boosts = new HashMap<>();
     private PlantType imitatorTarget = null;
 
@@ -26,7 +25,6 @@ public class PlantMenuController implements MenuController {
     public void reset() {
         selectedPlants.clear();
         maxSlots = 8 - App.getCurrentGame().getPlantLists().size();
-        numberOfLockedPlantsInList = App.getCurrentGame().getPlantLists().size();
         this.imitatorTarget = null;
     }
 
@@ -245,14 +243,6 @@ public class PlantMenuController implements MenuController {
 
         AppView.setCurrentScreen(GameMenuView.getInstance());
         return "Starting game with selected plants...";
-    }
-
-    public Set<PlantType> getSelectedPlants() {
-        return Collections.unmodifiableSet(selectedPlants);
-    }
-
-    public boolean isBoosted(PlantType type) {
-        return boosts.getOrDefault(type, false);
     }
 
     @Override

@@ -116,9 +116,6 @@ public class Wave {
         return waveNumber;
     }
 
-    public int getTotalCost() {
-        return totalCost;
-    }
 
     public boolean isFlagWave() {
         return isFinalWave;

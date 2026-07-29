@@ -49,13 +49,7 @@ public class BouncingStrategy implements MovementStrategy {
         projectile.setY(projectile.getY() + (speedY * 12));
     }
 
-    public float getSpeedX() {
-        return speedX;
-    }
 
-    public float getSpeedY() {
-        return speedY;
-    }
 
     @Override
     public boolean isDead(Projectile projectile) {

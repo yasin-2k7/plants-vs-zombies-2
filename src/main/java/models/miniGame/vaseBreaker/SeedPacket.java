@@ -38,9 +38,6 @@ public class SeedPacket {
         return plantType;
     }
 
-    public boolean isCollected() {
-        return collected;
-    }
 
     public void collect() {
         this.collected = true;
