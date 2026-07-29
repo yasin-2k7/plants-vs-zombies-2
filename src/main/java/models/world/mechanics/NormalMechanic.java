@@ -28,7 +28,7 @@ public class NormalMechanic implements Mechanic {
                 .filter(Zombie::isDead)
                 .toList();
 
-        for (Zombie _ : deadZombies) {
+        for (Zombie zombie : deadZombies) {
             waveManager.onZombieKilled();
             world.notifyZombieKilled();
         }

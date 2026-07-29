@@ -33,9 +33,6 @@ public class PlantCard {
         activeCooldown = false;
     }
 
-    public void setActiveCooldown() {
-        activeCooldown = true;
-    }
 
     public PlantType getType() {
         return type;

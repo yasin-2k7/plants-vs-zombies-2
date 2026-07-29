@@ -129,7 +129,4 @@ public class IZombieLevel extends GameWorld {
         return Math.toIntExact(currentTick);
     }
 
-    public void setCurrentTick(long currentTick) {
-        this.currentTick = currentTick;
-    }
 }

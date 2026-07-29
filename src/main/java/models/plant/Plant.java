@@ -5,9 +5,7 @@ import models.Damageable;
 import models.core.App;
 import models.core.User;
 import models.enums.PlantType;
-import models.plant.components.SunProducerComponent;
 import models.world.Cell;
-import models.world.obstacles.IceBlock;
 import models.zombie.Zombie;
 
 import java.util.ArrayList;
@@ -41,7 +39,7 @@ public class Plant implements Damageable {
     public static boolean isMushroom(PlantType type) {
         return switch (type) {
             case SUN_SHROOM, PUFF_SHROOM, FUME_SHROOM, SEA_SHROOM,
-                 ICE_SHROOM, DOOM_SHROOM, MAGNET_SHROOM, HYPNO_SHROOM -> true;
+                 ICE_SHROOM, DOOM_SHROOM, MAGNET_SHROOM -> true;
             default -> false;
         };
     }
@@ -73,9 +71,6 @@ public class Plant implements Damageable {
                 if (cell1.getPlant().iceHealth <= 0) {
                     cell1.getPlant().unfreeze();
                 }
-            }
-            if (cell1.hasObstacle() && cell1.getObstacle() instanceof IceBlock iceBlock) {
-                iceBlock.takeDamage(6, "NORMAL");
             }
             for (Zombie zombie : Cell.getZombiesInCell(cell)) {
                 if (zombie.getIceHealth() > 0) {

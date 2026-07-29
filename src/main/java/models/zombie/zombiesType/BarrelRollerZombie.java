@@ -121,5 +121,4 @@ public class BarrelRollerZombie extends Zombie {
         super.die();
     }
 
-    public int getBarrelHealth() { return barrelHealth; }
 }

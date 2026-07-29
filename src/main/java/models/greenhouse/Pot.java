@@ -84,8 +84,4 @@ public class Pot {
     public void setReady(boolean ready) {
         isReady = ready;
     }
-
-    public long getPlantedTime() {
-        return plantedTime;
-    }
 }

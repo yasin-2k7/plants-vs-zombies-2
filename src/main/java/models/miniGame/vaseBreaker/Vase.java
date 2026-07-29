@@ -57,12 +57,4 @@ public class Vase {
     public VaseType getType() {
         return type;
     }
-
-    public Zombie getHiddenZombie() {
-        return hiddenZombie;
-    }
-
-    public SeedPacket getHiddenSeed() {
-        return hiddenSeed;
-    }
 }

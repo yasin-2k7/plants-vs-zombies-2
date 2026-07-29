@@ -9,6 +9,7 @@ import models.quest.Quest;
 import models.quest.QuestManager;
 import models.quest.QuestStats;
 
+import java.time.LocalDate;
 import java.util.*;
 
 public class User {
@@ -45,7 +46,8 @@ public class User {
     private transient QuestManager questManager = new QuestManager();
     private Set<String> completedQuestIds = new HashSet<>();
     private int maxMupoint = 0;
-
+    private LocalDate dailyOfferPurchaseDate;
+    private boolean dailyOfferPurchasedToday;
 
     public User() {
         this.plantBoosts = new HashMap<>();
@@ -124,13 +126,14 @@ public class User {
         if (this.completedQuestIds == null) {
             this.completedQuestIds = new HashSet<>();
         }
+        if (dailyOfferPurchaseDate == null) dailyOfferPurchaseDate = null;
     }
 
     public void initQuests() {
-        questManager.generateMainQuests(this);
-        questManager.generateEpicQuests(this);
+        questManager.generateMainQuests();
+        questManager.generateEpicQuests();
         questManager.resetDailyIfNeeded(this);
-        questManager.generateDailyQuests(this);
+        questManager.generateDailyQuests();
 
         for (Quest q : questManager.getActiveQuests()) {
             if (completedQuestIds.contains(q.getId())) {
@@ -193,12 +196,6 @@ public class User {
         return true;
     }
 
-    public void unlockNewPlant() {
-    }
-
-    public void advanceLevel() {
-    }
-
     public HashMap<PlantType, Integer> getUnlockedPlantsLevels() {
         return unlockedPlantsLevels;
     }
@@ -209,11 +206,6 @@ public class User {
 
     public void addBoost(PlantType type) {
         plantBoosts.put(type, true);
-        save();
-    }
-
-    public void useBoost(PlantType type) {
-        plantBoosts.put(type, false);
         save();
     }
 
@@ -252,15 +244,6 @@ public class User {
         this.plantFoods += count;
         save();
         return true;
-    }
-
-    public boolean usePlantFood() {
-        if (this.plantFoods > 0) {
-            this.plantFoods--;
-            save();
-            return true;
-        }
-        return false;
     }
 
     public GreenHouse getGreenhouse() {
@@ -445,10 +428,6 @@ public class User {
         return questStats;
     }
 
-    public Set<String> getCompletedQuestIds() {
-        return completedQuestIds;
-    }
-
     public void addCompletedQuest(String questId) {
         completedQuestIds.add(questId);
         save();
@@ -491,6 +470,18 @@ public class User {
 
     public void setGamesPlayed(int gamesPlayed) {
         this.gamesPlayed = gamesPlayed;
+    }
+
+    public boolean hasPurchasedDailyOfferToday() {
+        return dailyOfferPurchasedToday
+                && dailyOfferPurchaseDate != null
+                && dailyOfferPurchaseDate.equals(LocalDate.now());
+    }
+
+    public void markDailyOfferPurchased() {
+        this.dailyOfferPurchaseDate = LocalDate.now();
+        this.dailyOfferPurchasedToday = true;
+        save();
     }
 
     public int getNormalQuestsCount() {

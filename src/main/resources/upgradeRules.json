@@ -81,34 +81,6 @@
       "cooldownReductionTicks": 0
     }
   },
-  "CAULIPOWER": {
-    "2": {
-      "sunCostModifier": 0,
-      "cooldownReductionTicks": 20
-    },
-    "3": {
-      "sunCostModifier": 0,
-      "cooldownReductionTicks": 20
-    },
-    "4": {
-      "sunCostModifier": -50,
-      "cooldownReductionTicks": 20
-    }
-  },
-  "ELECTRIC_BLUEBERRY": {
-    "2": {
-      "sunCostModifier": 0,
-      "cooldownReductionTicks": 20
-    },
-    "3": {
-      "sunCostModifier": 0,
-      "cooldownReductionTicks": 20
-    },
-    "4": {
-      "sunCostModifier": -25,
-      "cooldownReductionTicks": 20
-    }
-  },
   "BOWLING_BULB": {
     "4": {
       "sunCostModifier": -25,
@@ -377,26 +349,6 @@
     "4": {
       "sunCostModifier": 0,
       "cooldownReductionTicks": 50
-    }
-  },
-  "HYPNO_SHROOM": {
-    "2": {
-      "sunCostModifier": -25,
-      "cooldownReductionTicks": 0
-    },
-    "3": {
-      "sunCostModifier": -25,
-      "cooldownReductionTicks": 0
-    },
-    "4": {
-      "sunCostModifier": -25,
-      "cooldownReductionTicks": 0
-    }
-  },
-  "CAT_TAIL": {
-    "4": {
-      "sunCostModifier": -25,
-      "cooldownReductionTicks": 0
     }
   },
   "IMITATER": {

@@ -15,7 +15,6 @@ import models.world.Cell;
 import models.world.mechanics.NormalMechanic;
 import models.world.obstacles.BarrelObstacle;
 import models.world.obstacles.Grave;
-import models.world.obstacles.IceBlock;
 import models.world.obstacles.Obstacle;
 import models.world.obstacles.OctopusObstacle;
 import models.zombie.Zombie;
@@ -62,8 +61,6 @@ public class GameDetailsDisplayController {
                 }
             } else if (obs instanceof OctopusObstacle) {
                 terrainSymbol = "🐙";
-            } else if (obs instanceof IceBlock) {
-                terrainSymbol = "🧊";
             } else if (obs instanceof BarrelObstacle) {
                 terrainSymbol = "🛢️";
             } else {

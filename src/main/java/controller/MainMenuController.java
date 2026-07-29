@@ -2,6 +2,7 @@ package controller;
 
 import models.core.App;
 import models.core.User;
+import models.core.UserManager;
 import models.mupoint.MuPointLevel;
 import models.world.GameWorld;
 import view.terminalView.*;
@@ -71,6 +72,7 @@ public class MainMenuController implements MenuController {
         if (user == null) {
             return "No user is logged in.";
         }
+        UserManager.logout();
         App.setCurrentUser(null);
         AppView.setCurrentScreen(SignupMenuView.getInstance());
         return "Logged out successfully.";

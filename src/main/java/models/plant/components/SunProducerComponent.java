@@ -2,6 +2,7 @@ package models.plant.components;
 
 import controller.GameMenuController;
 import models.core.App;
+import models.miniGame.IZombie.IZombieLevel;
 import models.plant.GameComponent;
 import models.plant.Plant;
 import models.world.Sun;
@@ -46,6 +47,7 @@ public class SunProducerComponent implements GameComponent {
     @Override
     public void update(Plant owner) {
 
+        if (App.getCurrentGame() instanceof IZombieLevel) return;
         tick();
 
         if (shroom && checkShroomSize) {

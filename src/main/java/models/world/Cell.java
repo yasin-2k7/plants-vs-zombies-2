@@ -12,7 +12,6 @@ import models.plant.factory.PlantFactory;
 import models.quest.QuestStats;
 import models.world.cellTerrains.CellTerrain;
 import models.world.obstacles.Grave;
-import models.world.obstacles.IceBlock;
 import models.world.obstacles.Obstacle;
 import models.zombie.Zombie;
 

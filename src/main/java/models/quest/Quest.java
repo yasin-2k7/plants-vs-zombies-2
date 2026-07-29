@@ -68,7 +68,4 @@ public abstract class Quest implements Comparable<Quest> {
         return priority;
     }
 
-    public Reward getReward() {
-        return reward;
-    }
 }

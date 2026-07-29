@@ -29,13 +29,6 @@ public class ShopMenuController implements MenuController {
         shopList.getPermanentItems().forEach(i ->
                 output.add(i.getName() + ": " + i.getCoinCost() + " coins / " + i.getDiamondCost() + " gems")
         );
-        output.add("--- Daily Offer ---");
-        if (shopList.getDailyOffer().isAvailableToday()) {
-            output.add(shopList.getDailyOffer().getName() + " costs " +
-                    shopList.getDailyOffer().getCoinCost() + " coins");
-        } else {
-            output.add("No daily offer available today.");
-        }
         return output;
     }
 

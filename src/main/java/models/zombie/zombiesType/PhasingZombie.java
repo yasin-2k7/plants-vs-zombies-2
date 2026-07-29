@@ -69,7 +69,4 @@ public class PhasingZombie extends Zombie {
         }
     }
 
-    public boolean isPhaseChanged() {
-        return isPhaseChanged;
-    }
 }

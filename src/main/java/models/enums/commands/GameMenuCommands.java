@@ -42,7 +42,8 @@ public enum GameMenuCommands {
     PLACE_ZOMBIE(
             "\\s*place\\s+zombie\\s+-t\\s+(?<type>\\S+)\\s+-l\\s+\\(\\s*(?<x>\\d+)\\s*,\\s*(?<y>\\d+)\\s*\\)\\s*"),
     THROW_BOWLING_BALL(
-            "\\s*throw\\s+bowling-ball\\s+-t\\s+(?<type>\\S+)\\s+-l\\s+\\(\\s*(?<x>\\d+)\\s*,\\s*(?<y>\\d+)\\s*\\)\\s*");
+            "\\s*throw\\s+bowling-ball\\s+-t\\s+" +
+                    "(?<type>\\S+)\\s+-l\\s+\\(\\s*(?<x>\\d+)\\s*,\\s*(?<y>\\d+)\\s*\\)\\s*");
 
 
     private final Pattern compiledPattern;

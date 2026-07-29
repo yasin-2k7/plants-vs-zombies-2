@@ -11,9 +11,6 @@ public class PlantDamageStrategy implements HitStrategy {
     private int damage;
     private String element = "NORMAL"; // مقادیر ممکن: "NORMAL", "ICE", "CHILL"
 
-    public PlantDamageStrategy(int damage) {
-        this.damage = damage;
-    }
 
     public PlantDamageStrategy(int damage, String element) {
         this.damage = damage;

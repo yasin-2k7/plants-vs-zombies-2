@@ -40,14 +40,14 @@ public class QuestManager {
         checkAllQuests(user, false);
     }
 
-    public void generateDailyQuests(User user) {
+    public void generateDailyQuests() {
         // 1. آفتاب‌گیر روزانه (با مقدار تصادفی از 3000، 4000، 5000)
         int sunAmount = getRandomSunAmount();
         DailyQuest sunQuest = QuestFactory.createDailySunCollectorQuest(sunAmount);
         activeQuests.add(sunQuest);
 
         // 3. plant باز حرفه‌ای (یک گیاه تصادفی که قدرت کشتن دارد)
-        PlantType randomKillerPlant = getRandomKillerPlant(user);
+        PlantType randomKillerPlant = getRandomKillerPlant();
         if (randomKillerPlant != null) {
             DailyQuest plantKillerQuest = QuestFactory.createPlantKillerQuest(randomKillerPlant);
             activeQuests.add(plantKillerQuest);
@@ -87,9 +87,9 @@ public class QuestManager {
         activeQuests.add(QuestFactory.createOCDQuest());
     }
 
-    public void generateMainQuests(User user) {
+    public void generateMainQuests() {
         // 2. شکارچی فصل (برای هر فصلی که کاربر آن را باز کرده است)
-        for (Chapter chapter : getAvailableChapters(user)) {
+        for (Chapter chapter : getAvailableChapters()) {
             MainQuest chapterQuest = QuestFactory.createChapterHunterQuest(chapter.name());
             activeQuests.add(chapterQuest);
         }
@@ -124,7 +124,7 @@ public class QuestManager {
     }
 
     // متد جدید برای تولید کوئست‌های Epic
-    public void generateEpicQuests(User user) {
+    public void generateEpicQuests() {
         // 6. استاد دفاع
         activeQuests.add(QuestFactory.createMasterDefenseQuest());
         // 12. شب یا صبح
@@ -142,7 +142,7 @@ public class QuestManager {
         return options[new Random().nextInt(options.length)];
     }
 
-    private PlantType getRandomKillerPlant(User user) {
+    private PlantType getRandomKillerPlant() {
         List<PlantType> killerPlants = Arrays.stream(PlantType.values())
                 .filter(pt -> pt.family != PlantFamily.SUN_PRODUCER && pt != PlantType.GRAVE_BUSTER)
                 .collect(Collectors.toList());
@@ -150,13 +150,10 @@ public class QuestManager {
         return killerPlants.get(new Random().nextInt(killerPlants.size()));
     }
 
-    private List<Chapter> getAvailableChapters(User user) {
+    private List<Chapter> getAvailableChapters() {
         return Arrays.asList(Chapter.values());
     }
 
-    public void addQuest(Quest quest) {
-        this.activeQuests.add(quest);
-    }
 
     public void resetDailyIfNeeded(User user) {
         LocalDate today = LocalDate.now();

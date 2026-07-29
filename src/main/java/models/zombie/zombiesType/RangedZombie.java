@@ -6,7 +6,6 @@ import models.enums.Zombies;
 import models.plant.Plant;
 import models.world.Cell;
 import models.world.GameWorld;
-import models.world.obstacles.Grave;
 import models.world.obstacles.OctopusObstacle;
 import models.zombie.Zombie;
 

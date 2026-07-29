@@ -27,7 +27,7 @@ public class MintFactory {
         int level = App.getCurrentUser().getUnlockedPlantsLevels().get(type);
         boolean resetCooldown = level >= 4;
         Plant p = new Plant(type, 300, 0);
-        p.addComponent(new MintComponent(type, owner -> {
+        p.addComponent(new MintComponent(type, _ -> {
             for (Plant plant : App.getCurrentGame().getActivePlants()) {
                 if (plant.getType().family == type.family) {
                     plant.activatePlantFood();

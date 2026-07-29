@@ -3,7 +3,6 @@ package models.plant.visions;
 import models.Damageable;
 import models.core.App;
 import models.plant.Plant;
-import models.projectile.Projectile;
 import models.world.GameWorld;
 import models.world.obstacles.Obstacle;
 import models.zombie.Zombie;

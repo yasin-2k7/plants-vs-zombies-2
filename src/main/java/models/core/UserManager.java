@@ -1,6 +1,6 @@
 package models.core;
 
-import controller.GameMenuController;
+
 
 
 public class UserManager {
@@ -71,13 +71,12 @@ public class UserManager {
         return currentUser;
     }
 
-    public void logout() {
+    public static void logout() {
         if (currentUser != null) {
             UserDataManager.saveUser(currentUser); // ذخیره نهایی قبل از خروج
             currentUser = null;
             App.setCurrentUser(null);
             UserDataManager.clearLoggedInUser();
-            GameMenuController.updateState("You have been logged out.");
         }
     }
 }

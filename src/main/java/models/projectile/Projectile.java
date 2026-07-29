@@ -9,7 +9,6 @@ import models.plant.components.SunProducerComponent;
 import models.pool.Resettable;
 import models.projectile.hitStrategies.HitStrategy;
 import models.projectile.hitStrategies.PlantDamageStrategy;
-import models.projectile.movementStrategies.BouncingStrategy;
 import models.projectile.movementStrategies.MovementStrategy;
 import models.projectile.strikeStrategies.CheckStrike;
 import models.world.Cell;
@@ -58,34 +57,18 @@ public class Projectile implements Resettable {
         double oldX = x;
         double oldY = y;
         movementStrategy.move(this);
-
         GameWorld game = App.getCurrentGame();
-//        if (game != null) {
-//            Cell cell = game.getCellAt(this.x, this.y);
-//            if (cell != null && cell.hasObstacle() && cell.getObstacle().blocksProjectiles()) {
-//                Obstacle obstacle = cell.getObstacle();
-//                obstacle.takeDamage(hitStrategy.getDamage(), hitStrategy.getElement());
-//                if (!obstacle.isDestroyed()) {
-//                    dead = true;
-//                    return;
-//                }
-//            }
-//        }
-
         if (hitStrategy instanceof PlantDamageStrategy) {
             checkProjectilesTowardPlants(oldX, oldY);
             return;
         }
         Damageable zombie = null;
         if (type != null && type.movement != null) {
-
-            //  برخورد تیر مستقیم گیاهان به گیاهان یخ‌زده
             if (type.movement.equals("STRAIGHT") && !(hitStrategy instanceof PlantDamageStrategy)) {
                 if (game != null) {
                     Cell currentCell = game.getCellAt(this.x, this.y);
                     if (currentCell != null && currentCell.getPlant() != null) {
                         Plant p = currentCell.getPlant();
-                        // بررسی اینکه گیاه یخ زده باشد و گیاه شلیک‌کننده خودش نباشد
                         if (p.isFreeze() && p.getX() > this.originX + 20) {
                             p.takeDamage(hitStrategy.getDamage(), (models.zombie.Zombie) null);
                             pierce--;
@@ -97,20 +80,17 @@ public class Projectile implements Resettable {
                     }
                 }
             }
-
             if (type.movement.equals("STRAIGHT")) {
                 zombie = strikeStrategy.strike(x, y, oldX, oldY, lastTargets);
             } else if (type.movement.equals("LOBBED")) {
                 zombie = strikeStrategy.strike(x, y, target);
             }
         }
-
-        if (zombie != null && zombie instanceof SnorkelZombie snorkel) {
+        if (zombie instanceof SnorkelZombie snorkel) {
             if (snorkel.isUnderwater() && type != null && "STRAIGHT".equals(type.movement)) {
                 zombie = null;
             }
         }
-
         if (zombie != null) {
             if (zombie instanceof DeflectorZombie deflector) {
                 if (deflector.tryDeflect(this)) {
@@ -130,9 +110,7 @@ public class Projectile implements Resettable {
                 return;
             }
         }
-        if (movementStrategy.isDead(this)) {
-            dead = true;
-        }
+        if (movementStrategy.isDead(this)) dead = true;
     }
 
     @Override
