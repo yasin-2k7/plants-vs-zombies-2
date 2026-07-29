@@ -13,7 +13,7 @@ import models.world.GameWorld;
 import models.zombie.Zombie;
 
 public class DeflectorZombie extends Zombie {
-    private static final double SPIN_SPEED_MULTIPLIER = 1.8;  // افزایش سرعت در حالت چرخش
+    private static final double SPIN_SPEED_MULTIPLIER = 1.8;
     private final boolean isJuggler;
     private boolean isSpinning = false;
     private int spinTicks = 0;

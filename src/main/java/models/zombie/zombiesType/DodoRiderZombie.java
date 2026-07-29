@@ -106,7 +106,7 @@ public class DodoRiderZombie extends Zombie {
 
         if (!isDead && isRiding && this.health <= this.maxHealth / 2) {
             isRiding = false;
-            this.speed = this.originalSpeed * 0.6; // کندتر می‌شود
+            this.speed = this.originalSpeed * 0.6;
             GameMenuController.updateState("Dodo Rider lost its mount!");
         }
     }

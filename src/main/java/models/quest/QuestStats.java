@@ -275,10 +275,6 @@ public class QuestStats {
         return consecutiveWinsMaxDifficulty;
     }
 
-    public void setConsecutiveWinsMaxDifficulty(int consecutiveWins) {
-        this.consecutiveWinsMaxDifficulty = consecutiveWins;
-    }
-
     public void incrementConsecutiveWinsMaxDifficulty() {
         this.consecutiveWinsMaxDifficulty++;
     }

@@ -8,6 +8,7 @@ import models.core.UserDataManager;
 import models.enums.Chapter;
 import models.enums.PlantFamily;
 import models.enums.PlantType;
+import models.lawnMower.LawnMower;
 import models.lawnMower.LawnMowerManager;
 import models.mupoint.KillEvent;
 import models.mupoint.MupointManager;
@@ -232,6 +233,19 @@ public abstract class GameWorld {
                 stats.incrementZombiesKilledInFirstWave();
             }
         }
+
+        int col = (int) (zombie.getX() / App.getCellWidth()); // کوست14
+        int row = (int) (zombie.getY() / App.getCellHeight());
+        if (col == 0) {
+            LawnMower mower = null;
+            if (lawnMowerManager != null && row < lawnMowerManager.getMowers().size()) {
+                mower = lawnMowerManager.getMowers().get(row);
+            }
+            if (mower == null || !mower.isAlive()) {
+                stats.incrementZombiesKilledInFirstColumnWithoutMower();
+            }
+        }
+
         user.getQuestManager().checkAllQuests(user, false);
         processZombieDeathMu(zombie);
     }

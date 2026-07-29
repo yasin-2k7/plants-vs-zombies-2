@@ -22,14 +22,14 @@ public abstract class Zombie implements Damageable {
     protected int health;
     protected int maxHealth;
     protected double speed;
-    protected double originalSpeed = speed; // سرعت اصلی برای بازگردانی پس از کندی
+    protected double originalSpeed = speed;
     protected int damage;
     protected boolean isDead = false;
     protected float x, y;
     protected ZombieState currentState;
     protected List<String> armorTypes = new ArrayList<>();
-    private int slowTicksRemaining = 0;          // تعداد تیک‌های باقی‌مانده از کندی
-    private double slowFactor = 0.5;            // ضریب کندی
+    private int slowTicksRemaining = 0;
+    private double slowFactor = 0.5;
     private int disabledTicksRemaining;
     private int freezedTicksRemaining;
     private int onPoisonTicksRemaining;
@@ -112,7 +112,7 @@ public abstract class Zombie implements Damageable {
     public void takeDamage(int amount, String damageType) {
         if (isDead) return;
         if (iceHealth > 0) {
-            iceHealth -= amount; // اصلاح شد: استفاده از مقدار دمیج دریافتی (amount) به جای فیلد damage زامبی
+            iceHealth -= amount;
             if (iceHealth <= 0) {
                 unfreeze();
             }

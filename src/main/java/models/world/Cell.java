@@ -244,7 +244,6 @@ public class Cell {
                 if (newPlant.getType().family == PlantFamily.SUN_PRODUCER) {
                     stats.incrementSunProducerPlantsInLevel();
                 }
-//                user.getQuestManager().checkAllQuests(user);
             }
             return null;
         }

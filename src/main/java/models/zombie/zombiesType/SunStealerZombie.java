@@ -12,8 +12,8 @@ import models.zombie.Zombie;
 import java.util.List;
 
 public class SunStealerZombie extends Zombie {
-    private static final int STEAL_INTERVAL = 15;  // 1 second (15 ticks)
-    private static final int LASER_DELAY = 75;     // 5 seconds
+    private static final int STEAL_INTERVAL = 15;
+    private static final int LASER_DELAY = 75;
     private int stolenSun;
     private boolean isRa;
     private int stealTimer;
