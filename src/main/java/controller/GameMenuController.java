@@ -276,7 +276,8 @@ public class GameMenuController implements MenuController {
         PlantType type;
         if (card instanceof ImitatorCard imitatorCard) {
             type = imitatorCard.getTargetType();
-            error = selectedCell.handlePlanting(type, true);
+            error = selectedCell.handlePlanting(type,
+                    App.getCurrentUser().getUnlockedPlantsLevels().get(PlantType.IMITATOR)>=4);
         } else {
             type = card.getType();
             error = selectedCell.handlePlanting(type, App.getCurrentUser().hasBoost(type));
