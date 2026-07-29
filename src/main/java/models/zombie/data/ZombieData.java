@@ -7,8 +7,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ZombieData {
-    @JsonProperty("Hitpoints") // نام اصلی در جی‌سان
-    @JsonAlias("hitpoints")    // نام جایگزین
+    @JsonProperty("Hitpoints")
+    @JsonAlias("hitpoints")
     private int hitpoints;
 
     @JsonProperty("EatDPS")
@@ -42,7 +42,6 @@ public class ZombieData {
     @JsonProperty("HealthPercentThrowImp")
     @JsonAlias("healthPercentThrowImp")
     private Integer healthPercentThrowImp;
-    // سایر فیلدهای خاص بر اساس objclass (مثل MaxTorchReach, MaxClaimedSunCurrency و ...)
 
     public int getHitpoints() {
         return hitpoints;
@@ -56,27 +55,8 @@ public class ZombieData {
         return speed;
     }
 
-    public int getWavePointCost() {
-        return wavePointCost;
-    }
-
-    public int getWeight() {
-        return weight;
-    }
-
     public List<String> getZombieArmorProps() {
         return zombieArmorProps;
     }
 
-    public Integer getImpTargetColumn() {
-        return impTargetColumn;
-    }
-
-    public String getImpType() {
-        return impType;
-    }
-
-    public Integer getHealthPercentThrowImp() {
-        return healthPercentThrowImp;
-    }
 }

@@ -40,7 +40,7 @@ public class LawnMowerManager {
 
     private void checkActivations(List<Zombie> allZombies) {
         for (Zombie z : allZombies) {
-            if (!z.isDead() && z.getX() <= 0) { // انتهای خط رسیده
+            if (!z.isDead() && z.getX() <= 0) {
                 int row = getRowFromY(z.getY());
                 LawnMower mower = getMowerByRow(row);
 
@@ -49,11 +49,7 @@ public class LawnMowerManager {
                         mower.activate();
                     } else if (mower.isSpent()) {
 
-
-                        // TODO: در اینجا باید به GameWorld سیگنال باخت ارسال کنید
                         App.getCurrentGame().setState(GameState.LOST);
-
-                        // برای جلوگیری از اسپم شدن پیام، زامبی را متوقف یا بازی را فریز می‌کنیم
                         z.setSpeed(0);
                     }
                 }

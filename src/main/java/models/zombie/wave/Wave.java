@@ -30,7 +30,6 @@ public class Wave {
         this.isFinalWave = isFinalWave;
     }
 
-    // متد کمکی برای تولید خودکار موج بر اساس هزینه کل و لیست ورودی‌های مجاز
     public static Wave generateRandomWave(int waveNumber,
                                           int totalCost,
                                           List<WaveSpawnEntry> availableEntries,
@@ -39,16 +38,13 @@ public class Wave {
         List<WaveSpawnEntry> generatedEntries = new ArrayList<>();
         int currentCost = 0;
 
-        // تا زمانی که بودجه داریم و زامبی‌های مجاز تعریف شده‌اند
         while (currentCost < totalCost && !availableEntries.isEmpty()) {
             WaveSpawnEntry randomEntry = availableEntries.get(random.nextInt(availableEntries.size()));
 
-            // بررسی اینکه آیا اضافه کردن این زامبی از سقف سختی مجاز فراتر می‌رود یا خیر
             if (currentCost + randomEntry.getWavePointCost() <= totalCost) {
                 generatedEntries.add(new WaveSpawnEntry(randomEntry.getZombieAlias(), randomEntry.getWavePointCost()));
                 currentCost += randomEntry.getWavePointCost();
             } else {
-                // اگر هزینه این نمونه زیاد بود، لیست را چک می‌کنیم؛ اگر هیچ زامبی کم امتیاز تری پیدا نشد خارج می‌شویم
                 boolean canAddAny = false;
                 for (WaveSpawnEntry entry : availableEntries) {
                     if (currentCost + entry.getWavePointCost() <= totalCost) {

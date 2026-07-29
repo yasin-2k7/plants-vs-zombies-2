@@ -1,5 +1,6 @@
 package models.plant.factory;
 
+import controller.GameMenuController;
 import models.core.App;
 import models.enums.PlantLayer;
 import models.enums.PlantType;
@@ -10,6 +11,7 @@ import models.plant.components.explosiveBehaviors.AreaDamageBehavior;
 import models.plant.components.explosiveTriggers.InstantTrigger;
 import models.plant.components.moveZombieStrategy.AttractStrategy;
 import models.plant.components.moveZombieStrategy.EjectStrategy;
+import models.world.GameWorld;
 import models.world.Sun;
 import models.zombie.Zombie;
 
@@ -145,6 +147,7 @@ public class WallNutFactory {
                 ExplosivesComponent explosivesComponent = new ExplosivesComponent(InstantTrigger.INSTANCE,
                         new AreaDamageBehavior(damage, new CircularRange(1)), 0);
                 explosivesComponent.setPostTriggerDelay(0);
+                explosivesComponent.update(owner);
                 explosivesComponent.update(owner);
             }
         });

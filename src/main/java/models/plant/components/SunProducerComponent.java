@@ -65,9 +65,6 @@ public class SunProducerComponent implements GameComponent {
                 componentSuns.add(produceSun(owner));
             }
             if (isInstant) {
-                if (owner.getCell() != null) {
-                    owner.getCell().findAndRemovePlant();
-                }
                 owner.die();
                 return;
             }

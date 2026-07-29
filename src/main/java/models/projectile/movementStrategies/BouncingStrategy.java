@@ -25,9 +25,11 @@ public class BouncingStrategy implements MovementStrategy {
         if (projectile.getX() <= 0 && speedX < 0) {
             speedX = -speedX;
             bounceCount++;
+            projectile.getLastTarget().clear();
         } else if (projectile.getX() >= 1000 && speedX > 0) {
             speedX = -speedX;
             bounceCount++;
+            projectile.getLastTarget().clear();
         }
 
         float bottomLimit = App.getFirstCellY();
@@ -36,13 +38,23 @@ public class BouncingStrategy implements MovementStrategy {
         if (projectile.getY() <= bottomLimit && speedY < 0) {
             speedY = -speedY;
             bounceCount++;
+            projectile.getLastTarget().clear();
         } else if (projectile.getY() >= topLimit && speedY > 0) {
             speedY = -speedY;
             bounceCount++;
+            projectile.getLastTarget().clear();
         }
 
-        projectile.setX(projectile.getX() + (speedX * 10));
-        projectile.setY(projectile.getY() + (speedY * 10));
+        projectile.setX(projectile.getX() + (speedX * 12));
+        projectile.setY(projectile.getY() + (speedY * 12));
+    }
+
+    public float getSpeedX() {
+        return speedX;
+    }
+
+    public float getSpeedY() {
+        return speedY;
     }
 
     @Override

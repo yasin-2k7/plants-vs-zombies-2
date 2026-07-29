@@ -115,7 +115,8 @@ public class BarrelRollerZombie extends Zombie {
                     currentCell.getX(), currentCell.getY(), barrelHealth
             );
             currentCell.setObstacle(barrelObstacle);
-            System.out.println("🛢️ Barrel left behind as obstacle at (" + currentCell.getX() + ", " + currentCell.getY() + ")");
+            System.out.println("🛢️ Barrel left behind as obstacle at (" +
+                    currentCell.getX() + ", " + currentCell.getY() + ")");
         }
         super.die();
     }

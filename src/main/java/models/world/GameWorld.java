@@ -8,6 +8,7 @@ import models.core.UserDataManager;
 import models.enums.Chapter;
 import models.enums.PlantFamily;
 import models.enums.PlantType;
+import models.lawnMower.LawnMower;
 import models.lawnMower.LawnMowerManager;
 import models.mupoint.KillEvent;
 import models.mupoint.MupointManager;
@@ -45,7 +46,6 @@ public abstract class GameWorld {
     protected List<Sun> activeSuns;
     protected List<Projectile> activeProjectiles;
     protected List<Obstacle> activeObstacles;
-    protected List<Damageable> activeTargets;
     protected LawnMowerManager lawnMowerManager;
     private GameState state;
     private int currentTick = 0;
@@ -84,7 +84,6 @@ public abstract class GameWorld {
         this.activeProjectiles = new ArrayList<>();
         this.activeCollectables = new ArrayList<>();
         this.activeObstacles = new ArrayList<>();
-        this.activeTargets = new ArrayList<>();
         this.lawnMowerManager = new LawnMowerManager();
         this.sunsPool = new GenericObjectPool<>(Sun::new);
         currentSun = 50;
@@ -234,6 +233,19 @@ public abstract class GameWorld {
                 stats.incrementZombiesKilledInFirstWave();
             }
         }
+
+        int col = (int) (zombie.getX() / App.getCellWidth()); // کوست14
+        int row = (int) (zombie.getY() / App.getCellHeight());
+        if (col == 0) {
+            LawnMower mower = null;
+            if (lawnMowerManager != null && row < lawnMowerManager.getMowers().size()) {
+                mower = lawnMowerManager.getMowers().get(row);
+            }
+            if (mower == null || !mower.isAlive()) {
+                stats.incrementZombiesKilledInFirstColumnWithoutMower();
+            }
+        }
+
         user.getQuestManager().checkAllQuests(user, false);
         processZombieDeathMu(zombie);
     }
@@ -282,11 +294,6 @@ public abstract class GameWorld {
         projectileSnapshot.forEach(Projectile::update);
         List<Zombie> zombieSnapshot = new ArrayList<>(activeZombies);
         zombieSnapshot.forEach(Zombie::update);
-        if (!isConveyorMode) {
-            for (PlantCard card : plantLists) {
-                card.update();
-            }
-        }
         if (!isConveyorMode) for (PlantCard card : plantLists) card.update();
         for (Sun sun : activeSuns) {
             if (sun.getProducer() == null && sun.isExpired()) {
@@ -294,6 +301,11 @@ public abstract class GameWorld {
             }
         }
         lawnMowerManager.updateMowers(activeZombies);
+        for (Cell[] cells : grid){
+            for (Cell cell : cells){
+                cell.update();
+            }
+        }
     }
 
     private void removeIfDead() {
@@ -494,10 +506,6 @@ public abstract class GameWorld {
 
     public List<Zombie> getActiveZombies() {
         return activeZombies;
-    }
-
-    public List<Damageable> getActiveTargets() {
-        return activeTargets;
     }
 
     public List<Projectile> getActiveProjectiles() {

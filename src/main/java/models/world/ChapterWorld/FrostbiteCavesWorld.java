@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Random;
 
 public class FrostbiteCavesWorld extends GameWorld {
-    private final int icyWindTicks = 250;
+    private final int icyWindTicks = 50;
     private int lastIcyWindTick = 0;
     private Random random = new Random();
 

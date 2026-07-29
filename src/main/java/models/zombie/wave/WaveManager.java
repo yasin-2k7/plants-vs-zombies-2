@@ -141,7 +141,6 @@ public class WaveManager {
 
     }
 
-    // تقلب: تمام زامبی‌های فعال را نابود می‌کند
     public void releaseTheNuke(GameWorld game) {
         List<Zombie> zombies = game.getActiveZombies();
         for (Zombie z : zombies) {
@@ -153,7 +152,6 @@ public class WaveManager {
         GameMenuController.updateState("All zombies eliminated by nuke!");
     }
 
-    // هر بار که یک زامبی کشته می‌شود این متد صدا زده می‌شود
     public void onZombieKilled() {
         if (levelCompleted) return;
         killedZombiesInCurrentWave++;

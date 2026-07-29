@@ -4,11 +4,19 @@ import models.Damageable;
 import models.core.App;
 import models.world.obstacles.Obstacle;
 import models.zombie.Zombie;
+import java.util.Comparator;
+import java.util.List;
 
 public class CheckStraightStrike implements CheckStrike {
     @Override
-    public Damageable strike(double x, double y, double oldX, double oldY) {
-        for (Zombie zombie : App.getCurrentGame().getActiveZombies()) {
+    public Damageable strike(double x, double y, double oldX, double oldY, List<Damageable> lastTargets) {
+        List<Zombie> sortedZombies = App.getCurrentGame().getActiveZombies().stream()
+                .sorted(Comparator.comparingDouble(Zombie::getX))
+                .toList();
+        for (Zombie zombie : sortedZombies) {
+            if (lastTargets != null && lastTargets.contains(zombie)) {
+                continue;
+            }
             if (isCollidingWithCircle(oldX, oldY, x, y, zombie.getX(), zombie.getY(), 40)) {
                 return zombie;
             }
@@ -26,10 +34,7 @@ public class CheckStraightStrike implements CheckStrike {
                 (x2 <= oldX && x2 >= x) || (x2 >= oldX && x2 <= x);
         boolean yBetween =
                 (y2 <= oldY && y2 >= y) || (y2 >= oldY && y2 <= y);
-        if (xBetween && yBetween) {
-            return true;
-        }
-        return false;
+        return xBetween && yBetween;
     }
 
     private boolean isCollidingWithCircle(double x1, double y1, double x2, double y2,

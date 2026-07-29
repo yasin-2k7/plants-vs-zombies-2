@@ -30,10 +30,6 @@ public class PlantDamageStrategy implements HitStrategy {
         damage *= factor;
     }
 
-    @Override
-    public void resetState() {
-
-    }
 
     @Override
     public void applyDamage(Plant target, Projectile projectile) {

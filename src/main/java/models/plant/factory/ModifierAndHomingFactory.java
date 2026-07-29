@@ -27,6 +27,7 @@ public class ModifierAndHomingFactory {
         boolean aoe = level >= 3;
         Plant p = new Plant(PlantType.TORCHWOOD, health, 0);
         p.addComponent(new TorchwoodComponent(2, aoe));
+        p.setFire(true);
         return p;
     }
 

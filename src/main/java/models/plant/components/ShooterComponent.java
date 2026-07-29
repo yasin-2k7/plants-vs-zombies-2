@@ -85,13 +85,13 @@ public class ShooterComponent implements GameComponent {
 
         for (VisionStrategy visionStrategy : visions) {
             if (visionStrategy.findZombie(owner) != null) {
-                if (attackCallback != null) {
-                    attackCallback.onAttack(owner);
-                }
                 target = visionStrategy.findZombie(owner);
                 if (shootingTimer > 0) {
                     shootingTimer--;
                 } else {
+                    if (attackCallback != null) {
+                        attackCallback.onAttack(owner);
+                    }
                     this.projectilesLeftForShoot = burstProjectileNumber;
                     burstDelayMax = BURST_DELAY_MAX;
                     burstDelayTimer = 0;
@@ -124,6 +124,7 @@ public class ShooterComponent implements GameComponent {
                     }
                 }
                 p.setPlantType(owner.getType());
+                System.out.println("shoot");
 
                 p.setTarget(target);
                 App.getCurrentGame().getActiveProjectiles().add(p);
