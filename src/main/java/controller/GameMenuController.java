@@ -6,6 +6,7 @@ import models.core.UserDataManager;
 import models.enums.CollectableType;
 import models.enums.PlantLayer;
 import models.enums.PlantType;
+import models.greenhouse.GreenHouse;
 import models.miniGame.IZombie.IZombieLevel;
 import models.miniGame.beghouled.BeghouledMechanics;
 import models.miniGame.beghouled.GridPosition;
@@ -154,9 +155,9 @@ public class GameMenuController implements MenuController {
             if (Math.abs(collectable.getX() - x) < 2 && Math.abs(collectable.getY() - y) < 2) {
                 switch (collectable.getType()) {
                     case POT:
-                        App.getCurrentUser().setPot(App.getCurrentUser().getPot() + 1);
-                        GameMenuView.getInstance().showResult(
-                                "pot collected. now you have " + App.getCurrentUser().getPot() + " pots.");
+                        GreenHouse greenhouse = App.getCurrentUser().getGreenhouse();
+                        String result = greenhouse.unlockFirstLockedPot();
+                        GameMenuView.getInstance().showResult(result);
                         break;
                     case COIN:
                         App.getCurrentUser().setCoins(App.getCurrentUser().getCoins() + 10);
