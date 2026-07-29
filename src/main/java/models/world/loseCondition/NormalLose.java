@@ -9,7 +9,7 @@ public class NormalLose implements LoseCondition {
                 .anyMatch(zombie -> {
                     if (zombie.getX() < 0) {
                         return game.getLawnMowerManager().getMowers().stream()
-                                .noneMatch(lawnMower -> lawnMower.getRow() == zombie.getX()
+                                .noneMatch(lawnMower -> lawnMower.getRow() == (int) zombie.getY()
                                         && !lawnMower.isActive());
                     }
                     return false;

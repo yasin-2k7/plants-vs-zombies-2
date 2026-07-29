@@ -11,10 +11,6 @@ import java.util.Map;
 public class PlantCardFactory {
     private static Map<String, Map<Integer, UpgradeConfig>> upgradeRules;
 
-    public static void init(String jsonContent) {
-        // upgradeRules = gson.fromJson(...);
-    }
-
     public static void init(Reader reader) {
         Gson gson = new Gson();
         Type typeOfHashMap = new TypeToken<Map<String, Map<Integer, UpgradeConfig>>>() {

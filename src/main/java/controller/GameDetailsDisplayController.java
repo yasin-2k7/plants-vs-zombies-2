@@ -138,8 +138,9 @@ public class GameDetailsDisplayController {
     }
 
     public static void showPlantsStatus() {
-        if (App.getCurrentGame().isConveyorMode()) return;
-        for (PlantCard card : App.getCurrentGame().getPlantLists()) {
+        List<PlantCard> cards = App.getCurrentGame().isConveyorMode()?
+                App.getCurrentGame().getConveyorBelt() : App.getCurrentGame().getPlantLists();
+        for (PlantCard card : cards) {
             String ticksRemaining = card.isReady() ?
                     "" : " | ticks remaining: " + (card.getMaxCooldownTicks() - card.getCurrentCooldownTicks());
             GameMenuView.getInstance().showResult(card.getType().name() +

@@ -28,8 +28,8 @@ public class User {
 
     private int unlockedChapter;
     private transient Chapter currentChapter;
+    private int currentLevel;
     private int unlockedLevel;
-    private int userLevel;
     private int coins;
     private int gems;
     private int pot;
@@ -37,7 +37,6 @@ public class User {
     private HashMap<PlantType, Integer> unlockedPlantsLevels;
     private HashMap<PlantType, Boolean> plantBoosts;
     private HashMap<String, Boolean> showedZombies;
-    private ArrayList<News> unreadNews;
     private List<News> newsList = new ArrayList<>();
     private GreenHouse greenhouse;
     private transient boolean isLoaded = false;
@@ -378,16 +377,12 @@ public class User {
         this.gender = gender;
     }
 
+    public void setCurrentLevel(int currentLevel) {
+        this.currentLevel = currentLevel;
+    }
+
     public int getUnlockedChapter() {
         return unlockedChapter;
-    }
-
-    public int getUserLevel() {
-        return userLevel;
-    }
-
-    public void setUserLevel(int userLevel) {
-        this.userLevel = userLevel;
     }
 
     public int getUnlockedLevel() {
@@ -461,6 +456,9 @@ public class User {
 
     public void unlockLevel() {
         if (unlockedLevel == 4 && unlockedChapter == 4) return;
+        if (unlockedChapter-1 == currentChapter.ordinal() && unlockedLevel == currentLevel) return;
+        currentLevel = -1;
+        currentChapter = null;
         int newLevel = unlockedLevel == 4 ? 1 : unlockedLevel + 1;
         int newChapter = newLevel == 1 ? unlockedChapter + 1 : unlockedChapter;
         unlockedLevel = newLevel;

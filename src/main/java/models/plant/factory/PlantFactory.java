@@ -20,6 +20,7 @@ public class PlantFactory {
         WallNutFactory.register(REGISTRY);
         ModifierAndHomingFactory.register(REGISTRY);
         MintFactory.register(REGISTRY);
+        REGISTRY.put(PlantType.MARIGOLD, () -> new Plant(PlantType.MARIGOLD, 300, 0));
     }
 
     public static Plant createPlant(PlantType type, int x, int y, Cell cell) {
