@@ -26,15 +26,17 @@ public class ShopList {
     }
 
     private String checkDailyItem(int count, User user) {
-        if (!dailyOffer.isAvailableToday())
-            return "Error: Daily offer already purchased or not available.";
+        if (user.hasPurchasedDailyOfferToday()) {
+            return "Error: Daily offer already purchased today.";
+        }
         if (count > 1) return "Error: Can only buy 1 daily offer.";
         if (!dailyOffer.isAffordable(user.getCoins(), user.getGems()))
             return "Error: Not enough money for daily offer!";
 
         user.spendCoins(dailyOffer.getCoinCost());
-        dailyOffer.setPurchased(true);
         user.addSeedPackets(dailyOffer.getPlantType(), 10);
+        user.markDailyOfferPurchased();
+
         return dailyOffer.getPlantType() + " seeds unlocked permanently!";
     }
 

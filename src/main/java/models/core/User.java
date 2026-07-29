@@ -9,6 +9,7 @@ import models.quest.Quest;
 import models.quest.QuestManager;
 import models.quest.QuestStats;
 
+import java.time.LocalDate;
 import java.util.*;
 
 public class User {
@@ -46,7 +47,8 @@ public class User {
     private transient QuestManager questManager = new QuestManager();
     private Set<String> completedQuestIds = new HashSet<>();
     private int maxMupoint = 0;
-
+    private LocalDate dailyOfferPurchaseDate;
+    private boolean dailyOfferPurchasedToday;
 
     public User() {
         this.plantBoosts = new HashMap<>();
@@ -125,6 +127,7 @@ public class User {
         if (this.completedQuestIds == null) {
             this.completedQuestIds = new HashSet<>();
         }
+        if (dailyOfferPurchaseDate == null) dailyOfferPurchaseDate = null;
     }
 
     public void initQuests() {
@@ -493,6 +496,18 @@ public class User {
 
     public void setGamesPlayed(int gamesPlayed) {
         this.gamesPlayed = gamesPlayed;
+    }
+
+    public boolean hasPurchasedDailyOfferToday() {
+        return dailyOfferPurchasedToday
+                && dailyOfferPurchaseDate != null
+                && dailyOfferPurchaseDate.equals(LocalDate.now());
+    }
+
+    public void markDailyOfferPurchased() {
+        this.dailyOfferPurchaseDate = LocalDate.now();
+        this.dailyOfferPurchasedToday = true;
+        save();
     }
 
     public int getNormalQuestsCount() {

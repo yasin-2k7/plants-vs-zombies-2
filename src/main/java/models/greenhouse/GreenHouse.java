@@ -10,6 +10,8 @@ import models.world.cellTerrains.LandTerrain;
 
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class GreenHouse {
     private static final int ROWS = 4;
@@ -50,10 +52,13 @@ public class GreenHouse {
             chosenType = PlantType.MARIGOLD;
         } else {
             List<PlantType> unlockedWithPlantFood = user.getUnlockedPlantTypesWithPlantFood();
-            if (unlockedWithPlantFood.isEmpty()) {
-                return "Error: No unlocked plant with Plant Food ability available.";
+            List<PlantType> available = unlockedWithPlantFood.stream()
+                    .filter(type -> !FORBIDDEN_IN_GREENHOUSE.contains(type))
+                    .collect(Collectors.toList());
+            if (available.isEmpty()) {
+                return "Error: No suitable unlocked plant available.";
             }
-            chosenType = unlockedWithPlantFood.get(random.nextInt(unlockedWithPlantFood.size()));
+            chosenType = available.get(random.nextInt(available.size()));
         }
 
 
@@ -156,4 +161,8 @@ public class GreenHouse {
         if (x < 1 || x > COLS || y < 1 || y > ROWS) return null;
         return pots[y - 1][x - 1];
     }
+
+    private static final Set<PlantType> FORBIDDEN_IN_GREENHOUSE = Set.of(
+            PlantType.GIANT_WALLNUT
+    );
 }
