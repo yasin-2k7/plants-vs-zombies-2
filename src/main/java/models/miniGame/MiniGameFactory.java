@@ -147,7 +147,7 @@ public class MiniGameFactory {
 
         );
 
-        LevelSetup levelSetup = new BowlingSetup(rows, cols, redLineCol, zombies, 1, 500);
+        LevelSetup levelSetup = new BowlingSetup(rows, cols, redLineCol, zombies, 3, 500);
         LoseCondition loseCondition = new NormalLose();
         WinCondition winCondition = new NormalWin();
         winCondition.setCurrentLevel(MiniGameLevels.BOWLING_1);

@@ -12,6 +12,7 @@ import models.miniGame.beghouled.BeghouledMechanics;
 import models.miniGame.beghouled.GridPosition;
 import models.miniGame.bowling.BowlingMechanics;
 import models.miniGame.vaseBreaker.VaseBreakerLevel;
+import models.mupoint.MuPointLevel;
 import models.mupoint.MupointManager;
 import models.plant.card.ImitatorCard;
 import models.plant.card.PlantCard;
@@ -39,12 +40,24 @@ public class GameMenuController implements MenuController {
         if (gameWorld.isWillUnlockLevel()) {
             App.getCurrentUser().unlockLevel();
         }
+        User user = App.getCurrentUser();
+        MupointManager mupointManager = gameWorld.getMupointManager();
+        if (user != null && mupointManager != null) {
+            int currentLevelPoints = mupointManager.getTotalMupoints();
+            GameMenuView.getInstance().showResult("Your Mupoint in this level: " + currentLevelPoints);
+
+            if (currentLevelPoints > user.getMaxMupoint()) {
+                user.updateMupointRecord(currentLevelPoints);
+                UserDataManager.saveUser(user);
+                GameMenuView.getInstance().showResult("New High Score! Updated Mupoint record to: " + currentLevelPoints);
+            }
+        }
         AppView.setCurrentScreen(MainMenuView.getInstance());
         App.setCurrentGame(null);
         App.getCurrentUser().getPlantBoosts().clear();
     }
 
-    public static void handleLosing(GameWorld gameWorld, MupointManager mupointManager) {
+    public static void handleLosing(GameWorld gameWorld) {
         if (gameWorld instanceof IZombieLevel) {
             GameMenuView.getInstance().showResult("You ran out of zombies and failed to eat all the brains! LOSER!!!");
         } else if (gameWorld.getLevelSetup() instanceof DeadLineLevelSetup) {
@@ -53,11 +66,16 @@ public class GameMenuController implements MenuController {
             GameMenuView.getInstance().showResult("LOSER!!!");
         }
         User user = App.getCurrentUser();
+        MupointManager mupointManager = gameWorld.getMupointManager();
         if (user != null && mupointManager != null) {
-            user.updateMupointRecord(mupointManager.getTotalMupoints());
-            GameMenuView.getInstance().showResult("your muPoint: " + mupointManager.getTotalMupoints());
+            int currentLevelPoints = mupointManager.getTotalMupoints();
+            GameMenuView.getInstance().showResult("Your Mupoint in this level: " + currentLevelPoints);
 
-            UserDataManager.saveUser(user);
+            if (currentLevelPoints > user.getMaxMupoint()) {
+                user.updateMupointRecord(currentLevelPoints);
+                UserDataManager.saveUser(user);
+                GameMenuView.getInstance().showResult("New High Score! Updated Mupoint record to: " + currentLevelPoints);
+            }
         }
         AppView.setCurrentScreen(MainMenuView.getInstance());
         App.setCurrentGame(null);

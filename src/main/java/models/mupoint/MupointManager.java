@@ -50,11 +50,6 @@ public class MupointManager {
 
         totalMupoints += pointsGained;
 
-        User user = App.getCurrentUser();
-        if (user != null) {
-            user.updateMupointRecord(totalMupoints);
-            UserDataManager.saveUser(user);
-        }
 
         GameMenuController.updateState("Current Mupoints: " + totalMupoints);
     }
