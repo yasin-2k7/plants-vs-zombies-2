@@ -16,7 +16,11 @@ public class IZombieWin implements WinCondition {
             for (Brain brain : level.getBrains()) {
                 if (!brain.isEaten()) return false;
             }
-            if (currentLevel != null) App.getCurrentUser().getMiniGameLevels().add(currentLevel);
+            if (currentLevel != null){
+                App.getCurrentUser().getMiniGameLevels().add(currentLevel);
+                if (currentLevel.level != 3) App.getCurrentUser().notifyMinigameUnlocked(
+                        currentLevel.miniGame.name() + " " + (currentLevel.level+1));
+            }
             UserDataManager.saveUser(App.getCurrentUser());
 
             return true;

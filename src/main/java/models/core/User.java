@@ -33,7 +33,6 @@ public class User {
     private int unlockedLevel;
     private int coins;
     private int gems;
-    private int pot;
     private HashMap<PlantType, Integer> seedPackets;
     private HashMap<PlantType, Integer> unlockedPlantsLevels;
     private HashMap<PlantType, Boolean> plantBoosts;
@@ -407,21 +406,13 @@ public class User {
     public void notifyMinigameUnlocked(String minigameName) {
         addNews(new News(
                 "Unlock minigame",
-                "minigame" + minigameName,
+                "minigame " + minigameName,
                 NewsType.MINIGAME_UNLOCKED
         ));
     }
 
     public QuestManager getQuestManager() {
         return questManager;
-    }
-
-    public int getPot() {
-        return pot;
-    }
-
-    public void setPot(int pot) {
-        this.pot = pot;
     }
 
     public QuestStats getQuestStats() {
@@ -452,10 +443,6 @@ public class User {
 
     public int getMaxMupoint() {
         return maxMupoint;
-    }
-
-    public void setMaxMupoint(int maxMupoint) {
-        this.maxMupoint = maxMupoint;
     }
 
     public void updateMupointRecord(int currentScore) {

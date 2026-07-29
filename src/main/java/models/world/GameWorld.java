@@ -67,6 +67,10 @@ public abstract class GameWorld {
     private boolean plantingPhase = false;
     private int currentBatchKills = 1;
 
+    public MupointManager getMupointManager() {
+        return mupointManager;
+    }
+
     public GameWorld(LevelSetup levelSetup, ArrayList<LoseCondition> loseConditions,
                      WinCondition winCondition, ArrayList<Mechanic> mechanics) {
         App.getCurrentUser().setGamesPlayed(App.getCurrentUser().getGamesPlayed() + 1);

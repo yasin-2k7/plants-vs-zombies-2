@@ -14,7 +14,11 @@ public class BeghouledWinCondition implements WinCondition {
         BeghouledMechanics mechanics = game.getMechanic(BeghouledMechanics.class);
         if (mechanics == null) return false;
         if (mechanics.getScore() >= mechanics.getTargetScore()) {
-            if (currentLevel != null) App.getCurrentUser().getMiniGameLevels().add(currentLevel);
+            if (currentLevel != null){
+                App.getCurrentUser().getMiniGameLevels().add(currentLevel);
+                if (currentLevel.level != 3) App.getCurrentUser().notifyMinigameUnlocked(
+                        currentLevel.miniGame.name() + " " + (currentLevel.level+1));
+            }
             UserDataManager.saveUser(App.getCurrentUser());
         }
         return mechanics.getScore() >= mechanics.getTargetScore();
