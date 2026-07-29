@@ -329,7 +329,7 @@ public abstract class GameWorld {
         for (LoseCondition lose : loseConditions) {
             if (lose.checkLose(this)) {
                 state = GameState.LOST;
-                GameMenuController.handleLosing(this, mupointManager);
+                GameMenuController.handleLosing(this);
             }
         }
     }

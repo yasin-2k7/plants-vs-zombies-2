@@ -147,7 +147,7 @@ public class MiniGameFactory {
 
         );
 
-        LevelSetup levelSetup = new BowlingSetup(rows, cols, redLineCol, zombies, 1, 500);
+        LevelSetup levelSetup = new BowlingSetup(rows, cols, redLineCol, zombies, 3, 500);
         LoseCondition loseCondition = new NormalLose();
         WinCondition winCondition = new NormalWin();
         winCondition.setCurrentLevel(MiniGameLevels.BOWLING_1);
@@ -287,7 +287,7 @@ public class MiniGameFactory {
         List<Wave> waves = Wave.generateWaves(6, 500, zombies, 10);
 
 
-        LevelSetup levelSetup = new BeghouledSetup(5, 9, plants, upgrades, 5, waves);
+        LevelSetup levelSetup = new BeghouledSetup(5, 9, plants, upgrades, 50, waves);
         LoseCondition loseCondition = new NormalLose();
         WinCondition winCondition = new BeghouledWinCondition();
         winCondition.setCurrentLevel(MiniGameLevels.BEGHOULED_1);
@@ -317,7 +317,7 @@ public class MiniGameFactory {
         );
         List<Wave> waves = Wave.generateWaves(6, 500, zombies, 10);
 
-        LevelSetup levelSetup = new BeghouledSetup(5, 9, plants, upgrades, 8, waves);
+        LevelSetup levelSetup = new BeghouledSetup(5, 9, plants, upgrades, 60, waves);
         LoseCondition loseCondition = new NormalLose();
         WinCondition winCondition = new BeghouledWinCondition();
         winCondition.setCurrentLevel(MiniGameLevels.BEGHOULED_2);
@@ -348,7 +348,7 @@ public class MiniGameFactory {
         );
         List<Wave> waves = Wave.generateWaves(6, 500, zombies, 10);
 
-        LevelSetup levelSetup = new BeghouledSetup(5, 9, plants, upgrades, 12, waves);
+        LevelSetup levelSetup = new BeghouledSetup(5, 9, plants, upgrades, 80, waves);
         LoseCondition loseCondition = new NormalLose();
         WinCondition winCondition = new BeghouledWinCondition();
         winCondition.setCurrentLevel(MiniGameLevels.BEGHOULED_3);

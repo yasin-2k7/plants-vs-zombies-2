@@ -21,10 +21,6 @@ public class ShopItem {
         return coins >= coinCost && diamonds >= diamondCost;
     }
 
-    public boolean isAtCapacity(int currentCount) {
-        return maxCapacity != -1 && currentCount >= maxCapacity;
-    }
-
     public String getName() {
         return name;
     }
@@ -35,10 +31,6 @@ public class ShopItem {
 
     public int getDiamondCost() {
         return diamondCost;
-    }
-
-    public boolean isPermanent() {
-        return this.isPermanent;
     }
 
     public String getId() {
