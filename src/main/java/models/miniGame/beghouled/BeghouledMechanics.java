@@ -291,7 +291,7 @@ public class BeghouledMechanics implements Mechanic {
             }
         }
 
-        if (count == 0) return "u dont have this type of plant";
+        if (count == 0) return "you dont have this type of plant";
 
         world.setSun(world.getSun() - upgrade.getCost());
         return null;

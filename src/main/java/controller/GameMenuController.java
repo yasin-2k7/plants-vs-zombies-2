@@ -460,7 +460,7 @@ public class GameMenuController implements MenuController {
                 .anyMatch(z -> z.getName() == zombie.getName()
                         || (z.getSpecificName() != null && z.getSpecificName().equalsIgnoreCase(type)));
         if (!allowed) {
-            GameMenuView.getInstance().showResult("u dont have this zombie");
+            GameMenuView.getInstance().showResult("you dont have this zombie");
             return;
         }
         GameMenuView.getInstance().showResult(level.placeZombie(zombie, x, y));
