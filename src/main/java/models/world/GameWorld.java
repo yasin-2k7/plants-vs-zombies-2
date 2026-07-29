@@ -56,7 +56,7 @@ public abstract class GameWorld {
     private ArrayList<LoseCondition> loseConditions;
     private WinCondition winCondition;
     private ArrayList<Mechanic> mechanics;
-    private List<PlantCard> conveyorBelt;
+    private List<PlantCard> conveyorBelt = new ArrayList<>();
     private List<PlantCard> plantLists;
     private boolean isConveyorMode;
     private GenericObjectPool<Sun> sunsPool = new GenericObjectPool<>(Sun::new);
@@ -216,12 +216,14 @@ public abstract class GameWorld {
         QuestStats stats = user.getQuestStats();
         stats.addZombiesKilledToday(1);
         stats.addTotalZombiesKilled(1);
-        String chapter = currentChapter.name();
-        stats.addZombiesKilledByChapter(chapter, 1);
-        if (zombie.getKillerPlantType() != null) {
-            stats.addZombiesKilledByPlant(zombie.getKillerPlantType(), 1);
-            PlantFamily family = zombie.getKillerPlantType().family;
-            stats.addZombieKilledByFamily(family);
+        if (currentChapter != null) {
+            String chapter = currentChapter.name();
+            stats.addZombiesKilledByChapter(chapter, 1);
+            if (zombie.getKillerPlantType() != null) {
+                stats.addZombiesKilledByPlant(zombie.getKillerPlantType(), 1);
+                PlantFamily family = zombie.getKillerPlantType().family;
+                stats.addZombieKilledByFamily(family);
+            }
         }
         NormalMechanic normal = getMechanic(NormalMechanic.class);
         if (normal != null && normal.getWaveManager() != null) {
@@ -375,7 +377,7 @@ public abstract class GameWorld {
         for (LoseCondition lose : loseConditions) {
             if (lose.checkLose(this)) {
                 state = GameState.LOST;
-                GameMenuController.handleLosing(this, mupointManager);
+                GameMenuController.handleLosing(this);
             }
         }
     }

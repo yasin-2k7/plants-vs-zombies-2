@@ -41,8 +41,7 @@ public class MuPointLevel {
                 winCondition,
                 new ArrayList<>()
         );
-        world.setCurrentChapter(Chapter.EGYPT);
-        world.setWillUnlockLevel(true);
+        world.setWillUnlockLevel(false);
 
         MupointManager mupointManager = new MupointManager();
 

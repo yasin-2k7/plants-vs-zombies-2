@@ -56,7 +56,8 @@ public class CollectionMenuController implements MenuController {
 
     public void showPlant(PlantType type) {
         Plant plant = PlantFactory.createPlant(type, 0, 0, null);
-        PlantCard card = PlantCardFactory.createCard(type, App.getCurrentUser().getUserLevel());
+        PlantCard card = PlantCardFactory.createCard(type,
+                App.getCurrentUser().getUnlockedPlantsLevels().getOrDefault(type,1));
         CollectionMenuView.getInstance().showResult(type.name() + "\n"
                 + "Health: " + plant.getHealth() + "\n"
                 + "Damage: " + plant.getDamage() + "\n"

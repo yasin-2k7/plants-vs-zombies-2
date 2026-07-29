@@ -36,13 +36,13 @@ public class BowlingBallFactory {
             case WALL_NUT ->
                     new CombinedDamageStrategy(normalHealth, ProjectileType.BOWLING_STRAIGHT);
             case EXPLODE_O_NUT -> new CombinedDamageStrategy(
-                    normalHealth,
-                    normalHealth,
+                    3000,
+                    3000,
                     App.getCellWidth() * 1.5f,
                     ProjectileType.BOWLING_STRAIGHT
             );
             case GIANT_WALLNUT ->
-                    new CombinedDamageStrategy(normalHealth * 2, ProjectileType.BOWLING_STRAIGHT);
+                    new CombinedDamageStrategy(3000, ProjectileType.BOWLING_STRAIGHT);
             default ->
                     throw new IllegalArgumentException("Invalid plant type for bowling: " + plantType);
         };
