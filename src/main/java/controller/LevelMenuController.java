@@ -36,14 +36,17 @@ public class LevelMenuController implements MenuController {
 
         GameWorld game = LevelFactory.createLevel(user.getCurrentChapter(), level);
         App.setCurrentGame(game);
+        App.getCurrentUser().setCurrentLevel(level);
         game.initialize();
-        if (game.isConveyorMode())
+        if (game.isConveyorMode()) {
             AppView.setCurrentScreen(GameMenuView.getInstance());
+            return "level started!";
+        }
         else {
             AppView.setCurrentScreen(PlantMenuView.getInstance());
             PlantMenuView.getInstance().getController().reset();
+            return "";
         }
-        return "level started!";
     }
 
     public List<String> getLevelsToShow() {

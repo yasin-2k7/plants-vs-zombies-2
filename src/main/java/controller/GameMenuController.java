@@ -240,7 +240,8 @@ public class GameMenuController implements MenuController {
 
     public void plantPlant(PlantType type, float x, float y) {
         PlantCard selectedCard = null;
-        List<PlantCard> gamePlants = App.getCurrentGame().getPlantLists();
+        List<PlantCard> gamePlants = App.getCurrentGame().isConveyorMode()?
+                App.getCurrentGame().getConveyorBelt() : App.getCurrentGame().getPlantLists();
         for (PlantCard card : gamePlants) {
             if (card.getType().equals(type)) {
                 selectedCard = card;
