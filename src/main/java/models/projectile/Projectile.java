@@ -105,7 +105,7 @@ public class Projectile implements Resettable {
             }
         }
 
-        if (zombie != null && zombie instanceof SnorkelZombie snorkel) {
+        if (zombie instanceof SnorkelZombie snorkel) {
             if (snorkel.isUnderwater() && type != null && "STRAIGHT".equals(type.movement)) {
                 zombie = null;
             }

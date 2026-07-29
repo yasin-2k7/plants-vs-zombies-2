@@ -41,7 +41,7 @@ public class Plant implements Damageable {
     public static boolean isMushroom(PlantType type) {
         return switch (type) {
             case SUN_SHROOM, PUFF_SHROOM, FUME_SHROOM, SEA_SHROOM,
-                 ICE_SHROOM, DOOM_SHROOM, MAGNET_SHROOM, HYPNO_SHROOM -> true;
+                 ICE_SHROOM, DOOM_SHROOM, MAGNET_SHROOM -> true;
             default -> false;
         };
     }
