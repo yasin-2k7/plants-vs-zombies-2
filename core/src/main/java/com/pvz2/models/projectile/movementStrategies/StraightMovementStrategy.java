@@ -1,0 +1,34 @@
+package com.pvz2.models.projectile.movementStrategies;
+
+import com.pvz2.models.projectile.Projectile;
+
+public class StraightMovementStrategy implements MovementStrategy {
+    float speedX;
+    float speedY;
+    float changeYAmount = 0;
+
+    public StraightMovementStrategy(float speedX, float speedY, float changeYAmount) {
+        this.speedX = speedX;
+        this.speedY = speedY;
+        this.changeYAmount = changeYAmount;
+    }
+
+    @Override
+    public float changeOriginY() {
+        return changeYAmount;
+    }
+
+    @Override
+    public void move(Projectile projectile) {
+        projectile.setX(projectile.getX() + (speedX * 12));
+        projectile.setY(projectile.getY() + (speedY * 12));
+        // delta in the future...
+    }
+
+    @Override
+    public boolean isDead(Projectile projectile) {
+        return projectile.getX() > 1000 || projectile.getX() < 0 || projectile.getY() > 1000 || projectile.getY() < 0;
+    }
+
+
+}

@@ -1,0 +1,72 @@
+package com.pvz2.models.world.obstacles;
+
+import controller.GameMenuController;
+import com.pvz2.models.core.App;
+import com.pvz2.models.world.GameWorld;
+
+public class Grave extends Obstacle {
+    private GraveType type;
+    private boolean isCollected = false;
+    private int row;
+    private int col;
+    public Grave(float x, float y, int row, int col, GraveType type) {
+        super(x, y, 700);
+        this.row = row;
+        this.col = col;
+        this.type = type;
+    }
+
+    public int getRow() {
+        return row;
+    }
+
+    public int getCol() {
+        return col;
+    }
+
+    public GraveType getType() {
+        return type;
+    }
+
+
+    public boolean blocksProjectiles() {
+        return !isDestroyed;
+    }
+
+    @Override
+    public void takeDamage(int amount, String type) {
+        if (isDestroyed) return;
+        super.takeDamage(amount, type);
+        GameMenuController.updateState("grave in (" + x + ", " + y + ") health: " + health);
+        if (isDestroyed) {
+            releaseContent();
+        }
+    }
+
+    public void releaseContent() {
+        if (isCollected) return;
+
+        GameWorld game = App.getCurrentGame();
+        if (game == null) return;
+
+        if (type == GraveType.SUN) {
+            game.setSun(game.getSun() + 50);
+            GameMenuController.updateState("A grave released 50 suns!");
+        } else if (type == GraveType.PLANT_FOOD) {
+            if (game.getPlantFoods() < 3) {
+                game.setPlantFoods(game.getPlantFoods() + 1);
+                GameMenuController.updateState("A grave released a plant food!");
+            } else {
+                GameMenuController.updateState("Plant food inventory is full, grave released nothing.");
+            }
+        }
+        isCollected = true;
+    }
+
+    public enum GraveType {
+        NORMAL,
+        SUN,
+        PLANT_FOOD
+    }
+
+}

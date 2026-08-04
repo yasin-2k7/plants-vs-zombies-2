@@ -1,0 +1,62 @@
+package com.pvz2.models.zombie.data;
+
+import com.fasterxml.jackson.annotation.JsonAlias;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class ZombieData {
+    @JsonProperty("Hitpoints")
+    @JsonAlias("hitpoints")
+    private int hitpoints;
+
+    @JsonProperty("EatDPS")
+    @JsonAlias("eatDPS")
+    private int eatDPS;
+
+    @JsonProperty("Speed")
+    @JsonAlias("speed")
+    private double speed;
+
+    @JsonProperty("WavePointCost")
+    @JsonAlias("wavePointCost")
+    private int wavePointCost;
+
+    @JsonProperty("Weight")
+    @JsonAlias("weight")
+    private int weight;
+
+    @JsonProperty("ZombieArmorProps")
+    @JsonAlias("zombieArmorProps")
+    private List<String> zombieArmorProps = new ArrayList<>();
+
+    @JsonProperty("ImpTargetColumn")
+    @JsonAlias("impTargetColumn")
+    private Integer impTargetColumn;
+
+    @JsonProperty("ImpType")
+    @JsonAlias("impType")
+    private String impType;
+
+    @JsonProperty("HealthPercentThrowImp")
+    @JsonAlias("healthPercentThrowImp")
+    private Integer healthPercentThrowImp;
+
+    public int getHitpoints() {
+        return hitpoints;
+    }
+
+    public int getEatDPS() {
+        return eatDPS;
+    }
+
+    public double getSpeed() {
+        return speed;
+    }
+
+    public List<String> getZombieArmorProps() {
+        return zombieArmorProps;
+    }
+
+}
