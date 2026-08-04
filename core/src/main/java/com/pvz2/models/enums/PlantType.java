@@ -1,0 +1,93 @@
+package com.pvz2.models.enums;
+
+import static com.pvz2.models.enums.PlantFamily.*;
+
+public enum PlantType {
+    SUNFLOWER(SUN_PRODUCER, 50, 50),
+    TWIN_SUNFLOWER(SUN_PRODUCER, 125, 150),
+    SUN_SHROOM(SUN_PRODUCER, 25, 50),
+    PRIMAL_SUNFLOWER(SUN_PRODUCER, 75, 50),
+    GOLD_BLOOM(SUN_PRODUCER, 0, 750),
+    PEASHOOTER(SHOOTER, 100, 50),
+    REPEATER(SHOOTER, 200, 50),
+    THREEPEATER(SHOOTER, 300, 50),
+    SNOW_PEA(SHOOTER, 150, 50),
+    ROTOBAGA(SHOOTER, 150, 50),
+    PEA_POD(SHOOTER, 125, 50),
+    SPLIT_PEA(SHOOTER, 125, 50),
+    CITRON(SHOOTER, 350, 50),
+    BOWLING_BULB(SHOOTER, 200, 50),
+    CACTUS(STRIKE_THROUGH, 175, 50),
+    FIRE_PEASHOOTER(SHOOTER, 175, 50),
+    STARFRUIT(SHOOTER, 150, 50),
+    GOO_PEASHOOTER(SHOOTER, 125, 50),
+    MEGA_GATLING_PEA(SHOOTER, 400, 50),
+    SEA_SHROOM(SHOOTER, 0, 150),
+    PUFF_SHROOM(SHOOTER, 0, 50),
+    FUME_SHROOM(STRIKE_THROUGH, 125, 50),
+    CABBAGE_PULT(LOBBER, 100, 50),
+    KERNEL_PULT(LOBBER, 100, 50),
+    MELON_PULT(LOBBER, 325, 50),
+    WINTER_MELON(LOBBER, 500, 50),
+    PEPPER_PULT(LOBBER, 200, 50),
+    POTATO_MINE(EXPLOSIVE, 25, 250),
+    PRIMAL_POTATO_MINE(EXPLOSIVE, 50, 50),
+    CHERRY_BOMB(EXPLOSIVE, 150, 350),
+    SQUASH(EXPLOSIVE, 50, 200),
+    GRAPESHOT(EXPLOSIVE, 150, 350),
+    JALAPENO(EXPLOSIVE, 125, 350),
+    DOOM_SHROOM(EXPLOSIVE, 125, 150),
+    TANGLE_KELP(EXPLOSIVE, 25, 150),
+    ICEBERG_LETTUCE(EXPLOSIVE, 0, 200),
+    BONK_CHOY(MELEE, 150, 50),
+    PHAT_BEET(MELEE, 150, 50),
+    CHOMPER(MELEE, 150, 50),
+    WASABI_WHIP(MELEE, 150, 50),
+    KIWIBEAST(MELEE, 175, 50),
+    WALL_NUT(WALL_NUTS, 50, 200),
+    TALL_NUT(WALL_NUTS, 125, 200),
+    ENDURIAN(WALL_NUTS, 100, 150),
+    GARLIC(WALL_NUTS, 50, 200),
+    SWEET_POTATO(WALL_NUTS, 150, 200),
+    EXPLODE_O_NUT(WALL_NUTS, 50, 200),
+    GIANT_WALLNUT(WALL_NUTS, 0, 0),
+    PUMPKIN(WALL_NUTS, 150, 200),
+    SUN_BEAN(WALL_NUTS, 50, 200),
+    TORCHWOOD(MODIFIER, 175, 50),
+    MAGNET_SHROOM(HOMING, 100, 150),
+    IMITATOR(MODIFIER, 0, 0),
+    ICE_SHROOM(EXPLOSIVE, 75, 500),
+    LILY_PAD(MODIFIER, 25, 50),
+    HOT_POTATO(EXPLOSIVE, 0, 50),
+    GRAVE_BUSTER(EXPLOSIVE, 0, 100),
+    ENLIGHTEN_MINT(SUN_PRODUCER, 0, 850),
+    APPEASE_MINT(SHOOTER, 0, 850),
+    ARMA_MINT(LOBBER, 0, 850),
+    BOMBARD_MINT(EXPLOSIVE, 0, 850),
+    ENFORCE_MINT(MELEE, 0, 850),
+    REINFORCE_MINT(WALL_NUTS, 0, 850),
+    ENCHANT_MINT(MODIFIER, 0, 850),
+    PIERCE_MINT(STRIKE_THROUGH, 0, 850),
+    CAT_TAIL_MINT(HOMING, 0, 850),
+    MARIGOLD(WALL_NUTS, 0, 0); // گل معمولی گلخانه;
+
+    public final PlantFamily family;
+    public final int baseSunCost;
+    public final int baseCoolDown;
+    PlantType(PlantFamily family, int baseSunCost, int baseCoolDown) {
+        this.family = family;
+        this.baseSunCost = baseSunCost;
+        this.baseCoolDown = baseCoolDown;
+    }
+
+    public String getSymbol() {
+        return switch (this.family) {
+            case SUN_PRODUCER -> "🌻";
+            case SHOOTER, HOMING, LOBBER, STRIKE_THROUGH, MODIFIER -> "🟢";
+            case MELEE -> "🥊";
+            case WALL_NUTS -> "🧱";
+            case EXPLOSIVE -> "💥";
+            default -> "🌱";
+        };
+    }
+}
