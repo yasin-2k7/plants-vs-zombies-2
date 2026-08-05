@@ -31,7 +31,7 @@ public class DeflectorZombie extends Zombie {
 
         if (isJuggler) {
             boolean approaching = false;
-            models.world.GameWorld game = App.getCurrentGame();
+            GameWorld game = App.getCurrentGame();
 
             if (game != null) {
                 for (Projectile p : game.getActiveProjectiles()) {

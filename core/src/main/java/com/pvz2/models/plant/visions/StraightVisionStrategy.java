@@ -23,14 +23,17 @@ public class StraightVisionStrategy implements VisionStrategy {
         GameWorld gameWorld = App.getCurrentGame();
         if (!needZombie) {
             for (Zombie zombie : gameWorld.getActiveZombies()) {
-                if (isBetween(zombie.getX(), owner.getX(), owner.getX() + range) &&
-                        isBetween(zombie.getY(), owner.getY() - width / 2, owner.getY() + width / 2)) {
+                if (VisionStrategy.isBetween(zombie.getX(), owner.getX(),
+                    owner.getX() + range) &&
+                        VisionStrategy.isBetween(zombie.getY(), owner.getY() - width / 2,
+                            owner.getY() + width / 2)) {
                     return zombie;
                 }
             }
             for (Obstacle obstacle : gameWorld.getActiveObstacles()) {
-                if (isBetween(obstacle.getX(), owner.getX(), owner.getX() + range) &&
-                        isBetween(obstacle.getY(),owner.getY() - width / 2,owner.getY() + width / 2)) {
+                if (VisionStrategy.isBetween(obstacle.getX(), owner.getX(), owner.getX() + range) &&
+                        VisionStrategy.isBetween(obstacle.getY(),owner.getY() - width / 2,
+                            owner.getY() + width / 2)) {
                     return obstacle;
                 }
             }
@@ -40,8 +43,9 @@ public class StraightVisionStrategy implements VisionStrategy {
             Zombie firstZombie = null;
             Obstacle firstObstacle = null;
             for (Zombie zombie : gameWorld.getActiveZombies()) {
-                if (isBetween(zombie.getX(), owner.getX(), owner.getX() + range) &&
-                        isBetween(zombie.getY(), owner.getY() - width / 2, owner.getY() + width / 2)) {
+                if (VisionStrategy.isBetween(zombie.getX(), owner.getX(), owner.getX() + range) &&
+                        VisionStrategy.isBetween(zombie.getY(), owner.getY() - width / 2,
+                            owner.getY() + width / 2)) {
                     if (zombie.getX() < x) {
                         x = zombie.getX();
                         firstZombie = zombie;
@@ -50,8 +54,9 @@ public class StraightVisionStrategy implements VisionStrategy {
             }
             if (firstZombie != null) return firstZombie;
             for (Obstacle obstacle : gameWorld.getActiveObstacles()) {
-                if (isBetween(obstacle.getX(), owner.getX(), owner.getX() + range) &&
-                        isBetween(obstacle.getY(),owner.getY() - width / 2,owner.getY() + width / 2)) {
+                if (VisionStrategy.isBetween(obstacle.getX(), owner.getX(), owner.getX() + range) &&
+                        VisionStrategy.isBetween(obstacle.getY(),owner.getY() - width / 2,
+                            owner.getY() + width / 2)) {
                     if (obstacle.getX() < x) {
                         x = obstacle.getX();
                         firstObstacle = obstacle;
