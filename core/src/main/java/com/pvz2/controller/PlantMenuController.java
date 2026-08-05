@@ -7,8 +7,6 @@ import com.pvz2.models.enums.PlantType;
 import com.pvz2.models.plant.card.PlantCard;
 import com.pvz2.models.plant.card.PlantCardFactory;
 import com.pvz2.models.world.levelSetup.PlantWhatYouGetLevelSetup;
-import view.terminalView.AppView;
-import view.terminalView.GameMenuView;
 
 import java.util.*;
 
@@ -241,7 +239,8 @@ public class PlantMenuController implements MenuController {
             }
         }
 
-        AppView.setCurrentScreen(GameMenuView.getInstance());
+        //needs edit
+//        AppView.setCurrentScreen(GameMenuView.getInstance());
         return "Starting game with selected plants...";
     }
 
@@ -250,6 +249,7 @@ public class PlantMenuController implements MenuController {
     }
 
     public void showCurrentMenu() {
-        GameMenuView.getInstance().showResult("Current menu: plant menu");
+        //needs edit
+//        GameMenuView.getInstance().showResult("Current menu: plant menu");
     }
 }

@@ -2,9 +2,6 @@ package com.pvz2.controller;
 
 import com.pvz2.models.core.App;
 import com.pvz2.models.core.User;
-import view.terminalView.AppView;
-import view.terminalView.GameMenuView;
-import view.terminalView.MainMenuView;
 
 public class SettingMenuController implements MenuController {
     @Override
@@ -14,7 +11,8 @@ public class SettingMenuController implements MenuController {
 
     @Override
     public void exitMenu() {
-        AppView.currentScreen = MainMenuView.getInstance();
+        //needs edit
+//        AppView.currentScreen = MainMenuView.getInstance();
     }
 
     public String changeDifficulty(int newLevel) {
@@ -28,6 +26,7 @@ public class SettingMenuController implements MenuController {
     }
 
     public void showCurrentMenu() {
-        GameMenuView.getInstance().showResult("Current menu: settings menu");
+        //needs edit
+//        GameMenuView.getInstance().showResult("Current menu: settings menu");
     }
 }

@@ -1,6 +1,6 @@
 package com.pvz2.view.terminalView;
 
-import controller.PlantMenuController;
+import com.pvz2.controller.PlantMenuController;
 import com.pvz2.models.enums.commands.PlantMenuCommands;
 import view.View;
 

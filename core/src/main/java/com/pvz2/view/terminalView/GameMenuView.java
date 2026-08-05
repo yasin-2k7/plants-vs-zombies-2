@@ -1,6 +1,6 @@
 package com.pvz2.view.terminalView;
 
-import controller.GameMenuController;
+import com.pvz2.controller.GameMenuController;
 import com.pvz2.models.enums.PlantType;
 import com.pvz2.models.enums.commands.GameMenuCommands;
 import view.View;

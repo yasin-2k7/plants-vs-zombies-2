@@ -10,12 +10,12 @@ public class ChapterMenuController implements MenuController {
 
     @Override
     public void changeMenu() {
-        AppView.currentScreen = CollectionMenuView.getInstance();
+        //needs edit
     }
 
     @Override
     public void exitMenu() {
-        AppView.setCurrentScreen(MainMenuView.getInstance());
+        //needs edit
     }
 
     public String chooseChapter(Chapter chapter) {
@@ -24,12 +24,14 @@ public class ChapterMenuController implements MenuController {
             return "this chapter is locked!";
         }
         user.setCurrentChapter(chapter);
-        AppView.currentScreen = LevelMenuView.getInstance(new LevelMenuController());
+//        AppView.currentScreen = LevelMenuView.getInstance(new LevelMenuController());
+        //needs edit
         return "you choose " + chapter;
     }
 
     public void greenHouse() {
-        AppView.setCurrentScreen(GreenhouseMenuView.getInstance());
+//        AppView.setCurrentScreen(GreenhouseMenuView.getInstance());
+        //needs edit
     }
 
     public void cheatAdd(String type, int amount) {
@@ -45,11 +47,13 @@ public class ChapterMenuController implements MenuController {
     }
 
     public void travelLog() {
-        AppView.setCurrentScreen(TravelLogMenuView.getInstance());
+//        AppView.setCurrentScreen(TravelLogMenuView.getInstance());
+        //needs edit
     }
 
     public void leaderboard() {
-        AppView.setCurrentScreen(LeaderboardMenuView.getInstance());
+//        AppView.setCurrentScreen(LeaderboardMenuView.getInstance());
+        //needs edit
     }
 
     public void coinWallet() {

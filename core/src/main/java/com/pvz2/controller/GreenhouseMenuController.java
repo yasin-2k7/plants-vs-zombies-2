@@ -4,10 +4,6 @@ import com.pvz2.models.core.App;
 import com.pvz2.models.core.User;
 import com.pvz2.models.greenhouse.GreenHouse;
 import com.pvz2.models.greenhouse.Pot;
-import view.terminalView.AppView;
-import view.terminalView.GameMenuView;
-import view.terminalView.MainMenuView;
-import view.terminalView.ShopMenuView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,12 +12,14 @@ public class GreenhouseMenuController implements MenuController {
 
     @Override
     public void changeMenu() {
-        AppView.currentScreen = ShopMenuView.getInstance();
+        //needs edit
+//        AppView.currentScreen = ShopMenuView.getInstance();
     }
 
     @Override
     public void exitMenu() {
-        AppView.currentScreen = MainMenuView.getInstance();
+        //needs edit
+//        AppView.currentScreen = MainMenuView.getInstance();
     }
 
     private GreenHouse getGreenHouse() {
@@ -84,7 +82,8 @@ public class GreenhouseMenuController implements MenuController {
 //        return "Enterning Shop...";
 //    }
 
+    //needs edit
     public void showCurrentMenu() {
-        GameMenuView.getInstance().showResult("Current menu: greenhouse menu");
+//        GameMenuView.getInstance().showResult("Current menu: greenhouse menu");
     }
 }

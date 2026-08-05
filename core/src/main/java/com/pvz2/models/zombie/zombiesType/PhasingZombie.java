@@ -1,6 +1,6 @@
 package com.pvz2.models.zombie.zombiesType;
 
-import controller.GameMenuController;
+import com.pvz2.controller.GameMenuController;
 import com.pvz2.models.enums.Zombies;
 import com.pvz2.models.zombie.Zombie;
 import com.pvz2.models.zombie.state.EatingState;

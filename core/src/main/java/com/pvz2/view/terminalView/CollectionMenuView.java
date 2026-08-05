@@ -1,6 +1,6 @@
 package com.pvz2.view.terminalView;
 
-import controller.CollectionMenuController;
+import com.pvz2.controller.CollectionMenuController;
 import com.pvz2.models.enums.PlantType;
 import com.pvz2.models.enums.commands.CollectionMenuCommands;
 import view.View;

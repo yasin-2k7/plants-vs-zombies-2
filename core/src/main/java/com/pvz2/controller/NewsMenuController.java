@@ -3,10 +3,6 @@ package com.pvz2.controller;
 import com.pvz2.models.core.App;
 import com.pvz2.models.core.News;
 import com.pvz2.models.core.User;
-import view.terminalView.AppView;
-import view.terminalView.GameMenuView;
-import view.terminalView.MainMenuView;
-import view.terminalView.NewsMenuView;
 
 import java.util.List;
 
@@ -18,16 +14,18 @@ public class NewsMenuController implements MenuController {
 
     @Override
     public void exitMenu() {
-        AppView.setCurrentScreen(MainMenuView.getInstance());
+        //needs edit
+//        AppView.setCurrentScreen(MainMenuView.getInstance());
     }
 
     public void showNewsUnread() {
         User user = App.getCurrentUser();
         List<News> unreadNews = user.getUnreadNews();
         for (News news : unreadNews) {
-            NewsMenuView.getInstance().showResult(news.getTitle());
-            NewsMenuView.getInstance().showResult("------------------------------------------------\n");
-            NewsMenuView.getInstance().showResult(news.getMessage());
+            //needs edit
+//            NewsMenuView.getInstance().showResult(news.getTitle());
+//            NewsMenuView.getInstance().showResult("------------------------------------------------\n");
+//            NewsMenuView.getInstance().showResult(news.getMessage());
             news.markAsRead();
         }
     }
@@ -36,14 +34,16 @@ public class NewsMenuController implements MenuController {
         User user = App.getCurrentUser();
         List<News> allNews = user.getAllNews();
         for (News news : allNews) {
-            NewsMenuView.getInstance().showResult(news.getTitle());
-            NewsMenuView.getInstance().showResult("------------------------------------------------\n");
-            NewsMenuView.getInstance().showResult(news.getMessage());
+            //needs edit
+//            NewsMenuView.getInstance().showResult(news.getTitle());
+//            NewsMenuView.getInstance().showResult("------------------------------------------------\n");
+//            NewsMenuView.getInstance().showResult(news.getMessage());
             news.markAsRead();
         }
     }
 
     public void showCurrentMenu() {
-        GameMenuView.getInstance().showResult("Current menu: news menu");
+        //needs edit
+//        GameMenuView.getInstance().showResult("Current menu: news menu");
     }
 }

@@ -1,6 +1,6 @@
 package com.pvz2.view.terminalView;
 
-import controller.LevelMenuController;
+import com.pvz2.controller.LevelMenuController;
 import com.pvz2.models.enums.commands.LevelMenuCommands;
 import view.View;
 

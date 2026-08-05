@@ -1,6 +1,6 @@
 package com.pvz2.models.plant.factory;
 
-import controller.GameMenuController;
+import com.pvz2.controller.GameMenuController;
 import com.pvz2.models.enums.PlantType;
 import com.pvz2.models.plant.Plant;
 import com.pvz2.models.world.Cell;

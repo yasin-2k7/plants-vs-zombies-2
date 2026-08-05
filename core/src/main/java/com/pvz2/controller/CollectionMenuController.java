@@ -8,10 +8,7 @@ import com.pvz2.models.plant.card.PlantCardFactory;
 import com.pvz2.models.plant.factory.PlantFactory;
 import com.pvz2.models.zombie.Zombie;
 import com.pvz2.models.zombie.ZombieFactory;
-import view.terminalView.AppView;
-import view.terminalView.ChapterMenuView;
-import view.terminalView.CollectionMenuView;
-import view.terminalView.GameMenuView;
+
 
 public class CollectionMenuController implements MenuController {
 
@@ -22,35 +19,42 @@ public class CollectionMenuController implements MenuController {
 
     @Override
     public void exitMenu() {
-        AppView.setCurrentScreen(ChapterMenuView.getInstance());
+//        AppView.setCurrentScreen(ChapterMenuView.getInstance());
+        //needs edit
     }
 
     public void showCurrentMenu() {
-        GameMenuView.getInstance().showResult("Current menu: collection menu");
+//        GameMenuView.getInstance().showResult("Current menu: collection menu");
+        //needs edit
     }
 
     public void showPlants() {
         for (PlantType type : App.getCurrentUser().getUnlockedPlantsLevels().keySet()) {
-            CollectionMenuView.getInstance().showResult(type.name());
+//            CollectionMenuView.getInstance().showResult(type.name());
+            //needs edit
         }
     }
 
     public void showAllPlants() {
         for (PlantType type : PlantType.values()) {
-            CollectionMenuView.getInstance().showResult(type.name());
+//            CollectionMenuView.getInstance().showResult(type.name());
+            //needs edit
         }
     }
 
     public void showZombies() {
         for (String name : App.getCurrentUser().getShowedZombies().keySet()) {
-            if (App.getCurrentUser().getShowedZombies().get(name))
-                CollectionMenuView.getInstance().showResult(name);
+            if (App.getCurrentUser().getShowedZombies().get(name)) {
+//                CollectionMenuView.getInstance().showResult(name);
+                //needs edit
+            }
         }
     }
 
     public void showAllZombies() {
         for (String name : App.getCurrentUser().getShowedZombies().keySet()) {
-            CollectionMenuView.getInstance().showResult(name);
+//            CollectionMenuView.getInstance().showResult(name);
+            //needs edit
         }
     }
 
@@ -58,10 +62,11 @@ public class CollectionMenuController implements MenuController {
         Plant plant = PlantFactory.createPlant(type, 0, 0, null);
         PlantCard card = PlantCardFactory.createCard(type,
                 App.getCurrentUser().getUnlockedPlantsLevels().getOrDefault(type,1));
-        CollectionMenuView.getInstance().showResult(type.name() + "\n"
-                + "Health: " + plant.getHealth() + "\n"
-                + "Damage: " + plant.getDamage() + "\n"
-                + "Sun Cost: " + card.getSunCost());
+//        CollectionMenuView.getInstance().showResult(type.name() + "\n"
+//                + "Health: " + plant.getHealth() + "\n"
+//                + "Damage: " + plant.getDamage() + "\n"
+//                + "Sun Cost: " + card.getSunCost());
+        //needs edit
     }
 
     public void showZombie(String name) {
@@ -70,36 +75,42 @@ public class CollectionMenuController implements MenuController {
         try {
             zombie = new ZombieFactory().createZombie(zombieName);
         } catch (Exception e) {
-            CollectionMenuView.getInstance().showResult("Zombie doesn't exist.");
+//            CollectionMenuView.getInstance().showResult("Zombie doesn't exist.");
+            //needs edit
             return;
         }
 
         if (!App.getCurrentUser().getShowedZombies().containsKey(name)) {
-            CollectionMenuView.getInstance().showResult("Zombie doesn't exist.");
+//            CollectionMenuView.getInstance().showResult("Zombie doesn't exist.");
+            //needs edit
             return;
         }
 
         if (!App.getCurrentUser().getShowedZombies().get(name)) {
-            CollectionMenuView.getInstance().showResult("Zombie is locked.");
+//            CollectionMenuView.getInstance().showResult("Zombie is locked.");
+            //needs edit
             return;
         }
 
-        CollectionMenuView.getInstance().showResult(name + "\n"
-                + "Health: " + zombie.getHealth() + "\n"
-                + "Damage: " + zombie.getDamage() / 10 + "\n"
-                + "Speed: " + (int) (zombie.getSpeed() * 15));
+//        CollectionMenuView.getInstance().showResult(name + "\n"
+//                + "Health: " + zombie.getHealth() + "\n"
+//                + "Damage: " + zombie.getDamage() / 10 + "\n"
+//                + "Speed: " + (int) (zombie.getSpeed() * 15));
+        //needs edit
 
     }
 
 
     public void upgradePlant(PlantType type) {
         if (!App.getCurrentUser().getUnlockedPlantsLevels().containsKey(type)) {
-            CollectionMenuView.getInstance().showResult("you have not this plant.");
+//            CollectionMenuView.getInstance().showResult("you have not this plant.");
+            //needs edit
             return;
         }
         int plantLevel = App.getCurrentUser().getUnlockedPlantsLevels().get(type);
         if (plantLevel == 4) {
-            CollectionMenuView.getInstance().showResult("this plant has max level.");
+//            CollectionMenuView.getInstance().showResult("this plant has max level.");
+            //needs edit
             return;
         }
         int currentSeedPacket = App.getCurrentUser().getSeedPacketsCount(type);
@@ -107,19 +118,22 @@ public class CollectionMenuController implements MenuController {
         int currentCoin = App.getCurrentUser().getCoins();
         int neededCoin = plantLevel * 100;
         if (currentSeedPacket < neededSeedPacket) {
-            CollectionMenuView.getInstance().showResult("you need " + neededSeedPacket + " seed packets.");
-            CollectionMenuView.getInstance().showResult("current seed packets: ." + currentSeedPacket);
+//            CollectionMenuView.getInstance().showResult("you need " + neededSeedPacket + " seed packets.");
+//            CollectionMenuView.getInstance().showResult("current seed packets: ." + currentSeedPacket);
+            //needs edit
             return;
         }
         if (currentCoin < neededCoin) {
-            CollectionMenuView.getInstance().showResult("you need " + neededCoin + " coins.");
-            CollectionMenuView.getInstance().showResult("current coins: ." + currentCoin);
+//            CollectionMenuView.getInstance().showResult("you need " + neededCoin + " coins.");
+//            CollectionMenuView.getInstance().showResult("current coins: ." + currentCoin);
+            //needs edit
             return;
         }
         App.getCurrentUser().getUnlockedPlantsLevels().put(type, plantLevel + 1);
         App.getCurrentUser().spendCoins(neededCoin);
         App.getCurrentUser().getSeedPackets().put(type, currentSeedPacket - neededSeedPacket);
-        CollectionMenuView.getInstance().showResult("plant " + type + " upgraded.");
+//        CollectionMenuView.getInstance().showResult("plant " + type + " upgraded.");
+        //needs edit
     }
 
     public PlantType getPlantType(String type) {
@@ -128,23 +142,27 @@ public class CollectionMenuController implements MenuController {
                 return plantType;
             }
         }
-        CollectionMenuView.getInstance().showResult("Plant doesn't exist.");
+//        CollectionMenuView.getInstance().showResult("Plant doesn't exist.");
+        //needs edit
         return null;
     }
 
     public void purchasePlant(PlantType type) {
         if (App.getCurrentUser().getUnlockedPlantsLevels().containsKey(type)) {
-            CollectionMenuView.getInstance().showResult("you already have this plant.");
+//            CollectionMenuView.getInstance().showResult("you already have this plant.");
+            //needs edit
             return;
         }
         if (App.getCurrentUser().getCoins() < 2000) {
-            CollectionMenuView.getInstance().showResult("you need 2000 coins.");
-            CollectionMenuView.getInstance().showResult("current coins: ." + App.getCurrentUser().getCoins());
+//            CollectionMenuView.getInstance().showResult("you need 2000 coins.");
+//            CollectionMenuView.getInstance().showResult("current coins: ." + App.getCurrentUser().getCoins());
+            //needs edit
             return;
         }
         App.getCurrentUser().spendCoins(2000);
         App.getCurrentUser().unlockPlant(type);
-        CollectionMenuView.getInstance().showResult("plant " + type + " purchased.");
+//        CollectionMenuView.getInstance().showResult("plant " + type + " purchased.");
+        //needs edit
 
         App.getCurrentUser().notifyPlantUnlock(type.name());
     }

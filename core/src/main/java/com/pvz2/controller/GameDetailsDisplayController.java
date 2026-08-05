@@ -20,17 +20,18 @@ import com.pvz2.models.world.obstacles.OctopusObstacle;
 import com.pvz2.models.zombie.Zombie;
 import com.pvz2.models.zombie.wave.WaveManager;
 import com.pvz2.models.zombie.zombiesType.ArmoredZombie;
-import view.terminalView.GameMenuView;
+
 
 import java.util.List;
 
+//needs edit
 public class GameDetailsDisplayController {
     public static void showSunAmount() {
-        GameMenuView.getInstance().showResult("current sun amount: " + App.getCurrentGame().getSun());
+//        GameMenuView.getInstance().showResult("current sun amount: " + App.getCurrentGame().getSun());
     }
 
     public static void showPlantFoodsCount() {
-        GameMenuView.getInstance().showResult("plant foods count: " + App.getCurrentUser().getPlantFoods());
+//        GameMenuView.getInstance().showResult("plant foods count: " + App.getCurrentUser().getPlantFoods());
     }
 
     private static String getCellDetails(Cell cell, int x, int y) {
@@ -98,14 +99,14 @@ public class GameDetailsDisplayController {
             }
             totalWaves = wm.getTotalWavesCount();
         }
-        GameMenuView.getInstance().showResult(
-                "==================================================================================================");
+//        GameMenuView.getInstance().showResult(
+//                "==================================================================================================");
         String title = String.format(" WAVE: %d/%d  |  SUN: %d ☀️  |  PLANT FOOD: %d ⚡  |  STATUS: %s 🎮",
                 currentWaveNum, totalWaves, App.getCurrentGame().getSun(),
                 App.getCurrentGame().getPlantFoods(), App.getCurrentGame().getState());
-        GameMenuView.getInstance().showResult(title);
-        GameMenuView.getInstance().showResult(
-                "==================================================================================================");
+//        GameMenuView.getInstance().showResult(title);
+//        GameMenuView.getInstance().showResult(
+//                "==================================================================================================");
         boolean isIZombie = App.getCurrentGame() instanceof IZombieLevel;
         IZombieLevel izLevel = isIZombie ? (IZombieLevel) App.getCurrentGame() : null;
         for (int y = 0; y < App.getCurrentGame().getGrid().length; y++) {
@@ -128,10 +129,10 @@ public class GameDetailsDisplayController {
                 Cell cell = App.getCurrentGame().getGrid()[y][x];
                 rowBuilder.append(getCellDetails(cell, x, y));
             }
-            GameMenuView.getInstance().showResult(rowBuilder.toString());
+//            GameMenuView.getInstance().showResult(rowBuilder.toString());
         }
-        GameMenuView.getInstance().showResult(
-                "==================================================================================================");
+//        GameMenuView.getInstance().showResult(
+//                "==================================================================================================");
     }
 
     public static void showPlantsStatus() {
@@ -140,8 +141,8 @@ public class GameDetailsDisplayController {
         for (PlantCard card : cards) {
             String ticksRemaining = card.isReady() ?
                     "" : " | ticks remaining: " + (card.getMaxCooldownTicks() - card.getCurrentCooldownTicks());
-            GameMenuView.getInstance().showResult(card.getType().name() +
-                    " | Cost: " + card.getSunCost() + " | is ready: " + card.isReady() + ticksRemaining);
+//            GameMenuView.getInstance().showResult(card.getType().name() +
+//                    " | Cost: " + card.getSunCost() + " | is ready: " + card.isReady() + ticksRemaining);
         }
     }
 
@@ -158,48 +159,48 @@ public class GameDetailsDisplayController {
             }
         }
         if (selectedCell == null) {
-            GameMenuView.getInstance().showResult("there is no tile in that place!");
+//            GameMenuView.getInstance().showResult("there is no tile in that place!");
             return;
         }
-        GameMenuView.getInstance().showResult("plants in this tile:");
+//        GameMenuView.getInstance().showResult("plants in this tile:");
         for (PlantLayer layer : PlantLayer.values()) {
             Plant p = selectedCell.getPlant(layer);
             if (p != null) {
-                GameMenuView.getInstance().showResult(p.getType().name() +
-                        " | health: " + p.getHealth() + " | damage: " + p.getDamage());
-                if (p.isFreeze()) GameMenuView.getInstance().showResult("ICE health: " + p.getIceHealth());
+//                GameMenuView.getInstance().showResult(p.getType().name() +
+//                        " | health: " + p.getHealth() + " | damage: " + p.getDamage());
+//                if (p.isFreeze()) GameMenuView.getInstance().showResult("ICE health: " + p.getIceHealth());
             }
         }
-        GameMenuView.getInstance().showResult("zombies in this tile:");
+//        GameMenuView.getInstance().showResult("zombies in this tile:");
         for (Zombie zombie : Cell.getZombiesInCells(List.of(selectedCell))) {
-            GameMenuView.getInstance().showResult(
-                    App.getArmoredZombieName(zombie.getSpecificName()) +
-                            " | health: " + zombie.getHealth() + " | damage: " + zombie.getDamage());
+//            GameMenuView.getInstance().showResult(
+//                    App.getArmoredZombieName(zombie.getSpecificName()) +
+//                            " | health: " + zombie.getHealth() + " | damage: " + zombie.getDamage());
         }
     }
 
     public static void zombieInfo() {
         for (Zombie zombie : App.getCurrentGame().getActiveZombies()) {
-            GameMenuView.getInstance().showResult(App.getArmoredZombieName(zombie.getSpecificName()) + ":");
-            GameMenuView.getInstance().showResult("    position: (" + zombie.getX() + ", " + zombie.getY() + ")");
-            GameMenuView.getInstance().showResult("    health: " + zombie.getHealth());
+//            GameMenuView.getInstance().showResult(App.getArmoredZombieName(zombie.getSpecificName()) + ":");
+//            GameMenuView.getInstance().showResult("    position: (" + zombie.getX() + ", " + zombie.getY() + ")");
+//            GameMenuView.getInstance().showResult("    health: " + zombie.getHealth());
             if (zombie instanceof ArmoredZombie armoredZombie) {
-                GameMenuView.getInstance().showResult("    armor health: " + handleArmor(armoredZombie));
+//                GameMenuView.getInstance().showResult("    armor health: " + handleArmor(armoredZombie));
             } else {
-                GameMenuView.getInstance().showResult("    armor health: none");
+//                GameMenuView.getInstance().showResult("    armor health: none");
             }
-            GameMenuView.getInstance().showResult("    effects:");
+//            GameMenuView.getInstance().showResult("    effects:");
             if (zombie.getDisabledTicksRemaining() > 0)
-                GameMenuView.getInstance().showResult("        stunned " + zombie.getDisabledTicksRemaining());
+//                GameMenuView.getInstance().showResult("        stunned " + zombie.getDisabledTicksRemaining());
             if (zombie.getFreezedTicksRemaining() > 0)
-                GameMenuView.getInstance().showResult("        frozen " + zombie.getFreezedTicksRemaining());
+//                GameMenuView.getInstance().showResult("        frozen " + zombie.getFreezedTicksRemaining());
             if (zombie.getSlowTicksRemaining() > 0)
-                GameMenuView.getInstance().showResult("        slowed " + zombie.getSlowTicksRemaining());
+//                GameMenuView.getInstance().showResult("        slowed " + zombie.getSlowTicksRemaining());
             if (zombie.getIceHealth() > 0)
-                GameMenuView.getInstance().showResult("        ice health " + zombie.getIceHealth());
-            if (zombie.getOnPoisonTicksRemaining() > 0)
-                GameMenuView.getInstance().showResult("        poisoned " + zombie.getOnPoisonTicksRemaining());
-            GameMenuView.getInstance().showResult("");
+//                GameMenuView.getInstance().showResult("        ice health " + zombie.getIceHealth());
+            if (zombie.getOnPoisonTicksRemaining() > 0){}
+//                GameMenuView.getInstance().showResult("        poisoned " + zombie.getOnPoisonTicksRemaining());
+//            GameMenuView.getInstance().showResult("");
         }
     }
 
