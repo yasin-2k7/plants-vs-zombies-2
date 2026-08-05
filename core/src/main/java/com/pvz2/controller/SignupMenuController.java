@@ -2,9 +2,6 @@ package com.pvz2.controller;
 
 import com.pvz2.models.core.UserDataManager;
 import com.pvz2.models.core.UserManager;
-import view.terminalView.AppView;
-import view.terminalView.GameMenuView;
-import view.terminalView.LoginMenuView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,7 +22,8 @@ public class SignupMenuController implements MenuController {
 
     @Override
     public void changeMenu() {
-        AppView.currentScreen = LoginMenuView.getInstance(new LoginMenuController());
+        //needs edit
+//        AppView.currentScreen = LoginMenuView.getInstance(new LoginMenuController());
     }
 
     @Override
@@ -117,7 +115,8 @@ public class SignupMenuController implements MenuController {
                              String securityQ,
                              String securityA) {
         String result = UserManager.register(username, password, nickname, email, gender, securityQ, securityA);
-        AppView.currentScreen = LoginMenuView.getInstance(new LoginMenuController());
+        //needs edit
+//        AppView.currentScreen = LoginMenuView.getInstance(new LoginMenuController());
         return result;
 
     }
@@ -190,6 +189,7 @@ public class SignupMenuController implements MenuController {
     }
 
     public void showCurrentMenu() {
-        GameMenuView.getInstance().showResult("Current menu: signup menu");
+        //needs edit
+//        GameMenuView.getInstance().showResult("Current menu: signup menu");
     }
 }

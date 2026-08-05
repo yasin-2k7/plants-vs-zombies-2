@@ -1,6 +1,6 @@
 package com.pvz2.view.terminalView;
 
-import controller.NewsMenuController;
+import com.pvz2.controller.NewsMenuController;
 import com.pvz2.models.enums.commands.NewsMenuCommands;
 import view.View;
 

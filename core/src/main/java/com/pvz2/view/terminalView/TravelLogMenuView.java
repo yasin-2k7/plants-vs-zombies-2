@@ -1,7 +1,7 @@
 // فایل: view/terminalView/TravelLogMenuView.java
 package com.pvz2.view.terminalView;
 
-import controller.TravelLogMenuController;
+import com.pvz2.controller.TravelLogMenuController;
 import com.pvz2.models.enums.commands.TravelLogCommands;
 import view.View;
 

@@ -11,10 +11,6 @@ import com.pvz2.models.quest.types.DailyQuest;
 import com.pvz2.models.quest.types.EpicChallengeQuest;
 import com.pvz2.models.quest.types.MainQuest;
 import com.pvz2.models.world.GameWorld;
-import view.terminalView.AppView;
-import view.terminalView.GameMenuView;
-import view.terminalView.MainMenuView;
-import view.terminalView.PlantMenuView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,11 +26,13 @@ public class TravelLogMenuController implements MenuController {
 
     @Override
     public void exitMenu() {
-        AppView.setCurrentScreen(MainMenuView.getInstance());
+        //needs edit
+//        AppView.setCurrentScreen(MainMenuView.getInstance());
     }
 
     public void showCurrentMenu() {
-        GameMenuView.getInstance().showResult("Current menu: travel log");
+        //needs edit
+//        GameMenuView.getInstance().showResult("Current menu: travel log");
     }
 
     public String changePage(String pageName) {
@@ -49,7 +47,8 @@ public class TravelLogMenuController implements MenuController {
     public void displayCurrentPage() {
         User user = App.getCurrentUser();
         if (user == null) {
-            GameMenuView.getInstance().showResult("No user logged in.");
+            //needs edit
+//            GameMenuView.getInstance().showResult("No user logged in.");
             return;
         }
 
@@ -71,7 +70,8 @@ public class TravelLogMenuController implements MenuController {
                 displayMinigames();
                 break;
             default:
-                GameMenuView.getInstance().showResult("Unknown page.");
+                //needs edit
+//                GameMenuView.getInstance().showResult("Unknown page.");
         }
     }
 
@@ -82,21 +82,26 @@ public class TravelLogMenuController implements MenuController {
                 .collect(Collectors.toList());
 
         if (filtered.isEmpty()) {
-            GameMenuView.getInstance().showResult("No " + type.getSimpleName() + " quests available.");
+            //needs edit
+//            GameMenuView.getInstance().showResult("No " + type.getSimpleName() + " quests available.");
             return;
         }
 
-        GameMenuView.getInstance().showResult("===== " + type.getSimpleName() + " Quests =====");
+        //needs edit
+//        GameMenuView.getInstance().showResult("===== " + type.getSimpleName() + " Quests =====");
         for (Quest q : filtered) {
             String status = q.isCompleted() ? "[✓ COMPLETED]" : "[✗ IN PROGRESS]";
             String priorityIcon = getPriorityIcon(q.getPriority());
             if (q.isCompleted()) {
-                GameMenuView.getInstance().showResult("✅ " + q.getDescription() + " " + status);
+                //needs edit
+//                GameMenuView.getInstance().showResult("✅ " + q.getDescription() + " " + status);
             } else {
-                GameMenuView.getInstance().showResult(priorityIcon + " " + q.getDescription() + " " + status);
+                //needs edit
+//                GameMenuView.getInstance().showResult(priorityIcon + " " + q.getDescription() + " " + status);
             }
         }
-        GameMenuView.getInstance().showResult("================================");
+        //needs edit
+//        GameMenuView.getInstance().showResult("================================");
     }
 
     private String getPriorityIcon(QuestPriority priority) {
@@ -114,21 +119,23 @@ public class TravelLogMenuController implements MenuController {
         }
     }
 
+    //needs edit
     private void displayMinigames() {
-        GameMenuView.getInstance().showResult("===== Minigames =====");
-        GameMenuView.getInstance().showResult("1. Beghouled");
-        GameMenuView.getInstance().showResult("2. Bowling");
-        GameMenuView.getInstance().showResult("3. Vase Breaker");
-        GameMenuView.getInstance().showResult("4. IZombie");
-        GameMenuView.getInstance().showResult("4. Zombotany");
-        GameMenuView.getInstance().showResult("=====================");
+//        GameMenuView.getInstance().showResult("===== Minigames =====");
+//        GameMenuView.getInstance().showResult("1. Beghouled");
+//        GameMenuView.getInstance().showResult("2. Bowling");
+//        GameMenuView.getInstance().showResult("3. Vase Breaker");
+//        GameMenuView.getInstance().showResult("4. IZombie");
+//        GameMenuView.getInstance().showResult("4. Zombotany");
+//        GameMenuView.getInstance().showResult("=====================");
     }
 
     public void selectMinigame(String minigameName, int level) {
         MiniGames selected = parseMinigameName(minigameName);
         if (selected == null) {
-            GameMenuView.getInstance().showResult("Invalid minigame name. Available: beghouled, bowling, vasebreaker," +
-                    " izombie, zombotany.");
+            //needs edit
+//            GameMenuView.getInstance().showResult("Invalid minigame name. Available: beghouled, bowling, vasebreaker," +
+//                    " izombie, zombotany.");
             return;
         }
 
@@ -143,7 +150,7 @@ public class TravelLogMenuController implements MenuController {
             isUnlocked = true;
         }
         if (!isUnlocked){
-            GameMenuView.getInstance().showResult("this mini game is locked!");
+//            GameMenuView.getInstance().showResult("this mini game is locked!");
             return;
         }
 
@@ -151,16 +158,17 @@ public class TravelLogMenuController implements MenuController {
             GameWorld world = MiniGameFactory.createMiniGameLevel(selected, level);
             App.setCurrentGame(world);
 
+            //needs edit
             if (world.getLevelSetup().requirePlantSelection()) {
-                AppView.setCurrentScreen(PlantMenuView.getInstance());
-                GameMenuView.getInstance().showResult(
-                        "Select your plants for " + selected.name() + " - Level " + level + "!");
+//                AppView.setCurrentScreen(PlantMenuView.getInstance());
+//                GameMenuView.getInstance().showResult(
+//                        "Select your plants for " + selected.name() + " - Level " + level + "!");
             } else {
-                AppView.setCurrentScreen(GameMenuView.getInstance());
-                GameMenuView.getInstance().showResult("Starting " + selected.name() + " - Level " + level + "!");
+//                AppView.setCurrentScreen(GameMenuView.getInstance());
+//                GameMenuView.getInstance().showResult("Starting " + selected.name() + " - Level " + level + "!");
             }
         } catch (IllegalArgumentException e) {
-            GameMenuView.getInstance().showResult(e.getMessage());
+//            GameMenuView.getInstance().showResult(e.getMessage());
         }
     }
 

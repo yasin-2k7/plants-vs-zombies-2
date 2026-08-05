@@ -1,6 +1,6 @@
 package com.pvz2.models.plant.components.explosionRanges;
 
-import controller.LevelMenuController;
+import com.pvz2.controller.LevelMenuController;
 import com.pvz2.models.plant.Plant;
 import com.pvz2.models.world.Cell;
 

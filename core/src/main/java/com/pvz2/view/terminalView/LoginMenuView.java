@@ -1,6 +1,6 @@
 package com.pvz2.view.terminalView;
 
-import controller.LoginMenuController;
+import com.pvz2.controller.LoginMenuController;
 import com.pvz2.models.core.App;
 import com.pvz2.models.enums.commands.LoginMenuCommands;
 import view.View;

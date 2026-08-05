@@ -1,6 +1,6 @@
 package com.pvz2.models.quest;
 
-import controller.GameMenuController;
+import com.pvz2.controller.GameMenuController;
 import com.pvz2.models.core.User;
 import com.pvz2.models.enums.Chapter;
 import com.pvz2.models.enums.PlantFamily;

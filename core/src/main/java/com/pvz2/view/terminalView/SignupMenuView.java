@@ -1,6 +1,6 @@
 package com.pvz2.view.terminalView;
 
-import controller.SignupMenuController;
+import com.pvz2.controller.SignupMenuController;
 import com.pvz2.models.enums.commands.SignupMenuCommands;
 import view.View;
 

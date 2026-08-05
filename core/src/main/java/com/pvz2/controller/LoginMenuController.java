@@ -4,10 +4,6 @@ import com.pvz2.models.core.PasswordHasher;
 import com.pvz2.models.core.User;
 import com.pvz2.models.core.UserDataManager;
 import com.pvz2.models.core.UserManager;
-import view.terminalView.AppView;
-import view.terminalView.GameMenuView;
-import view.terminalView.MainMenuView;
-import view.terminalView.SignupMenuView;
 
 public class LoginMenuController implements MenuController {
 
@@ -16,12 +12,14 @@ public class LoginMenuController implements MenuController {
 
     @Override
     public void changeMenu() {
-        AppView.currentScreen = MainMenuView.getInstance();
+        //needs edit
+//        AppView.currentScreen = MainMenuView.getInstance();
     }
 
     @Override
     public void exitMenu() {
-        AppView.currentScreen = SignupMenuView.getInstance();
+        //needs edit
+//        AppView.currentScreen = SignupMenuView.getInstance();
     }
 
     public String loginUser(String username, String password, boolean stayLoggedIn) {
@@ -81,6 +79,7 @@ public class LoginMenuController implements MenuController {
     }
 
     public void showCurrentMenu() {
-        GameMenuView.getInstance().showResult("Current menu: login menu");
+        //needs edit
+//        GameMenuView.getInstance().showResult("Current menu: login menu");
     }
 }

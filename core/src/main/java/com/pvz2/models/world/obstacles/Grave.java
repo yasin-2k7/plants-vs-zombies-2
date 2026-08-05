@@ -1,6 +1,6 @@
 package com.pvz2.models.world.obstacles;
 
-import controller.GameMenuController;
+import com.pvz2.controller.GameMenuController;
 import com.pvz2.models.core.App;
 import com.pvz2.models.world.GameWorld;
 

@@ -1,6 +1,6 @@
 package com.pvz2.models.world.mechanics;
 
-import controller.GameMenuController;
+import com.pvz2.controller.GameMenuController;
 import com.pvz2.models.world.Cell;
 import com.pvz2.models.world.ChapterWorld.DarkAgesWorld;
 import com.pvz2.models.world.GameWorld;

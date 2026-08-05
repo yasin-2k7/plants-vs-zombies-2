@@ -1,6 +1,6 @@
 package com.pvz2.models.zombie.zombiesType;
 
-import controller.GameMenuController;
+import com.pvz2.controller.GameMenuController;
 import com.pvz2.models.core.App;
 import com.pvz2.models.enums.PlantLayer;
 import com.pvz2.models.enums.Zombies;

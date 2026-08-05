@@ -1,6 +1,6 @@
 package com.pvz2.models.plant.components;
 
-import controller.LevelMenuController;
+import com.pvz2.controller.LevelMenuController;
 import com.pvz2.models.core.App;
 import com.pvz2.models.plant.GameComponent;
 import com.pvz2.models.plant.Plant;

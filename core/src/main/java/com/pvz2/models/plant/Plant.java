@@ -1,6 +1,6 @@
 package com.pvz2.models.plant;
 
-import controller.GameMenuController;
+import com.pvz2.controller.GameMenuController;
 import com.pvz2.models.Damageable;
 import com.pvz2.models.core.App;
 import com.pvz2.models.core.User;

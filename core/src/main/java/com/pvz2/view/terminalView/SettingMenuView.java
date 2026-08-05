@@ -1,6 +1,6 @@
 package com.pvz2.view.terminalView;
 
-import controller.SettingMenuController;
+import com.pvz2.controller.SettingMenuController;
 import com.pvz2.models.enums.commands.SettingMenuCommands;
 import view.View;
 

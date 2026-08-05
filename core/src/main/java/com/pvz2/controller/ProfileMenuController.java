@@ -4,9 +4,6 @@ import com.pvz2.models.core.App;
 import com.pvz2.models.core.PasswordHasher;
 import com.pvz2.models.core.User;
 import com.pvz2.models.core.UserDataManager;
-import view.terminalView.AppView;
-import view.terminalView.GameMenuView;
-import view.terminalView.MainMenuView;
 
 import java.util.List;
 
@@ -19,7 +16,8 @@ public class ProfileMenuController implements MenuController {
 
     @Override
     public void exitMenu() {
-        AppView.currentScreen = MainMenuView.getInstance();
+        //needs edit
+//        AppView.currentScreen = MainMenuView.getInstance();
     }
 
     public String changeUsername(String newUsername) {
@@ -113,7 +111,8 @@ public class ProfileMenuController implements MenuController {
     }
 
     public void showCurrentMenu() {
-        GameMenuView.getInstance().showResult("Current menu: profile menu");
+        //needs edit
+//        GameMenuView.getInstance().showResult("Current menu: profile menu");
     }
 
 }

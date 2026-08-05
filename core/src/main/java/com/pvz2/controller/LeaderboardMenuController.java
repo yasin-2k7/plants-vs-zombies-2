@@ -3,10 +3,6 @@ package com.pvz2.controller;
 import com.pvz2.models.core.User;
 import com.pvz2.models.core.UserDataManager;
 import com.pvz2.models.enums.LeaderboardSortField;
-import view.terminalView.AppView;
-import view.terminalView.GameMenuView;
-import view.terminalView.LeaderboardMenuView;
-import view.terminalView.MainMenuView;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -20,11 +16,13 @@ public class LeaderboardMenuController implements MenuController {
 
     @Override
     public void exitMenu() {
-        AppView.setCurrentScreen(MainMenuView.getInstance());
+        //needs edit
+//        AppView.setCurrentScreen(MainMenuView.getInstance());
     }
 
     public void showCurrentMenu() {
-        GameMenuView.getInstance().showResult("Current menu: leaderboard menu");
+        //needs edit
+//        GameMenuView.getInstance().showResult("Current menu: leaderboard menu");
     }
 
     public List<User> getSortedLeaderboard(List<User> allUsers, LeaderboardSortField field, boolean ascending) {
@@ -51,29 +49,31 @@ public class LeaderboardMenuController implements MenuController {
             }
         }
         if (sortField == null) {
-            LeaderboardMenuView.getInstance().showResult("invalid field!");
+            //needs edit
+//            LeaderboardMenuView.getInstance().showResult("invalid field!");
             return;
         }
 
         List<User> sortedUsers = getSortedLeaderboard(UserDataManager.loadAllUsers(), sortField, ascending);
-        LeaderboardMenuView.getInstance().showResult(
-                "===============================================================================================\n" +
-                "                                \uD83C\uDFC6 LEADERBOARD \uD83C\uDFC6\n" +
-                "===============================================================================================\n" +
-                "| Rank | Username       | Last Stage         | Mini-Games | Daily Q. | Normal Q. | High Score |\n" +
-                "+------+----------------+--------------------+------------+----------+-----------+------------+");
-
-        int i = 1;
-        for (User user : sortedUsers) {
-            String row = String.format("| %-4d | %-14s | %-17s | %-10d | %-8d | %-9d | %-10d |",
-                    i++, user.getUsername(), "SEASON " + user.getUnlockedChapter() +
-                            " - " + "LEVEL " + user.getUnlockedLevel(), user.getMiniGameLevels().size(),
-                    user.getDailyQuestsCount(), user.getNormalQuestsCount(), user.getMaxMupoint());
-            LeaderboardMenuView.getInstance().showResult(row);
-        }
-
-        LeaderboardMenuView.getInstance().showResult(
-                "===============================================================================================\n" +
-                "* Sorted by: " + sortField.name() + (ascending ? " (Ascending)" : " (Descending)"));
+        //needs edit
+//        LeaderboardMenuView.getInstance().showResult(
+//                "===============================================================================================\n" +
+//                "                                \uD83C\uDFC6 LEADERBOARD \uD83C\uDFC6\n" +
+//                "===============================================================================================\n" +
+//                "| Rank | Username       | Last Stage         | Mini-Games | Daily Q. | Normal Q. | High Score |\n" +
+//                "+------+----------------+--------------------+------------+----------+-----------+------------+");
+//
+//        int i = 1;
+//        for (User user : sortedUsers) {
+//            String row = String.format("| %-4d | %-14s | %-17s | %-10d | %-8d | %-9d | %-10d |",
+//                    i++, user.getUsername(), "SEASON " + user.getUnlockedChapter() +
+//                            " - " + "LEVEL " + user.getUnlockedLevel(), user.getMiniGameLevels().size(),
+//                    user.getDailyQuestsCount(), user.getNormalQuestsCount(), user.getMaxMupoint());
+//            LeaderboardMenuView.getInstance().showResult(row);
+//        }
+//
+//        LeaderboardMenuView.getInstance().showResult(
+//                "===============================================================================================\n" +
+//                "* Sorted by: " + sortField.name() + (ascending ? " (Ascending)" : " (Descending)"));
     }
 }

@@ -6,9 +6,10 @@ import com.pvz2.models.enums.Chapter;
 import com.pvz2.models.world.Cell;
 import com.pvz2.models.world.GameWorld;
 import com.pvz2.models.world.LevelFactory;
-import view.terminalView.AppView;
-import view.terminalView.GameMenuView;
-import view.terminalView.PlantMenuView;
+//import com.pvz2.models.world.LevelFactory;
+//import view.terminalView.AppView;
+//import view.terminalView.GameMenuView;
+//import view.terminalView.PlantMenuView;
 
 import java.util.List;
 
@@ -39,12 +40,14 @@ public class LevelMenuController implements MenuController {
         App.getCurrentUser().setCurrentLevel(level);
         game.initialize();
         if (game.isConveyorMode()) {
-            AppView.setCurrentScreen(GameMenuView.getInstance());
+            //needs edit
+//            AppView.setCurrentScreen(GameMenuView.getInstance());
             return "level started!";
         }
         else {
-            AppView.setCurrentScreen(PlantMenuView.getInstance());
-            PlantMenuView.getInstance().getController().reset();
+            //needs edit
+//            AppView.setCurrentScreen(PlantMenuView.getInstance());
+//            PlantMenuView.getInstance().getController().reset();
             return "";
         }
     }
@@ -67,6 +70,7 @@ public class LevelMenuController implements MenuController {
     }
 
     public void showCurrentMenu() {
-        GameMenuView.getInstance().showResult("Current menu: level menu");
+        //needs edit
+//        GameMenuView.getInstance().showResult("Current menu: level menu");
     }
 }

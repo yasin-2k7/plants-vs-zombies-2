@@ -1,6 +1,6 @@
 package com.pvz2.view.terminalView;
 
-import controller.GreenhouseMenuController;
+import com.pvz2.controller.GreenhouseMenuController;
 import com.pvz2.models.enums.commands.GreenhouseMenuCommands;
 import view.View;
 
