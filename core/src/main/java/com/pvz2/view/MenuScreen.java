@@ -1,4 +1,4 @@
-package com.pvz2.view.graphicalView;
+package com.pvz2.view;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
@@ -6,7 +6,6 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Stack;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.pvz2.Main;
@@ -17,22 +16,22 @@ public abstract class MenuScreen implements Screen {
     protected Stage stage;
     protected Skin skin;
 
-    protected Stack rootStack;
+    private Stack rootStack;
     protected Stack modalStack;
     protected Stack toastStack;
-    private Stack mainStack;
+    protected Stack mainStack;
 
     protected float stateTime = 0f; // زمان انیمیشن‌ها
 
     public MenuScreen(Main game) {
         this.game = game;
+        this.skin = game.skin;
     }
 
     @Override
     public void show() {
         ScreenViewport viewport = new ScreenViewport();
         stage = new Stage(viewport);
-        // skin = GameAssetManager.skin; // اسکین UI خود را ست کنید
 
         mainStack = new Stack();
         modalStack = new Stack();

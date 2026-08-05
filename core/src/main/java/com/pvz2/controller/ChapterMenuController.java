@@ -4,7 +4,6 @@ package com.pvz2.controller;
 import com.pvz2.models.core.App;
 import com.pvz2.models.core.User;
 import com.pvz2.models.enums.Chapter;
-import com.pvz2.view.terminalView.*;
 
 public class ChapterMenuController implements MenuController {
 
@@ -43,7 +42,8 @@ public class ChapterMenuController implements MenuController {
                 App.getCurrentUser().setGems(App.getCurrentUser().getGems() + amount);
                 break;
         }
-        ChapterMenuView.getInstance().showResult("Added successfully.");
+        //needs edit
+//        ChapterMenuView.getInstance().showResult("Added successfully.");
     }
 
     public void travelLog() {
@@ -57,15 +57,18 @@ public class ChapterMenuController implements MenuController {
     }
 
     public void coinWallet() {
-        ChapterMenuView.getInstance().showResult("Your coins amount: " + App.getCurrentUser().getCoins());
+        //needs edit
+//        ChapterMenuView.getInstance().showResult("Your coins amount: " + App.getCurrentUser().getCoins());
     }
 
     public void gemWallet() {
-        ChapterMenuView.getInstance().showResult("Your gems amount: " + App.getCurrentUser().getGems());
+        //needs edit
+//        ChapterMenuView.getInstance().showResult("Your gems amount: " + App.getCurrentUser().getGems());
     }
 
     public void showCurrentMenu() {
-        GameMenuView.getInstance().showResult("Current menu: chapter menu");
+        //needs edit
+//        GameMenuView.getInstance().showResult("Current menu: chapter menu");
     }
 
 
