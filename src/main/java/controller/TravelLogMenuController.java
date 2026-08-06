@@ -132,17 +132,17 @@ public class TravelLogMenuController implements MenuController {
             return;
         }
 
-        boolean isUnlocked = false;
-        if (level != 1){
-            for (MiniGameLevels miniGameLevels : App.getCurrentUser().getMiniGameLevels()){
-                if (miniGameLevels.miniGame == selected && miniGameLevels.level == level-1) isUnlocked = true;
-                break;
-            }
-        }
-        if (!isUnlocked){
-            GameMenuView.getInstance().showResult("this mini game is locked!");
-            return;
-        }
+//        boolean isUnlocked = false;
+//        if (level != 1){
+//            for (MiniGameLevels miniGameLevels : App.getCurrentUser().getMiniGameLevels()){
+//                if (miniGameLevels.miniGame == selected && miniGameLevels.level == level-1) isUnlocked = true;
+//                break;
+//            }
+//        }
+//        if (!isUnlocked){
+//            GameMenuView.getInstance().showResult("this mini game is locked!");
+//            return;
+//        }
 
         try {
             GameWorld world = MiniGameFactory.createMiniGameLevel(selected, level);

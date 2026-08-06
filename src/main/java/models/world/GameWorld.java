@@ -536,7 +536,4 @@ public abstract class GameWorld {
                 .orElse(null);
     }
 
-    public MupointManager getMupointManager() {
-        return mupointManager;
-    }
 }

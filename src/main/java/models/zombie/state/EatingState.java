@@ -3,6 +3,7 @@ package models.zombie.state;
 import models.core.App;
 import models.miniGame.beghouled.BeghouledMechanics;
 import models.plant.Plant;
+import models.world.Cell;
 import models.world.GameWorld;
 import models.world.levelSetup.SaveOurSeedsLevelSetup;
 import models.world.loseCondition.SaveOurSeedsLose;
@@ -18,6 +19,7 @@ public class EatingState implements ZombieState {
     @Override
     public void handleAction(Zombie zombie) {
         if (targetPlant != null && !targetPlant.isDead()) {
+            Cell targetCell = targetPlant.getCell();
             targetPlant.takeDamage(zombie.getDamage(), zombie);
             zombie.setHasEatenPlant(true);
 
@@ -26,8 +28,8 @@ public class EatingState implements ZombieState {
                 GameWorld world = App.getCurrentGame();
                 BeghouledMechanics beghouled = world.getMechanic(BeghouledMechanics.class);
 
-                if (beghouled != null) {
-                    beghouled.createCrater(world, targetPlant.getCell().getRow(), targetPlant.getCell().getCol());
+                if (beghouled != null && targetCell != null) {
+                    beghouled.createCrater(world, targetCell.getRow(), targetCell.getCol());
                 }
 
                 if(world.getLevelSetup() instanceof SaveOurSeedsLevelSetup setup){

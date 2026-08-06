@@ -25,7 +25,6 @@ public class UserDataManager {
 
                 @Override
                 public boolean shouldSkipClass(Class<?> clazz) {
-                    // اگر کلاس از نوع Random بود، نادیده‌اش بگیر
                     return clazz == java.util.Random.class;
                 }
             })

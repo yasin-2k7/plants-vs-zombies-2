@@ -97,7 +97,7 @@ public class SignupMenuView implements View {
                         break;
                     case MENU_ENTER:
                         controller.changeMenu();
-                        System.out.println("login menu\n");
+                        System.out.println("Entering login menu...\n");
                         break;
                     case MENU_EXIT:
                         controller.exitMenu();
