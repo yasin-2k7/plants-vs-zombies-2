@@ -31,7 +31,6 @@ import java.util.function.Supplier;
 
 public class SignupMenuScreen extends MenuScreen {
 
-    private ClipRef backgroundClip;
     TextureRegion textureRegion;
     private TextureBank textureBank;
 
@@ -152,7 +151,7 @@ public class SignupMenuScreen extends MenuScreen {
         loginBtn.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                super.clicked(event, x, y);
+                game.setScreen(new LoginMenuScreen(game));
             }
         });
 
