@@ -3,9 +3,11 @@ package com.pvz2;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.pvz2.models.core.GameInitializer;
 import com.pvz2.models.core.UserManager;
+import com.pvz2.view.LoginMenuScreen;
 import com.pvz2.view.MainMenuScreen;
 import com.pvz2.view.SignupMenuScreen;
 import pvz.libpvz.pam.PamPlayer;
@@ -17,11 +19,16 @@ public class Main extends Game {
     public TextureBank textureBank;
     public PamPlayer pamPlayer;
     public Skin skin;
+    private SpriteBatch batch;
+
+
 
     @Override
     public void create() {
         UserManager.init();
         GameInitializer.loadPlantUpgrades();
+
+        batch = new SpriteBatch();
 
         FileHandle assetsFolder = Gdx.files.internal("");
         textureBank = new TextureBank("768", assetsFolder);
@@ -29,7 +36,7 @@ public class Main extends Game {
         skin = PvzSkin.get();
 
 
-        setScreen(new MainMenuScreen(this));
+        setScreen(new LoginMenuScreen(this));
     }
 
     @Override
