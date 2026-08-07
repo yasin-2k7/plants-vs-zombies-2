@@ -4,22 +4,28 @@ import com.pvz2.models.core.PasswordHasher;
 import com.pvz2.models.core.User;
 import com.pvz2.models.core.UserDataManager;
 import com.pvz2.models.core.UserManager;
+import com.pvz2.view.LoginMenuScreen;
+import com.pvz2.view.MainMenuScreen;
+import com.pvz2.view.SignupMenuScreen;
 
 public class LoginMenuController implements MenuController {
+    private LoginMenuScreen screen;
 
     private User recoveringUser = null;
     private boolean isSQPassed = false;
 
+    public LoginMenuController(LoginMenuScreen screen) {
+        this.screen = screen;
+    }
+
     @Override
     public void changeMenu() {
-        //needs edit
-//        AppView.currentScreen = MainMenuView.getInstance();
+        screen.fadeAndSwitchScreen(new MainMenuScreen(screen.getGame()));
     }
 
     @Override
     public void exitMenu() {
-        //needs edit
-//        AppView.currentScreen = SignupMenuView.getInstance();
+        screen.fadeAndSwitchScreen(new SignupMenuScreen(screen.getGame()));
     }
 
     public String loginUser(String username, String password, boolean stayLoggedIn) {

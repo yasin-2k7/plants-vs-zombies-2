@@ -34,7 +34,7 @@ public class SignupMenuScreen extends MenuScreen {
     TextureRegion textureRegion;
     private TextureBank textureBank;
 
-    private final SignupMenuController controller = new SignupMenuController();
+    private SignupMenuController controller;
     private NinePatchDrawable errorBorderDrawable;
 
     private static class ValidatedField {
@@ -54,6 +54,7 @@ public class SignupMenuScreen extends MenuScreen {
 
     @Override
     protected void buildUI() {
+        controller = new SignupMenuController(this);
         errorBorderDrawable = createBorderDrawable(Color.RED, 3);
 
         Image backgroundImage = new Image(textureRegion);
@@ -144,6 +145,10 @@ public class SignupMenuScreen extends MenuScreen {
                     && passwordConfirmOk && genderOk && answerOk && answerConfirmOk;
 
                 if (!allOk) return;
+                controller.createUser(usernameField.getText(), passwordField.getText(),
+                    nicknameField.getText(), emailField.getText(), genderBox.getSelected(),
+                    questionBox.getSelected(), answerField.getText());
+                controller.changeMenu();
             }
         });
 
@@ -151,7 +156,7 @@ public class SignupMenuScreen extends MenuScreen {
         loginBtn.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                game.setScreen(new LoginMenuScreen(game));
+                controller.changeMenu();
             }
         });
 

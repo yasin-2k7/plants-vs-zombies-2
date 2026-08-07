@@ -6,8 +6,7 @@ import com.pvz2.models.core.User;
 import com.pvz2.models.core.UserManager;
 import com.pvz2.models.mupoint.MuPointLevel;
 import com.pvz2.models.world.GameWorld;
-import com.pvz2.view.MainMenuScreen;
-import com.pvz2.view.SignupMenuScreen;
+import com.pvz2.view.*;
 
 
 public class MainMenuController implements MenuController {

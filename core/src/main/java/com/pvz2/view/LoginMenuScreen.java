@@ -36,7 +36,7 @@ public class LoginMenuScreen extends MenuScreen {
     TextureRegion textureRegion;
     private TextureBank textureBank;
 
-    private final LoginMenuController controller = new LoginMenuController();
+    private final LoginMenuController controller = new LoginMenuController(this);
     private final SignupMenuController passwordRules = new SignupMenuController();
 
     private NinePatchDrawable errorBorderDrawable;
@@ -126,7 +126,7 @@ public class LoginMenuScreen extends MenuScreen {
         signupBtn.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                game.setScreen(new SignupMenuScreen(game));
+                controller.exitMenu();
             }
         });
 
