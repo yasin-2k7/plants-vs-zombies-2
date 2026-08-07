@@ -1,18 +1,26 @@
 package com.pvz2.controller;
 
+import com.badlogic.gdx.Gdx;
 import com.pvz2.models.core.UserDataManager;
 import com.pvz2.models.core.UserManager;
+import com.pvz2.view.LoginMenuScreen;
+import com.pvz2.view.SignupMenuScreen;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class SignupMenuController implements MenuController {
     private List<String> questions = new ArrayList<>();
+    private SignupMenuScreen screen;
 
-    public SignupMenuController() {
+    public SignupMenuController(SignupMenuScreen screen) {
+        this.screen = screen;
         questions.add("1. What is your best friend's name?");
         questions.add("2. Where was you born?");
         questions.add("3. What is your major?");
+    }
+
+    public SignupMenuController() {
     }
 
     public String getQuestion(int index) {
@@ -22,13 +30,12 @@ public class SignupMenuController implements MenuController {
 
     @Override
     public void changeMenu() {
-        //needs edit
-//        AppView.currentScreen = LoginMenuView.getInstance(new LoginMenuController());
+        screen.fadeAndSwitchScreen(new LoginMenuScreen(screen.getGame()));
     }
 
     @Override
     public void exitMenu() {
-        System.exit(0);
+        Gdx.app.exit();
     }
 
     public List<String> getUsernameErrors(String username) {
@@ -204,8 +211,4 @@ public class SignupMenuController implements MenuController {
         return questions;
     }
 
-    public void showCurrentMenu() {
-        //needs edit
-//        GameMenuView.getInstance().showResult("Current menu: signup menu");
-    }
 }

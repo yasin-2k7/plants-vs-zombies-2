@@ -8,6 +8,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.pvz2.models.core.GameInitializer;
 import com.pvz2.models.core.UserManager;
 import com.pvz2.view.LoginMenuScreen;
+import com.pvz2.view.MainMenuScreen;
 import com.pvz2.view.SignupMenuScreen;
 import pvz.libpvz.pam.PamPlayer;
 import pvz.libpvz.textures.TextureBank;
