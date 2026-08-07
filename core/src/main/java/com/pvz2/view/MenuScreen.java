@@ -129,4 +129,8 @@ public abstract class MenuScreen implements Screen {
             })
         ));
     }
+
+    public Main getGame() {
+        return game;
+    }
 }

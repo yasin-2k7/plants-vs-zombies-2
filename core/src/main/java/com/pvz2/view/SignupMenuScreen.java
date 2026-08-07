@@ -7,17 +7,17 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.pvz2.Main;
+import com.ray3k.tenpatch.TenPatchDrawable;
 import pvz.libpvz.pam.ClipRef;
+import pvz.skin.BorderedTable;
 
 public class SignupMenuScreen extends MenuScreen{
-    private SpriteBatch batch;
     private ClipRef backgroundClip;
     TextureRegion textureRegion;
 
     public SignupMenuScreen(Main game) {
         super(game);
-        batch = new SpriteBatch();
-        textureRegion = game.atlasManager.get("IMAGE_UI_MAINMENU_MAINMENU_CONTENT_OFFLINE");
+        textureRegion = game.textureBank.region("IMAGE_MAINMENU_BACKGROUND");
 //        // بارگذاری انیمیشن پس‌زمینه منو با libPVZ
 //        game.pamPlayer.loadSync("IMAGE_MAINMENU_BACKGROUND");
 //        backgroundClip = game.pamPlayer.getClip("MENUS/MAIN_MENU/MAIN_MENU.PAM", "idle");
@@ -29,9 +29,13 @@ public class SignupMenuScreen extends MenuScreen{
 
         mainStack.add(backgroundImage);
         TextButton button = new TextButton("HELLO", skin);
-        Table myTable = new Table();
+        BorderedTable myTable = new BorderedTable();
+
+
         myTable.add(button);
-        mainStack.add(myTable);
+        Table wrapper = new Table();
+        wrapper.add(myTable);
+        mainStack.add(wrapper);
     }
 
     @Override
