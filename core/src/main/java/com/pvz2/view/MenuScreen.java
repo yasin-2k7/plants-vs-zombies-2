@@ -7,6 +7,7 @@ import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Stack;
 import com.badlogic.gdx.utils.ScreenUtils;
+import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.pvz2.Main;
 
@@ -30,7 +31,7 @@ public abstract class MenuScreen implements Screen {
 
     @Override
     public void show() {
-        ScreenViewport viewport = new ScreenViewport();
+        FitViewport viewport = new FitViewport(2560, 1440);
         stage = new Stage(viewport);
 
         mainStack = new Stack();
@@ -75,6 +76,9 @@ public abstract class MenuScreen implements Screen {
         game.textureBank.update();
 
         ScreenUtils.clear(0, 0, 0, 1);
+
+        stage.getViewport().apply();
+        game.batch.setProjectionMatrix(stage.getCamera().combined);
 
         // ۲. رسم پس‌زمینه (انیمیشن‌های PAM یا عکس ثابت)
         drawBackground(delta);
