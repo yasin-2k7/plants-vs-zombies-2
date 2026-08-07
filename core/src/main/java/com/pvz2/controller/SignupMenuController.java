@@ -171,10 +171,21 @@ public class SignupMenuController implements MenuController {
         return errors;
     }
 
-    public List<String> getPickQErrors(int num, String answer, String answerCon) {
+    public List<String> getAnswerErrors(int num, String answer) {
         List<String> errors = new ArrayList<>();
         if (num <= 0 || num >= 4) {
             errors.add("Please choose a num between 1 and 3.");
+        }
+        if (answer == null || answer.trim().isEmpty()) {
+            errors.add("Please enter an answer.");
+        }
+        return errors;
+    }
+
+    public List<String> getAnswerConfirmErrors(int num, String answer, String answerCon) {
+        List<String> errors = getAnswerErrors(num, answer);
+        if (!errors.isEmpty()) {
+            return errors;
         }
 
         if (answerCon == null || !answer.equals(answerCon)) {
@@ -182,6 +193,11 @@ public class SignupMenuController implements MenuController {
         }
 
         return errors;
+    }
+
+    @Deprecated
+    public List<String> getPickQErrors(int num, String answer, String answerCon) {
+        return getAnswerConfirmErrors(num, answer, answerCon);
     }
 
     public List<String> getQuestions() {
