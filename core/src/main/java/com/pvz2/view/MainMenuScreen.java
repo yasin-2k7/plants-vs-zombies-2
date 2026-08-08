@@ -1,5 +1,6 @@
 package com.pvz2.view;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
@@ -7,6 +8,8 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.pvz2.Main;
 import com.pvz2.controller.MainMenuController;
+import com.pvz2.models.core.App;
+import pvz.libpvz.textures.TextureBank;
 
 public class MainMenuScreen extends MenuScreen {
     private MainMenuController controller;
@@ -22,6 +25,8 @@ public class MainMenuScreen extends MenuScreen {
     private Button muPoint;
     private Button profileBtn;
     private ImageButton backBtn;
+
+    private ResourcesTable resourcesTable = new ResourcesTable(App.getCurrentUser(), game);
 
     private Table mainTable;
     private Table topBar;
@@ -49,12 +54,14 @@ public class MainMenuScreen extends MenuScreen {
 
         newsBtn = createImageButton(
             "IMAGE_UI_HUD_NEWSBUTTON_BUTTONS_HUD_NEWS_NORMAL",
-            "IMAGE_UI_HUD_NEWSBUTTON_BUTTONS_HUD_NEWS_SELECTED"
+            "IMAGE_UI_HUD_NEWSBUTTON_BUTTONS_HUD_NEWS_SELECTED",
+            game.textureBank
         );
 
         settingsBtn = createImageButton(
             "IMAGE_UI_HUD_SETTINGSBUTTON_BUTTONS_HUD_SETTINGS_NORMAL",
-            "IMAGE_UI_HUD_SETTINGSBUTTON_BUTTONS_HUD_SETTINGS_SELECTED"
+            "IMAGE_UI_HUD_SETTINGSBUTTON_BUTTONS_HUD_SETTINGS_SELECTED",
+            game.textureBank
         );
 
         leaderboardBtn = new TextButton("", skin, "brown");
@@ -71,7 +78,8 @@ public class MainMenuScreen extends MenuScreen {
 
         backBtn = createImageButton(
             "IMAGE_UI_MAINMENU_BACK_BTN_NORMAL",
-            "IMAGE_UI_MAINMENU_BACK_BTN_PRESSED"
+            "IMAGE_UI_MAINMENU_BACK_BTN_PRESSED",
+            game.textureBank
         );
 
         unreadBadge = new Image(game.textureBank.region("IMAGE_UI_CLAIM_SMALL"));
@@ -95,11 +103,22 @@ public class MainMenuScreen extends MenuScreen {
             topBar.add(backBtn).left().top().pad(10);
         }
         topBar.add().expandX();
+        if (App.getCurrentUser() != null){
+            topBar.add(resourcesTable).padRight(20);
+        }
         mainTable.add(topBar).top().growX().row();
 
         if (logoImg != null) {
-            mainTable.add(logoImg).prefWidth(400).prefHeight(100).padTop(20).row();
+            mainTable.add(logoImg).prefWidth(400).prefHeight(100).padTop(5).row();
         }
+        Table welcomeTbl = new Table();
+        welcomeTbl.setBackground(new TextureRegionDrawable(game.textureBank.region(
+            "IMAGE_UI_MAINMENU_MAINMENU_CONTENT_OFFLINE")));
+        Label welcome =
+            new Label("Welcome, " + App.getCurrentUser().getNickname(), skin, "big_outline");
+        welcome.setColor(Color.RED);
+        welcomeTbl.bottom().left().add(welcome).pad(15);
+        centerTable.add(welcomeTbl).row();
         centerTable.add(playBtn).width(200).height(60).pad(20).row();
         mainTable.add(centerTable).expandY().center().row();
 
@@ -181,9 +200,10 @@ public class MainMenuScreen extends MenuScreen {
         });
     }
 
-    private ImageButton createImageButton(String normalRegionKey, String selectedRegionKey) {
-        TextureRegion normalReg = game.textureBank.region(normalRegionKey);
-        TextureRegion selectedReg = game.textureBank.region(selectedRegionKey);
+    public static ImageButton createImageButton(String normalRegionKey, String selectedRegionKey,
+                                                TextureBank bank) {
+        TextureRegion normalReg = bank.region(normalRegionKey);
+        TextureRegion selectedReg = bank.region(selectedRegionKey);
 
         if (normalReg == null) return null;
 
