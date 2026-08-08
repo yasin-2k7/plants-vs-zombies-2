@@ -1,15 +1,23 @@
 package com.pvz2.view;
 
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.pvz2.Main;
 import com.pvz2.controller.MainMenuController;
 import com.pvz2.models.core.App;
+import com.pvz2.models.core.News;
+import com.pvz2.models.enums.NewsType;
 import pvz.libpvz.textures.TextureBank;
+import pvz.skin.BorderedTable;
 
 public class MainMenuScreen extends MenuScreen {
     private MainMenuController controller;
@@ -95,6 +103,9 @@ public class MainMenuScreen extends MenuScreen {
     @Override
     protected void buildUI() {
         initFields();
+        News myNews = new News("Welcome", "welcome to your game. play this game for free!",
+            NewsType.PLANT_UNLOCKED);
+        App.getCurrentUser().getAllNews().add(myNews);
 
         mainTable.clear();
         mainTable.setFillParent(true);
@@ -123,6 +134,7 @@ public class MainMenuScreen extends MenuScreen {
         mainTable.add(centerTable).expandY().center().row();
 
         if (newsBtn != null) {
+            setUnreadStatus(controller.checkUnreadNews());
             newsStack.add(newsBtn);
 
             badgeOverlay.top().right();
@@ -177,7 +189,8 @@ public class MainMenuScreen extends MenuScreen {
         newsBtn.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                controller.enterMenu("news");
+                setUnreadStatus(false);
+                showScrollablePopup("NEWS", controller.getNews(skin));
             }
         });
         muPoint.addListener(new ClickListener(){
@@ -213,6 +226,56 @@ public class MainMenuScreen extends MenuScreen {
             : upDrawable;
 
         return new ImageButton(upDrawable, downDrawable);
+    }
+
+    private void showScrollablePopup(String titleText, Actor contentActor) {
+        Table overlay = new Table();
+        overlay.setFillParent(true);
+        overlay.setBackground(createSolidColor(new Color(0, 0, 0, 0.65f)));
+        overlay.setTouchable(Touchable.enabled);
+        overlay.addListener(new ClickListener());
+
+        BorderedTable popupBox = new BorderedTable();
+        popupBox.pad(20);
+
+        Table topBar = new Table();
+
+        Label titleLabel = new Label(titleText, skin, "big_outline");
+
+        ImageButton backBtn = createImageButton(
+            "IMAGE_UI_MAINMENU_BACK_BTN_NORMAL",
+            "IMAGE_UI_MAINMENU_BACK_BTN_PRESSED",
+            game.textureBank
+        );
+        backBtn.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                overlay.remove();
+            }
+        });
+        topBar.add(backBtn).size(45, 45).left().expandX();
+        topBar.add(titleLabel).center();
+        topBar.add().expandX();
+
+
+        ScrollPane scrollPane = new ScrollPane(contentActor, skin);
+        scrollPane.setFadeScrollBars(false);
+        scrollPane.setScrollingDisabled(true, false);
+
+        popupBox.add(topBar).growX().pad(10).row();
+        popupBox.add(scrollPane).width(450).height(320).pad(5).grow().row();
+
+        overlay.add(popupBox).width(600).height(500);
+        stage.addActor(overlay);
+    }
+
+    private Drawable createSolidColor(Color color) {
+        Pixmap pixmap = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
+        pixmap.setColor(color);
+        pixmap.fill();
+        Texture texture = new Texture(pixmap);
+        pixmap.dispose();
+        return new TextureRegionDrawable(new TextureRegion(texture));
     }
 
     public void setUnreadStatus(boolean hasUnread) {
