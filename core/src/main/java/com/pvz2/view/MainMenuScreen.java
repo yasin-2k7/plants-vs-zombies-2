@@ -33,6 +33,7 @@ public class MainMenuScreen extends MenuScreen {
     private Button muPoint;
     private Button profileBtn;
     private ImageButton backBtn;
+    private ImageButton travelLogBtn;
 
     private ResourcesTable resourcesTable = new ResourcesTable(App.getCurrentUser(), game);
 
@@ -84,6 +85,12 @@ public class MainMenuScreen extends MenuScreen {
         Image prof = new Image(game.textureBank.region("IMAGE_UI_MAINMENU_MM_PLAYERICON"));
         profileBtn.add(prof).padRight(5);
 
+        travelLogBtn = createImageButton(
+            "IMAGE_UI_GENERIC_BUTTON_HUD_MINIGAMES_ALT_SELECTED",
+            "IMAGE_UI_GENERIC_BUTTON_HUD_MINIGAMES_ALT_SELECTED",
+            game.textureBank
+        );
+
         backBtn = createImageButton(
             "IMAGE_UI_MAINMENU_BACK_BTN_NORMAL",
             "IMAGE_UI_MAINMENU_BACK_BTN_PRESSED",
@@ -98,6 +105,7 @@ public class MainMenuScreen extends MenuScreen {
         bottomBar = new Table();
         badgeOverlay = new Table();
         newsStack = new Stack();
+
     }
 
     @Override
@@ -156,6 +164,7 @@ public class MainMenuScreen extends MenuScreen {
         bottomBar.add().expandX();
 
         if (leaderboardBtn != null) bottomBar.add(leaderboardBtn).size(btnSize).pad(10);
+        if (travelLogBtn != null) bottomBar.add(travelLogBtn).size(btnSize).pad(10);
         if (profileBtn != null) bottomBar.add(profileBtn).size(btnSize).padRight(25).pad(10);
 
         mainTable.add(bottomBar).bottom().growX().pad(10);
@@ -210,6 +219,12 @@ public class MainMenuScreen extends MenuScreen {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 showScrollablePopup("PROFILE", new ProfileMenuTable(game, skin), 660, 620, 570, 480);
+            }
+        });
+        travelLogBtn.addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                showScrollablePopup("TRAVEL LOG", new TravelLogMenuTable(game, skin), 800, 500, 750, 400);
             }
         });
     }

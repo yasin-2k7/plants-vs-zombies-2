@@ -29,28 +29,34 @@ public class QuestFactory {
         return new DailyQuest(id, desc, QuestPriority.MEDIUM, condition, reward);
     }
 
-    // 2. Chapter Hunter
+    // 2. Chapter Hunter (grouped: one row per chapter, quest itself is shared)
     public static MainQuest createChapterHunterQuest(String chapter) {
         String date = LocalDate.now().toString();
         String id = "main_hunter_" + chapter + "_" + date;
         String desc = "Defeat 50 zombies from " + chapter + " chapter";
         Predicate<QuestStats> condition = stats ->
-                stats.getZombiesKilledByChapter().getOrDefault(chapter, 0) >= 50;
+            stats.getZombiesKilledByChapter().getOrDefault(chapter, 0) >= 50;
         Reward reward = new RandomSeedPacketReward(10);
-        return new MainQuest(id, desc, condition, reward);
+        MainQuest quest = new MainQuest(id, desc, condition, reward);
+        quest.setGroupId("main_chapter_hunter");
+        quest.setVariantLabel(chapter);
+        return quest;
     }
 
-    // 3. Professional Plant Killer
+    // 3. Professional Plant Killer (grouped: one row per plant)
     public static DailyQuest createPlantKillerQuest(PlantType plant) {
         String date = LocalDate.now().toString();
         String id = "daily_plant_killer_" + plant.name() + "_" + date;
         String desc = "Kill 10 zombies only with " + plant.name();
         Predicate<QuestStats> condition = stats ->
-                stats.getZombiesKilledByPlant().getOrDefault(plant, 0) >= 10 &&
-                        stats.isOnlyPlantKills() &&
-                        stats.getExclusivePlantUsed() == plant;
+            stats.getZombiesKilledByPlant().getOrDefault(plant, 0) >= 10 &&
+                stats.isOnlyPlantKills() &&
+                stats.getExclusivePlantUsed() == plant;
         Reward reward = new RandomUnlockReward();
-        return new DailyQuest(id, desc, QuestPriority.HIGH, condition, reward);
+        DailyQuest quest = new DailyQuest(id, desc, QuestPriority.HIGH, condition, reward);
+        quest.setGroupId("daily_plant_killer");
+        quest.setVariantLabel(plant.name());
+        return quest;
     }
 
     // 4. Only Cactus
@@ -59,23 +65,26 @@ public class QuestFactory {
         String id = "daily_cactus_only" + "_" + date;
         String desc = "Kill 10 zombies only with Cactus";
         Predicate<QuestStats> condition = stats ->
-                stats.getZombiesKilledByPlant().getOrDefault(PlantType.CACTUS, 0) >= 10 &&
-                        stats.isOnlyPlantKills() &&
-                        stats.getExclusivePlantUsed() == PlantType.CACTUS;
+            stats.getZombiesKilledByPlant().getOrDefault(PlantType.CACTUS, 0) >= 10 &&
+                stats.isOnlyPlantKills() &&
+                stats.getExclusivePlantUsed() == PlantType.CACTUS;
         Reward reward = new CurrencyReward(0, 20);
         return new DailyQuest(id, desc, QuestPriority.HIGH, condition, reward);
     }
 
-    // 5. Economic Vegetarian
+    // 5. Economic Vegetarian (grouped: one row per n)
     public static MainQuest createEconomicVegetarianQuest(int n) {
         String date = LocalDate.now().toString();
         String id = "main_eco_" + n + "_" + date;
         String desc = "Win a level without losing more than " + n + " plants";
         Predicate<QuestStats> condition = stats ->
-                stats.isLevelWon() && stats.getPlantsLostInLevel() <= n;
+            stats.isLevelWon() && stats.getPlantsLostInLevel() <= n;
         int seedCount = 20 - n;
         Reward reward = new RandomSeedPacketReward(seedCount);
-        return new MainQuest(id, desc, condition, reward, true);
+        MainQuest quest = new MainQuest(id, desc, condition, reward, true);
+        quest.setGroupId("main_eco_vegetarian");
+        quest.setVariantLabel("\u2264" + n);
+        return quest;
     }
 
 
@@ -123,28 +132,34 @@ public class QuestFactory {
         return new DailyQuest(id, desc, QuestPriority.HIGH, condition, reward, true);
     }
 
-    // 10. کشتار خانوادگی (Daily)
+    // 10. کشتار خانوادگی (Daily, grouped: one row per family)
     public static DailyQuest createFamilySlaughterQuest(PlantFamily family) {
         String date = LocalDate.now().toString();
         String id = "daily_family_slaughter_" + family.name() + "_" + date;
         String desc = "Only use plants from " + family.name() + " family to kill zombies";
         Predicate<QuestStats> condition = stats ->
-                stats.isOnlyFamilyKills() &&
-                        stats.getExclusiveFamilyUsed() == family &&
-                        stats.getTotalZombiesKilled() >= 10;
+            stats.isOnlyFamilyKills() &&
+                stats.getExclusiveFamilyUsed() == family &&
+                stats.getTotalZombiesKilled() >= 10;
         Reward reward = new CurrencyReward(1000, 0);
-        return new DailyQuest(id, desc, QuestPriority.MEDIUM, condition, reward);
+        DailyQuest quest = new DailyQuest(id, desc, QuestPriority.MEDIUM, condition, reward);
+        quest.setGroupId("daily_family_slaughter");
+        quest.setVariantLabel(family.name());
+        return quest;
     }
 
-    // 11. شکوفایی در محدودیت‌ها (Daily)
+    // 11. شکوفایی در محدودیت‌ها (Daily, grouped: one row per family)
     public static DailyQuest createFlourishInRestrictionsQuest(PlantFamily family) {
         String date = LocalDate.now().toString();
         String id = "daily_flourish_" + family.name() + "_" + date;
         String desc = "Win a level without using any plant from " + family.name() + " family";
         Predicate<QuestStats> condition = stats ->
-                stats.isLevelWon() && !stats.getFamiliesUsedInLevel().contains(family);
+            stats.isLevelWon() && !stats.getFamiliesUsedInLevel().contains(family);
         Reward reward = new CurrencyReward(0, 100);
-        return new DailyQuest(id, desc, QuestPriority.HIGH, condition, reward, true);
+        DailyQuest quest = new DailyQuest(id, desc, QuestPriority.HIGH, condition, reward, true);
+        quest.setGroupId("daily_flourish");
+        quest.setVariantLabel(family.name());
+        return quest;
     }
 
     // 12. شب یا صبح (Epic)
@@ -158,7 +173,7 @@ public class QuestFactory {
             if (game == null) return false;
             if (game instanceof DarkAgesWorld) return false;
             return stats.getTotalPlantsUsedInLevel() > 0 &&
-                    stats.getTotalPlantsUsedInLevel() == stats.getMushroomPlantsUsedInLevel();
+                stats.getTotalPlantsUsedInLevel() == stats.getMushroomPlantsUsedInLevel();
         };
         Reward reward = new CurrencyReward(0, 20);
         return new EpicChallengeQuest(id, desc, condition, reward, true);
@@ -180,7 +195,7 @@ public class QuestFactory {
         String id = "daily_almost_victory_" + date;
         String desc = "Kill 10 zombies in the first column of a row without a lawnmower";
         Predicate<QuestStats> condition = stats ->
-                stats.getZombiesKilledInFirstColumnWithoutMower() >= 10;
+            stats.getZombiesKilledInFirstColumnWithoutMower() >= 10;
         Reward reward = new CurrencyReward(300, 0);
         return new DailyQuest(id, desc, QuestPriority.MEDIUM, condition, reward);
     }
@@ -191,7 +206,7 @@ public class QuestFactory {
         String id = "daily_ocd_" + date;
         String desc = "Win a level with no symmetry in the garden (except middle row)";
         Predicate<QuestStats> condition = stats ->
-                stats.isLevelWon() && !stats.isSymmetryAchieved();
+            stats.isLevelWon() && !stats.isSymmetryAchieved();
         Reward reward = new CurrencyReward(800, 0);
         return new DailyQuest(id, desc, QuestPriority.MEDIUM, condition, reward, true);
     }
@@ -202,53 +217,65 @@ public class QuestFactory {
         String id = "daily_cloudy_day_" + date;
         String desc = "Win a level using only 3 sun-producing plants";
         Predicate<QuestStats> condition = stats ->
-                stats.isLevelWon() && stats.getSunProducerPlantsInLevel() == 3;
+            stats.isLevelWon() && stats.getSunProducerPlantsInLevel() == 3;
         Reward reward = new CurrencyReward(0, 10);
         return new DailyQuest(id, desc, QuestPriority.HIGH, condition, reward, true);
     }
 
-    // 17. یه ستون کمتر (Daily)
+    // 17. یه ستون کمتر (Daily, grouped: one row, one marker per column)
     public static DailyQuest createOneLessColumnQuest(int n) {
         String date = LocalDate.now().toString();
         String id = "daily_one_less_column_" + n + "_" + date;
         String desc = "Win a level without planting any plant in column " + n;
         Predicate<QuestStats> condition = stats ->
-                stats.isLevelWon() && stats.getEmptyColumnsInLevel().contains(n);
+            stats.isLevelWon() && stats.getEmptyColumnsInLevel().contains(n);
         Reward reward = new CurrencyReward(0, 10);
-        return new DailyQuest(id, desc, QuestPriority.HIGH, condition, reward, true);
+        DailyQuest quest = new DailyQuest(id, desc, QuestPriority.HIGH, condition, reward, true);
+        quest.setGroupId("daily_one_less_column");
+        quest.setVariantLabel(String.valueOf(n + 1));
+        return quest;
     }
 
-    // 18. سطر بی دفاع (Daily)
+    // 18. سطر بی دفاع (Daily, grouped: one row, one marker per row)
     public static DailyQuest createDefenselessRowQuest(int n) {
         String date = LocalDate.now().toString();
         String id = "daily_defenseless_row_" + n + "_" + date;
         String desc = "Win a level without planting any plant in row " + n;
         Predicate<QuestStats> condition = stats ->
-                stats.isLevelWon() && stats.getEmptyRowsInLevel().contains(n);
+            stats.isLevelWon() && stats.getEmptyRowsInLevel().contains(n);
         Reward reward = new CurrencyReward(0, 20);
-        return new DailyQuest(id, desc, QuestPriority.HIGH, condition, reward, true);
+        DailyQuest quest = new DailyQuest(id, desc, QuestPriority.HIGH, condition, reward, true);
+        quest.setGroupId("daily_defenseless_row");
+        quest.setVariantLabel(String.valueOf(n + 1));
+        return quest;
     }
 
-    // 19. صلیب بی دفاع (Daily)
+    // 19. صلیب بی دفاع (Daily, grouped: one row, one marker per n)
     public static DailyQuest createCrossDefenselessQuest(int n) {
         String date = LocalDate.now().toString();
         String id = "daily_cross_defenseless_" + n + "_" + date;
         String desc = "Win a level with column " + n + " and row " + n + " empty";
         Predicate<QuestStats> condition = stats ->
-                stats.isLevelWon() &&
-                        stats.getEmptyColumnForCross() == n &&
-                        stats.getEmptyRowForCross() == n;
+            stats.isLevelWon() &&
+                stats.getEmptyColumnForCross() == n &&
+                stats.getEmptyRowForCross() == n;
         Reward reward = new CurrencyReward(0, 25);
-        return new DailyQuest(id, desc, QuestPriority.HIGH, condition, reward, true);
+        DailyQuest quest = new DailyQuest(id, desc, QuestPriority.HIGH, condition, reward, true);
+        quest.setGroupId("daily_cross_defenseless");
+        quest.setVariantLabel(String.valueOf(n + 1));
+        return quest;
     }
 
-    // 20. وقت چمن‌زنی (Epic)
+    // 20. وقت چمن‌زنی (Epic, grouped: one row, one marker per threshold)
     public static EpicChallengeQuest createLawnmowerTimeQuest(int n) {
         String date = LocalDate.now().toString();
         String id = "epic_lawnmower_time_" + n + "_" + date;
         String desc = "Kill at least " + n + " zombies using lawnmowers";
         Predicate<QuestStats> condition = stats -> stats.getLawnmowerKills() >= n;
         Reward reward = new CurrencyReward(0, n);
-        return new EpicChallengeQuest(id, desc, condition, reward);
+        EpicChallengeQuest quest = new EpicChallengeQuest(id, desc, condition, reward);
+        quest.setGroupId("epic_lawnmower_time");
+        quest.setVariantLabel(String.valueOf(n));
+        return quest;
     }
 }

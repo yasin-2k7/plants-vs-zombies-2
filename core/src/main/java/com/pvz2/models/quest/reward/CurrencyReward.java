@@ -20,4 +20,12 @@ public class CurrencyReward implements Reward {
             user.addGems(gems);
         }
     }
+
+    public int getCoins() {
+        return coins;
+    }
+
+    public int getGems() {
+        return gems;
+    }
 }

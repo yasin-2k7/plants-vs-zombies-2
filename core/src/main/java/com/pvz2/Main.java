@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.pvz2.models.core.GameInitializer;
 import com.pvz2.models.core.UserManager;
+import com.pvz2.view.ChapterMenuScreen;
 import com.pvz2.view.LoginMenuScreen;
 import com.pvz2.view.MainMenuScreen;
 import com.pvz2.view.SignupMenuScreen;
@@ -19,13 +20,14 @@ public class Main extends Game {
     public TextureBank textureBank;
     public PamPlayer pamPlayer;
     public Skin skin;
-    private SpriteBatch batch;
+    public SpriteBatch batch;
 
 
 
     @Override
     public void create() {
-        UserManager.init();
+        boolean foundUser = UserManager.loadInitialUser();
+
         GameInitializer.loadPlantUpgrades();
 
         batch = new SpriteBatch();
@@ -35,8 +37,12 @@ public class Main extends Game {
         pamPlayer = new PamPlayer(textureBank, assetsFolder);
         skin = PvzSkin.get();
 
+        if(foundUser){
+            setScreen(new MainMenuScreen(this));
+        } else {
+            setScreen(new LoginMenuScreen(this));
+        }
 
-        setScreen(new LoginMenuScreen(this));
     }
 
     @Override
