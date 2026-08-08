@@ -45,9 +45,6 @@ public class MainMenuController implements MenuController {
 //
 //                AppView.setCurrentScreen(PlantMenuView.getInstance());
 //                PlantMenuView.getInstance().getController().reset();
-
-            case "leaderboard":
-                mainMenuScreen.fadeAndSwitchScreen(new LeaderboardMenuScreen(mainMenuScreen.getGame()));
                 break;
         }
 

@@ -778,6 +778,12 @@ ATLASES/ZOMBIEZOYBEANPODBASICGROUP_768_00.PNG
 ATLASES/ZOMBIEZOYBEANPODGARGANTUARGROUP_768_00.PNG
 ATLASES/ZOMBOSSCOMMONGROUP_768_00.PNG
 ATLASES/ZOMBOSSPIRATEEFFECTGROUP_768_00.PNG
+Exports/badge_demoted.png
+Exports/badge_promoted.png
+Exports/badge_standstill.png
+Exports/leaderboard_scroll_bottom.png
+Exports/leaderboard_scroll_mid.png
+Exports/leaderboard_scroll_top.png
 IMAGES/768/DEV/UI/CHOOSER/RENT_A_SEED_PACKET_OVERLAYS/RENT_A_SEED_PACKET_OVERLAYS.PAM
 IMAGES/768/DEV/UI/QUESTS/DIFFICULTY_METER/DIFFICULTY_METER.PAM
 IMAGES/768/FULL/BACKGROUNDS/BACKGROUND_DARK_BRAZIER_BOTTOM/BACKGROUND_DARK_BRAZIER_BOTTOM.PAM
@@ -2244,4 +2250,5 @@ data/zombies.json
 libgdx.png
 pvz2/src/main/java/models/users/current_user.txt
 pvz2/src/main/java/models/users/goli-g.json
+pvz2/src/main/java/models/users/goli-s.json
 pvz2/src/main/java/models/users/test_greenhouse_user.json

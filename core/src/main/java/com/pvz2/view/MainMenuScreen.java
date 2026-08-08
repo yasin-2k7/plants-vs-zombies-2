@@ -202,7 +202,8 @@ public class MainMenuScreen extends MenuScreen {
         leaderboardBtn.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                controller.enterMenu("leaderboard");
+                showScrollablePopup("LEADERBOARD", new LeaderboardMenuTable(game, skin),
+                    950, 650, 800, 480);
             }
         });
         profileBtn.addListener(new ClickListener(){
