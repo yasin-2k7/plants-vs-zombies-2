@@ -24,4 +24,8 @@ public class RandomSeedPacketReward implements Reward {
             user.addSeedPackets(randomPlant, quantity);
         }
     }
+
+    public int getQuantity() {
+        return quantity;
+    }
 }
