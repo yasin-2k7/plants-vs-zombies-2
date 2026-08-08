@@ -7,6 +7,7 @@ import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Stack;
 import com.badlogic.gdx.utils.ScreenUtils;
+import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.pvz2.Main;
@@ -31,7 +32,7 @@ public abstract class MenuScreen implements Screen {
 
     @Override
     public void show() {
-        FitViewport viewport = new FitViewport(2560, 1440);
+        ExtendViewport viewport = new ExtendViewport(1800, 1000);
         stage = new Stage(viewport);
 
         mainStack = new Stack();
@@ -116,9 +117,7 @@ public abstract class MenuScreen implements Screen {
         return modalStack;
     }
 
-    /**
-     * تغییر صفحه با افکت FadeOut
-     */
+
     public void fadeAndSwitchScreen(final Screen targetScreen) {
         Gdx.input.setInputProcessor(null);
         final Screen currentScreen = this;
@@ -127,7 +126,7 @@ public abstract class MenuScreen implements Screen {
             Actions.run(new Runnable() {
                 @Override
                 public void run() {
-                    game.setScreen(targetScreen); // تغییر صفحه از طریق کلاس اصلی
+                    game.setScreen(targetScreen);
                     currentScreen.dispose();
                 }
             })

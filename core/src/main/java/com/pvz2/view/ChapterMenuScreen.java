@@ -4,56 +4,79 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.pvz2.Main;
 import com.pvz2.controller.ChapterMenuController;
 import com.pvz2.models.core.App;
 import com.pvz2.models.enums.Chapter;
 import pvz.libpvz.pam.PamPlayer;
-import pvz.libpvz.textures.TextureBank;
 
 public class ChapterMenuScreen extends MenuScreen {
 
-    TextureRegion textureRegion;
-    private TextureBank textureBank;
+    private TextureRegion textureRegion;
     private PamPlayer pamPlayer;
 
     private final ChapterMenuController controller = new ChapterMenuController();
     private static final String LOCK_PAM_PATH = "768/INITIAL/UI/UNIVERSE/WORLD_LOCK/WORLD_LOCK.PAM";
 
+    private Group contentGroup;
+    private float scrollX = 0f;
+    private float minScrollX = 0f;
+    private float velocityX = 0f;
+
+    private boolean isDragging = false;
+    private final Vector2 touchStartPos = new Vector2();
+    private final Vector2 currTouch = new Vector2();
+    private final Vector2 prevTouch = new Vector2();
+
     public ChapterMenuScreen(Main game) {
         super(game);
 
         FileHandle assetsFolder = Gdx.files.internal("");
-        textureBank = new TextureBank("786", assetsFolder);
-        textureRegion = textureBank.region("IMAGE_MAINMENU_BACKGROUND");
-
+        textureRegion = game.textureBank.region("IMAGE_MAINMENU_BACKGROUND");
         pamPlayer = new PamPlayer(game.textureBank, assetsFolder);
     }
 
     @Override
     protected void buildUI() {
-        Table contentTable = new Table();
-        contentTable.defaults().padLeft(200).padRight(200);
+        float stageWidth = stage.getWidth();
+        float stageHeight = stage.getHeight();
 
-        String[] pamPaths = {
-            "768/INITIAL/WORLDMAP/ZOMBOSS_NODE_EGYPT/ZOMBOSS_NODE_EGYPT.PAM",
-            "768/FULL/WORLDMAP/ZOMBOSS_NODE_ICEAGE/ZOMBOSS_NODE_ICEAGE.PAM",
-            "768/FULL/WORLDMAP/ZOMBOSS_NODE_DARK/ZOMBOSS_NODE_DARK.PAM",
-            "768/FULL/WORLDMAP/ZOMBOSS_NODE_BEACH/ZOMBOSS_NODE_BEACH.PAM"
+        contentGroup = new Group() {
+            @Override
+            public void act(float delta) {
+                super.act(delta);
+                handleViewportIndependentInput();
+            }
         };
 
-        Chapter[] chapters = Chapter.values();
+        String[] regionNames = {
+            "IMAGE_WORLDMAP_ZOMBOSS_NODE_EGYPT_ZOMBOSS_NODE_EGYPT_914X994",
+            "IMAGE_WORLDMAP_BEACH_ANIM27_ANIM27_1362X953",
+            "IMAGE_WORLDMAP_ZOMBOSS_NODE_DARK_ZOMBOSS_NODE_DARK_905X1096",
+            "IMAGE_WORLDMAP_ZOMBOSS_NODE_ICEAGE_ZOMBOSS_NODE_ICEAGE_1055X1280"
+        };
+
+        final Chapter[] chapters = Chapter.values();
         int unlockedChapter = App.getCurrentUser().getUnlockedChapter();
 
-        for (int i = 0; i < Math.min(4, chapters.length); i++) {
-            final String pamPath = pamPaths[i];
+        float nodeSize = 600f;
+        float spacing = 200f;
+        float startX = 200f;
+
+        float startY = (stageHeight - nodeSize) / 2f;
+
+        int count = Math.min(4, chapters.length);
+
+        for (int i = 0; i < count; i++) {
+            final TextureRegion nodeRegion = game.textureBank.region(regionNames[i]);
             final Chapter chapter = chapters[i];
-            final boolean isLocked = chapter.ordinal() > unlockedChapter;
+            final boolean isLocked = chapter.ordinal() >= unlockedChapter;
 
             Actor nodeActor = new Actor() {
                 private float stateTime = 0f;
@@ -69,36 +92,75 @@ public class ChapterMenuScreen extends MenuScreen {
                     float centerX = getX() + getWidth() / 2f;
                     float centerY = getY() + getHeight() / 2f;
 
-
-                    try {
-                        pamPlayer.draw(batch, pamPath, "active", stateTime, centerX, centerY, true);
-                    } catch (IllegalArgumentException e) {
-                        pamPlayer.draw(batch, pamPath, "Active", stateTime, centerX, centerY, true);
+                    if (nodeRegion != null) {
+                        batch.draw(nodeRegion, getX(), getY(), getWidth(), getHeight());
                     }
+
                     if (isLocked) {
-                        pamPlayer.draw(batch, LOCK_PAM_PATH, "idle", stateTime, centerX, centerY, true);
+                        try {
+                            pamPlayer.draw(batch, LOCK_PAM_PATH, "idle", stateTime, centerX, centerY, true);
+                        } catch (Exception ignored) {}
                     }
                 }
             };
 
-            nodeActor.setSize(600, 600);
+            nodeActor.setSize(nodeSize, nodeSize);
+            nodeActor.setPosition(startX + i * (nodeSize + spacing), startY);
+
             nodeActor.addListener(new ClickListener() {
                 @Override
                 public void clicked(InputEvent event, float x, float y) {
-                    String result = controller.chooseChapter(chapter);
-                    System.out.println(result);
+                    if (!isDragging) {
+                        String result = controller.chooseChapter(chapter);
+                        game.setScreen(new LevelMenuScreen(game));
+                        System.out.println(result);
+                    }
                 }
             });
 
-            contentTable.add(nodeActor).size(600, 600);
+            contentGroup.addActor(nodeActor);
         }
 
-        ScrollPane scrollPane = new ScrollPane(contentTable);
-        scrollPane.setScrollingDisabled(false, true);
-        scrollPane.setOverscroll(false, false);
-        scrollPane.setFlingTime(0.4f);
+        float totalWidth = startX * 2 + count * nodeSize + (count - 1) * spacing;
+        minScrollX = Math.min(0, stageWidth - totalWidth);
 
-        mainStack.add(scrollPane);
+        mainStack.add(contentGroup);
+    }
+
+    private void handleViewportIndependentInput() {
+        if (Gdx.input.isTouched()) {
+            if (Gdx.input.justTouched()) {
+                touchStartPos.set(Gdx.input.getX(), Gdx.input.getY());
+            }
+
+            currTouch.set(Gdx.input.getX(), Gdx.input.getY());
+            prevTouch.set(Gdx.input.getX() - Gdx.input.getDeltaX(), Gdx.input.getY() - Gdx.input.getDeltaY());
+
+            stage.screenToStageCoordinates(currTouch);
+            stage.screenToStageCoordinates(prevTouch);
+
+            float deltaStageX = currTouch.x - prevTouch.x;
+
+            if (!isDragging && touchStartPos.dst(Gdx.input.getX(), Gdx.input.getY()) > 10f) {
+                isDragging = true;
+            }
+
+            if (isDragging) {
+                scrollX = MathUtils.clamp(scrollX + deltaStageX, minScrollX, 0);
+                contentGroup.setX(scrollX);
+                velocityX = deltaStageX;
+            }
+        } else {
+            if (Math.abs(velocityX) > 0.5f) {
+                scrollX = MathUtils.clamp(scrollX + velocityX, minScrollX, 0);
+                contentGroup.setX(scrollX);
+                velocityX *= 0.92f;
+            }
+
+            if (isDragging) {
+                Gdx.app.postRunnable(() -> isDragging = false);
+            }
+        }
     }
 
     @Override

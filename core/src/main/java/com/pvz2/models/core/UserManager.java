@@ -6,20 +6,20 @@ package com.pvz2.models.core;
 public class UserManager {
     private static User currentUser;
 
-    public static void init() {
-        loadInitialUser();
-    }
 
-    private static void loadInitialUser() {
+    public static boolean loadInitialUser() {
         String loggedInUsername = UserDataManager.getLoggedInUsername();
+        boolean found = false;
         if (loggedInUsername != null) {
             User user = UserDataManager.loadUser(loggedInUsername);
             if (user != null) {
                 currentUser = user;
                 App.setCurrentUser(user);
                 user.initQuests();
+                found = true;
             }
         }
+        return found;
     }
 
     public static String register(String username,
