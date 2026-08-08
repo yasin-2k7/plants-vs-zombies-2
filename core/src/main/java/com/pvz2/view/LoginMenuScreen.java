@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.g2d.NinePatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.CheckBox;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
@@ -150,6 +151,7 @@ public class LoginMenuScreen extends MenuScreen {
         Table overlay = new Table();
         overlay.setFillParent(true);
         overlay.setBackground(createSolidColor(new Color(0, 0, 0, 0.6f)));
+        overlay.setTouchable(Touchable.enabled);
         overlay.addListener(new ClickListener());
 
         BorderedTable popupBox = new BorderedTable();

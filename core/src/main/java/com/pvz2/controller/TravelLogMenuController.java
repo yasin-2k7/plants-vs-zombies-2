@@ -6,19 +6,86 @@ import com.pvz2.models.miniGame.MiniGameFactory;
 import com.pvz2.models.miniGame.MiniGameLevels;
 import com.pvz2.models.miniGame.MiniGames;
 import com.pvz2.models.quest.Quest;
-import com.pvz2.models.quest.QuestPriority;
-import com.pvz2.models.quest.types.DailyQuest;
-import com.pvz2.models.quest.types.EpicChallengeQuest;
-import com.pvz2.models.quest.types.MainQuest;
+import com.pvz2.models.quest.reward.Reward;
 import com.pvz2.models.world.GameWorld;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class TravelLogMenuController implements MenuController {
 
-    private String currentPage = "daily";
+    public static class QuestGroupView {
+        public final String description;
+        public final Reward reward;
+        public final List<VariantView> variants;
+
+        public final float progress;
+
+        public final boolean claimable;
+
+        public QuestGroupView(String description, Reward reward, List<VariantView> variants) {
+            this.description = description;
+            this.reward = reward;
+            this.variants = variants;
+
+            int total = variants.size();
+            int done = 0;
+            boolean allDone = true;
+            boolean anyUnclaimed = false;
+            for (VariantView v : variants) {
+                if (v.completed || v.ready) {
+                    done++;
+                } else {
+                    allDone = false;
+                }
+                if (v.ready && !v.completed) {
+                    anyUnclaimed = true;
+                }
+            }
+            this.progress = total == 0 ? 0f : (float) done / total;
+            this.claimable = allDone && anyUnclaimed;
+        }
+
+        public List<String> getClaimableQuestIds() {
+            List<String> ids = new ArrayList<>();
+            for (VariantView v : variants) {
+                if (v.ready && !v.completed) {
+                    ids.add(v.questId);
+                }
+            }
+            return ids;
+        }
+    }
+
+    public static class VariantView {
+        public final String label;
+        public final boolean completed;
+        public final boolean ready;
+        public final String questId;
+
+        public VariantView(String label, boolean completed, boolean ready, String questId) {
+            this.label = label;
+            this.completed = completed;
+            this.ready = ready;
+            this.questId = questId;
+        }
+    }
+
+    public static class MinigameLevelInfo {
+        public final MiniGames game;
+        public final int level;
+        public final boolean unlocked;
+        public final boolean completed;
+
+        public MinigameLevelInfo(MiniGames game, int level, boolean unlocked, boolean completed) {
+            this.game = game;
+            this.level = level;
+            this.unlocked = unlocked;
+            this.completed = completed;
+        }
+    }
 
     @Override
     public void changeMenu() {
@@ -26,149 +93,92 @@ public class TravelLogMenuController implements MenuController {
 
     @Override
     public void exitMenu() {
-        //needs edit
-//        AppView.setCurrentScreen(MainMenuView.getInstance());
     }
 
-    public void showCurrentMenu() {
-        //needs edit
-//        GameMenuView.getInstance().showResult("Current menu: travel log");
-    }
-
-    public String changePage(String pageName) {
-        if (pageName.equalsIgnoreCase("daily") || pageName.equalsIgnoreCase("main")
-                || pageName.equalsIgnoreCase("epic") || pageName.equalsIgnoreCase("minigame")) {
-            this.currentPage = pageName.toLowerCase();
-            return "Switched to " + pageName + " page.";
-        }
-        return "Invalid page name. Available pages: daily, main, epic, minigame.";
-    }
-
-    public void displayCurrentPage() {
+    public List<QuestGroupView> getQuestGroups(Class<? extends Quest> type) {
+        List<QuestGroupView> result = new ArrayList<>();
         User user = App.getCurrentUser();
-        if (user == null) {
-            //needs edit
-//            GameMenuView.getInstance().showResult("No user logged in.");
-            return;
-        }
+        if (user == null) return result;
 
         List<Quest> allQuests = new ArrayList<>();
         allQuests.addAll(user.getQuestManager().getActiveQuests());
         allQuests.addAll(user.getQuestManager().getCompletedQuests());
 
-        switch (currentPage) {
-            case "daily":
-                displayQuests(allQuests, DailyQuest.class);
-                break;
-            case "main":
-                displayQuests(allQuests, MainQuest.class);
-                break;
-            case "epic":
-                displayQuests(allQuests, EpicChallengeQuest.class);
-                break;
-            case "minigame":
-                displayMinigames();
-                break;
-            default:
-                //needs edit
-//                GameMenuView.getInstance().showResult("Unknown page.");
+        List<Quest> filtered = allQuests.stream()
+            .filter(type::isInstance)
+            .sorted((q1, q2) -> q1.getPriority().compareTo(q2.getPriority()))
+            .collect(Collectors.toList());
+
+        LinkedHashMap<String, List<Quest>> grouped = new LinkedHashMap<>();
+        for (Quest q : filtered) {
+            String key = q.getGroupId() != null ? q.getGroupId() : q.getId();
+            grouped.computeIfAbsent(key, k -> new ArrayList<>()).add(q);
         }
+
+        for (List<Quest> group : grouped.values()) {
+            Quest first = group.get(0);
+            List<VariantView> variants = new ArrayList<>();
+            for (Quest q : group) {
+                String label = q.getVariantLabel() != null ? q.getVariantLabel() : "";
+                variants.add(new VariantView(label, q.isCompleted(), q.isReadyToClaim(), q.getId()));
+            }
+            result.add(new QuestGroupView(first.getDescription(), first.getReward(), variants));
+        }
+        return result;
     }
 
-    private void displayQuests(List<Quest> allQuests, Class<? extends Quest> type) {
-        List<Quest> filtered = allQuests.stream()
-                .filter(type::isInstance)
-                .sorted((q1, q2) -> q1.getPriority().compareTo(q2.getPriority()))
-                .collect(Collectors.toList());
+    public boolean claimQuestGroup(QuestGroupView group) {
+        User user = App.getCurrentUser();
+        if (user == null) return false;
 
-        if (filtered.isEmpty()) {
-            //needs edit
-//            GameMenuView.getInstance().showResult("No " + type.getSimpleName() + " quests available.");
-            return;
-        }
-
-        //needs edit
-//        GameMenuView.getInstance().showResult("===== " + type.getSimpleName() + " Quests =====");
-        for (Quest q : filtered) {
-            String status = q.isCompleted() ? "[✓ COMPLETED]" : "[✗ IN PROGRESS]";
-            String priorityIcon = getPriorityIcon(q.getPriority());
-            if (q.isCompleted()) {
-                //needs edit
-//                GameMenuView.getInstance().showResult("✅ " + q.getDescription() + " " + status);
-            } else {
-                //needs edit
-//                GameMenuView.getInstance().showResult(priorityIcon + " " + q.getDescription() + " " + status);
+        boolean claimedAny = false;
+        for (String questId : group.getClaimableQuestIds()) {
+            if (user.getQuestManager().claimQuest(user, questId)) {
+                claimedAny = true;
             }
         }
-        //needs edit
-//        GameMenuView.getInstance().showResult("================================");
+        return claimedAny;
     }
 
-    private String getPriorityIcon(QuestPriority priority) {
-        switch (priority) {
-            case CRITICAL:
-                return "🔥 CRITICAL";
-            case HIGH:
-                return "⭐ HIGH";
-            case MEDIUM:
-                return "● MEDIUM";
-            case LOW:
-                return "○ LOW";
-            default:
-                return "";
+    public List<MinigameLevelInfo> getMinigameLevels(MiniGames game) {
+        List<MinigameLevelInfo> result = new ArrayList<>();
+        User user = App.getCurrentUser();
+        if (user == null) return result;
+
+        for (MiniGameLevels lvl : MiniGameLevels.values()) {
+            if (lvl.miniGame != game) continue;
+            boolean completed = user.getMiniGameLevels().contains(lvl);
+            boolean unlocked = isMinigameLevelUnlocked(user, game, lvl.level);
+            result.add(new MinigameLevelInfo(game, lvl.level, unlocked, completed));
         }
+        return result;
     }
 
-    //needs edit
-    private void displayMinigames() {
-//        GameMenuView.getInstance().showResult("===== Minigames =====");
-//        GameMenuView.getInstance().showResult("1. Beghouled");
-//        GameMenuView.getInstance().showResult("2. Bowling");
-//        GameMenuView.getInstance().showResult("3. Vase Breaker");
-//        GameMenuView.getInstance().showResult("4. IZombie");
-//        GameMenuView.getInstance().showResult("4. Zombotany");
-//        GameMenuView.getInstance().showResult("=====================");
+    private boolean isMinigameLevelUnlocked(User user, MiniGames game, int level) {
+        if (level == 1) return true;
+        int previousLevel = level - 1;
+        return user.getMiniGameLevels().stream()
+            .anyMatch(ml -> ml.miniGame == game && ml.level == previousLevel);
     }
 
     public void selectMinigame(String minigameName, int level) {
         MiniGames selected = parseMinigameName(minigameName);
-        if (selected == null) {
-            //needs edit
-//            GameMenuView.getInstance().showResult("Invalid minigame name. Available: beghouled, bowling, vasebreaker," +
-//                    " izombie, zombotany.");
+        User user = App.getCurrentUser();
+        if (selected == null || user == null) {
             return;
         }
 
-        boolean isUnlocked = false;
-        if (level != 1){
-            for (MiniGameLevels miniGameLevels : App.getCurrentUser().getMiniGameLevels()){
-                if (miniGameLevels.miniGame == selected && miniGameLevels.level == level-1) isUnlocked = true;
-                break;
-            }
-        }
-        else {
-            isUnlocked = true;
-        }
-        if (!isUnlocked){
-//            GameMenuView.getInstance().showResult("this mini game is locked!");
+        if (!isMinigameLevelUnlocked(user, selected, level)) {
+            // this minigame level is locked
             return;
         }
 
         try {
             GameWorld world = MiniGameFactory.createMiniGameLevel(selected, level);
             App.setCurrentGame(world);
-
-            //needs edit
-            if (world.getLevelSetup().requirePlantSelection()) {
-//                AppView.setCurrentScreen(PlantMenuView.getInstance());
-//                GameMenuView.getInstance().showResult(
-//                        "Select your plants for " + selected.name() + " - Level " + level + "!");
-            } else {
-//                AppView.setCurrentScreen(GameMenuView.getInstance());
-//                GameMenuView.getInstance().showResult("Starting " + selected.name() + " - Level " + level + "!");
-            }
+            // needs edit: wire up screen switch once GameMenuView / PlantMenuView are ready
         } catch (IllegalArgumentException e) {
-//            GameMenuView.getInstance().showResult(e.getMessage());
+            // needs edit: surface e.getMessage() to the UI
         }
     }
 

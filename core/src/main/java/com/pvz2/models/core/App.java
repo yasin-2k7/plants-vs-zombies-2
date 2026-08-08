@@ -12,6 +12,7 @@ public class App {
     private static final float FIRST_CELL_Y = 0;
     private static User currentUser;
     private static GameWorld currentGame;
+    private static boolean debugMode = true;
 
     public static User getCurrentUser() {
         return currentUser;
@@ -84,5 +85,13 @@ public class App {
             default:
                 return name;
         }
+    }
+
+    public static boolean isDebugMode() {
+        return debugMode;
+    }
+
+    public static void setDebugMode(boolean debugMode) {
+        App.debugMode = debugMode;
     }
 }

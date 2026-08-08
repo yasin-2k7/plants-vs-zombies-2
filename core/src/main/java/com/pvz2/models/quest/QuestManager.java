@@ -19,25 +19,37 @@ public class QuestManager {
     public void checkAllQuests(User user, boolean isGameEnded) {
         QuestStats stats = user.getQuestStats();
         Collections.sort(activeQuests);
-        Iterator<Quest> iterator = activeQuests.iterator();
-        while (iterator.hasNext()) {
-            Quest quest = iterator.next();
+        for (Quest quest : activeQuests) {
             if (quest.isEndGameDependent() && !isGameEnded) {
                 continue;
             }
-            if (!quest.isCompleted() && quest.checkCompletion(stats)) {
-                quest.complete(user);
-                String msg = "🎉 Quest completed: " + quest.getDescription();
+            if (!quest.isCompleted() && !quest.isReadyToClaim() && quest.checkCompletion(stats)) {
+                quest.markReadyToClaim();
+                String msg = "✅ Quest ready to claim: " + quest.getDescription();
                 GameMenuController.updateState(msg);
-                user.addCompletedQuest(quest.getId());
-                completedQuests.add(quest);
-                iterator.remove();
             }
         }
     }
 
     public void checkAllQuests(User user) {
         checkAllQuests(user, false);
+    }
+
+    public boolean claimQuest(User user, String questId) {
+        Iterator<Quest> iterator = activeQuests.iterator();
+        while (iterator.hasNext()) {
+            Quest quest = iterator.next();
+            if (quest.getId().equals(questId) && quest.isReadyToClaim() && !quest.isCompleted()) {
+                quest.complete(user);
+                String msg = "🎉 Quest reward claimed: " + quest.getDescription();
+                GameMenuController.updateState(msg);
+                user.addCompletedQuest(quest.getId());
+                completedQuests.add(quest);
+                iterator.remove();
+                return true;
+            }
+        }
+        return false;
     }
 
     public void generateDailyQuests() {
@@ -144,8 +156,8 @@ public class QuestManager {
 
     private PlantType getRandomKillerPlant() {
         List<PlantType> killerPlants = Arrays.stream(PlantType.values())
-                .filter(pt -> pt.family != PlantFamily.SUN_PRODUCER && pt != PlantType.GRAVE_BUSTER)
-                .collect(Collectors.toList());
+            .filter(pt -> pt.family != PlantFamily.SUN_PRODUCER && pt != PlantType.GRAVE_BUSTER)
+            .collect(Collectors.toList());
         if (killerPlants.isEmpty()) return null;
         return killerPlants.get(new Random().nextInt(killerPlants.size()));
     }

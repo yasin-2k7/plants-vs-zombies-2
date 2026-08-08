@@ -1,12 +1,20 @@
 package com.pvz2.controller;
 
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.pvz2.Main;
 import com.pvz2.models.core.App;
+import com.pvz2.models.core.News;
 import com.pvz2.models.core.User;
 import com.pvz2.models.core.UserManager;
+import com.pvz2.models.enums.NewsType;
 import com.pvz2.models.mupoint.MuPointLevel;
 import com.pvz2.models.world.GameWorld;
 import com.pvz2.view.*;
+
+import java.util.List;
 
 
 public class MainMenuController implements MenuController {
@@ -31,21 +39,50 @@ public class MainMenuController implements MenuController {
             case "news":
                 mainMenuScreen.fadeAndSwitchScreen(new NewsMenuScreen(mainMenuScreen.getGame()));
                 break;
-            case "profile":
-                mainMenuScreen.fadeAndSwitchScreen(new ProfileMenuScreen(mainMenuScreen.getGame()));
-                break;
             case "mu point":
                 GameWorld game = MuPointLevel.createMuPointLevel();
                 App.setCurrentGame(game);
 //
 //                AppView.setCurrentScreen(PlantMenuView.getInstance());
 //                PlantMenuView.getInstance().getController().reset();
-
-            case "leaderboard":
-                mainMenuScreen.fadeAndSwitchScreen(new LeaderboardMenuScreen(mainMenuScreen.getGame()));
                 break;
         }
 
+    }
+
+    public boolean checkUnreadNews(){
+        User user = App.getCurrentUser();
+        List<News> allNews = user.getAllNews();
+        for (News news : allNews) {
+            if (!news.isRead()){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public Table getNews(Skin skin) {
+        User user = App.getCurrentUser();
+        List<News> allNews = user.getAllNews();
+        News myNews = new News("Welcome", "welcome to your game. play this game for free!",
+            NewsType.PLANT_UNLOCKED);
+        App.getCurrentUser().getAllNews().add(myNews);
+        Table table = new Table();
+        for (News news : allNews) {
+            Label titleLabel = new Label(news.getTitle(), skin, "medium_outline");
+            titleLabel.setColor(Color.CYAN);
+            String content = "\n" + news.getMessage() +
+                "\n------------------------------------------------\n";
+            Label contentLabel = new Label(content, skin);
+            contentLabel.setColor(Color.BLACK);
+            table.left();
+            table.add(titleLabel).left().expandX().row();
+            table.add(contentLabel).left().expandX().row();
+            news.markAsRead();
+        }
+
+
+        return table;
     }
 
 

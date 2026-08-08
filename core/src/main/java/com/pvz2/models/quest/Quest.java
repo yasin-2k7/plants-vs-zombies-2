@@ -10,9 +10,13 @@ public abstract class Quest implements Comparable<Quest> {
     private String description;
     private QuestPriority priority;
     private boolean isCompleted;
+    private boolean readyToClaim;
     private Reward reward;
     private transient Predicate<QuestStats> condition;
     private boolean endGameDependent;
+
+    private String groupId;
+    private String variantLabel;
 
     public Quest(String id, String description, QuestPriority priority,
                  Predicate<QuestStats> condition, Reward reward, boolean endGameDependent) {
@@ -22,11 +26,22 @@ public abstract class Quest implements Comparable<Quest> {
         this.condition = condition;
         this.reward = reward;
         this.isCompleted = false;
+        this.readyToClaim = false;
         this.endGameDependent = endGameDependent;
     }
 
     public boolean isEndGameDependent() {
         return endGameDependent;
+    }
+
+    public void markReadyToClaim() {
+        if (!this.isCompleted) {
+            this.readyToClaim = true;
+        }
+    }
+
+    public boolean isReadyToClaim() {
+        return readyToClaim;
     }
 
     public void complete(User user) {
@@ -37,7 +52,7 @@ public abstract class Quest implements Comparable<Quest> {
     }
 
     public boolean checkCompletion(QuestStats stats) {
-        if (!isCompleted && condition != null && condition.test(stats)) {
+        if (!isCompleted && !readyToClaim && condition != null && condition.test(stats)) {
             return true;
         }
         return false;
@@ -62,10 +77,32 @@ public abstract class Quest implements Comparable<Quest> {
 
     public void setCompleted(boolean completed) {
         this.isCompleted = completed;
+        if (completed) {
+            this.readyToClaim = true;
+        }
     }
 
     public QuestPriority getPriority() {
         return priority;
     }
 
+    public Reward getReward() {
+        return reward;
+    }
+
+    public String getGroupId() {
+        return groupId;
+    }
+
+    public void setGroupId(String groupId) {
+        this.groupId = groupId;
+    }
+
+    public String getVariantLabel() {
+        return variantLabel;
+    }
+
+    public void setVariantLabel(String variantLabel) {
+        this.variantLabel = variantLabel;
+    }
 }

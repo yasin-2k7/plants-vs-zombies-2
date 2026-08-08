@@ -1,12 +1,23 @@
 package com.pvz2.view;
 
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.pvz2.Main;
 import com.pvz2.controller.MainMenuController;
+import com.pvz2.models.core.App;
+import com.pvz2.models.core.News;
+import com.pvz2.models.enums.NewsType;
+import pvz.libpvz.textures.TextureBank;
+import pvz.skin.BorderedTable;
 
 public class MainMenuScreen extends MenuScreen {
     private MainMenuController controller;
@@ -22,6 +33,9 @@ public class MainMenuScreen extends MenuScreen {
     private Button muPoint;
     private Button profileBtn;
     private ImageButton backBtn;
+    private ImageButton travelLogBtn;
+
+    private ResourcesTable resourcesTable = new ResourcesTable(App.getCurrentUser(), game);
 
     private Table mainTable;
     private Table topBar;
@@ -49,12 +63,14 @@ public class MainMenuScreen extends MenuScreen {
 
         newsBtn = createImageButton(
             "IMAGE_UI_HUD_NEWSBUTTON_BUTTONS_HUD_NEWS_NORMAL",
-            "IMAGE_UI_HUD_NEWSBUTTON_BUTTONS_HUD_NEWS_SELECTED"
+            "IMAGE_UI_HUD_NEWSBUTTON_BUTTONS_HUD_NEWS_SELECTED",
+            game.textureBank
         );
 
         settingsBtn = createImageButton(
             "IMAGE_UI_HUD_SETTINGSBUTTON_BUTTONS_HUD_SETTINGS_NORMAL",
-            "IMAGE_UI_HUD_SETTINGSBUTTON_BUTTONS_HUD_SETTINGS_SELECTED"
+            "IMAGE_UI_HUD_SETTINGSBUTTON_BUTTONS_HUD_SETTINGS_SELECTED",
+            game.textureBank
         );
 
         leaderboardBtn = new TextButton("", skin, "brown");
@@ -69,9 +85,16 @@ public class MainMenuScreen extends MenuScreen {
         Image prof = new Image(game.textureBank.region("IMAGE_UI_MAINMENU_MM_PLAYERICON"));
         profileBtn.add(prof).padRight(5);
 
+        travelLogBtn = createImageButton(
+            "IMAGE_UI_GENERIC_BUTTON_HUD_MINIGAMES_ALT_SELECTED",
+            "IMAGE_UI_GENERIC_BUTTON_HUD_MINIGAMES_ALT_SELECTED",
+            game.textureBank
+        );
+
         backBtn = createImageButton(
             "IMAGE_UI_MAINMENU_BACK_BTN_NORMAL",
-            "IMAGE_UI_MAINMENU_BACK_BTN_PRESSED"
+            "IMAGE_UI_MAINMENU_BACK_BTN_PRESSED",
+            game.textureBank
         );
 
         unreadBadge = new Image(game.textureBank.region("IMAGE_UI_CLAIM_SMALL"));
@@ -82,11 +105,15 @@ public class MainMenuScreen extends MenuScreen {
         bottomBar = new Table();
         badgeOverlay = new Table();
         newsStack = new Stack();
+
     }
 
     @Override
     protected void buildUI() {
         initFields();
+        News myNews = new News("Welcome", "welcome to your game. play this game for free!",
+            NewsType.PLANT_UNLOCKED);
+        App.getCurrentUser().getAllNews().add(myNews);
 
         mainTable.clear();
         mainTable.setFillParent(true);
@@ -95,15 +122,27 @@ public class MainMenuScreen extends MenuScreen {
             topBar.add(backBtn).left().top().pad(10);
         }
         topBar.add().expandX();
+        if (App.getCurrentUser() != null){
+            topBar.add(resourcesTable).padRight(20);
+        }
         mainTable.add(topBar).top().growX().row();
 
         if (logoImg != null) {
-            mainTable.add(logoImg).prefWidth(400).prefHeight(100).padTop(20).row();
+            mainTable.add(logoImg).prefWidth(400).prefHeight(100).padTop(5).row();
         }
+        Table welcomeTbl = new Table();
+        welcomeTbl.setBackground(new TextureRegionDrawable(game.textureBank.region(
+            "IMAGE_UI_MAINMENU_MAINMENU_CONTENT_OFFLINE")));
+        Label welcome =
+            new Label("Welcome, " + App.getCurrentUser().getNickname(), skin, "big_outline");
+        welcome.setColor(Color.RED);
+        welcomeTbl.bottom().left().add(welcome).pad(15);
+        centerTable.add(welcomeTbl).row();
         centerTable.add(playBtn).width(200).height(60).pad(20).row();
         mainTable.add(centerTable).expandY().center().row();
 
         if (newsBtn != null) {
+            setUnreadStatus(controller.checkUnreadNews());
             newsStack.add(newsBtn);
 
             badgeOverlay.top().right();
@@ -125,6 +164,7 @@ public class MainMenuScreen extends MenuScreen {
         bottomBar.add().expandX();
 
         if (leaderboardBtn != null) bottomBar.add(leaderboardBtn).size(btnSize).pad(10);
+        if (travelLogBtn != null) bottomBar.add(travelLogBtn).size(btnSize).pad(10);
         if (profileBtn != null) bottomBar.add(profileBtn).size(btnSize).padRight(25).pad(10);
 
         mainTable.add(bottomBar).bottom().growX().pad(10);
@@ -158,7 +198,8 @@ public class MainMenuScreen extends MenuScreen {
         newsBtn.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                controller.enterMenu("news");
+                setUnreadStatus(false);
+                showScrollablePopup("NEWS", controller.getNews(skin));
             }
         });
         muPoint.addListener(new ClickListener(){
@@ -170,20 +211,28 @@ public class MainMenuScreen extends MenuScreen {
         leaderboardBtn.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                controller.enterMenu("leaderboard");
+                showScrollablePopup("LEADERBOARD", new LeaderboardMenuTable(game, skin),
+                    950, 650, 800, 480);
             }
         });
         profileBtn.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                controller.enterMenu("profile");
+                showScrollablePopup("PROFILE", new ProfileMenuTable(game, skin), 660, 620, 570, 480);
+            }
+        });
+        travelLogBtn.addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                showScrollablePopup("TRAVEL LOG", new TravelLogMenuTable(game, skin), 800, 500, 750, 400);
             }
         });
     }
 
-    private ImageButton createImageButton(String normalRegionKey, String selectedRegionKey) {
-        TextureRegion normalReg = game.textureBank.region(normalRegionKey);
-        TextureRegion selectedReg = game.textureBank.region(selectedRegionKey);
+    public static ImageButton createImageButton(String normalRegionKey, String selectedRegionKey,
+                                                TextureBank bank) {
+        TextureRegion normalReg = bank.region(normalRegionKey);
+        TextureRegion selectedReg = bank.region(selectedRegionKey);
 
         if (normalReg == null) return null;
 
@@ -193,6 +242,62 @@ public class MainMenuScreen extends MenuScreen {
             : upDrawable;
 
         return new ImageButton(upDrawable, downDrawable);
+    }
+
+    private void showScrollablePopup(String titleText, Actor contentActor) {
+        showScrollablePopup(titleText, contentActor, 600, 500, 450, 320);
+    }
+
+    private void showScrollablePopup(String titleText, Actor contentActor,
+                                      float boxWidth, float boxHeight,
+                                      float scrollWidth, float scrollHeight) {
+        Table overlay = new Table();
+        overlay.setFillParent(true);
+        overlay.setBackground(createSolidColor(new Color(0, 0, 0, 0.65f)));
+        overlay.setTouchable(Touchable.enabled);
+        overlay.addListener(new ClickListener());
+
+        BorderedTable popupBox = new BorderedTable();
+        popupBox.pad(20);
+
+        Table topBar = new Table();
+
+        Label titleLabel = new Label(titleText, skin, "big_outline");
+
+        ImageButton backBtn = createImageButton(
+            "IMAGE_UI_MAINMENU_BACK_BTN_NORMAL",
+            "IMAGE_UI_MAINMENU_BACK_BTN_PRESSED",
+            game.textureBank
+        );
+        backBtn.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                overlay.remove();
+            }
+        });
+        topBar.add(backBtn).size(45, 45).left().expandX();
+        topBar.add(titleLabel).center();
+        topBar.add().expandX();
+
+
+        ScrollPane scrollPane = new ScrollPane(contentActor, skin);
+        scrollPane.setFadeScrollBars(false);
+        scrollPane.setScrollingDisabled(true, false);
+
+        popupBox.add(topBar).growX().pad(10).row();
+        popupBox.add(scrollPane).width(scrollWidth).height(scrollHeight).pad(5).grow().row();
+
+        overlay.add(popupBox).width(boxWidth).height(boxHeight);
+        stage.addActor(overlay);
+    }
+
+    private Drawable createSolidColor(Color color) {
+        Pixmap pixmap = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
+        pixmap.setColor(color);
+        pixmap.fill();
+        Texture texture = new Texture(pixmap);
+        pixmap.dispose();
+        return new TextureRegionDrawable(new TextureRegion(texture));
     }
 
     public void setUnreadStatus(boolean hasUnread) {
