@@ -39,9 +39,6 @@ public class MainMenuController implements MenuController {
             case "news":
                 mainMenuScreen.fadeAndSwitchScreen(new NewsMenuScreen(mainMenuScreen.getGame()));
                 break;
-            case "profile":
-                mainMenuScreen.fadeAndSwitchScreen(new ProfileMenuScreen(mainMenuScreen.getGame()));
-                break;
             case "mu point":
                 GameWorld game = MuPointLevel.createMuPointLevel();
                 App.setCurrentGame(game);

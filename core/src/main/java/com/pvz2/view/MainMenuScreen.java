@@ -208,7 +208,7 @@ public class MainMenuScreen extends MenuScreen {
         profileBtn.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                controller.enterMenu("profile");
+                showScrollablePopup("PROFILE", new ProfileMenuTable(game, skin), 660, 620, 570, 480);
             }
         });
     }
@@ -229,6 +229,12 @@ public class MainMenuScreen extends MenuScreen {
     }
 
     private void showScrollablePopup(String titleText, Actor contentActor) {
+        showScrollablePopup(titleText, contentActor, 600, 500, 450, 320);
+    }
+
+    private void showScrollablePopup(String titleText, Actor contentActor,
+                                      float boxWidth, float boxHeight,
+                                      float scrollWidth, float scrollHeight) {
         Table overlay = new Table();
         overlay.setFillParent(true);
         overlay.setBackground(createSolidColor(new Color(0, 0, 0, 0.65f)));
@@ -263,9 +269,9 @@ public class MainMenuScreen extends MenuScreen {
         scrollPane.setScrollingDisabled(true, false);
 
         popupBox.add(topBar).growX().pad(10).row();
-        popupBox.add(scrollPane).width(450).height(320).pad(5).grow().row();
+        popupBox.add(scrollPane).width(scrollWidth).height(scrollHeight).pad(5).grow().row();
 
-        overlay.add(popupBox).width(600).height(500);
+        overlay.add(popupBox).width(boxWidth).height(boxHeight);
         stage.addActor(overlay);
     }
 

@@ -16,8 +16,22 @@ public class ProfileMenuController implements MenuController {
 
     @Override
     public void exitMenu() {
-        //needs edit
-//        AppView.currentScreen = MainMenuView.getInstance();
+
+    }
+
+    public String getCurrentUsername() {
+        User user = App.getCurrentUser();
+        return user == null ? "" : user.getUsername();
+    }
+
+    public String getCurrentNickname() {
+        User user = App.getCurrentUser();
+        return user == null ? "" : user.getNickname();
+    }
+
+    public String getCurrentEmail() {
+        User user = App.getCurrentUser();
+        return user == null ? "" : user.getEmail();
     }
 
     public String changeUsername(String newUsername) {

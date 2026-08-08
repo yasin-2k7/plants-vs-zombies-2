@@ -2242,3 +2242,6 @@ data/ArmorTypeData.json
 data/upgradeRules.json
 data/zombies.json
 libgdx.png
+pvz2/src/main/java/models/users/current_user.txt
+pvz2/src/main/java/models/users/goli-g.json
+pvz2/src/main/java/models/users/test_greenhouse_user.json
