@@ -36,7 +36,7 @@ public class ShooterFactory {
         registry.put(PlantType.REPEATER, ShooterFactory::buildRepeater);
         registry.put(PlantType.THREEPEATER, ShooterFactory::buildThreepeater);
         registry.put(PlantType.SNOW_PEA, ShooterFactory::buildSnowPea);
-        registry.put(PlantType.ROTOBAGA, ShooterFactory::buildRotobaga);
+        registry.put(PlantType.XSHOT, ShooterFactory::buildRotobaga);
         registry.put(PlantType.PEA_POD, ShooterFactory::buildPeaPod);
         registry.put(PlantType.SPLIT_PEA, ShooterFactory::buildSplitPea);
         registry.put(PlantType.CITRON, ShooterFactory::buildCitron);
@@ -44,8 +44,8 @@ public class ShooterFactory {
         registry.put(PlantType.CACTUS, ShooterFactory::buildCactus);
         registry.put(PlantType.FIRE_PEASHOOTER, ShooterFactory::buildFirePeashooter);
         registry.put(PlantType.STARFRUIT, ShooterFactory::buildStarfruit);
-        registry.put(PlantType.GOO_PEASHOOTER, ShooterFactory::buildGooPeashooter);
-        registry.put(PlantType.MEGA_GATLING_PEA, ShooterFactory::buildMegaGatlingPea);
+        registry.put(PlantType.POISON_PEASHOOTER, ShooterFactory::buildGooPeashooter);
+        registry.put(PlantType.MEGA_GATLING, ShooterFactory::buildMegaGatlingPea);
         registry.put(PlantType.SEA_SHROOM, ShooterFactory::buildSeaShroom);
         registry.put(PlantType.PUFF_SHROOM, ShooterFactory::buildPuffShroom);
         registry.put(PlantType.FUME_SHROOM, ShooterFactory::buildFumeShroom);
@@ -142,10 +142,10 @@ public class ShooterFactory {
         return p;
     }
     private static Plant buildRotobaga() {
-        int level = App.getCurrentUser().getUnlockedPlantsLevels().get(PlantType.ROTOBAGA);
+        int level = App.getCurrentUser().getUnlockedPlantsLevels().get(PlantType.XSHOT);
         int damage = level >= 2 ? 20 : 10;
         int health = level >= 3 ? 450 : 300;
-        Plant p = new Plant(PlantType.ROTOBAGA, health, damage);
+        Plant p = new Plant(PlantType.XSHOT, health, damage);
         CombinedDamageStrategy combinedDamageStrategy = new CombinedDamageStrategy(
                 damage, ProjectileType.ROTOBAGA_PROJECTILE);
         for (int i = 0; i < 4; i++) {
@@ -299,9 +299,9 @@ public class ShooterFactory {
         return p;
     }
     private static Plant buildGooPeashooter() {
-        int level = App.getCurrentUser().getUnlockedPlantsLevels().get(PlantType.GOO_PEASHOOTER);
+        int level = App.getCurrentUser().getUnlockedPlantsLevels().get(PlantType.POISON_PEASHOOTER);
         int health = level >= 3 ? 30 : 20;
-        Plant p = new Plant(PlantType.GOO_PEASHOOTER, health, 20);
+        Plant p = new Plant(PlantType.POISON_PEASHOOTER, health, 20);
         CombinedDamageStrategy combinedDamageStrategy = new CombinedDamageStrategy(20, ProjectileType.GOO);
         CombinedDamageStrategy plantFoodStrategy = new CombinedDamageStrategy(20, ProjectileType.GOO_SPECIAL);
         combinedDamageStrategy.setElement("POISON");
@@ -323,10 +323,10 @@ public class ShooterFactory {
         return p;
     }
     private static Plant buildMegaGatlingPea() {
-        int level = App.getCurrentUser().getUnlockedPlantsLevels().get(PlantType.MEGA_GATLING_PEA);
+        int level = App.getCurrentUser().getUnlockedPlantsLevels().get(PlantType.MEGA_GATLING);
         int damage = level >= 2 ? 30 : 20;
         int plantFoodChance = level >= 3 ? 10 : 5;
-        Plant p = new Plant(PlantType.MEGA_GATLING_PEA, 300, damage);
+        Plant p = new Plant(PlantType.MEGA_GATLING, 300, damage);
         CombinedDamageStrategy combinedDamageStrategy = new CombinedDamageStrategy(damage, ProjectileType.PEA);
         ShooterComponent newComponent = new ShooterComponent(ProjectileType.PEA,
                 ProjectileType.GIANT_PEA, 15, 4,

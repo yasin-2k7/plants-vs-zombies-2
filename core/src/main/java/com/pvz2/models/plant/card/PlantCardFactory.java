@@ -39,8 +39,8 @@ public class PlantCardFactory {
         int finalSunCost = baseTargetCard.getSunCost();
         int finalMaxCooldownTicks = baseTargetCard.getMaxCooldownTicks();
 
-        if (upgradeRules != null && upgradeRules.containsKey(PlantType.IMITATOR.name())) {
-            UpgradeConfig imitatorConfig = upgradeRules.get(PlantType.IMITATOR.name()).get(imitatorLevel);
+        if (upgradeRules != null && upgradeRules.containsKey(PlantType.IMITATER.name())) {
+            UpgradeConfig imitatorConfig = upgradeRules.get(PlantType.IMITATER.name()).get(imitatorLevel);
 
             if (imitatorConfig != null) {
                 finalSunCost += imitatorConfig.getSunCostModifier();

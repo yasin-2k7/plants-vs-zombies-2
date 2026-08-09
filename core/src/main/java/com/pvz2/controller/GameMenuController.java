@@ -12,7 +12,6 @@ import com.pvz2.models.miniGame.beghouled.BeghouledMechanics;
 import com.pvz2.models.miniGame.beghouled.GridPosition;
 import com.pvz2.models.miniGame.bowling.BowlingMechanics;
 import com.pvz2.models.miniGame.vaseBreaker.VaseBreakerLevel;
-import com.pvz2.models.mupoint.MuPointLevel;
 import com.pvz2.models.mupoint.MupointManager;
 import com.pvz2.models.plant.card.ImitatorCard;
 import com.pvz2.models.plant.card.PlantCard;
@@ -282,7 +281,7 @@ public class GameMenuController implements MenuController {
         if (card instanceof ImitatorCard imitatorCard) {
             type = imitatorCard.getTargetType();
             error = selectedCell.handlePlanting(type,
-                    App.getCurrentUser().getUnlockedPlantsLevels().get(PlantType.IMITATOR)>=4);
+                    App.getCurrentUser().getUnlockedPlantsLevels().get(PlantType.IMITATER)>=4);
         } else {
             type = card.getType();
             error = selectedCell.handlePlanting(type, App.getCurrentUser().hasBoost(type));

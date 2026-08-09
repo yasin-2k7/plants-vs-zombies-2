@@ -13,6 +13,7 @@ public class App {
     private static User currentUser;
     private static GameWorld currentGame;
     private static boolean debugMode = true;
+    private static Main gameApp;
 
     public static User getCurrentUser() {
         return currentUser;
@@ -85,6 +86,14 @@ public class App {
             default:
                 return name;
         }
+    }
+
+    public static void setGameApp(Main gameApp) {
+        App.gameApp = gameApp;
+    }
+
+    public static Main getGameApp() {
+        return gameApp;
     }
 
     public static boolean isDebugMode() {
