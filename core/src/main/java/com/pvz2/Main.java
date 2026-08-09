@@ -5,6 +5,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.pvz2.models.core.App;
 import com.pvz2.models.core.GameInitializer;
 import com.pvz2.models.core.UserManager;
 import com.pvz2.view.ChapterMenuScreen;
@@ -36,6 +37,7 @@ public class Main extends Game {
         textureBank = new TextureBank("768", assetsFolder);
         pamPlayer = new PamPlayer(textureBank, assetsFolder);
         skin = PvzSkin.get();
+        App.setGameApp(this);
 
         if(foundUser){
             setScreen(new MainMenuScreen(this));

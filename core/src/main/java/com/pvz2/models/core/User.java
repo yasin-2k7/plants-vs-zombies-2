@@ -101,7 +101,7 @@ public class User {
         unlockedPlantsLevels.put(PlantType.CABBAGE_PULT, 1);
         unlockedPlantsLevels.put(PlantType.POTATO_MINE, 1);
         unlockedPlantsLevels.put(PlantType.CHERRY_BOMB, 1);
-        unlockedPlantsLevels.put(PlantType.ICEBERG_LETTUCE, 1);
+        unlockedPlantsLevels.put(PlantType.ICEBURG, 1);
         unlockedPlantsLevels.put(PlantType.WALL_NUT, 1);
         unlockedPlantsLevels.put(PlantType.GRAVE_BUSTER, 1);
         unlockedPlantsLevels.put(PlantType.REPEATER, 1);

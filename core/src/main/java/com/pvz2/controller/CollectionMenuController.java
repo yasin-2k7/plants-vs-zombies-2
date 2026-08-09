@@ -8,9 +8,18 @@ import com.pvz2.models.plant.card.PlantCardFactory;
 import com.pvz2.models.plant.factory.PlantFactory;
 import com.pvz2.models.zombie.Zombie;
 import com.pvz2.models.zombie.ZombieFactory;
+import com.pvz2.view.CollectionMenuScreen;
+import com.pvz2.view.MenuScreen;
 
 
 public class CollectionMenuController implements MenuController {
+    MenuScreen lastScreen;
+    CollectionMenuScreen screen;
+
+    public CollectionMenuController(MenuScreen lastScreen, CollectionMenuScreen screen) {
+        this.lastScreen = lastScreen;
+        this.screen = screen;
+    }
 
     @Override
     public void changeMenu() {
@@ -19,44 +28,10 @@ public class CollectionMenuController implements MenuController {
 
     @Override
     public void exitMenu() {
-//        AppView.setCurrentScreen(ChapterMenuView.getInstance());
-        //needs edit
+        screen.fadeAndSwitchScreen(lastScreen);
     }
 
-    public void showCurrentMenu() {
-//        GameMenuView.getInstance().showResult("Current menu: collection menu");
-        //needs edit
-    }
 
-    public void showPlants() {
-        for (PlantType type : App.getCurrentUser().getUnlockedPlantsLevels().keySet()) {
-//            CollectionMenuView.getInstance().showResult(type.name());
-            //needs edit
-        }
-    }
-
-    public void showAllPlants() {
-        for (PlantType type : PlantType.values()) {
-//            CollectionMenuView.getInstance().showResult(type.name());
-            //needs edit
-        }
-    }
-
-    public void showZombies() {
-        for (String name : App.getCurrentUser().getShowedZombies().keySet()) {
-            if (App.getCurrentUser().getShowedZombies().get(name)) {
-//                CollectionMenuView.getInstance().showResult(name);
-                //needs edit
-            }
-        }
-    }
-
-    public void showAllZombies() {
-        for (String name : App.getCurrentUser().getShowedZombies().keySet()) {
-//            CollectionMenuView.getInstance().showResult(name);
-            //needs edit
-        }
-    }
 
     public void showPlant(PlantType type) {
         Plant plant = PlantFactory.createPlant(type, 0, 0, null);
@@ -134,17 +109,6 @@ public class CollectionMenuController implements MenuController {
         App.getCurrentUser().getSeedPackets().put(type, currentSeedPacket - neededSeedPacket);
 //        CollectionMenuView.getInstance().showResult("plant " + type + " upgraded.");
         //needs edit
-    }
-
-    public PlantType getPlantType(String type) {
-        for (PlantType plantType : PlantType.values()) {
-            if (plantType.name().equalsIgnoreCase(type)) {
-                return plantType;
-            }
-        }
-//        CollectionMenuView.getInstance().showResult("Plant doesn't exist.");
-        //needs edit
-        return null;
     }
 
     public void purchasePlant(PlantType type) {

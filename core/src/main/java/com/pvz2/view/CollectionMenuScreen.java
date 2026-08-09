@@ -1,0 +1,129 @@
+package com.pvz2.view;
+
+import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.Touchable;
+import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.pvz2.Main;
+import com.pvz2.controller.CollectionMenuController;
+import com.pvz2.controller.MainMenuController;
+import com.ray3k.tenpatch.TenPatchDrawable;
+
+public class CollectionMenuScreen extends MenuScreen{
+    private CollectionMenuController controller;
+    private ScrollPane pane;
+    private Table plantsTable;
+    private Table zombiesTable;
+
+    public CollectionMenuScreen(Main game, MenuScreen lastScreen) {
+        super(game);
+        this.controller = new CollectionMenuController(lastScreen, this);
+    }
+
+    @Override
+    protected void buildUI() {
+        plantsTable = new PlantsTable(8, 30, false, false, 150, 100);
+        zombiesTable = new Table();
+        pane = new ScrollPane(plantsTable);
+
+        Table mainTable = new Table();
+        Table rootTable = new Table();
+
+        mainTable.add(pane).pad(20);
+        TenPatchDrawable tenPatchDrawable = new TenPatchDrawable((TenPatchDrawable) skin.getDrawable("image_ui_quests_panel_edge_to_edge_ten"));
+        Table headerTable = buildHeaderTable();
+
+        Table containingTable = new Table();
+        containingTable.setBackground(tenPatchDrawable);
+
+        rootTable.bottom();
+        containingTable.top().add(headerTable).growX().padLeft(10).padRight(10).padTop(-80);
+        containingTable.row();
+        containingTable.add(mainTable).bottom().growX();
+        rootTable.add(containingTable).bottom().height(900).growX();
+
+        mainStack.add(rootTable);
+    }
+
+    private Table buildHeaderTable() {
+        Table headerTable = new Table();
+        ImageButton.ImageButtonStyle plantsStyle = new ImageButton.ImageButtonStyle();
+        plantsStyle.imageUp = new Image(game.textureBank.region(
+            "IMAGE_UI_ALMANAC_TABS_PLANTS_DOWN")).getDrawable();
+        plantsStyle.imageChecked = new Image(game.textureBank.region(
+            "IMAGE_UI_ALMANAC_TABS_PLANTS_ACTIVE")).getDrawable();
+        ImageButton plantsTab = new ImageButton(plantsStyle);
+
+        Image plantIcon = new Image(game.textureBank.region(
+            "IMAGE_UI_STORE_TABICONS_PLANTS"));
+        plantIcon.setTouchable(Touchable.disabled);
+        Table plantIconWrapper = new Table();
+        plantIconWrapper.add(plantIcon);
+
+        Stack plantsTabStack = new Stack();
+        plantsTabStack.add(plantsTab);
+        plantsTabStack.add(plantIconWrapper);
+
+        ImageButton.ImageButtonStyle zombiesStyle = new ImageButton.ImageButtonStyle();
+        zombiesStyle.imageUp = new Image(game.textureBank.region(
+            "IMAGE_UI_ALMANAC_TABS_ZOMBIES_DOWN")).getDrawable();
+        zombiesStyle.imageChecked = new Image(game.textureBank.region(
+            "IMAGE_UI_ALMANAC_TABS_ZOMBIES_ACTIVE")).getDrawable();
+        ImageButton zombiesTab = new ImageButton(zombiesStyle);
+
+        Image zombieIcon = new Image(game.textureBank.region(
+            "IMAGE_UI_STORE_TABICONS_ZOMBIES"));
+        zombieIcon.setTouchable(Touchable.disabled);
+        Table zombieIconWrapper = new Table();
+        zombieIconWrapper.add(zombieIcon);
+
+        Stack zombiesTabStack = new Stack();
+        zombiesTabStack.add(zombiesTab);
+        zombiesTabStack.add(zombieIconWrapper);
+
+        ButtonGroup<ImageButton> tabGroup = new ButtonGroup<>(plantsTab, zombiesTab);
+        tabGroup.setMinCheckCount(1);
+        tabGroup.setMaxCheckCount(1);
+        plantsTab.setChecked(true);
+
+        plantsTab.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                if (plantsTab.isChecked()) {
+                    pane.setActor(plantsTable);
+                }
+            }
+        });
+
+        zombiesTab.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                if (zombiesTab.isChecked()) {
+                    pane.setActor(zombiesTable);
+                }
+            }
+        });
+
+        Table tabsTable = new Table();
+        tabsTable.left().top();
+        tabsTable.add(plantsTabStack).top().padLeft(10).padRight(15);
+        tabsTable.add(zombiesTabStack).top();
+
+        ImageButton exitButton = MainMenuScreen.createImageButton(
+            "IMAGE_UI_ALMANAC_TABS_CLOSE_TAB", "IMAGE_UI_ALMANAC_TABS_CLOSE_TAB_DOWN",
+            game.textureBank);
+        exitButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                controller.exitMenu();
+            }
+        });
+        headerTable.add(tabsTable).left().expandX();
+        headerTable.add(exitButton).right().padBottom(-12).size(50, 50);
+        return headerTable;
+    }
+
+
+}

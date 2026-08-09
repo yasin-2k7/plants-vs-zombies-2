@@ -6,7 +6,7 @@ public class ImitatorCard extends PlantCard {
     private final PlantType targetType;
 
     public ImitatorCard(PlantType targetType, int sunCost, int maxCooldownTicks) {
-        super(PlantType.IMITATOR, sunCost, maxCooldownTicks);
+        super(PlantType.IMITATER, sunCost, maxCooldownTicks);
         this.targetType = targetType;
     }
 

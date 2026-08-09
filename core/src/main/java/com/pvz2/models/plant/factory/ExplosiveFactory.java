@@ -34,7 +34,7 @@ public class ExplosiveFactory {
         registry.put(PlantType.JALAPENO, ExplosiveFactory::buildJalapeno);
         registry.put(PlantType.DOOM_SHROOM, ExplosiveFactory::buildDoomShroom);
         registry.put(PlantType.TANGLE_KELP, ExplosiveFactory::buildTangleKelp);
-        registry.put(PlantType.ICEBERG_LETTUCE, ExplosiveFactory::buildIcebergLettuce);
+        registry.put(PlantType.ICEBURG, ExplosiveFactory::buildIcebergLettuce);
         registry.put(PlantType.ICE_SHROOM, ExplosiveFactory::buildIceShroom);
         registry.put(PlantType.HOT_POTATO, ExplosiveFactory::buildHotPotato);
         registry.put(PlantType.GRAVE_BUSTER, ExplosiveFactory::buildGraveBuster);
@@ -173,9 +173,9 @@ public class ExplosiveFactory {
     }
 
     private static Plant buildIcebergLettuce() {
-        int level = App.getCurrentUser().getUnlockedPlantsLevels().get(PlantType.ICEBERG_LETTUCE);
+        int level = App.getCurrentUser().getUnlockedPlantsLevels().get(PlantType.ICEBURG);
         int freezeTime = level >= 3 ? 60 : 40;
-        Plant p = new Plant(PlantType.ICEBERG_LETTUCE, 1000, 0);
+        Plant p = new Plant(PlantType.ICEBURG, 1000, 0);
         ExplosivesComponent component = new ExplosivesComponent(
                 new ProximityTrigger(App.getCellWidth()),
                 new FreezeZombieBehavior(new CircularRange(0), freezeTime), 0);

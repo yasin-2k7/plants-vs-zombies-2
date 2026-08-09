@@ -40,7 +40,7 @@ public class LockedPlantsLevelSetup implements LevelSetup {
         if(user != null && !user.getUnlockedPlantsLevels().isEmpty()){
             List<PlantType> unlockedPlants = new ArrayList<>(user.getUnlockedPlantsLevels().keySet());
 
-            unlockedPlants.remove(PlantType.IMITATOR);
+            unlockedPlants.remove(PlantType.IMITATER);
 
             Collections.shuffle(unlockedPlants);
 
