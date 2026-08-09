@@ -14,10 +14,12 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.pvz2.models.core.App;
 import com.pvz2.models.enums.PlantType;
 
+import java.util.function.Consumer;
+
 public class PlantCardView extends Stack {
     private boolean active, boost, lock;
     private int level, costAmount;
-    private Runnable onClick;
+    private Consumer<PlantCardView> onClick;
     private CooldownOverlay overlay;
     private PlantType type;
 
@@ -35,7 +37,7 @@ public class PlantCardView extends Stack {
         this.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                if (onClick != null) onClick.run();
+                if (onClick != null) onClick.accept(PlantCardView.this);
             }
         });
         build();
@@ -102,8 +104,31 @@ public class PlantCardView extends Stack {
     }
 
 
+    public PlantType getType() {
+        return type;
+    }
 
-    public void setClickMethod(Runnable onClick) {
+    public boolean isActive() {
+        return active;
+    }
+
+    public boolean isLock() {
+        return lock;
+    }
+
+    public boolean isBoost() {
+        return boost;
+    }
+
+    public int getLevel() {
+        return level;
+    }
+
+    public int getCostAmount() {
+        return costAmount;
+    }
+
+    public void setClickMethod(Consumer<PlantCardView> onClick) {
         this.onClick = onClick;
     }
 }

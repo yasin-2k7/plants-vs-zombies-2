@@ -9,6 +9,7 @@ import com.pvz2.models.plant.card.PlantCard;
 import com.pvz2.models.plant.card.PlantCardFactory;
 
 import java.util.HashMap;
+import java.util.function.Consumer;
 
 public class PlantsTable extends Table {
     private int column;
@@ -16,10 +17,10 @@ public class PlantsTable extends Table {
     private static HashMap<PlantType, String> plantsMap;
     private static HashMap<PlantFamily, String> plantsFamilyMap;
     private int cardWidth, cardHeight;
-    private Runnable cardClickMethod;
+    private Consumer<PlantCardView> cardClickMethod;
 
     public PlantsTable(int column, int pad, boolean upgradeBar, boolean canFilter, int cardWidth,
-                       int cardHeight, Runnable cardClickMethod) {
+                       int cardHeight, Consumer<PlantCardView> cardClickMethod) {
         this.column = column;
         this.cardClickMethod = cardClickMethod;
         this.defaults().pad(pad);

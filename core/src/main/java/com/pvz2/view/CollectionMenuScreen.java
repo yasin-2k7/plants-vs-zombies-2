@@ -11,6 +11,8 @@ import com.pvz2.controller.CollectionMenuController;
 import com.pvz2.controller.MainMenuController;
 import com.ray3k.tenpatch.TenPatchDrawable;
 
+import java.util.function.Consumer;
+
 public class CollectionMenuScreen extends MenuScreen{
     private CollectionMenuController controller;
     private ScrollPane pane;
