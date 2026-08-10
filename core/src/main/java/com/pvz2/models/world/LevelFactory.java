@@ -132,7 +132,7 @@ public class LevelFactory {
                 new PlantCard(PlantType.PEA_POD, 0, 0),
                 new PlantCard(PlantType.WALL_NUT, 0, 0),
                 new PlantCard(PlantType.STARFRUIT, 0, 0),
-                new PlantCard(PlantType.ROTOBAGA, 0, 0),
+                new PlantCard(PlantType.XSHOT, 0, 0),
                 new PlantCard(PlantType.CHERRY_BOMB, 0, 0),
                 new PlantCard(PlantType.MELON_PULT, 0, 0),
                 new PlantCard(PlantType.SQUASH, 0, 0),

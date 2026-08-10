@@ -72,7 +72,7 @@ public class PlantMenuController implements MenuController {
             return "Error: Invalid plant type.";
         }
 
-        if (type == PlantType.IMITATOR) {
+        if (type == PlantType.IMITATER) {
             return "Error: Please specify target plant for Imitator (e.g., add plant -t imitator " +
                     "peashooter).";
         }
@@ -122,10 +122,10 @@ public class PlantMenuController implements MenuController {
             return "Error: Invalid plant type.";
         }
 
-        if (type != PlantType.IMITATOR) {
-            return "Error: Target plant can only be specified for IMITATOR.";
+        if (type != PlantType.IMITATER) {
+            return "Error: Target plant can only be specified for IMITATER.";
         }
-        if (targetType == PlantType.IMITATOR) {
+        if (targetType == PlantType.IMITATER) {
             return "Error: Imitator cannot imitate itself!";
         }
         if (!user.getUnlockedPlantsLevels().containsKey(targetType)) {
@@ -142,7 +142,7 @@ public class PlantMenuController implements MenuController {
         selectedPlants.add(type);
         this.imitatorTarget = targetType;
 
-        return "Plant IMITATOR added to selection as " + targetType.name() + ".";
+        return "Plant IMITATER added to selection as " + targetType.name() + ".";
     }
 
     public String removePlant(String typeName) {
@@ -172,7 +172,7 @@ public class PlantMenuController implements MenuController {
         selectedPlants.remove(type);
         boosts.remove(type);
 
-        if (type == PlantType.IMITATOR) {
+        if (type == PlantType.IMITATER) {
             this.imitatorTarget = null;
         }
         return "Plant " + type.name() + " removed from selection.";
@@ -224,9 +224,9 @@ public class PlantMenuController implements MenuController {
         }
 
         for (PlantType type : selectedPlants) {
-            if (type == PlantType.IMITATOR) {
+            if (type == PlantType.IMITATER) {
                 int targetLevel = user.getUnlockedPlantsLevels().getOrDefault(imitatorTarget, 1);
-                int imitatorLevel = user.getUnlockedPlantsLevels().getOrDefault(PlantType.IMITATOR, 1);
+                int imitatorLevel = user.getUnlockedPlantsLevels().getOrDefault(PlantType.IMITATER, 1);
 
                 App.getCurrentGame().getPlantLists().add(
                         PlantCardFactory.createImitatorCard(imitatorTarget, targetLevel, imitatorLevel)

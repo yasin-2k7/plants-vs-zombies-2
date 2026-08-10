@@ -13,11 +13,12 @@ import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.pvz2.Main;
-import com.pvz2.controller.LeaderboardMenuController;
 import com.pvz2.models.core.User;
 import com.pvz2.models.core.UserDataManager;
 import com.pvz2.models.enums.LeaderboardSortField;
 
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 public class LeaderboardMenuTable extends Table {
@@ -44,7 +45,6 @@ public class LeaderboardMenuTable extends Table {
     private static final float COL_DIVIDER_W = 1;
     private static final float COL_DIVIDER_PAD = 4;
 
-    private final LeaderboardMenuController controller = new LeaderboardMenuController();
     private final Skin skin;
     private final Main game;
 
@@ -140,7 +140,7 @@ public class LeaderboardMenuTable extends Table {
         rowsTable.clear();
 
         LeaderboardSortField field = sortBox.getSelected();
-        List<User> users = controller.getSortedLeaderboard(
+        List<User> users = getSortedLeaderboard(
             UserDataManager.loadAllUsers(), field, ascending);
 
         int rank = 1;
@@ -230,6 +230,21 @@ public class LeaderboardMenuTable extends Table {
         Texture texture = new Texture(pixmap);
         pixmap.dispose();
         return new TextureRegionDrawable(new TextureRegion(texture));
+    }
+
+    public List<User> getSortedLeaderboard(List<User> allUsers, LeaderboardSortField field, boolean ascending) {
+        List<User> sortedList = new ArrayList<>(allUsers);
+        Comparator<User> comparator = field.getComparator();
+
+        if (!ascending) {
+            comparator = comparator.reversed();
+        }
+
+        comparator = comparator.thenComparing(User::getUsername);
+
+        sortedList.sort(comparator);
+
+        return sortedList;
     }
 
     private Drawable createCircle(Color color, int diameter) {

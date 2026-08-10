@@ -12,7 +12,6 @@ import com.pvz2.models.miniGame.beghouled.BeghouledMechanics;
 import com.pvz2.models.miniGame.beghouled.GridPosition;
 import com.pvz2.models.miniGame.bowling.BowlingMechanics;
 import com.pvz2.models.miniGame.vaseBreaker.VaseBreakerLevel;
-import com.pvz2.models.mupoint.MuPointLevel;
 import com.pvz2.models.mupoint.MupointManager;
 import com.pvz2.models.plant.card.ImitatorCard;
 import com.pvz2.models.plant.card.PlantCard;
@@ -196,9 +195,6 @@ public class GameMenuController implements MenuController {
 //        GameMenuView.getInstance().showResult("there is no collectable in that place!");
     }
 
-    public void showSunAmount() {
-        GameDetailsDisplayController.showSunAmount();
-    }
 
     public void cheatAddSun(int count) {
         App.getCurrentGame().setSun(25 * count + App.getCurrentGame().getSun());
@@ -285,7 +281,7 @@ public class GameMenuController implements MenuController {
         if (card instanceof ImitatorCard imitatorCard) {
             type = imitatorCard.getTargetType();
             error = selectedCell.handlePlanting(type,
-                    App.getCurrentUser().getUnlockedPlantsLevels().get(PlantType.IMITATOR)>=4);
+                    App.getCurrentUser().getUnlockedPlantsLevels().get(PlantType.IMITATER)>=4);
         } else {
             type = card.getType();
             error = selectedCell.handlePlanting(type, App.getCurrentUser().hasBoost(type));
@@ -310,9 +306,7 @@ public class GameMenuController implements MenuController {
 //            GameMenuView.getInstance().showResult("there is no plant in that place!");
         }
     }
-    public void showPlantFoodsCount() {
-        GameDetailsDisplayController.showPlantFoodsCount();
-    }
+
     public void feedPlant(float x, float y) {
         if (App.getCurrentGame().getPlantFoods() <= 0) {
 //            GameMenuView.getInstance().showResult("you have not any plant foods!");
@@ -343,16 +337,6 @@ public class GameMenuController implements MenuController {
         }
     }
 
-    public void showMap() {
-        GameDetailsDisplayController.showMap();
-    }
-    public void showPlantsStatus() {
-        GameDetailsDisplayController.showPlantsStatus();
-    }
-    public void showTileStatus(float x, float y) {GameDetailsDisplayController.showTileStatus(x, y);}
-    public void zombieInfo() {
-        GameDetailsDisplayController.zombieInfo();
-    }
 
     public void cheatSpawnZombie(String type, float x, float y) {
         Zombie zombie = new ZombieFactory().createZombie(type);
