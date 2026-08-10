@@ -13,13 +13,14 @@ import com.badlogic.gdx.utils.viewport.FillViewport;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.pvz2.Main;
+import com.pvz2.controller.GameMenuController;
 import com.pvz2.models.core.App;
 import com.pvz2.models.enums.Chapter;
 import com.pvz2.models.lawnMower.LawnMower;
+import com.pvz2.models.world.GameState;
 import com.pvz2.models.world.GameWorld;
 import pvz.libpvz.pam.PamPlayer;
 import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.math.Rectangle;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,6 +53,8 @@ public class GameScreen implements Screen {
     private float panStartX;
     private boolean introFinished = false;
 
+    private CrazyDaveOverlay daveOverlay;
+
     private record PanStep(float targetCenterX, float duration, boolean isTravel) {
     }
 
@@ -77,11 +80,17 @@ public class GameScreen implements Screen {
 
         FileHandle assetsFolder = Gdx.files.internal("");
         pamPlayer = new PamPlayer(game.textureBank, assetsFolder);
-
         pamPlayer.loadAsync(getMowerPamPath(chapter), null);
 
         computeSideWidths();
         buildIntroPanSequence();
+
+        List<String> starting = world.getStartingDialogs();
+        if (starting == null) {
+            starting = new ArrayList<>();
+        }
+        daveOverlay = new CrazyDaveOverlay(game, starting, world);
+        hudStage.addActor(daveOverlay);
 
         Gdx.input.setInputProcessor(hudStage);
     }
@@ -132,7 +141,6 @@ public class GameScreen implements Screen {
 
     private void buildIntroPanSequence() {
         float mainCenterX = mainLawnWidth / 2f;
-
         float minCameraX = -leftWidthScaled + mainLawnWidth / 2f;
         float maxCameraX = mainLawnWidth + rightWidthScaled - mainLawnWidth / 2f;
 
@@ -140,11 +148,11 @@ public class GameScreen implements Screen {
         float streetCenterX = MathUtils.clamp(mainLawnWidth + rightWidthScaled / 2f, minCameraX, maxCameraX);
 
         introSteps.clear();
-        introSteps.add(new PanStep(houseCenterX, 0.9f, false));   // hold on house
-        introSteps.add(new PanStep(streetCenterX, 2.2f, true));   // pan to street
-        introSteps.add(new PanStep(streetCenterX, 0.9f, false));  // hold on street
-        introSteps.add(new PanStep(mainCenterX, 2.2f, true));     // pan back to lawn
-        introSteps.add(new PanStep(mainCenterX, 0f, false));      // fixed forever after
+        introSteps.add(new PanStep(houseCenterX, 0.9f, false));
+        introSteps.add(new PanStep(streetCenterX, 2.2f, true));
+        introSteps.add(new PanStep(streetCenterX, 0.9f, false));
+        introSteps.add(new PanStep(mainCenterX, 2.2f, true));
+        introSteps.add(new PanStep(mainCenterX, 0f, false));
 
         currentStepIndex = 0;
         stepElapsed = 0f;
@@ -183,16 +191,42 @@ public class GameScreen implements Screen {
         }
     }
 
-    public boolean isIntroFinished() {
-        return introFinished;
-    }
-
     @Override
     public void render(float delta) {
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        if (!introFinished) updateIntroPan(delta);
+        if (!introFinished) {
+            updateIntroPan(delta);
+        } else {
+            if (daveOverlay != null && !daveOverlay.isStarted() && world.getState() == GameState.PLAYING) {
+                daveOverlay.startPresentation();
+            }
+
+            if (!world.isEndGameHandled()) {
+                if (world.getState() == GameState.WON) {
+                    world.setEndGameHandled(true);
+                    if (daveOverlay != null) {
+                        daveOverlay.startPresentation(world.getWinningDialogs(), () -> {
+                            GameMenuController.handleWinning(world);
+                        });
+                    } else {
+                        GameMenuController.handleWinning(world);
+                    }
+                } else if (world.getState() == GameState.LOST) {
+                    world.setEndGameHandled(true);
+                    if (daveOverlay != null) {
+                        daveOverlay.startPresentation(world.getLosingDialogs(), () -> {
+                            GameMenuController.handleLosing(world);
+                        });
+                    } else {
+                        GameMenuController.handleLosing(world);
+                    }
+                }
+            }
+        }
+
+        worldViewport.apply();
 
         worldViewport.apply();
         game.batch.setProjectionMatrix(worldCamera.combined);
@@ -222,24 +256,19 @@ public class GameScreen implements Screen {
 
     private void renderWorldContent(float delta) {
         if (world.getLawnMowerManager() != null) {
-
             float gridOffsetY = App.getCellHeight() * 0.8f;
-
             float visualRowHeight = App.getCellHeight() * 0.68f;
 
             for (LawnMower mower : world.getLawnMowerManager().getMowers()) {
                 if (!mower.isSpent()) {
                     float x = (float) mower.getPositionX();
-
                     float y = gridOffsetY + (mower.getRow() * visualRowHeight);
-
                     String pamPath = getMowerPamPath(chapter);
                     String animStateName = getMowerAnimStateName(mower.getState());
 
                     try {
                         com.badlogic.gdx.math.Matrix4 oldMatrix = game.batch.getTransformMatrix().cpy();
                         com.badlogic.gdx.math.Matrix4 newMatrix = new com.badlogic.gdx.math.Matrix4(oldMatrix);
-
                         float scale = Math.min(0.45f, App.getCellHeight() / 200f);
 
                         newMatrix.translate(x, y, 0);
@@ -247,9 +276,7 @@ public class GameScreen implements Screen {
                         newMatrix.translate(-x, -y, 0);
 
                         game.batch.setTransformMatrix(newMatrix);
-
                         pamPlayer.draw(game.batch, pamPath, animStateName, mower.getStateTime(), x, y, true);
-
                         game.batch.setTransformMatrix(oldMatrix);
 
                     } catch (Exception e) {
@@ -262,29 +289,20 @@ public class GameScreen implements Screen {
 
     private String getMowerPamPath(Chapter chapter) {
         switch (chapter) {
-            case EGYPT:
-                return "768/INITIAL/MOWERS/MOWER_EGYPT/MOWER_EGYPT.PAM";
-            case BIG_WAVE_BEACH:
-                return "768/FULL/MOWERS/MOWER_BEACH/MOWER_BEACH.PAM";
-            case DARK_AGES:
-                return "768/FULL/MOWERS/MOWER_DARK/MOWER_DARK.PAM";
-                case FROSTBITE_CAVES:
-                    return "768/FULL/MOWERS/MOWER_ICEAGE/MOWER_ICEAGE.PAM";
-            default:
-                return "768/FULL/MOWERS/MOWER_MODERN/MOWER_MODERN.PAM";
+            case EGYPT: return "768/INITIAL/MOWERS/MOWER_EGYPT/MOWER_EGYPT.PAM";
+            case BIG_WAVE_BEACH: return "768/FULL/MOWERS/MOWER_BEACH/MOWER_BEACH.PAM";
+            case DARK_AGES: return "768/FULL/MOWERS/MOWER_DARK/MOWER_DARK.PAM";
+            case FROSTBITE_CAVES: return "768/FULL/MOWERS/MOWER_ICEAGE/MOWER_ICEAGE.PAM";
+            default: return "768/FULL/MOWERS/MOWER_MODERN/MOWER_MODERN.PAM";
         }
     }
 
     private String getMowerAnimStateName(LawnMower.MowerState state) {
         switch (state) {
-            case IDLE:
-                return "idle";
-            case MOVING:
-                return "transition";
-            case ATTACKING:
-                return "attack";
-            default:
-                return "idle";
+            case IDLE: return "idle";
+            case MOVING: return "transition";
+            case ATTACKING: return "attack";
+            default: return "idle";
         }
     }
 
@@ -295,25 +313,9 @@ public class GameScreen implements Screen {
         hud.resize(hudStage.getWidth(), hudStage.getHeight());
     }
 
-    @Override
-    public void show() {
-        Gdx.input.setInputProcessor(hudStage);
-    }
-
-    @Override
-    public void hide() {
-    }
-
-    @Override
-    public void pause() {
-    }
-
-    @Override
-    public void resume() {
-    }
-
-    @Override
-    public void dispose() {
-        hudStage.dispose();
-    }
+    @Override public void show() { Gdx.input.setInputProcessor(hudStage); }
+    @Override public void hide() {}
+    @Override public void pause() {}
+    @Override public void resume() {}
+    @Override public void dispose() { hudStage.dispose(); }
 }
