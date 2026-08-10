@@ -85,12 +85,12 @@ public abstract class GameWorld {
         this.activeProjectiles = new ArrayList<>();
         this.activeCollectables = new ArrayList<>();
         this.activeObstacles = new ArrayList<>();
-        this.lawnMowerManager = new LawnMowerManager();
         this.sunsPool = new GenericObjectPool<>(Sun::new);
         currentSun = 50;
         this.state = GameState.PLAYING;
         this.plantLists = new ArrayList<>();
         this.levelSetup.groundSetup(this);
+        this.lawnMowerManager = new LawnMowerManager(this);
         this.plantFoods = App.getCurrentUser().getPlantFoods();
         App.getCurrentUser().setPlantFoods(0);
     }
@@ -263,7 +263,7 @@ public abstract class GameWorld {
                 sun.collect();
             }
         }
-        lawnMowerManager.updateMowers(activeZombies);
+        lawnMowerManager.updateMowers(activeZombies, 0.016f);
         for (Cell[] cells : grid){
             for (Cell cell : cells){
                 cell.update();

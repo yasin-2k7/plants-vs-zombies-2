@@ -178,4 +178,25 @@ public class WaveManager {
         return currentWaveIndex;
     }
 
+    public int getKilledZombiesInCurrentWave() {
+        return killedZombiesInCurrentWave;
+    }
+
+    public int getTotalZombiesInCurrentWave() {
+        return totalZombiesInCurrentWave;
+    }
+
+    public float getOverallProgress() {
+        int totalWaves = getTotalWavesCount();
+        if (totalWaves == 0) return levelCompleted ? 1f : 0f;
+
+        float currentWaveProgress = 0f;
+        if (totalZombiesInCurrentWave > 0) {
+            currentWaveProgress = Math.min(1f,
+                    (float) killedZombiesInCurrentWave / (float) totalZombiesInCurrentWave);
+        }
+
+        float progress = (currentWaveIndex + currentWaveProgress) / (float) totalWaves;
+        return levelCompleted ? 1f : Math.min(1f, progress);
+    }
 }
