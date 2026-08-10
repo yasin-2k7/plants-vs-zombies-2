@@ -76,12 +76,15 @@ public class App {
         }
         switch (name) {
             case "ZombieConehead":
+            case "ZombieConeHead":
                 return "ZombieArmor1";
             case "ZombieBuckethead":
+            case "ZombieBucketHead":
                 return "ZombieArmor2";
             case "ZombieKnight":
                 return "ZombieDarkArmor3";
             case "ZombieBrickhead":
+            case "ZombieBrickHead":
                 return "ZombieArmor4";
             default:
                 return name;

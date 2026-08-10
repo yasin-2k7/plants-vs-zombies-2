@@ -20,8 +20,7 @@ public class PlantsCollectionMenuScreen extends MenuScreen{
         this.plantType = plantType;
         this.collectionMenuScreen = collectionMenuScreen;
 
-//                                    "IMAGE_UI_ALMANAC_ZOMBIES_ZOMBIESPEED_ICON"
-//                                        "IMAGE_UI_ALMANAC_ZOMBIES_ZOMBIETOUGHNESS_ICON"
+
 
     }
 
@@ -59,9 +58,11 @@ public class PlantsCollectionMenuScreen extends MenuScreen{
             ? App.getCurrentUser().getUnlockedPlantsLevels().getOrDefault(plantType, 1) : 1;
         Label levelLbl = new Label("Level " + cardLevel, skin, "medium");
         leftColumn.add(levelLbl).padTop(-40).padBottom(15).row();
-        leftColumn.add(PlantsTable.createProgressStack(App.getCurrentUser(), plantType, cardLevel, "medium"))
-            .growX()
-            .row();
+        if (cardLevel < 4){
+            leftColumn.add(PlantsTable.createProgressStack(App.getCurrentUser(), plantType, cardLevel, "medium"))
+                .growX()
+                .row();
+        }
         if (App.getCurrentUser().getUnlockedPlantsLevels().getOrDefault(plantType, 0) == 0){
             leftColumn.add(createBuyBtn()).pad(10).growX();
         }
@@ -116,11 +117,11 @@ public class PlantsCollectionMenuScreen extends MenuScreen{
         Table table = new Table();
         table.top().left();
         table.add(createFieldTable("IMAGE_UI_ALMANAC_ALMANAC_STAT_ICON_SUNCOST", "SUN COST",
-            result, 0)).pad(20);
+            result, 0)).left().pad(20);
         table.add(createFieldTable("IMAGE_UI_ALMANAC_PLANTS_RECHARGE_ICON", "RECHARGE",
             result, 1)).pad(20).row();
         table.add(createFieldTable("IMAGE_UI_ALMANAC_PLANTS_TOUGHNESS_ICON", "TOUGHNESS",
-            result, 2)).pad(20);
+            result, 2)).left().pad(20);
         table.add(createFieldTable("IMAGE_UI_ALMANAC_PLANTS_DAMAGE_ICON", "DAMAGE",
             result, 3)).pad(20).row();
         Image familyImg = new Image(game.textureBank.region(PlantsTable.getPlantsFamilyMap().get(plantType.family)));
@@ -148,12 +149,22 @@ public class PlantsCollectionMenuScreen extends MenuScreen{
     private Table createCardAppearanceTable() {
         String path = getPlantAnimAddress(plantType);
         String clip = getPlantInitialClip(plantType);
-        PamActor plantPam = new PamActor(game.pamPlayer, path, clip, 0.8f);
+        PamActor plantPam = new PamActor(game.pamPlayer, path, clip, 0.8f, null);
 
 
         Table table = new Table();
-        table.setBackground(new TextureRegionDrawable(
-            game.textureBank.region("IMAGE_UI_CARDS_BACKGROUNDS_CARD_PLANT_BG_MODERN")));
+        if (plantType.hasTag("Water")){
+            table.setBackground(new TextureRegionDrawable(
+                game.textureBank.region("IMAGE_UI_CARDS_BACKGROUNDS_CARD_PLANT_BG_BEACH_WATER")));
+        }
+        else if (plantType.hasTag("Shroom")){
+            table.setBackground(new TextureRegionDrawable(
+                game.textureBank.region("IMAGE_UI_CARDS_BACKGROUNDS_CARD_PLANT_BG_DARK")));
+        }
+        else {
+            table.setBackground(new TextureRegionDrawable(
+                game.textureBank.region("IMAGE_UI_CARDS_BACKGROUNDS_CARD_PLANT_BG_MODERN")));
+        }
         table.add(plantPam);
         return table;
     }

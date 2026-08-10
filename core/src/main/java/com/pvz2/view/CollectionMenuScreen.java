@@ -21,6 +21,8 @@ public class CollectionMenuScreen extends MenuScreen{
     private ScrollPane pane;
     private PlantsTable plantsTable;
     private Table zombiesTable;
+    private Table currentTable;
+    private Table mainTable;
     private ResourcesTable resourcesTable = new ResourcesTable(App.getCurrentUser(), game);
 
     public CollectionMenuScreen(Main game, MenuScreen lastScreen) {
@@ -31,15 +33,19 @@ public class CollectionMenuScreen extends MenuScreen{
     @Override
     protected void buildUI() {
         plantsTable = new PlantsTable(8, 30, true, 150, 100, createCollectionMenuCardsMethod());
-        zombiesTable = new Table();
-        pane = new ScrollPane(plantsTable, skin);
+        zombiesTable = new ZombiesTable(createCollectionMenuZombieCardsMethod());
+        if (currentTable == null){
+            currentTable = plantsTable;
+        }
+        pane = new ScrollPane(currentTable, skin);
         pane.setFadeScrollBars(true);
         pane.setScrollingDisabled(true, false);
 
-        Table mainTable = new Table();
+        mainTable = new Table();
         Table rootTable = new Table();
 
-        mainTable.add(pane).pad(20);
+        resetMainTable();
+
         TenPatchDrawable tenPatchDrawable = new TenPatchDrawable((TenPatchDrawable) skin.getDrawable("image_ui_quests_panel_edge_to_edge_ten"));
         Table headerTable = buildHeaderTable();
 
@@ -60,6 +66,12 @@ public class CollectionMenuScreen extends MenuScreen{
         mainStack.add(topBarWrapper);
     }
 
+    private void resetMainTable() {
+        mainTable.clearChildren();
+        mainTable.add(pane).pad(20).row();
+        if (currentTable instanceof PlantsTable) mainTable.add(createFilterBar(plantsTable)).center();
+    }
+
     private Consumer<PlantCardView> createCollectionMenuCardsMethod() {
         return new Consumer<PlantCardView>() {
             @Override
@@ -69,6 +81,16 @@ public class CollectionMenuScreen extends MenuScreen{
                  CollectionMenuScreen.this);
                 fadeAndSwitchScreen(plantsCollectionMenuScreen);
                 controller.setPlantsCollectionMenuScreen(plantsCollectionMenuScreen);
+            }
+        };
+    }
+
+    private Consumer<String> createCollectionMenuZombieCardsMethod() {
+        return new Consumer<String>() {
+            @Override
+            public void accept(String name) {
+                fadeAndSwitchScreen(new ZombiesCollectionMenuScreen(game, name,
+                    CollectionMenuScreen.this));
             }
         };
     }
@@ -112,13 +134,17 @@ public class CollectionMenuScreen extends MenuScreen{
         ButtonGroup<ImageButton> tabGroup = new ButtonGroup<>(plantsTab, zombiesTab);
         tabGroup.setMinCheckCount(1);
         tabGroup.setMaxCheckCount(1);
-        plantsTab.setChecked(true);
+        if (currentTable instanceof PlantsTable) plantsTab.setChecked(true);
+        else zombiesTab.setChecked(true);
+
 
         plantsTab.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 if (plantsTab.isChecked()) {
+                    currentTable = plantsTable;
                     pane.setActor(plantsTable);
+                    resetMainTable();
                 }
             }
         });
@@ -127,7 +153,9 @@ public class CollectionMenuScreen extends MenuScreen{
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 if (zombiesTab.isChecked()) {
+                    currentTable = zombiesTable;
                     pane.setActor(zombiesTable);
+                    resetMainTable();
                 }
             }
         });
@@ -147,7 +175,6 @@ public class CollectionMenuScreen extends MenuScreen{
             }
         });
         headerTable.add(tabsTable).left().expandX();
-        headerTable.add(createFilterBar(plantsTable)).center();
         headerTable.add().expandX();
         headerTable.add(exitButton).right().padBottom(-12).size(50, 50);
         return headerTable;

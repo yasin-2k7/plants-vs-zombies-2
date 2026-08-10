@@ -10,6 +10,7 @@ import com.pvz2.models.core.GameInitializer;
 import com.pvz2.models.core.User;
 import com.pvz2.models.core.UserManager;
 import com.pvz2.models.enums.PlantType;
+import com.pvz2.models.zombie.ZombieRegistry;
 import com.pvz2.view.*;
 import pvz.libpvz.pam.PamPlayer;
 import pvz.libpvz.textures.TextureBank;
@@ -29,6 +30,7 @@ public class Main extends Game {
         boolean foundUser = UserManager.loadInitialUser();
 
         GameInitializer.loadPlantUpgrades();
+        ZombieRegistry.init();
 
         batch = new SpriteBatch();
 
@@ -39,12 +41,9 @@ public class Main extends Game {
         App.setGameApp(this);
 
         if(foundUser){
-            User user = App.getCurrentUser();
-            user.getSeedPackets().put(PlantType.SUNFLOWER, 7);
-            user.getSeedPackets().put(PlantType.PEASHOOTER, 5);
-            user.getSeedPackets().put(PlantType.TORCHWOOD, 12);
-            user.getSeedPackets().put(PlantType.TWIN_SUNFLOWER, 10);
-            user.getSeedPackets().put(PlantType.REPEATER, 17);
+            for (String zombieName : App.getCurrentUser().getShowedZombies().keySet()){
+                App.getCurrentUser().getShowedZombies().put(zombieName, true);
+            }
             setScreen(new CollectionMenuScreen(this, new ChapterMenuScreen(this)));
         } else {
             setScreen(new LoginMenuScreen(this));

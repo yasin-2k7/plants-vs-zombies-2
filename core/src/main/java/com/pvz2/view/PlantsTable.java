@@ -80,12 +80,12 @@ public class PlantsTable extends Table {
             cardTable.add(plantCardView).size(cardWidth, cardHeight);
             plantCardView.setClickMethod(cardClickMethod);
 
-            if (upgradeBar){
+            if (upgradeBar && cardLevel < 4){
                 Stack progress = createProgressStack(user, plantType, cardLevel, "default");
                 cardTable.row();
                 cardTable.add(progress);
             }
-            this.add(cardTable);
+            this.add(cardTable).top();
             i++;
             if (i > column){
                 i = 1;

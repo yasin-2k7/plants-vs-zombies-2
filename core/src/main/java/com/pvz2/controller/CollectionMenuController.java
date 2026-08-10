@@ -8,6 +8,7 @@ import com.pvz2.models.plant.card.PlantCardFactory;
 import com.pvz2.models.plant.factory.PlantFactory;
 import com.pvz2.models.zombie.Zombie;
 import com.pvz2.models.zombie.ZombieFactory;
+import com.pvz2.models.zombie.zombiesType.ArmoredZombie;
 import com.pvz2.view.CollectionMenuScreen;
 import com.pvz2.view.MenuScreen;
 import com.pvz2.view.PlantsCollectionMenuScreen;
@@ -50,35 +51,25 @@ public class CollectionMenuController implements MenuController {
         return result;
     }
 
-    public void showZombie(String name) {
+    public float[] showZombie(String name) {
         String zombieName = App.getZombieId(name);
         Zombie zombie;
         try {
             zombie = new ZombieFactory().createZombie(zombieName);
         } catch (Exception e) {
-//            CollectionMenuView.getInstance().showResult("Zombie doesn't exist.");
-            //needs edit
-            return;
+            return new float[]{0,0,0};
+        }
+        float[] result = new float[3];
+        result[0] = zombie.getHealth();
+        result[1] = (float) zombie.getSpeed();
+        result[2] = zombie.getDamage();
+
+        if (zombie instanceof ArmoredZombie armoredZombie){
+            int finalHealth = (int) result[0] + armoredZombie.getArmorHealth();
+            result[0] = finalHealth;
         }
 
-        if (!App.getCurrentUser().getShowedZombies().containsKey(name)) {
-//            CollectionMenuView.getInstance().showResult("Zombie doesn't exist.");
-            //needs edit
-            return;
-        }
-
-        if (!App.getCurrentUser().getShowedZombies().get(name)) {
-//            CollectionMenuView.getInstance().showResult("Zombie is locked.");
-            //needs edit
-            return;
-        }
-
-//        CollectionMenuView.getInstance().showResult(name + "\n"
-//                + "Health: " + zombie.getHealth() + "\n"
-//                + "Damage: " + zombie.getDamage() / 10 + "\n"
-//                + "Speed: " + (int) (zombie.getSpeed() * 15));
-        //needs edit
-
+        return result;
     }
 
 
@@ -111,7 +102,8 @@ public class CollectionMenuController implements MenuController {
         App.getCurrentUser().spendCoins(neededCoin);
         App.getCurrentUser().getSeedPackets().put(type, currentSeedPacket - neededSeedPacket);
         if (plantsCollectionMenuScreen != null){
-            plantsCollectionMenuScreen.addToast("Error", "plant " + type + " upgraded.");
+            plantsCollectionMenuScreen.addToast("plant " + type + " upgraded.",
+                "new level: " + plantLevel + 1);
         }
         return true;
     }

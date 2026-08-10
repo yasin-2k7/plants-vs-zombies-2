@@ -5,6 +5,8 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import pvz.libpvz.pam.ClipRef;
 import pvz.libpvz.pam.PamPlayer;
 
+import java.util.HashMap;
+
 public class PamActor extends Actor {
     private final PamPlayer pamPlayer;
     private final String pamPath;
@@ -12,12 +14,14 @@ public class PamActor extends Actor {
     private ClipRef clipRef;
     private float stateTime = 0f;
     private float scale;
+    private HashMap<String, Boolean> partVisibility;
 
-    public PamActor(PamPlayer pamPlayer, String pamPath, String clipName, float scale) {
+    public PamActor(PamPlayer pamPlayer, String pamPath, String clipName, float scale, HashMap<String, Boolean> partVisibility) {
         this.pamPlayer = pamPlayer;
         this.pamPath = pamPath;
         this.clipName = clipName;
         this.scale = scale;
+        this.partVisibility = partVisibility;
 
         // پیش‌بارگذاری
         this.pamPlayer.loadAsync(pamPath, () -> {
@@ -38,8 +42,15 @@ public class PamActor extends Actor {
         }
 
         if (clipRef != null) {
-            pamPlayer.draw(batch, clipRef, stateTime, getX(), getY(), scale, scale,
-                true);
+            if (partVisibility == null){
+                pamPlayer.draw(batch, clipRef, stateTime, getX(), getY(), scale, scale,
+                    true);
+            }
+            else{
+                pamPlayer.draw(batch, clipRef, stateTime, getX(), getY(), scale, scale, true,
+                    partVisibility);
+            }
+
         }
     }
 
