@@ -11,11 +11,13 @@ public class PamActor extends Actor {
     private final String clipName;
     private ClipRef clipRef;
     private float stateTime = 0f;
+    private float scale;
 
-    public PamActor(PamPlayer pamPlayer, String pamPath, String clipName) {
+    public PamActor(PamPlayer pamPlayer, String pamPath, String clipName, float scale) {
         this.pamPlayer = pamPlayer;
         this.pamPath = pamPath;
         this.clipName = clipName;
+        this.scale = scale;
 
         // پیش‌بارگذاری
         this.pamPlayer.loadAsync(pamPath, () -> {
@@ -36,8 +38,12 @@ public class PamActor extends Actor {
         }
 
         if (clipRef != null) {
-            pamPlayer.draw(batch, clipRef, stateTime, getX(), getY(),
+            pamPlayer.draw(batch, clipRef, stateTime, getX(), getY(), scale, scale,
                 true);
         }
+    }
+
+    public ClipRef getClipRef() {
+        return clipRef;
     }
 }

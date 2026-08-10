@@ -57,7 +57,7 @@ public class ShooterFactory {
     }
 
     private static Plant buildPeaShooter() {
-        int level = App.getCurrentUser().getUnlockedPlantsLevels().get(PlantType.PEASHOOTER);
+        int level = App.getCurrentUser().getUnlockedPlantsLevels().getOrDefault(PlantType.PEASHOOTER, 1);
         int health = level >= 3 ? 450 : 300;
         int damage = level >= 2 ? 30 : 20;
         Plant p = new Plant(PlantType.PEASHOOTER, health, damage);
@@ -74,7 +74,7 @@ public class ShooterFactory {
         return p;
     }
     private static Plant buildRepeater() {
-        int level = App.getCurrentUser().getUnlockedPlantsLevels().get(PlantType.REPEATER);
+        int level = App.getCurrentUser().getUnlockedPlantsLevels().getOrDefault(PlantType.REPEATER, 1);
         int health = level >= 3 ? 500 : 300;
         int damage = level >= 2 ? 30 : 20;
         Plant p = new Plant(PlantType.REPEATER, health, damage);
@@ -91,7 +91,7 @@ public class ShooterFactory {
         return p;
     }
     private static Plant buildThreepeater() { // plant food...
-        int level = App.getCurrentUser().getUnlockedPlantsLevels().get(PlantType.THREEPEATER);
+        int level = App.getCurrentUser().getUnlockedPlantsLevels().getOrDefault(PlantType.THREEPEATER, 1);
         int health = level >= 4 ? 500 : 300;
         int damage = level >= 3 ? 30 : 20;
         Plant p = new Plant(PlantType.THREEPEATER, health, 0);
@@ -112,7 +112,7 @@ public class ShooterFactory {
         return p;
     }
     private static Plant buildSnowPea() {
-        int level = App.getCurrentUser().getUnlockedPlantsLevels().get(PlantType.SNOW_PEA);
+        int level = App.getCurrentUser().getUnlockedPlantsLevels().getOrDefault(PlantType.SNOW_PEA, 1);
         int damage = level >= 2 ? 30 : 20;
         Plant p = new Plant(PlantType.SNOW_PEA, 300, damage);
         CombinedDamageStrategy combinedDamageStrategy = new CombinedDamageStrategy(damage, ProjectileType.ICE_PEA);
@@ -142,7 +142,7 @@ public class ShooterFactory {
         return p;
     }
     private static Plant buildRotobaga() {
-        int level = App.getCurrentUser().getUnlockedPlantsLevels().get(PlantType.XSHOT);
+        int level = App.getCurrentUser().getUnlockedPlantsLevels().getOrDefault(PlantType.XSHOT, 1);
         int damage = level >= 2 ? 20 : 10;
         int health = level >= 3 ? 450 : 300;
         Plant p = new Plant(PlantType.XSHOT, health, damage);
@@ -166,7 +166,7 @@ public class ShooterFactory {
         return p;
     }
     private static Plant buildPeaPod() {
-        int level = App.getCurrentUser().getUnlockedPlantsLevels().get(PlantType.PEA_POD);
+        int level = App.getCurrentUser().getUnlockedPlantsLevels().getOrDefault(PlantType.PEA_POD, 1);
         int damage = level >= 2 ? 30 : 20;
         int health = level >= 3 ? 500 : 300;
         Plant p = new Plant(PlantType.PEA_POD, health, damage);
@@ -185,7 +185,7 @@ public class ShooterFactory {
         return p;
     }
     private static Plant buildSplitPea() {
-        int level = App.getCurrentUser().getUnlockedPlantsLevels().get(PlantType.SPLIT_PEA);
+        int level = App.getCurrentUser().getUnlockedPlantsLevels().getOrDefault(PlantType.SPLIT_PEA, 1);
         int damage = level >= 2 ? 30 : 20;
         int health = level >= 3 ? 500 : 300;
         Plant p = new Plant(PlantType.SPLIT_PEA, health, damage);
@@ -207,7 +207,7 @@ public class ShooterFactory {
         return p;
     }
     private static Plant buildCitron() {
-        int level = App.getCurrentUser().getUnlockedPlantsLevels().get(PlantType.CITRON);
+        int level = App.getCurrentUser().getUnlockedPlantsLevels().getOrDefault(PlantType.CITRON, 1);
         int damage = level >= 3 ? 950 : 800;
         int chargeTime = level >= 2 ? 80 : 90;
         Plant p = new Plant(PlantType.CITRON, 300, damage);
@@ -224,7 +224,7 @@ public class ShooterFactory {
         return p;
     }
     private static Plant buildBowlingBulb() {
-        int level = App.getCurrentUser().getUnlockedPlantsLevels().get(PlantType.BOWLING_BULB);
+        int level = App.getCurrentUser().getUnlockedPlantsLevels().getOrDefault(PlantType.BOWLING_BULB, 1);
         int regenReduce = level >= 2 ? 10 : 0;
         int damageAddition = level >= 3 ? 15 : 0;
         CombinedDamageStrategy first = new CombinedDamageStrategy(180 + damageAddition, ProjectileType.LARGE_BULB);
@@ -239,7 +239,7 @@ public class ShooterFactory {
         return p;
     }
     private static Plant buildCactus() {
-        int level = App.getCurrentUser().getUnlockedPlantsLevels().get(PlantType.CACTUS);
+        int level = App.getCurrentUser().getUnlockedPlantsLevels().getOrDefault(PlantType.CACTUS, 1);
         int damage = level >= 3 ? 40 : 30;
         int pierce = level >= 2 ? 4 : 3;
         Plant p = new Plant(PlantType.CACTUS, 300, damage);
@@ -256,7 +256,7 @@ public class ShooterFactory {
         return p;
     }
     private static Plant buildFirePeashooter() {
-        int level = App.getCurrentUser().getUnlockedPlantsLevels().get(PlantType.FIRE_PEASHOOTER);
+        int level = App.getCurrentUser().getUnlockedPlantsLevels().getOrDefault(PlantType.FIRE_PEASHOOTER, 1);
         int damage = level >= 2 ? 60 : 40;
         int health = level >= 3 ? 500 : 300;
         Plant p = new Plant(PlantType.FIRE_PEASHOOTER, health, damage);
@@ -275,7 +275,7 @@ public class ShooterFactory {
         return p;
     }
     private static Plant buildStarfruit() {
-        int level = App.getCurrentUser().getUnlockedPlantsLevels().get(PlantType.STARFRUIT);
+        int level = App.getCurrentUser().getUnlockedPlantsLevels().getOrDefault(PlantType.STARFRUIT, 1);
         int shootingTime = level >= 2 ? 13 : 15;
         int damage = level >= 3 ? 30 : 20;
         Plant p = new Plant(PlantType.STARFRUIT, 300, damage);
@@ -299,7 +299,7 @@ public class ShooterFactory {
         return p;
     }
     private static Plant buildGooPeashooter() {
-        int level = App.getCurrentUser().getUnlockedPlantsLevels().get(PlantType.POISON_PEASHOOTER);
+        int level = App.getCurrentUser().getUnlockedPlantsLevels().getOrDefault(PlantType.POISON_PEASHOOTER, 1);
         int health = level >= 3 ? 30 : 20;
         Plant p = new Plant(PlantType.POISON_PEASHOOTER, health, 20);
         CombinedDamageStrategy combinedDamageStrategy = new CombinedDamageStrategy(20, ProjectileType.GOO);
@@ -323,7 +323,7 @@ public class ShooterFactory {
         return p;
     }
     private static Plant buildMegaGatlingPea() {
-        int level = App.getCurrentUser().getUnlockedPlantsLevels().get(PlantType.MEGA_GATLING);
+        int level = App.getCurrentUser().getUnlockedPlantsLevels().getOrDefault(PlantType.MEGA_GATLING, 1);
         int damage = level >= 2 ? 30 : 20;
         int plantFoodChance = level >= 3 ? 10 : 5;
         Plant p = new Plant(PlantType.MEGA_GATLING, 300, damage);
@@ -345,7 +345,7 @@ public class ShooterFactory {
         return p;
     }
     private static Plant buildSeaShroom() {
-        int level = App.getCurrentUser().getUnlockedPlantsLevels().get(PlantType.SEA_SHROOM);
+        int level = App.getCurrentUser().getUnlockedPlantsLevels().getOrDefault(PlantType.SEA_SHROOM, 1);
         float range = (level >= 2 ? 5 : 4) * App.getCellWidth();
         int damage = level >= 3 ? 25 : 20;
         int lifespan = level >= 4 ? 700 : 600;
@@ -373,7 +373,7 @@ public class ShooterFactory {
         return p;
     }
     private static Plant buildPuffShroom() {
-        int level = App.getCurrentUser().getUnlockedPlantsLevels().get(PlantType.PUFF_SHROOM);
+        int level = App.getCurrentUser().getUnlockedPlantsLevels().getOrDefault(PlantType.PUFF_SHROOM, 1);
         float range = (level >= 4 ? 5 : 4) * App.getCellWidth();
         int damage = level >= 3 ? 30 : 20;
         int lifespan = level >= 2 ? 700 : 600;
@@ -400,7 +400,7 @@ public class ShooterFactory {
         return p;
     }
     private static Plant buildFumeShroom() {
-        int level = App.getCurrentUser().getUnlockedPlantsLevels().get(PlantType.FUME_SHROOM);
+        int level = App.getCurrentUser().getUnlockedPlantsLevels().getOrDefault(PlantType.FUME_SHROOM, 1);
         float range = (level >= 2 ? 6 : 5) * App.getCellWidth();
         int damage = level >= 3 ? 30 : 20;
         Plant p = new Plant(PlantType.FUME_SHROOM, 300, damage);
@@ -426,7 +426,7 @@ public class ShooterFactory {
         return p;
     }
     private static Plant buildCabbagePult() {
-        int level = App.getCurrentUser().getUnlockedPlantsLevels().get(PlantType.CABBAGE_PULT);
+        int level = App.getCurrentUser().getUnlockedPlantsLevels().getOrDefault(PlantType.CABBAGE_PULT, 1);
         int damage = level >= 2 ? 50 : 40;
         int shootingTime = level >= 3 ? 25 : 29;
         int health = level >= 4 ? 450 : 300;
@@ -444,7 +444,7 @@ public class ShooterFactory {
         return p;
     }
     private static Plant buildKernelPult() {
-        int level = App.getCurrentUser().getUnlockedPlantsLevels().get(PlantType.KERNEL_PULT);
+        int level = App.getCurrentUser().getUnlockedPlantsLevels().getOrDefault(PlantType.KERNEL_PULT, 1);
         float butterChance = level >= 2 ? 0.35f : 0.3f;
         int damageAddition = level >= 3 ? 10 : 0;
         int health = level >= 4 ? 450 : 300;
@@ -478,7 +478,7 @@ public class ShooterFactory {
         return p;
     }
     private static Plant buildMelonPult() {
-        int level = App.getCurrentUser().getUnlockedPlantsLevels().get(PlantType.MELON_PULT);
+        int level = App.getCurrentUser().getUnlockedPlantsLevels().getOrDefault(PlantType.MELON_PULT, 1);
         int damage = level >= 3 ? 110 : 80;
         int aoeDamage = level >= 4 ? 55 : 40;
         Plant p = new Plant(PlantType.MELON_PULT, 300, damage);
@@ -496,7 +496,7 @@ public class ShooterFactory {
         return p;
     }
     private static Plant buildWinterMelonPult() {
-        int level = App.getCurrentUser().getUnlockedPlantsLevels().get(PlantType.WINTER_MELON);
+        int level = App.getCurrentUser().getUnlockedPlantsLevels().getOrDefault(PlantType.WINTER_MELON, 1);
         int aoeDamage = level >= 3 ? 55 : 40;
         Plant p = new Plant(PlantType.WINTER_MELON, 300, 80);
         CombinedDamageStrategy combinedDamageStrategy = new CombinedDamageStrategy(
@@ -514,7 +514,7 @@ public class ShooterFactory {
         return p;
     }
     private static Plant buildPepperPult() {
-        int level = App.getCurrentUser().getUnlockedPlantsLevels().get(PlantType.PEPPER_PULT);
+        int level = App.getCurrentUser().getUnlockedPlantsLevels().getOrDefault(PlantType.PEPPER_PULT, 1);
         int damage = level >= 2 ? 65 : 50;
         Plant p = new Plant(PlantType.PEPPER_PULT, 300, damage);
         CombinedDamageStrategy combinedDamageStrategy = new CombinedDamageStrategy(

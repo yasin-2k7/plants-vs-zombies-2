@@ -21,7 +21,7 @@ public class MeleeFactory {
     }
 
     private static Plant buildBonkChoy() {
-        int level = App.getCurrentUser().getUnlockedPlantsLevels().get(PlantType.BONK_CHOY);
+        int level = App.getCurrentUser().getUnlockedPlantsLevels().getOrDefault(PlantType.BONK_CHOY, 1);
 
         int health = (level >= 4) ? 500 : 300;
         int damage = (level >= 2) ? 20 : 15;
@@ -33,7 +33,7 @@ public class MeleeFactory {
     }
 
     private static Plant buildWasabiWhip() {
-        int level = App.getCurrentUser().getUnlockedPlantsLevels().get(PlantType.WASABI_WHIP);
+        int level = App.getCurrentUser().getUnlockedPlantsLevels().getOrDefault(PlantType.WASABI_WHIP, 1);
 
         int health = (level >= 4) ? 500 : 300;
         int damage = (level >= 2) ? 50 : 40;
@@ -46,7 +46,7 @@ public class MeleeFactory {
     }
 
     private static Plant buildPhatBeet() {
-        int level = App.getCurrentUser().getUnlockedPlantsLevels().get(PlantType.PHAT_BEET);
+        int level = App.getCurrentUser().getUnlockedPlantsLevels().getOrDefault(PlantType.PHAT_BEET, 1);
         int damage = (level >= 2) ? 25 : 15;
         int health = (level >= 4) ? 500 : 300;
         int interval = (level >= 3) ? 18 : 20;
@@ -57,7 +57,7 @@ public class MeleeFactory {
     }
 
     private static Plant buildKiwibeast() {
-        int level = App.getCurrentUser().getUnlockedPlantsLevels().get(PlantType.KIWIBEAST);
+        int level = App.getCurrentUser().getUnlockedPlantsLevels().getOrDefault(PlantType.KIWIBEAST, 1);
         int health = (level >= 2) ? 500 : 300;
         int baseDamage = (level >= 3) ? 30 : 15;
         int maxStage = (level >= 4) ? 4 : 3;
@@ -68,7 +68,7 @@ public class MeleeFactory {
     }
 
     private static Plant buildChomper() {
-        int level = App.getCurrentUser().getUnlockedPlantsLevels().get(PlantType.CHOMPER);
+        int level = App.getCurrentUser().getUnlockedPlantsLevels().getOrDefault(PlantType.CHOMPER, 1);
 
         int health = (level >= 3) ? 500 : 300;
 

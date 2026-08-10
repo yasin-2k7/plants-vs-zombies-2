@@ -18,7 +18,7 @@ public class SunProducerFactory {
     }
 
     private static Plant buildSunflower() {
-        int level = App.getCurrentUser().getUnlockedPlantsLevels().get(PlantType.SUNFLOWER);
+        int level = App.getCurrentUser().getUnlockedPlantsLevels().getOrDefault(PlantType.SUNFLOWER, 1);
         int health = level >= 3 ? 450 : 300;
         int prodTime = level >= 2 ? 24 : 22;
         boolean doubleSunChance = level == 4;
@@ -28,7 +28,7 @@ public class SunProducerFactory {
     }
 
     private static Plant buildTwinSunflower() {
-        int level = App.getCurrentUser().getUnlockedPlantsLevels().get(PlantType.TWIN_SUNFLOWER);
+        int level = App.getCurrentUser().getUnlockedPlantsLevels().getOrDefault(PlantType.TWIN_SUNFLOWER, 1);
         int health = level >= 3 ? 450 : 300;
         int prodTime = level >= 2 ? 24 : 22;
         Plant p = new Plant(PlantType.TWIN_SUNFLOWER, health, 0);
@@ -37,7 +37,7 @@ public class SunProducerFactory {
     }
 
     private static Plant buildSunShroom() {
-        int level = App.getCurrentUser().getUnlockedPlantsLevels().get(PlantType.SUN_SHROOM);
+        int level = App.getCurrentUser().getUnlockedPlantsLevels().getOrDefault(PlantType.SUN_SHROOM, 1);
         int health = level >= 3 ? 450 : 300;
         int growTimeReduce = level >= 2 ? 5 : 0;
         boolean doubleSunChance = level == 4;
@@ -47,7 +47,7 @@ public class SunProducerFactory {
     }
 
     private static Plant buildPrimalSunflower() {
-        int level = App.getCurrentUser().getUnlockedPlantsLevels().get(PlantType.PRIMAL_SUNFLOWER);
+        int level = App.getCurrentUser().getUnlockedPlantsLevels().getOrDefault(PlantType.PRIMAL_SUNFLOWER, 1);
         int health = level >= 3 ? 450 : 300;
         int prodTime = level >= 2 ? 24 : 22;
         Plant p = new Plant(PlantType.PRIMAL_SUNFLOWER, health, 0);
@@ -56,7 +56,7 @@ public class SunProducerFactory {
     }
 
     private static Plant buildGoldBloom() {
-        int level = App.getCurrentUser().getUnlockedPlantsLevels().get(PlantType.GOLD_BLOOM);
+        int level = App.getCurrentUser().getUnlockedPlantsLevels().getOrDefault(PlantType.GOLD_BLOOM, 1);
         Plant p = new Plant(PlantType.GOLD_BLOOM, 0, 0);
         int sunNumber = level >= 3 ? 17 : 15;
         p.addComponent(new SunProducerComponent(25, sunNumber, 0, false, false, 0, 0, true));

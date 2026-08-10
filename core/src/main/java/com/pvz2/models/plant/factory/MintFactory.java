@@ -24,7 +24,7 @@ public class MintFactory {
     }
 
     private static Plant buildMint(PlantType type) {
-        int level = App.getCurrentUser().getUnlockedPlantsLevels().get(type);
+        int level = App.getCurrentUser().getUnlockedPlantsLevels().getOrDefault(type, 1);
         boolean resetCooldown = level >= 4;
         Plant p = new Plant(type, 300, 0);
         p.addComponent(new MintComponent(type, _ -> {

@@ -22,7 +22,7 @@ public class ModifierAndHomingFactory {
     }
 
     private static Plant buildTorchwood() {
-        int level = App.getCurrentUser().getUnlockedPlantsLevels().get(PlantType.TORCHWOOD);
+        int level = App.getCurrentUser().getUnlockedPlantsLevels().getOrDefault(PlantType.TORCHWOOD, 1);
         int health = (level >= 2) ? 600 : 300;
         boolean aoe = level >= 3;
         Plant p = new Plant(PlantType.TORCHWOOD, health, 0);
@@ -32,7 +32,7 @@ public class ModifierAndHomingFactory {
     }
 
     private static Plant buildMagnetShroom() {
-        int level = App.getCurrentUser().getUnlockedPlantsLevels().get(PlantType.MAGNET_SHROOM);
+        int level = App.getCurrentUser().getUnlockedPlantsLevels().getOrDefault(PlantType.MAGNET_SHROOM, 1);
         int health = (level >= 4) ? 500 : 300;
         int radius = (level >= 2) ? 3 : 2;
         Plant p = new Plant(PlantType.MAGNET_SHROOM, health, 0);
@@ -41,7 +41,7 @@ public class ModifierAndHomingFactory {
     }
 
     private static Plant buildLilyPad() {
-        int level = App.getCurrentUser().getUnlockedPlantsLevels().get(PlantType.LILY_PAD);
+        int level = App.getCurrentUser().getUnlockedPlantsLevels().getOrDefault(PlantType.LILY_PAD, 1);
         int health = (level >= 3) ? 500 : 300;
         Plant p = new Plant(PlantType.LILY_PAD, health, 0);
         GameComponent component = new PlacementBehaviorComponent(PlantLayer.BASE, false, 0, true) {

@@ -6,9 +6,12 @@ import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.utils.Array;
 import com.pvz2.Main;
 import com.pvz2.controller.CollectionMenuController;
 import com.pvz2.controller.MainMenuController;
+import com.pvz2.models.core.App;
+import com.pvz2.models.enums.PlantFamily;
 import com.ray3k.tenpatch.TenPatchDrawable;
 
 import java.util.function.Consumer;
@@ -16,8 +19,9 @@ import java.util.function.Consumer;
 public class CollectionMenuScreen extends MenuScreen{
     private CollectionMenuController controller;
     private ScrollPane pane;
-    private Table plantsTable;
+    private PlantsTable plantsTable;
     private Table zombiesTable;
+    private ResourcesTable resourcesTable = new ResourcesTable(App.getCurrentUser(), game);
 
     public CollectionMenuScreen(Main game, MenuScreen lastScreen) {
         super(game);
@@ -26,9 +30,11 @@ public class CollectionMenuScreen extends MenuScreen{
 
     @Override
     protected void buildUI() {
-        plantsTable = new PlantsTable(8, 30, false, false, 150, 100, null);
+        plantsTable = new PlantsTable(8, 30, true, 150, 100, createCollectionMenuCardsMethod());
         zombiesTable = new Table();
-        pane = new ScrollPane(plantsTable);
+        pane = new ScrollPane(plantsTable, skin);
+        pane.setFadeScrollBars(true);
+        pane.setScrollingDisabled(true, false);
 
         Table mainTable = new Table();
         Table rootTable = new Table();
@@ -46,7 +52,25 @@ public class CollectionMenuScreen extends MenuScreen{
         containingTable.add(mainTable).bottom().growX();
         rootTable.add(containingTable).bottom().height(900).growX();
 
+        Table topBar = new Table();
+        Table topBarWrapper = new Table();
+        topBar.add(resourcesTable).padRight(100);
+        topBarWrapper.top().right().add(topBar).pad(5);
         mainStack.add(rootTable);
+        mainStack.add(topBarWrapper);
+    }
+
+    private Consumer<PlantCardView> createCollectionMenuCardsMethod() {
+        return new Consumer<PlantCardView>() {
+            @Override
+            public void accept(PlantCardView plantCardView) {
+                PlantsCollectionMenuScreen plantsCollectionMenuScreen =
+                new PlantsCollectionMenuScreen(game, plantCardView.getType(),
+                 CollectionMenuScreen.this);
+                fadeAndSwitchScreen(plantsCollectionMenuScreen);
+                controller.setPlantsCollectionMenuScreen(plantsCollectionMenuScreen);
+            }
+        };
     }
 
     private Table buildHeaderTable() {
@@ -123,9 +147,60 @@ public class CollectionMenuScreen extends MenuScreen{
             }
         });
         headerTable.add(tabsTable).left().expandX();
+        headerTable.add(createFilterBar(plantsTable)).center();
+        headerTable.add().expandX();
         headerTable.add(exitButton).right().padBottom(-12).size(50, 50);
         return headerTable;
     }
 
+    private Table createFilterBar(PlantsTable plantsTable) {
+        Table filterTable = new Table();
+        filterTable.defaults().pad(5);
 
+        SelectBox<String> familySelect = new SelectBox<>(skin);
+        Array<String> familyOptions = new Array<>();
+        familyOptions.add("All Families");
+        for (PlantFamily family : PlantFamily.values()) {
+            familyOptions.add(family.name());
+        }
+        familySelect.setItems(familyOptions);
+
+        SelectBox<PlantsTable.LockFilter> lockSelect = new SelectBox<>(skin);
+        lockSelect.setItems(PlantsTable.LockFilter.ALL, PlantsTable.LockFilter.UNLOCKED_ONLY, PlantsTable.LockFilter.LOCKED_ONLY);
+
+        CheckBox upgradeableCheck = new CheckBox("Upgradeable", skin);
+
+        ChangeListener filterChangeListener = new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                String selectedFamStr = familySelect.getSelected();
+                PlantFamily family = selectedFamStr.equals("All Families") ? null : PlantFamily.valueOf(selectedFamStr);
+
+                PlantsTable.LockFilter lockFilter = lockSelect.getSelected();
+                boolean upgradeable = upgradeableCheck.isChecked();
+
+                plantsTable.applyFilters(family, lockFilter, upgradeable);
+            }
+        };
+
+        familySelect.addListener(filterChangeListener);
+        lockSelect.addListener(filterChangeListener);
+        upgradeableCheck.addListener(filterChangeListener);
+
+        filterTable.add(new Label("Family:", skin)).left();
+        filterTable.add(familySelect);
+        filterTable.add(new Label("Status:", skin)).padLeft(15);
+        filterTable.add(lockSelect);
+        filterTable.add(upgradeableCheck).padLeft(15);
+
+        return filterTable;
+    }
+
+    public CollectionMenuController getController() {
+        return controller;
+    }
+
+    public ResourcesTable getResourcesTable() {
+        return resourcesTable;
+    }
 }

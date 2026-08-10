@@ -42,7 +42,7 @@ public class ExplosiveFactory {
 
 
     private static Plant buildPotatoMine() {
-        int level = App.getCurrentUser().getUnlockedPlantsLevels().get(PlantType.POTATO_MINE);
+        int level = App.getCurrentUser().getUnlockedPlantsLevels().getOrDefault(PlantType.POTATO_MINE, 1);
         int armTime = level >= 2 ? 120 : 150;
         int damage = level >= 4 ? 2400 : 1800;
         Plant p = new Plant(PlantType.POTATO_MINE, 300, damage);
@@ -65,7 +65,7 @@ public class ExplosiveFactory {
     }
 
     private static Plant buildPrimalPotatoMine() {
-        int level = App.getCurrentUser().getUnlockedPlantsLevels().get(PlantType.PRIMAL_POTATO_MINE);
+        int level = App.getCurrentUser().getUnlockedPlantsLevels().getOrDefault(PlantType.PRIMAL_POTATO_MINE, 1);
         int armTime = level >= 2 ? 40 : 50;
         int damage = level >= 4 ? 2800 : 2400;
         Plant p = new Plant(PlantType.PRIMAL_POTATO_MINE, 300, damage);
@@ -88,7 +88,7 @@ public class ExplosiveFactory {
     }
 
     private static Plant buildCherryBomb() {
-        int level = App.getCurrentUser().getUnlockedPlantsLevels().get(PlantType.CHERRY_BOMB);
+        int level = App.getCurrentUser().getUnlockedPlantsLevels().getOrDefault(PlantType.CHERRY_BOMB, 1);
         int damage = level >= 3 ? 2400 : 1800;
         Plant p = new Plant(PlantType.CHERRY_BOMB, 1000, damage);
         p.addComponent(new ExplosivesComponent(
@@ -98,7 +98,7 @@ public class ExplosiveFactory {
     }
 
     private static Plant buildSquash() {
-        int level = App.getCurrentUser().getUnlockedPlantsLevels().get(PlantType.SQUASH);
+        int level = App.getCurrentUser().getUnlockedPlantsLevels().getOrDefault(PlantType.SQUASH, 1);
         int damage = level >= 3 ? 2400 : 1800;
         Plant p = new Plant(PlantType.SQUASH, 1000, damage);
         ExplosivesComponent component = new ExplosivesComponent(
@@ -117,7 +117,7 @@ public class ExplosiveFactory {
     }
 
     private static Plant buildGrapeshot() {
-        int level = App.getCurrentUser().getUnlockedPlantsLevels().get(PlantType.GRAPESHOT);
+        int level = App.getCurrentUser().getUnlockedPlantsLevels().getOrDefault(PlantType.GRAPESHOT, 1);
         int damage = level >= 2 ? 2400 : 1800;
         int bounceMax = level >= 3 ? 5 : 4;
         Plant p = new Plant(PlantType.GRAPESHOT, 1000, damage);
@@ -128,7 +128,7 @@ public class ExplosiveFactory {
     }
 
     private static Plant buildJalapeno() {
-        int level = App.getCurrentUser().getUnlockedPlantsLevels().get(PlantType.JALAPENO);
+        int level = App.getCurrentUser().getUnlockedPlantsLevels().getOrDefault(PlantType.JALAPENO, 1);
         int damage = level >= 3 ? 2400 : 1800;
         Plant p = new Plant(PlantType.JALAPENO, 1000, damage);
         p.addComponent(new ExplosivesComponent(InstantTrigger.INSTANCE,
@@ -139,7 +139,7 @@ public class ExplosiveFactory {
     }
 
     private static Plant buildDoomShroom() {
-        int level = App.getCurrentUser().getUnlockedPlantsLevels().get(PlantType.DOOM_SHROOM);
+        int level = App.getCurrentUser().getUnlockedPlantsLevels().getOrDefault(PlantType.DOOM_SHROOM, 1);
         int damage = level >= 3 ? 2600 : 1800;
         Plant p = new Plant(PlantType.DOOM_SHROOM, 1000, damage);
         p.addComponent(new ExplosivesComponent(InstantTrigger.INSTANCE,
@@ -149,7 +149,7 @@ public class ExplosiveFactory {
     }
 
     private static Plant buildTangleKelp() {
-        int level = App.getCurrentUser().getUnlockedPlantsLevels().get(PlantType.TANGLE_KELP);
+        int level = App.getCurrentUser().getUnlockedPlantsLevels().getOrDefault(PlantType.TANGLE_KELP, 1);
         Plant p = new Plant(PlantType.TANGLE_KELP, 1000, 20000);
         ExplosivesComponent component = new ExplosivesComponent(
                 new ProximityTrigger(App.getCellWidth()),
@@ -173,7 +173,7 @@ public class ExplosiveFactory {
     }
 
     private static Plant buildIcebergLettuce() {
-        int level = App.getCurrentUser().getUnlockedPlantsLevels().get(PlantType.ICEBURG);
+        int level = App.getCurrentUser().getUnlockedPlantsLevels().getOrDefault(PlantType.ICEBURG, 1);
         int freezeTime = level >= 3 ? 60 : 40;
         Plant p = new Plant(PlantType.ICEBURG, 1000, 0);
         ExplosivesComponent component = new ExplosivesComponent(
@@ -188,7 +188,7 @@ public class ExplosiveFactory {
     }
 
     private static Plant buildIceShroom() {
-        int level = App.getCurrentUser().getUnlockedPlantsLevels().get(PlantType.ICE_SHROOM);
+        int level = App.getCurrentUser().getUnlockedPlantsLevels().getOrDefault(PlantType.ICE_SHROOM, 1);
         int freezeTime = level >= 2 ? 60 : 40;
         int damage = level >= 4 ? 50 : 0;
         Plant p = new Plant(PlantType.ICE_SHROOM, 1000, damage);
@@ -199,7 +199,7 @@ public class ExplosiveFactory {
     }
 
     private static Plant buildHotPotato() {
-        int level = App.getCurrentUser().getUnlockedPlantsLevels().get(PlantType.HOT_POTATO);
+        int level = App.getCurrentUser().getUnlockedPlantsLevels().getOrDefault(PlantType.HOT_POTATO, 1);
         int radius = level >= 3 ? 1 : 0;
         Plant p = new Plant(PlantType.HOT_POTATO, 1000, 0);
         ExplosivesComponent component = new ExplosivesComponent(InstantTrigger.INSTANCE,
@@ -213,7 +213,7 @@ public class ExplosiveFactory {
     }
 
     private static Plant buildGraveBuster() {
-        int level = App.getCurrentUser().getUnlockedPlantsLevels().get(PlantType.GRAVE_BUSTER);
+        int level = App.getCurrentUser().getUnlockedPlantsLevels().getOrDefault(PlantType.GRAVE_BUSTER, 1);
         int delay = level >= 2 ? 30 : 20;
         Plant p = new Plant(PlantType.GRAVE_BUSTER, 300, 0);
         ExplosivesComponent component = new ExplosivesComponent(
