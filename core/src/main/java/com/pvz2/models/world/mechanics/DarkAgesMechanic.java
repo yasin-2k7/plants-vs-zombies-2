@@ -51,7 +51,7 @@ public class DarkAgesMechanic implements Mechanic {
                         zombie.setX(x);
                         zombie.setY(y);
                         world.addZombie(zombie);
-                        GameMenuController.updateState("A zombie emerged from a grave at (" + c + ", " + r + ")");
+//                        GameMenuController.updateState("A zombie emerged from a grave at (" + c + ", " + r + ")");
                     }
                     cell.setNecromancyTriggered(false);
                 }

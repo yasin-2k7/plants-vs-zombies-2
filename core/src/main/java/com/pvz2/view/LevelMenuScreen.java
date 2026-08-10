@@ -26,7 +26,7 @@ public class LevelMenuScreen extends MenuScreen {
     private TextureRegion backgroundRegion;
     private PamPlayer pamPlayer;
 
-    private final LevelMenuController controller = new LevelMenuController();
+    private final LevelMenuController controller = new LevelMenuController(this);
 
     private Group contentGroup;
     private float scrollX = 0f;
@@ -193,7 +193,13 @@ public class LevelMenuScreen extends MenuScreen {
             levelNodeActor.addListener(new ClickListener() {
                 @Override
                 public void clicked(InputEvent event, float x, float y) {
-
+                    if (isDragging) return;
+                    if (levelStatus == 0) {
+                        System.out.println("this level is locked!");
+                        return;
+                    }
+                    String result = controller.chooseLevel(levelIndex);
+                    System.out.println(result);
                 }
             });
 

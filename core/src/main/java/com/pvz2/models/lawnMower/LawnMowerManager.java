@@ -2,57 +2,63 @@ package com.pvz2.models.lawnMower;
 
 import com.pvz2.models.core.App;
 import com.pvz2.models.world.GameState;
+import com.pvz2.models.world.GameWorld;
 import com.pvz2.models.zombie.Zombie;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 
 public class LawnMowerManager {
-    private static final int TOTAL_ROWS = 5;
+    private final int totalRows;
+    private final float cellWidth;
+    private final float cellHeight;
+    private final double startX;
+    private final double maxX;
+
     private List<LawnMower> mowers;
     private boolean enabled = true;
 
-    public LawnMowerManager() {
+    public LawnMowerManager(GameWorld world) {
+        this.totalRows = world.getRows();
+        this.cellWidth = App.getCellWidth();
+        this.cellHeight = App.getCellHeight();
+
+        this.startX = cellWidth * 2.0;
+        this.maxX = world.getCols() * cellWidth + cellWidth;
+
         this.mowers = new ArrayList<>();
-        for (int i = 0; i < TOTAL_ROWS; i++) {
-            mowers.add(new LawnMower(i));
+        resetMowers();
+    }
+
+    private void resetMowers() {
+        mowers.clear();
+        for (int i = 0; i < totalRows; i++) {
+            mowers.add(new LawnMower(i, startX, maxX));
         }
     }
 
-    public void updateMowers(List<Zombie> allZombies) {
+    public void updateMowers(List<Zombie> allZombies, float delta) {
         if (!enabled) {
             return;
         }
 
-        checkActivations(allZombies);
-
         for (LawnMower mower : mowers) {
-            List<Zombie> zombies = getZombiesInRow(allZombies, mower.getRow());
-            zombies.stream()
-                    .min(Comparator.comparingDouble(Zombie::getX)).ifPresent(mower::checkCollision);
-            if (mower.isActive()) {
-                mower.mowZombies(getZombiesInRow(allZombies, mower.getRow()));
-                mower.move();
-            }
-        }
-    }
+            List<Zombie> zombiesInRow = getZombiesInRow(allZombies, mower.getRow());
 
-    private void checkActivations(List<Zombie> allZombies) {
-        for (Zombie z : allZombies) {
-            if (!z.isDead() && z.getX() <= 0) {
-                int row = getRowFromY(z.getY());
-                LawnMower mower = getMowerByRow(row);
-
-                if (mower != null) {
+            for (Zombie z : zombiesInRow) {
+                if (!z.isDead() && z.getX() <= 0) {
                     if (!mower.isSpent() && !mower.isActive()) {
                         mower.activate();
                     } else if (mower.isSpent()) {
-
                         App.getCurrentGame().setState(GameState.LOST);
                         z.setSpeed(0);
                     }
                 }
+            }
+
+            if (mower.isActive()) {
+                mower.mowZombies(zombiesInRow);
+                mower.move(delta);
             }
         }
     }
@@ -67,18 +73,9 @@ public class LawnMowerManager {
         return zombiesInRow;
     }
 
-    private LawnMower getMowerByRow(int row) {
-        for (LawnMower mower : mowers) {
-            if (mower.getRow() == row) {
-                return mower;
-            }
-        }
-        return null;
-    }
-
     private int getRowFromY(float y) {
-        int row = (int) (y / 100);
-        return Math.max(0, Math.min(row, TOTAL_ROWS - 1));
+        int row = (int) (y / cellHeight);
+        return Math.max(0, Math.min(row, totalRows - 1));
     }
 
     public List<LawnMower> getMowers() {
@@ -92,7 +89,9 @@ public class LawnMowerManager {
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
         if (!enabled) {
-            this.mowers.clear();
+            mowers.clear();
+        } else if (mowers.isEmpty()) {
+            resetMowers();
         }
     }
 }

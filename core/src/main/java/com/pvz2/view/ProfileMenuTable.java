@@ -228,7 +228,6 @@ public class ProfileMenuTable extends Table {
         return label;
     }
 
-    /** Shows the controller message and returns true if it represents a success. */
     private boolean applyStatus(Label status, String message) {
         boolean success = message != null && message.toLowerCase().contains("changed");
         status.setColor(success ? SUCCESS_COLOR : ERROR_COLOR);

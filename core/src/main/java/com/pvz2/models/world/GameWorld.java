@@ -66,6 +66,11 @@ public abstract class GameWorld {
     private PlantType selectedPlant = null;
     private boolean plantingPhase = false;
     private int currentBatchKills = 1;
+    private List<String> startingDialogs = new ArrayList<>();
+    private boolean isDialogActive = false;
+    private List<String> winningDialogs = new ArrayList<>();
+    private List<String> losingDialogs = new ArrayList<>();
+    private boolean isEndGameHandled = false;
 
     public MupointManager getMupointManager() {
         return mupointManager;
@@ -85,12 +90,12 @@ public abstract class GameWorld {
         this.activeProjectiles = new ArrayList<>();
         this.activeCollectables = new ArrayList<>();
         this.activeObstacles = new ArrayList<>();
-        this.lawnMowerManager = new LawnMowerManager();
         this.sunsPool = new GenericObjectPool<>(Sun::new);
         currentSun = 50;
         this.state = GameState.PLAYING;
         this.plantLists = new ArrayList<>();
         this.levelSetup.groundSetup(this);
+        this.lawnMowerManager = new LawnMowerManager(this);
         this.plantFoods = App.getCurrentUser().getPlantFoods();
         App.getCurrentUser().setPlantFoods(0);
     }
@@ -263,7 +268,7 @@ public abstract class GameWorld {
                 sun.collect();
             }
         }
-        lawnMowerManager.updateMowers(activeZombies);
+        lawnMowerManager.updateMowers(activeZombies, 0.016f);
         for (Cell[] cells : grid){
             for (Cell cell : cells){
                 cell.update();
@@ -331,11 +336,11 @@ public abstract class GameWorld {
         }
         handleWinCondition();
         for (LoseCondition lose : loseConditions) {
-            if (lose.checkLose(this)) {
+            if (lose.checkLose(this) && state == GameState.PLAYING) {
                 state = GameState.LOST;
-                GameMenuController.handleLosing(this);
             }
         }
+        if (getState() != GameState.PLAYING || isDialogActive) return;
     }
     private void handleWinCondition() {
         if (!winCondition.checkWin(this)) return;
@@ -383,7 +388,6 @@ public abstract class GameWorld {
         }
         user.getQuestManager().checkAllQuests(user, true);
         user.getQuestStats().setLevelWon(true);
-        GameMenuController.handleWinning(this);
     }
     public boolean isGardenSymmetricExceptMiddleRow() {
         if (grid == null || rows == 0 || cols == 0) return false;
@@ -535,4 +539,26 @@ public abstract class GameWorld {
                 .findFirst()
                 .orElse(null);
     }
+    public List<String> getStartingDialogs() {
+        return startingDialogs;
+    }
+
+    public void setStartingDialogs(List<String> startingDialogs) {
+        this.startingDialogs = startingDialogs;
+        this.isDialogActive = startingDialogs != null && !startingDialogs.isEmpty();
+    }
+
+    public boolean isDialogActive() {
+        return isDialogActive;
+    }
+
+    public void setDialogActive(boolean dialogActive) {
+        this.isDialogActive = dialogActive;
+    }
+    public List<String> getWinningDialogs() { return winningDialogs; }
+    public void setWinningDialogs(List<String> winningDialogs) { this.winningDialogs = winningDialogs; }
+    public List<String> getLosingDialogs() { return losingDialogs; }
+    public void setLosingDialogs(List<String> losingDialogs) { this.losingDialogs = losingDialogs; }
+    public boolean isEndGameHandled() { return isEndGameHandled; }
+    public void setEndGameHandled(boolean handled) { this.isEndGameHandled = handled; }
 }

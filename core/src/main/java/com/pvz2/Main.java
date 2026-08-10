@@ -44,7 +44,7 @@ public class Main extends Game {
             for (String zombieName : App.getCurrentUser().getShowedZombies().keySet()){
                 App.getCurrentUser().getShowedZombies().put(zombieName, true);
             }
-            setScreen(new CollectionMenuScreen(this, new ChapterMenuScreen(this)));
+            setScreen(new MainMenuScreen(this));
         } else {
             setScreen(new LoginMenuScreen(this));
         }
