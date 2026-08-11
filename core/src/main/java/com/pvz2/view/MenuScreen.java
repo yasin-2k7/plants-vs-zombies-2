@@ -18,7 +18,7 @@ import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.pvz2.Main;
 
 public abstract class MenuScreen implements Screen {
-    protected final Main game; // ارجاع به بازی اصلی شامل libPVZ
+    protected final Main game;
 
     protected Stage stage;
     protected Skin skin;
