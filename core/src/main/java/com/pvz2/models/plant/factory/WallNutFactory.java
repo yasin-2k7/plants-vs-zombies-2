@@ -29,7 +29,7 @@ public class WallNutFactory {
     }
 
     private static Plant buildWallNut() {
-        int level = App.getCurrentUser().getUnlockedPlantsLevels().get(PlantType.WALL_NUT);
+        int level = App.getCurrentUser().getUnlockedPlantsLevels().getOrDefault(PlantType.WALL_NUT, 1);
         int health = 4000;
         if (level >= 2) health += 1000;
         if (level >= 4) health += 1500;
@@ -49,7 +49,7 @@ public class WallNutFactory {
     }
 
     private static Plant buildTallNut() {
-        int level = App.getCurrentUser().getUnlockedPlantsLevels().get(PlantType.TALL_NUT);
+        int level = App.getCurrentUser().getUnlockedPlantsLevels().getOrDefault(PlantType.TALL_NUT, 1);
         int health = 8000;
         if (level >= 2) health += 2000;
         if (level >= 4) health += 3000;
@@ -69,7 +69,7 @@ public class WallNutFactory {
     }
 
     private static Plant buildEndurian() {
-        int level = App.getCurrentUser().getUnlockedPlantsLevels().get(PlantType.ENDURIAN);
+        int level = App.getCurrentUser().getUnlockedPlantsLevels().getOrDefault(PlantType.ENDURIAN, 1);
         int health = (level >= 3) ? 4000 : 3000;
         int damage = (level >= 2) ? 25 : 20;
         Plant p = new Plant(PlantType.ENDURIAN, health, damage);
@@ -96,7 +96,7 @@ public class WallNutFactory {
     }
 
     private static Plant buildGarlic() {
-        int level = App.getCurrentUser().getUnlockedPlantsLevels().get(PlantType.GARLIC);
+        int level = App.getCurrentUser().getUnlockedPlantsLevels().getOrDefault(PlantType.GARLIC, 1);
         int health = 300;
         if (level >= 2) health += 150;
         if (level >= 4) health += 250;
@@ -106,7 +106,7 @@ public class WallNutFactory {
     }
 
     private static Plant buildSweetPotato() {
-        int level = App.getCurrentUser().getUnlockedPlantsLevels().get(PlantType.SWEET_POTATO);
+        int level = App.getCurrentUser().getUnlockedPlantsLevels().getOrDefault(PlantType.SWEET_POTATO, 1);
         int health = 3000;
         if (level >= 2) health += 1000;
         if (level >= 4) health += 1500;
@@ -116,7 +116,7 @@ public class WallNutFactory {
     }
 
     private static Plant buildExplodeONut() {
-        int level = App.getCurrentUser().getUnlockedPlantsLevels().get(PlantType.EXPLODE_O_NUT);
+        int level = App.getCurrentUser().getUnlockedPlantsLevels().getOrDefault(PlantType.EXPLODE_O_NUT, 1);
         int health = (level >= 2) ? 5000 : 4000;
         int damage = (level >= 3) ? 2000 : 1800;
         Plant p = new Plant(PlantType.EXPLODE_O_NUT, health, damage);
@@ -153,7 +153,7 @@ public class WallNutFactory {
     }
 
     private static Plant buildPumpkin() {
-        int level = App.getCurrentUser().getUnlockedPlantsLevels().get(PlantType.PUMPKIN);
+        int level = App.getCurrentUser().getUnlockedPlantsLevels().getOrDefault(PlantType.PUMPKIN, 1);
         int health = 4000;
         if (level >= 2) health += 1000;
         if (level >= 4) health += 1500;
@@ -174,7 +174,7 @@ public class WallNutFactory {
     }
 
     private static Plant buildSunBean() {
-        int level = App.getCurrentUser().getUnlockedPlantsLevels().get(PlantType.SUN_BEAN);
+        int level = App.getCurrentUser().getUnlockedPlantsLevels().getOrDefault(PlantType.SUN_BEAN, 1);
         int health = (level >= 3) ? 1000 : 1150;
         int sunSize = (level >= 2) ? 10 : 5;
         Plant p = new Plant(PlantType.SUN_BEAN, health, 0);

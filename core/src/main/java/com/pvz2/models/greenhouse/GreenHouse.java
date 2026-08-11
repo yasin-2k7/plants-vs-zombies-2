@@ -14,8 +14,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 public class GreenHouse {
-    private static final int ROWS = 4;
-    private static final int COLS = 5;
+    private static final int ROWS = 3;
+    private static final int COLS = 4;
     private Pot[][] pots;
     private Random random;
 

@@ -2,14 +2,19 @@ package com.pvz2.view;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.ui.Stack;
+import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
+import com.badlogic.gdx.utils.Queue;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
-import com.badlogic.gdx.utils.viewport.FitViewport;
-import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.pvz2.Main;
 
 public abstract class MenuScreen implements Screen {
@@ -22,6 +27,20 @@ public abstract class MenuScreen implements Screen {
     protected Stack modalStack;
     protected Stack toastStack;
     protected Stack mainStack;
+
+    private final Queue<Notif> toastQueue = new Queue<>();
+    private boolean hasNotification = false;
+    private static Drawable dimBackground;
+
+    private static class Notif {
+        String title;
+        String message;
+
+        public Notif(String title, String message) {
+            this.title = title;
+            this.message = message;
+        }
+    }
 
     protected float stateTime = 0f; // زمان انیمیشن‌ها
 
@@ -131,6 +150,80 @@ public abstract class MenuScreen implements Screen {
                 }
             })
         ));
+    }
+
+    public Table createToastNotification(String title, String message) {
+        Table toast = new Table();
+
+        toast.setBackground(getDimBackground());
+        toast.pad(15);
+
+        Table textTable = new Table();
+        textTable.left();
+
+        Label titleLabel = new Label(title, skin, "big");
+        titleLabel.setColor(Color.GOLD);
+
+
+        Label messageLabel = new Label(message, skin, "medium");
+
+        textTable.add(titleLabel).left().row();
+        textTable.add(messageLabel).left().padTop(4);
+
+        toast.add(textTable).expandX().fillX();
+
+        return toast;
+    }
+
+    public void addToast(String title, String message){
+        toastQueue.addLast(new Notif(title, message));
+        if (!hasNotification){
+            showNextToast();
+        }
+    }
+
+    private void showNextToast() {
+        if (toastQueue.isEmpty()) {
+            hasNotification = false;
+            return;
+        }
+
+        hasNotification = true;
+        Notif notif = toastQueue.removeFirst();
+
+        final Table toastTable = createToastNotification(notif.title, notif.message);
+        final Table wrapper = new Table();
+        wrapper.pad(10).right().top();
+
+        toastTable.setColor(toastTable.getColor().r, toastTable.getColor().g, toastTable.getColor().b, 1f);
+        wrapper.add(toastTable);
+        toastStack.addActor(wrapper);
+
+        toastTable.addAction(Actions.sequence(
+            Actions.moveBy(0, 200f),
+            Actions.moveBy(0, -200, 0.5f, Interpolation.bounceIn),
+            Actions.delay(3.0f),
+            Actions.fadeOut(0.4f),
+            Actions.run(new Runnable() {
+                @Override
+                public void run() {
+                    wrapper.remove();
+                    showNextToast();
+                }
+            })
+        ));
+    }
+
+    public static Drawable getDimBackground() {
+        if (dimBackground == null) {
+            Pixmap pixmap = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
+            pixmap.setColor(0f, 0f, 0f, 0.8f);
+            pixmap.fill();
+            Texture texture = new Texture(pixmap);
+            pixmap.dispose();
+            dimBackground = new TextureRegionDrawable(texture);
+        }
+        return dimBackground;
     }
 
     public Main getGame() {

@@ -1,5 +1,7 @@
 package com.pvz2.models.core;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.files.FileHandle;
 import com.pvz2.models.plant.card.PlantCardFactory;
 
 import java.io.InputStream;
@@ -9,20 +11,19 @@ import java.nio.charset.StandardCharsets;
 
 public class GameInitializer {
     public static void loadPlantUpgrades() {
-        try (InputStream inputStream = GameInitializer.class
-                .getClassLoader()
-                .getResourceAsStream("upgradeRules.json")) {
+        try {
+            FileHandle file = Gdx.files.internal("data/upgradeRules.json");
 
-            if (inputStream == null) {
-                throw new IllegalStateException("Upgrades file not found in resources!");
+            if (!file.exists()) {
+                throw new IllegalStateException("Upgrades file not found in assets!");
             }
 
-            try (Reader reader = new InputStreamReader(inputStream, StandardCharsets.UTF_8)) {
+            try (Reader reader = file.reader("UTF-8")) {
                 PlantCardFactory.init(reader);
             }
 
         } catch (Exception e) {
-            return;
+            e.printStackTrace();
         }
     }
 }
