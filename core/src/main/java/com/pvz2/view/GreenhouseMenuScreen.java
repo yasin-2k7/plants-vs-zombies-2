@@ -23,7 +23,6 @@ public class GreenhouseMenuScreen extends MenuScreen {
     private final GreenhouseMenuController controller = new GreenhouseMenuController();
     private Table gridTable;
     private Label statusLabel;
-    private PamPlayer pamPlayer;
 
     private static final String TEX_BG = "IMAGE_BACKGROUNDS_ZEN_GARDEN";
     private static final String TEX_POT_EMPTY = "IMAGE_ZEN_GARDEN_GROWING_PLANT_SLOT_GROWING_PLANT_SLOT_184X161";
@@ -136,29 +135,30 @@ public class GreenhouseMenuScreen extends MenuScreen {
             Image potBg = new Image(game.textureBank.region(TEX_POT_EMPTY));
             potStack.add(potBg);
 
-            String plantTexName = TEX_PLANT_PREFIX + pot.getPlantType().name();
-            Image plantImage;
-            try {
-                plantImage = new Image(game.textureBank.region(plantTexName));
-            } catch (Exception e) {
-                plantImage = new Image(game.textureBank.region(TEX_POT_EMPTY));
-            }
+            String pamPath = PlantsCollectionMenuScreen.getPlantAnimAddress(pot.getPlantType());
+            String clip = PlantsCollectionMenuScreen.getPlantInitialClip(pot.getPlantType());
+
+            PamActor plantPamActor = new PamActor(game.pamPlayer, pamPath, clip, 0.6f, null);
 
             if (pot.isReady()) {
-                plantImage.setColor(READY_COLOR);
-                potStack.add(plantImage);
+                plantPamActor.setColor(READY_COLOR);
             } else {
-                plantImage.setColor(GROWING_TINT);
-                potStack.add(plantImage);
+                plantPamActor.setColor(GROWING_TINT);
+            }
 
+            Table plantContainer = new Table();
+            plantContainer.setFillParent(true);
+
+            plantContainer.add(plantPamActor).center().padBottom(40f);
+            potStack.add(plantContainer);
+
+            if (!pot.isReady()) {
                 Table overlayTable = new Table();
                 overlayTable.setFillParent(true);
 
                 Table timerTable = new Table();
-                try {
-                    TextureRegion timerRegion = game.textureBank.region("finish_timer_background");
-                    if (timerRegion != null) timerTable.background(new TextureRegionDrawable(timerRegion));
-                } catch (Exception ignored) {}
+                TextureRegion timerRegion = game.textureBank.region("finish_timer_background");
+                if (timerRegion != null) timerTable.background(new TextureRegionDrawable(timerRegion));
 
                 long remainingHours = pot.getRemainingHours();
                 Label timeLabel = new Label(remainingHours + "h", skin);
@@ -167,23 +167,16 @@ public class GreenhouseMenuScreen extends MenuScreen {
                 timerTable.add(timeLabel).pad(2, 6, 2, 6);
 
                 Table growButtonTable = new Table();
-                try {
-                    TextureRegion btnRegion = game.textureBank.region("IMAGE_ZEN_GARDEN_BUTTON_UNLOCK_ACTIVE");
-                    if (btnRegion != null) growButtonTable.background(new TextureRegionDrawable(btnRegion));
-                } catch (Exception ignored) {}
+                TextureRegion btnRegion = game.textureBank.region("IMAGE_ZEN_GARDEN_BUTTON_UNLOCK_ACTIVE");
+                if (btnRegion != null) growButtonTable.background(new TextureRegionDrawable(btnRegion));
 
                 int gemCost = (int) Math.ceil(remainingHours);
                 Label gemLabel = new Label(String.valueOf(gemCost), skin);
                 gemLabel.setFontScale(0.55f);
                 gemLabel.setColor(Color.WHITE);
 
-                Image gemImage;
-                try {
-                    TextureRegion gemRegion = game.textureBank.region("GEM_LARGE");
-                    gemImage = (gemRegion != null) ? new Image(gemRegion) : new Image(game.textureBank.region(TEX_POT_EMPTY));
-                } catch (Exception e) {
-                    gemImage = new Image(game.textureBank.region(TEX_POT_EMPTY));
-                }
+                TextureRegion gemRegion = game.textureBank.region("GEM_LARGE");
+                Image gemImage = (gemRegion != null) ? new Image(gemRegion) : new Image(game.textureBank.region(TEX_POT_EMPTY));
 
                 growButtonTable.add(gemLabel).padRight(2);
                 growButtonTable.add(gemImage).size(14, 14);
@@ -192,7 +185,6 @@ public class GreenhouseMenuScreen extends MenuScreen {
                 overlayTable.bottom().add(growButtonTable).padBottom(-2);
 
                 potStack.add(overlayTable);
-                potStack.setUserObject(pot);
             }
 
             potStack.setTouchable(Touchable.enabled);
@@ -321,53 +313,5 @@ public class GreenhouseMenuScreen extends MenuScreen {
     public void resize(int width, int height) {
         super.resize(width, height);
         stage.getViewport().update(width, height, true);
-    }
-
-    @Override
-    protected void drawBackground(float delta) {
-        super.drawBackground(delta);
-
-        if (gridTable == null || game.batch == null || pamPlayer == null) return;
-
-
-        game.batch.begin();
-
-        com.badlogic.gdx.math.Vector2 tempVector = new com.badlogic.gdx.math.Vector2();
-
-        for (Actor child : gridTable.getChildren()) {
-            if (!(child instanceof Table)) continue;
-            Table cell = (Table) child;
-
-            if (cell.getChildren().size == 0) continue;
-            Actor potWidget = cell.getChildren().first();
-
-            if (potWidget.getUserObject() instanceof Pot) {
-                Pot pot = (Pot) potWidget.getUserObject();
-
-                if (!pot.isEmpty() && !pot.isLocked() && pot.getPlantType() != null) {
-
-                    tempVector.set(0, 0);
-                    potWidget.localToStageCoordinates(tempVector);
-
-                    float posX = tempVector.x;
-                    float posY = tempVector.y;
-
-                    String plantName = pot.getPlantType().name();
-                    String pamPath = TEX_PLANT_PREFIX + plantName + "/" + plantName + ".PAM";
-
-                    pamPlayer.draw(
-                        game.batch,
-                        pamPath,
-                        "idle",
-                        delta,
-                        posX + 15,
-                        posY + 20,
-                        true
-                    );
-                }
-            }
-        }
-
-        game.batch.end();
     }
 }

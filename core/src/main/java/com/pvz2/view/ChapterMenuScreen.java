@@ -169,7 +169,7 @@ public class ChapterMenuScreen extends MenuScreen {
         collectionBtn.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                // اکشن دکمه سوم
+                fadeAndSwitchScreen(new CollectionMenuScreen(game, ChapterMenuScreen.this));
             }
         });
 

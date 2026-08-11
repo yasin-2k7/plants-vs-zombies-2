@@ -49,7 +49,6 @@ public class Main extends Game {
         } else {
             setScreen(new LoginMenuScreen(this));
         }
-
     }
 
     @Override

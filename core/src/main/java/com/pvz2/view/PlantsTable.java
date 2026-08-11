@@ -116,6 +116,7 @@ public class PlantsTable extends Table {
         if (plantsMap == null){
             plantsMap = new HashMap<>();
             for (PlantType type : PlantType.values()){
+                if (type == PlantType.GIANT_WALLNUT) continue;
                 String newName = type.name().toUpperCase().replaceAll("_", "");
                 if (type == PlantType.CHERRY_BOMB) newName = "CHERRY_BOMB";
                 String address = "IMAGE_UI_PACKETS_" + newName;
