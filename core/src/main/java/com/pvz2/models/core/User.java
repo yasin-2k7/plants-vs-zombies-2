@@ -47,6 +47,9 @@ public class User {
     private int maxMupoint = 0;
     private LocalDate dailyOfferPurchaseDate;
     private boolean dailyOfferPurchasedToday;
+    private int gameSpeed = 1;
+    private boolean showGrid = false;
+    private boolean debugMode = false;
 
     public User() {
         this.plantBoosts = new HashMap<>();
@@ -495,5 +498,29 @@ public class User {
 
     public Set<MiniGameLevels> getMiniGameLevels() {
         return completedMiniGames;
+    }
+
+    public int getGameSpeed() {
+        return gameSpeed;
+    }
+
+    public void setGameSpeed(int gameSpeed) {
+        this.gameSpeed = gameSpeed;
+    }
+
+    public boolean isShowGrid() {
+        return showGrid;
+    }
+
+    public void setShowGrid(boolean showGrid) {
+        this.showGrid = showGrid;
+    }
+
+    public boolean isDebugMode() {
+        return debugMode;
+    }
+
+    public void setDebugMode(boolean debugMode) {
+        this.debugMode = debugMode;
     }
 }

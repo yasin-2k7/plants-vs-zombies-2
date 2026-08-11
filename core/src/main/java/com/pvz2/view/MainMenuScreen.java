@@ -161,6 +161,17 @@ public class MainMenuScreen extends MenuScreen {
 
         if (muPoint != null) bottomBar.add(muPoint).size(btnSize).pad(10);
 
+        TextButton shopBtn = new TextButton("STORE", skin, "green");
+
+        shopBtn.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                fadeAndSwitchScreen(new ShopMenuScreen(game));
+            }
+        });
+
+        mainTable.add(shopBtn).width(200).height(52).pad(10).row();
+
         bottomBar.add().expandX();
 
         if (leaderboardBtn != null) bottomBar.add(leaderboardBtn).size(btnSize).pad(10);
@@ -192,7 +203,8 @@ public class MainMenuScreen extends MenuScreen {
         settingsBtn.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                controller.enterMenu("settings");
+                showScrollablePopup("SETTINGS", new SettingsMenuTable(game, skin),
+                    750, 520, 680, 400);
             }
         });
         newsBtn.addListener(new ClickListener(){

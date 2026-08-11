@@ -33,9 +33,6 @@ public class MainMenuController implements MenuController {
             case "play":
                 mainMenuScreen.fadeAndSwitchScreen(new ChapterMenuScreen(mainMenuScreen.getGame()));
                 break;
-            case "settings":
-                mainMenuScreen.fadeAndSwitchScreen(new SettingMenuScreen(mainMenuScreen.getGame()));
-                break;
             case "news":
                 mainMenuScreen.fadeAndSwitchScreen(new NewsMenuScreen(mainMenuScreen.getGame()));
                 break;

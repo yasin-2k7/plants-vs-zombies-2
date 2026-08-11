@@ -2,6 +2,7 @@ package com.pvz2.view;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
@@ -9,10 +10,16 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.pvz2.Main;
 import com.pvz2.controller.ChapterMenuController;
 import com.pvz2.models.core.App;
+import com.pvz2.models.core.User;
 import com.pvz2.models.enums.Chapter;
 import pvz.libpvz.pam.PamPlayer;
 
@@ -63,12 +70,11 @@ public class ChapterMenuScreen extends MenuScreen {
         };
 
         final Chapter[] chapters = Chapter.values();
-        int unlockedChapter = App.getCurrentUser().getUnlockedChapter();
+        int unlockedChapter = (App.getCurrentUser() != null) ? App.getCurrentUser().getUnlockedChapter() : 1;
 
         float nodeSize = 600f;
         float spacing = 200f;
         float startX = 200f;
-
         float startY = (stageHeight - nodeSize) / 2f;
 
         int count = Math.min(4, chapters.length);
@@ -112,8 +118,12 @@ public class ChapterMenuScreen extends MenuScreen {
                 public void clicked(InputEvent event, float x, float y) {
                     if (!isDragging) {
                         String result = controller.chooseChapter(chapter);
-                        game.setScreen(new LevelMenuScreen(game));
-                        System.out.println(result);
+                        if (isLocked) {
+                            System.out.println(result);
+                        } else {
+                            game.setScreen(new LevelMenuScreen(game));
+                            System.out.println(result);
+                        }
                     }
                 }
             });
@@ -124,8 +134,83 @@ public class ChapterMenuScreen extends MenuScreen {
         float totalWidth = startX * 2 + count * nodeSize + (count - 1) * spacing;
         minScrollX = Math.min(0, stageWidth - totalWidth);
 
+        // ۱. اضافه کردن لایه محتوای اسکرول‌شونده
         mainStack.add(contentGroup);
+
+        // ۲. ساخت و اضافه کردن نوار ثابت بالای صفحه (Top Bar)
+        Table topBar = new Table();
+        topBar.top().setFillParent(true);
+
+        // دکمه‌های سمت چپ (نام تکسچر دکمه‌های خودت را جایگزین کن)
+        Table buttonsTable = new Table();
+
+        ImageButton backBtn = createIconButton("IMAGE_UI_ALMANAC_BUTTONS_HUD_BACK_NORMAL",
+            "IMAGE_UI_ALMANAC_BUTTONS_HUD_BACK_SELECTED");
+        backBtn.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                fadeAndSwitchScreen(new MainMenuScreen(game));
+            }
+        });
+
+        ImageButton greenBtn = createIconButton(
+            "IMAGE_UI_GENERIC_BUTTONS_HUD_ZG_NORMAL",
+            "IMAGE_UI_GENERIC_BUTTONS_HUD_ZG_SELECTED");
+        greenBtn.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                fadeAndSwitchScreen(new GreenhouseMenuScreen(game));
+            }
+        });
+
+        ImageButton collectionBtn = createIconButton(
+            "IMAGE_UI_HUD_ALMANACBUTTON_BUTTONS_HUD_ALMANAC_NORMAL",
+            "IMAGE_UI_HUD_ALMANACBUTTON_BUTTONS_HUD_ALMANAC_NORMAL");
+        collectionBtn.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                // اکشن دکمه سوم
+            }
+        });
+
+        buttonsTable.add(backBtn).size(55, 55).padRight(10);
+        buttonsTable.add(greenBtn).size(55, 55).padRight(10);
+        buttonsTable.add(collectionBtn).size(55, 55);
+
+        topBar.add(buttonsTable).left().pad(15);
+        topBar.add().expandX(); // ایجاد فاصله بین دکمه‌ها و بخش منابع
+
+        // نمایش سکه و الماس سمت راست
+        if (App.getCurrentUser() != null) {
+            ResourcesTable resourcesTable = new ResourcesTable(App.getCurrentUser(), game);
+            topBar.add(resourcesTable).right().pad(15);
+        }
+
+        // اضافه کردن نوار روی لایه اصلی
+        mainStack.add(topBar);
     }
+
+    /**
+     * ساخت دکمه تصویری با تکسچر
+     */
+    private ImageButton createIconButton(String upRegionName, String downRegionName) {
+        TextureRegion upRegion = game.textureBank.region(upRegionName);
+        TextureRegion downRegion = game.textureBank.region(downRegionName);
+
+        if (upRegion == null) {
+            upRegion = game.textureBank.region("IMAGE_MAINMENU_BACKGROUND"); // تکسچر جایگزین امن
+        }
+
+        ImageButton.ImageButtonStyle style = new ImageButton.ImageButtonStyle();
+        style.up = new TextureRegionDrawable(upRegion);
+        if (downRegion != null) {
+            style.down = new TextureRegionDrawable(downRegion);
+        }
+
+        return new ImageButton(style);
+    }
+
+
 
     private void handleViewportIndependentInput() {
         if (Gdx.input.isTouched()) {
