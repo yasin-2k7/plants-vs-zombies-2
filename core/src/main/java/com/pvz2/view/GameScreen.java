@@ -54,6 +54,7 @@ public class GameScreen implements Screen {
     private boolean introFinished = false;
 
     private CrazyDaveOverlay daveOverlay;
+    private boolean mowersSpawned = false;
 
     private record PanStep(float targetCenterX, float duration, boolean isTravel) {
     }
@@ -75,12 +76,13 @@ public class GameScreen implements Screen {
         worldViewport = new FillViewport(mainLawnWidth, mainLawnHeight, worldCamera);
 
         hudStage = new Stage(new ScreenViewport(), game.batch);
-        hud = new GameHUD(game, game.skin);
+        hud = new GameHUD(game, game.skin, this::restartLevel);
         hudStage.addActor(hud);
 
         FileHandle assetsFolder = Gdx.files.internal("");
         pamPlayer = new PamPlayer(game.textureBank, assetsFolder);
         pamPlayer.loadAsync(getMowerPamPath(chapter), null);
+        pamPlayer.loadAsync("768/INITIAL/EFFECTS/MOWER_SPAWN/MOWER_SPAWN.PAM", null);
 
         computeSideWidths();
         buildIntroPanSequence();
@@ -92,7 +94,28 @@ public class GameScreen implements Screen {
         daveOverlay = new CrazyDaveOverlay(game, starting, world);
         hudStage.addActor(daveOverlay);
 
+        hud.toFront();
         Gdx.input.setInputProcessor(hudStage);
+    }
+
+    public void restartLevel() {
+        world.reset();
+        world.setEndGameHandled(false);
+
+        mowersSpawned = false;
+
+        buildIntroPanSequence();
+
+        if (daveOverlay != null) {
+            daveOverlay.remove();
+        }
+        List<String> starting = world.getStartingDialogs();
+        if (starting == null) {
+            starting = new ArrayList<>();
+        }
+        daveOverlay = new CrazyDaveOverlay(game, starting, world);
+        hudStage.addActor(daveOverlay);
+        hud.toFront();
     }
 
     private String[] getBackgroundKeys(Chapter chapter) {
@@ -196,37 +219,37 @@ public class GameScreen implements Screen {
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        if (!introFinished) {
-            updateIntroPan(delta);
-        } else {
-            if (daveOverlay != null && !daveOverlay.isStarted() && world.getState() == GameState.PLAYING) {
-                daveOverlay.startPresentation();
-            }
+        if (world.getState() != GameState.PAUSED) {
+            if (!introFinished) {
+                updateIntroPan(delta);
+            } else {
+                if (daveOverlay != null && !daveOverlay.isStarted() && world.getState() == GameState.PLAYING) {
+                    daveOverlay.startPresentation();
+                }
 
-            if (!world.isEndGameHandled()) {
-                if (world.getState() == GameState.WON) {
-                    world.setEndGameHandled(true);
-                    if (daveOverlay != null) {
-                        daveOverlay.startPresentation(world.getWinningDialogs(), () -> {
+                if (!world.isEndGameHandled()) {
+                    if (world.getState() == GameState.WON) {
+                        world.setEndGameHandled(true);
+                        if (daveOverlay != null) {
+                            daveOverlay.startPresentation(world.getWinningDialogs(), () -> {
+                                GameMenuController.handleWinning(world);
+                            });
+                        } else {
                             GameMenuController.handleWinning(world);
-                        });
-                    } else {
-                        GameMenuController.handleWinning(world);
-                    }
-                } else if (world.getState() == GameState.LOST) {
-                    world.setEndGameHandled(true);
-                    if (daveOverlay != null) {
-                        daveOverlay.startPresentation(world.getLosingDialogs(), () -> {
+                        }
+                    } else if (world.getState() == GameState.LOST) {
+                        world.setEndGameHandled(true);
+                        if (daveOverlay != null) {
+                            daveOverlay.startPresentation(world.getLosingDialogs(), () -> {
+                                GameMenuController.handleLosing(world);
+                            });
+                        } else {
                             GameMenuController.handleLosing(world);
-                        });
-                    } else {
-                        GameMenuController.handleLosing(world);
+                        }
                     }
                 }
             }
         }
-
-        worldViewport.apply();
 
         worldViewport.apply();
         game.batch.setProjectionMatrix(worldCamera.combined);

@@ -100,6 +100,42 @@ public abstract class GameWorld {
         App.getCurrentUser().setPlantFoods(0);
     }
     public GameWorld() {}
+
+
+    public void reset() {
+        activeZombies.clear();
+        activePlants.clear();
+        activeSuns.clear();
+        activeProjectiles.clear();
+        activeCollectables.clear();
+        activeObstacles.clear();
+        conveyorBelt.clear();
+        if (plantLists == null) {
+            plantLists = new ArrayList<>();
+        } else {
+            plantLists.clear();
+        }
+
+        sunsPool = new GenericObjectPool<>(Sun::new);
+        projectilesPool = new GenericObjectPool<>(Projectile::new);
+
+        currentTick = 0;
+        currentSun = 50;
+        isPlantSelected = false;
+        selectedPlant = null;
+        plantingPhase = false;
+        isDialogActive = false;
+        isEndGameHandled = false;
+        sandstormActive = false;
+
+
+        this.levelSetup.groundSetup(this);
+        this.lawnMowerManager = new LawnMowerManager(this);
+        this.plantFoods = 0;
+
+        this.state = GameState.PLAYING;
+    }
+
     public void registerZombieKillListener(Runnable listener) {
         zombieKillListeners.add(listener);
     }

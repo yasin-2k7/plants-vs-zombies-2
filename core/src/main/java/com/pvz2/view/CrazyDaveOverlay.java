@@ -12,6 +12,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.WidgetGroup;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.pvz2.Main;
 import com.pvz2.models.world.GameWorld;
@@ -24,6 +25,7 @@ public class CrazyDaveOverlay extends WidgetGroup {
     private final Main game;
     private final GameWorld world;
     private final PamPlayer davePam;
+    private final PamPlayer pennyPam;
     private final List<String> dialogs;
 
     private int currentDialogIndex = 0;
@@ -33,9 +35,17 @@ public class CrazyDaveOverlay extends WidgetGroup {
 
     private float stateTime = 0f;
     private String currentAnim = "anim_enter";
+    private String currentSpeaker = "DAVE";
+
+    private boolean hasDave = false;
+    private boolean hasPenny = false;
 
     private final Image bubbleImage;
+    private final TextureRegionDrawable daveBubbleDrawable;
+    private final TextureRegionDrawable pennyBubbleDrawable;
+
     private final Label textLabel;
+    private final Label tapToContinueLabel;
 
     private boolean isTyping = false;
     private float typeTimer = 0f;
@@ -44,7 +54,13 @@ public class CrazyDaveOverlay extends WidgetGroup {
     private final float DAVE_X = 145f;
     private final float DAVE_Y = 310f;
     private final float DAVE_SCALE = 0.36f;
+
+    private final float PENNY_X = 1780f;
+    private final float PENNY_Y = 160f;
+    private final float PENNY_SCALE = 0.85f;
+
     private final String DAVE_PAM_PATH = "768/INITIAL/CRAZYDAVE/CRAZYDAVE/CRAZYDAVE.PAM";
+    private final String PENNY_PAM_PATH = "768/INITIAL/CRAZYDAVE/DAVEWINNIE_NARRATIONICONS/DAVEWINNIE_NARRATIONICONS.PAM";
 
     private final String[] talkAnimations = {
         "anim_smalltalk",
@@ -64,10 +80,17 @@ public class CrazyDaveOverlay extends WidgetGroup {
         davePam = new PamPlayer(game.textureBank, Gdx.files.internal(""));
         davePam.loadAsync(DAVE_PAM_PATH, null);
 
-        TextureRegion bubbleReg = game.textureBank.region("IMAGE_STORE_SPEECHBUBBLE2");
-        bubbleImage = new Image(bubbleReg);
+        pennyPam = new PamPlayer(game.textureBank, Gdx.files.internal(""));
+        pennyPam.loadAsync(PENNY_PAM_PATH, null);
 
-        bubbleImage.setPosition(DAVE_X + 30f, DAVE_Y + 20f);
+        TextureRegion bubbleReg = game.textureBank.region("IMAGE_STORE_SPEECHBUBBLE2");
+        daveBubbleDrawable = new TextureRegionDrawable(bubbleReg);
+
+        TextureRegion pennyBubbleReg = new TextureRegion(bubbleReg);
+        pennyBubbleReg.flip(true, false); // flip x = true, flip y = false
+        pennyBubbleDrawable = new TextureRegionDrawable(pennyBubbleReg);
+
+        bubbleImage = new Image(daveBubbleDrawable);
         bubbleImage.setVisible(false);
 
         Label.LabelStyle baseStyle = game.skin.get(Label.LabelStyle.class);
@@ -90,11 +113,17 @@ public class CrazyDaveOverlay extends WidgetGroup {
         }
 
         textLabel.setAlignment(Align.topLeft);
-        textLabel.setPosition(bubbleImage.getX() + 32, bubbleImage.getY() + bubbleImage.getHeight() - 30);
         textLabel.setVisible(false);
+
+        Label.LabelStyle tapStyle = new Label.LabelStyle(baseStyle);
+        tapStyle.fontColor = Color.DARK_GRAY;
+        tapToContinueLabel = new Label("TAP TO CONTINUE", tapStyle);
+        tapToContinueLabel.setFontScale(0.8f);
+        tapToContinueLabel.setVisible(false);
 
         addActor(bubbleImage);
         addActor(textLabel);
+        addActor(tapToContinueLabel);
 
         addListener(new ClickListener() {
             @Override
@@ -105,7 +134,9 @@ public class CrazyDaveOverlay extends WidgetGroup {
                     isTyping = false;
                     textLabel.setText(targetText);
                     currentAnim = "anim_idle";
+                    tapToContinueLabel.setVisible(true);
                 } else {
+                    tapToContinueLabel.setVisible(false);
                     currentDialogIndex++;
                     if (currentDialogIndex >= dialogs.size()) {
                         startLeaving();
@@ -117,8 +148,23 @@ public class CrazyDaveOverlay extends WidgetGroup {
         });
     }
 
+    private void checkSpeakersInDialogs() {
+        hasDave = false;
+        hasPenny = false;
+        for (String d : dialogs) {
+            if (d.startsWith("PENNY:")) {
+                hasPenny = true;
+            } else if (d.startsWith("DAVE:")) {
+                hasDave = true;
+            } else {
+                hasDave = true;
+            }
+        }
+    }
+
     public void startPresentation() {
         if (dialogs.isEmpty()) return;
+        checkSpeakersInDialogs();
         isStarted = true;
         setVisible(true);
         world.setDialogActive(true);
@@ -126,16 +172,42 @@ public class CrazyDaveOverlay extends WidgetGroup {
         currentAnim = "anim_enter";
     }
 
-    private void startTyping(String text) {
-        targetText = text;
+    private void startTyping(String rawText) {
+        tapToContinueLabel.setVisible(false);
+
+        if (rawText.startsWith("PENNY:")) {
+            currentSpeaker = "PENNY";
+            targetText = rawText.substring(6);
+        } else if (rawText.startsWith("DAVE:")) {
+            currentSpeaker = "DAVE";
+            targetText = rawText.substring(5);
+        } else {
+            currentSpeaker = "DAVE";
+            targetText = rawText;
+        }
+
         typeTimer = 0f;
         isTyping = true;
         textLabel.setText("");
 
         currentAnim = talkAnimations[MathUtils.random(talkAnimations.length - 1)];
-
         bubbleImage.setVisible(true);
         textLabel.setVisible(true);
+
+        if (currentSpeaker.equals("DAVE")) {
+            bubbleImage.setDrawable(daveBubbleDrawable);
+            bubbleImage.setPosition(DAVE_X + 30f, DAVE_Y + 20f);
+        } else {
+            bubbleImage.setDrawable(pennyBubbleDrawable);
+            bubbleImage.setPosition(PENNY_X - bubbleImage.getWidth() - 40f, PENNY_Y + 60f);
+        }
+
+        textLabel.setPosition(bubbleImage.getX() + 32, bubbleImage.getY() + bubbleImage.getHeight() - 30);
+
+        tapToContinueLabel.setPosition(
+            bubbleImage.getX() + (bubbleImage.getWidth() - tapToContinueLabel.getPrefWidth()) / 2f,
+            bubbleImage.getY() + 35f
+        );
     }
 
     private void startLeaving() {
@@ -144,6 +216,7 @@ public class CrazyDaveOverlay extends WidgetGroup {
         stateTime = 0f;
         bubbleImage.setVisible(false);
         textLabel.setVisible(false);
+        tapToContinueLabel.setVisible(false);
     }
 
     private void finishPresentation() {
@@ -182,6 +255,7 @@ public class CrazyDaveOverlay extends WidgetGroup {
                 charsToShow = targetText.length();
                 isTyping = false;
                 currentAnim = "anim_idle";
+                tapToContinueLabel.setVisible(true);
             }
             textLabel.setText(targetText.substring(0, charsToShow));
         }
@@ -196,6 +270,7 @@ public class CrazyDaveOverlay extends WidgetGroup {
         this.dialogs.addAll(newDialogs);
         this.onCompleteAction = onComplete;
         this.currentDialogIndex = 0;
+        checkSpeakersInDialogs();
         this.isStarted = true;
         this.finished = false;
         this.isLeaving = false;
@@ -210,20 +285,39 @@ public class CrazyDaveOverlay extends WidgetGroup {
         if (finished || !isStarted) return;
 
         Matrix4 oldMatrix = batch.getTransformMatrix().cpy();
-        Matrix4 newMatrix = new Matrix4(oldMatrix);
-
-        newMatrix.translate(DAVE_X, DAVE_Y, 0);
-        newMatrix.scale(DAVE_SCALE, DAVE_SCALE, 1f);
-        newMatrix.translate(-DAVE_X, -DAVE_Y, 0);
-
-        batch.setTransformMatrix(newMatrix);
 
         try {
-            davePam.draw(batch, DAVE_PAM_PATH, currentAnim, stateTime, DAVE_X, DAVE_Y, true);
-        } catch (Exception e) {
-        }
+            if (hasDave) {
+                String daveAnimToPlay = currentSpeaker.equals("DAVE") ? currentAnim : "anim_idle";
+                if (currentAnim.equals("anim_enter") || currentAnim.equals("anim_leave")) {
+                    daveAnimToPlay = currentAnim;
+                }
 
-        batch.setTransformMatrix(oldMatrix);
+                Matrix4 newMatrix = new Matrix4(oldMatrix);
+                newMatrix.translate(DAVE_X, DAVE_Y, 0);
+                newMatrix.scale(DAVE_SCALE, DAVE_SCALE, 1f);
+                newMatrix.translate(-DAVE_X, -DAVE_Y, 0);
+                batch.setTransformMatrix(newMatrix);
+
+                davePam.draw(batch, DAVE_PAM_PATH, daveAnimToPlay, stateTime, DAVE_X, DAVE_Y, true);
+            }
+
+            if (hasPenny) {
+                Matrix4 newMatrix = new Matrix4(oldMatrix);
+                newMatrix.translate(PENNY_X, PENNY_Y, 0);
+                newMatrix.scale(PENNY_SCALE, PENNY_SCALE, 1f);
+                newMatrix.translate(-PENNY_X, -PENNY_Y, 0);
+                batch.setTransformMatrix(newMatrix);
+
+                String pennyAnimToPlay = (currentSpeaker.equals("PENNY") && isTyping) ? "winnie" : "open";
+
+                pennyPam.draw(batch, PENNY_PAM_PATH, pennyAnimToPlay, stateTime, PENNY_X, PENNY_Y, true);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            batch.setTransformMatrix(oldMatrix);
+        }
 
         super.draw(batch, parentAlpha);
     }
