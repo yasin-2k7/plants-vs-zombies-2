@@ -13,6 +13,7 @@ public class App {
     private static User currentUser;
     private static GameWorld currentGame;
     private static boolean debugMode = true;
+    private static Main gameApp;
 
     public static User getCurrentUser() {
         return currentUser;
@@ -75,16 +76,27 @@ public class App {
         }
         switch (name) {
             case "ZombieConehead":
+            case "ZombieConeHead":
                 return "ZombieArmor1";
             case "ZombieBuckethead":
+            case "ZombieBucketHead":
                 return "ZombieArmor2";
             case "ZombieKnight":
                 return "ZombieDarkArmor3";
             case "ZombieBrickhead":
+            case "ZombieBrickHead":
                 return "ZombieArmor4";
             default:
                 return name;
         }
+    }
+
+    public static void setGameApp(Main gameApp) {
+        App.gameApp = gameApp;
+    }
+
+    public static Main getGameApp() {
+        return gameApp;
     }
 
     public static boolean isDebugMode() {

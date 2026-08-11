@@ -6,14 +6,18 @@ import com.pvz2.models.enums.Chapter;
 import com.pvz2.models.world.Cell;
 import com.pvz2.models.world.GameWorld;
 import com.pvz2.models.world.LevelFactory;
-//import com.pvz2.models.world.LevelFactory;
-//import view.terminalView.AppView;
-//import view.terminalView.GameMenuView;
-//import view.terminalView.PlantMenuView;
+import com.pvz2.view.GameScreen;
+import com.pvz2.view.LevelMenuScreen;
 
 import java.util.List;
 
 public class LevelMenuController implements MenuController {
+
+    private final LevelMenuScreen levelMenuScreen;
+
+    public LevelMenuController(LevelMenuScreen levelMenuScreen) {
+        this.levelMenuScreen = levelMenuScreen;
+    }
 
     public static Cell[][] getGameCells() {
         return App.getCurrentGame().getGrid();
@@ -31,25 +35,25 @@ public class LevelMenuController implements MenuController {
 
     public String chooseLevel(int level) {
         User user = App.getCurrentUser();
-        if (user.getUnlockedChapter() == user.getCurrentChapter().ordinal() + 1 && user.getUnlockedLevel() < level) {
+        Chapter currentChapter = user.getCurrentChapter();
+        if (currentChapter == null) {
+            return "no chapter selected!";
+        }
+        if (currentChapter.ordinal() >= user.getUnlockedChapter()) {
+            return "this chapter is locked!";
+        }
+        if (user.getUnlockedChapter() == currentChapter.ordinal() + 1 && user.getUnlockedLevel() < level) {
             return "this level is locked!";
         }
 
-        GameWorld game = LevelFactory.createLevel(user.getCurrentChapter(), level);
-        App.setCurrentGame(game);
-        App.getCurrentUser().setCurrentLevel(level);
-        game.initialize();
-        if (game.isConveyorMode()) {
-            //needs edit
-//            AppView.setCurrentScreen(GameMenuView.getInstance());
-            return "level started!";
-        }
-        else {
-            //needs edit
-//            AppView.setCurrentScreen(PlantMenuView.getInstance());
-//            PlantMenuView.getInstance().getController().reset();
-            return "";
-        }
+        GameWorld world = LevelFactory.createLevel(currentChapter, level);
+        App.setCurrentGame(world);
+        user.setCurrentLevel(level);
+        world.initialize();
+
+        levelMenuScreen.fadeAndSwitchScreen(
+                new GameScreen(levelMenuScreen.getGame(), world, currentChapter));
+        return "level started!";
     }
 
     public List<String> getLevelsToShow() {

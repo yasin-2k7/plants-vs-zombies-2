@@ -124,9 +124,6 @@ public class ProfileMenuController implements MenuController {
                 "Mu point: " + user.getMaxMupoint();
     }
 
-    public void showCurrentMenu() {
-        //needs edit
-//        GameMenuView.getInstance().showResult("Current menu: profile menu");
-    }
+    public void showCurrentMenu() {}
 
 }

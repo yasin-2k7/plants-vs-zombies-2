@@ -5,8 +5,13 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.pvz2.models.core.App;
 import com.pvz2.models.core.GameInitializer;
+import com.pvz2.models.core.User;
 import com.pvz2.models.core.UserManager;
+import com.pvz2.models.enums.PlantType;
+import com.pvz2.models.zombie.ZombieRegistry;
+import com.pvz2.view.*;
 import com.pvz2.view.*;
 import pvz.libpvz.pam.PamPlayer;
 import pvz.libpvz.textures.TextureBank;
@@ -26,6 +31,7 @@ public class Main extends Game {
         boolean foundUser = UserManager.loadInitialUser();
 
         GameInitializer.loadPlantUpgrades();
+        ZombieRegistry.init();
 
         batch = new SpriteBatch();
 
@@ -33,8 +39,12 @@ public class Main extends Game {
         textureBank = new TextureBank("768", assetsFolder);
         pamPlayer = new PamPlayer(textureBank, assetsFolder);
         skin = PvzSkin.get();
+        App.setGameApp(this);
 
         if(foundUser){
+            for (String zombieName : App.getCurrentUser().getShowedZombies().keySet()){
+                App.getCurrentUser().getShowedZombies().put(zombieName, true);
+            }
             setScreen(new MainMenuScreen(this));
         } else {
             setScreen(new LoginMenuScreen(this));

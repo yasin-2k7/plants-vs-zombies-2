@@ -18,13 +18,13 @@ public class MintFactory {
         registry.put(PlantType.ENFORCE_MINT, () -> buildMint(PlantType.ENFORCE_MINT));
         registry.put(PlantType.REINFORCE_MINT, () -> buildMint(PlantType.REINFORCE_MINT));
         registry.put(PlantType.ENCHANT_MINT, () -> buildMint(PlantType.ENCHANT_MINT));
-        registry.put(PlantType.PIERCE_MINT, () -> buildMint(PlantType.PIERCE_MINT));
-        registry.put(PlantType.CAT_TAIL_MINT, () -> buildMint(PlantType.CAT_TAIL_MINT));
+        registry.put(PlantType.SPEAR_MINT, () -> buildMint(PlantType.SPEAR_MINT));
+        registry.put(PlantType.CONTAIN_MINT, () -> buildMint(PlantType.CONTAIN_MINT));
 
     }
 
     private static Plant buildMint(PlantType type) {
-        int level = App.getCurrentUser().getUnlockedPlantsLevels().get(type);
+        int level = App.getCurrentUser().getUnlockedPlantsLevels().getOrDefault(type, 1);
         boolean resetCooldown = level >= 4;
         Plant p = new Plant(type, 300, 0);
         p.addComponent(new MintComponent(type, _ -> {

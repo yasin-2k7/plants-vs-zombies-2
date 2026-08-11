@@ -1,5 +1,7 @@
 package com.pvz2.models.zombie;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.files.FileHandle;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -16,29 +18,37 @@ public class ZombieRegistry {
     private static final Logger LOGGER = Logger.getLogger(ZombieRegistry.class.getName());
     private static final Map<String, ZombieProperties> ZOMBIE_MAP = new HashMap<>();
     private static final Map<String, ArmorProperties> ARMOR_MAP = new HashMap<>();
+    private static boolean initialized = false;
 
-    static {
+    public static void init() {
+        if (initialized) return;
         loadZombies();
         loadArmors();
+        initialized = true;
     }
 
     private static void loadZombies() {
         ObjectMapper mapper = new ObjectMapper();
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         mapper.configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true);
-        try (InputStream is = ZombieRegistry.class.getResourceAsStream("/zombies.json")) {
-            if (is == null) {
-                LOGGER.severe("zombies.json not found in resources!");
-                return;
-            }
+
+        FileHandle file = Gdx.files.internal("data/zombies.json");
+        if (!file.exists()) {
+            LOGGER.severe("zombies.json not found in assets!");
+            return;
+        }
+
+        try (InputStream is = file.read()) {
             List<ZombieProperties> list = mapper.readValue(is,
-                    mapper.getTypeFactory().constructCollectionType(List.class, ZombieProperties.class));
+                mapper.getTypeFactory().constructCollectionType(List.class, ZombieProperties.class));
+
             for (ZombieProperties zp : list) {
-                for (String alias : zp.getAliases()) {
-                    ZOMBIE_MAP.put(alias, zp);
+                if (zp.getAliases() != null) {
+                    for (String alias : zp.getAliases()) {
+                        ZOMBIE_MAP.put(alias, zp);
+                    }
                 }
             }
-//            logger.info("Loaded " + zombieMap.size() + " zombie entries.");
         } catch (Exception e) {
             LOGGER.severe("Failed to load zombies.json: " + e.getMessage());
             e.printStackTrace();
@@ -49,19 +59,24 @@ public class ZombieRegistry {
         ObjectMapper mapper = new ObjectMapper();
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         mapper.configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true);
-        try (InputStream is = ZombieRegistry.class.getResourceAsStream("/ArmorTypeData.json")) {
-            if (is == null) {
-                LOGGER.severe("ArmorTypeData.json not found in resources!");
-                return;
-            }
+
+        FileHandle file = Gdx.files.internal("data/ArmorTypeData.json");
+        if (!file.exists()) {
+            LOGGER.severe("ArmorTypeData.json not found in assets!");
+            return;
+        }
+
+        try (InputStream is = file.read()) {
             List<ArmorProperties> list = mapper.readValue(is,
-                    mapper.getTypeFactory().constructCollectionType(List.class, ArmorProperties.class));
+                mapper.getTypeFactory().constructCollectionType(List.class, ArmorProperties.class));
+
             for (ArmorProperties ap : list) {
-                for (String alias : ap.getAliases()) {
-                    ARMOR_MAP.put(alias, ap);
+                if (ap.getAliases() != null) {
+                    for (String alias : ap.getAliases()) {
+                        ARMOR_MAP.put(alias, ap);
+                    }
                 }
             }
-//            logger.info("Loaded " + armorMap.size() + " armor entries.");
         } catch (Exception e) {
             LOGGER.severe("Failed to load ArmorTypeData.json: " + e.getMessage());
             e.printStackTrace();
