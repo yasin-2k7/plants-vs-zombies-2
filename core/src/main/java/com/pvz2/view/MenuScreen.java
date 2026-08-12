@@ -28,11 +28,11 @@ public abstract class MenuScreen implements Screen {
     protected Stack toastStack;
     protected Stack mainStack;
 
-    private final Queue<Notif> toastQueue = new Queue<>();
-    private boolean hasNotification = false;
+    protected final Queue<Notif> toastQueue = new Queue<>();
+    protected boolean hasNotification = false;
     private static Drawable dimBackground;
 
-    private static class Notif {
+    protected static class Notif {
         String title;
         String message;
 
@@ -182,7 +182,7 @@ public abstract class MenuScreen implements Screen {
         }
     }
 
-    private void showNextToast() {
+    protected void showNextToast() {
         if (toastQueue.isEmpty()) {
             hasNotification = false;
             return;

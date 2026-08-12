@@ -74,13 +74,13 @@ public class BigWaveBeachWorld extends GameWorld {
                     if (cell.isLowLyingCoast()) {
                         if (random.nextBoolean()) {
                             Zombie zombie = random.nextBoolean() ?
-                                    new ZombieFactory().createZombie("ZombieDefault") :
-                                    new ZombieFactory().createZombie(App.getZombieId("ZombieConehead"));
+                                new ZombieFactory().createZombie("ZombieDefault") :
+                                new ZombieFactory().createZombie(App.getZombieId("ZombieConehead"));
                             if (zombie != null) {
+                                GameMenuController.showAnnouncement("A zombie is rising from a low lying coast!");
                                 zombie.setX(cell.getX());
                                 zombie.setY(cell.getY());
                                 this.addZombie(zombie);
-                                GameMenuController.updateState("A zombie emerged from a low lying coast.");
                             }
                         }
                     }

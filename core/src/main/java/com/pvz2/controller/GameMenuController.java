@@ -1,5 +1,6 @@
 package com.pvz2.controller;
 
+
 import com.pvz2.models.core.App;
 import com.pvz2.models.core.User;
 import com.pvz2.models.core.UserDataManager;
@@ -22,6 +23,7 @@ import com.pvz2.models.world.mechanics.NormalMechanic;
 import com.pvz2.models.zombie.Zombie;
 import com.pvz2.models.zombie.ZombieFactory;
 import com.pvz2.models.zombie.wave.WaveManager;
+import com.pvz2.view.GameScreen;
 
 import java.util.List;
 
@@ -496,5 +498,9 @@ public class GameMenuController implements MenuController {
         App.getCurrentGame().setPlantingPhase(false);
         waveManager.startWaves();
         return "Zombie waves started!";
+    }
+
+    public static void showAnnouncement(String message) {
+        GameScreen.announce(message);
     }
 }

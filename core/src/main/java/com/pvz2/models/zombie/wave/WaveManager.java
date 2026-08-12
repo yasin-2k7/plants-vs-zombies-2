@@ -60,9 +60,9 @@ public class WaveManager {
     private void printWaveStartMessage(Wave wave) {
         int waveNum = wave.getWaveNumber();
         if (wave.isFlagWave()) {
-            GameMenuController.updateState("The final wave has come.");
+            GameMenuController.showAnnouncement("The final wave has come.");
         } else {
-            GameMenuController.updateState("Wave " + waveNum + " started.");
+            GameMenuController.showAnnouncement("Wave " + waveNum + " started.");
         }
     }
 

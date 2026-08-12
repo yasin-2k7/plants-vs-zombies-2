@@ -18,6 +18,10 @@ import com.pvz2.models.lawnMower.LawnMower;
 import com.pvz2.models.world.GameState;
 import com.pvz2.models.world.GameWorld;
 import pvz.libpvz.pam.PamPlayer;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.utils.Align;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,6 +53,11 @@ public class GameScreen extends MenuScreen {
     private boolean introFinished = false;
 
     private CrazyDaveOverlay daveOverlay;
+    private static GameScreen activeInstance;
+    private static final List<String> pendingAnnouncements = new ArrayList<>();
+
+    private LevelObjectivesOverlay objectivesOverlay;
+    private boolean objectivesDismissed = false;
 
     private record PanStep(float targetCenterX, float duration, boolean isTravel) {
     }
@@ -85,6 +94,30 @@ public class GameScreen extends MenuScreen {
 
         stage.setViewport(new ScreenViewport());
         stage.getViewport().update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
+
+        activeInstance = this;
+        if (!pendingAnnouncements.isEmpty()) {
+            for (String msg : pendingAnnouncements) {
+                addToast("", msg);
+            }
+            pendingAnnouncements.clear();
+        }
+    }
+
+    @Override
+    public void hide() {
+        super.hide();
+        if (activeInstance == this) {
+            activeInstance = null;
+        }
+    }
+
+    public static void announce(String message) {
+        if (activeInstance != null) {
+            activeInstance.addToast("", message);
+        } else {
+            pendingAnnouncements.add(message);
+        }
     }
 
     @Override
@@ -98,6 +131,11 @@ public class GameScreen extends MenuScreen {
         }
         daveOverlay = new CrazyDaveOverlay(game, starting, world);
         modalStack.addActor(daveOverlay);
+
+        objectivesOverlay = new LevelObjectivesOverlay(game, skin, world.getLevelSetup(), () -> {
+            objectivesDismissed = true;
+        });
+        modalStack.addActor(objectivesOverlay);
     }
 
     public void restartLevel() {
@@ -216,31 +254,33 @@ public class GameScreen extends MenuScreen {
     @Override
     protected void drawBackground(float delta) {
         if (world.getState() != GameState.PAUSED) {
-            if (!introFinished) {
-                updateIntroPan(delta);
-            } else {
-                if (daveOverlay != null && !daveOverlay.isStarted() && world.getState() == GameState.PLAYING) {
-                    daveOverlay.startPresentation();
-                }
+            if (objectivesDismissed) {
+                if (!introFinished) {
+                    updateIntroPan(delta);
+                } else {
+                    if (daveOverlay != null && !daveOverlay.isStarted() && world.getState() == GameState.PLAYING) {
+                        daveOverlay.startPresentation();
+                    }
 
-                if (!world.isEndGameHandled()) {
-                    if (world.getState() == GameState.WON) {
-                        world.setEndGameHandled(true);
-                        if (daveOverlay != null) {
-                            daveOverlay.startPresentation(world.getWinningDialogs(), () -> {
+                    if (!world.isEndGameHandled()) {
+                        if (world.getState() == GameState.WON) {
+                            world.setEndGameHandled(true);
+                            if (daveOverlay != null) {
+                                daveOverlay.startPresentation(world.getWinningDialogs(), () -> {
+                                    GameMenuController.handleWinning(world);
+                                });
+                            } else {
                                 GameMenuController.handleWinning(world);
-                            });
-                        } else {
-                            GameMenuController.handleWinning(world);
-                        }
-                    } else if (world.getState() == GameState.LOST) {
-                        world.setEndGameHandled(true);
-                        if (daveOverlay != null) {
-                            daveOverlay.startPresentation(world.getLosingDialogs(), () -> {
+                            }
+                        } else if (world.getState() == GameState.LOST) {
+                            world.setEndGameHandled(true);
+                            if (daveOverlay != null) {
+                                daveOverlay.startPresentation(world.getLosingDialogs(), () -> {
+                                    GameMenuController.handleLosing(world);
+                                });
+                            } else {
                                 GameMenuController.handleLosing(world);
-                            });
-                        } else {
-                            GameMenuController.handleLosing(world);
+                            }
                         }
                     }
                 }
@@ -332,4 +372,63 @@ public class GameScreen extends MenuScreen {
             hud.resize(stage.getWidth(), stage.getHeight());
         }
     }
+
+    @Override
+    public Table createToastNotification(String title, String message) {
+        Table toast = new Table();
+        toast.pad(10);
+
+        Label messageLabel = new Label(message, skin, "big_outline");
+        messageLabel.setColor(new Color(0.95f, 0.16f, 0.14f, 1f)); // قرمز
+        messageLabel.setAlignment(Align.center);
+        messageLabel.setWrap(true);
+        messageLabel.setFontScale(1.3f);
+
+        toast.add(messageLabel).width(800).center();
+        return toast;
+    }
+
+    @Override
+    protected void showNextToast() {
+        if (toastQueue.isEmpty()) {
+            hasNotification = false;
+            return;
+        }
+
+        hasNotification = true;
+        Notif notif = toastQueue.removeFirst();
+
+        final Table toastTable = createToastNotification(notif.title, notif.message);
+        final Table wrapper = new Table();
+        wrapper.setFillParent(true);
+        wrapper.center();
+        wrapper.add(toastTable);
+
+        toastTable.setTransform(true);
+        toastTable.setOrigin(Align.center);
+        toastTable.setScale(0.7f);
+        toastTable.getColor().a = 0f;
+
+        toastStack.addActor(wrapper);
+
+        toastTable.addAction(Actions.sequence(
+            Actions.parallel(
+                Actions.fadeIn(0.3f),
+                Actions.scaleTo(1f, 1f, 0.35f, Interpolation.swingOut)
+            ),
+            Actions.repeat(2, Actions.sequence(
+                Actions.scaleTo(1.06f, 1.06f, 0.4f, Interpolation.sine),
+                Actions.scaleTo(1f, 1f, 0.4f, Interpolation.sine)
+            )),
+            Actions.fadeOut(0.4f),
+            Actions.run(new Runnable() {
+                @Override
+                public void run() {
+                    wrapper.remove();
+                    showNextToast();
+                }
+            })
+        ));
+    }
+
 }

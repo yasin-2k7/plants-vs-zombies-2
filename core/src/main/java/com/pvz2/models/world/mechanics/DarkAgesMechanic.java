@@ -32,6 +32,7 @@ public class DarkAgesMechanic implements Mechanic {
 
             darkWorld.spawnWaveGraves();
 
+            GameMenuController.showAnnouncement("Necromancy stirs the graves...");
             darkWorld.triggerNecromancy();
 
             spawnZombiesFromNecromancy(darkWorld);
