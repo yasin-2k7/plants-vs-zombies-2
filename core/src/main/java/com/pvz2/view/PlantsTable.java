@@ -14,12 +14,12 @@ import java.util.function.Consumer;
 public class PlantsTable extends Table {
 
     public enum LockFilter { ALL, UNLOCKED_ONLY, LOCKED_ONLY }
-    private int column;
+    protected int column;
     private boolean upgradeBar;
     private static HashMap<PlantType, String> plantsMap;
     private static HashMap<PlantFamily, String> plantsFamilyMap;
-    private int cardWidth, cardHeight;
-    private Consumer<PlantCardView> cardClickMethod;
+    protected int cardWidth, cardHeight;
+    protected Consumer<PlantCardView> cardClickMethod;
 
     private PlantFamily selectedFamily = null;
     private LockFilter lockFilter = LockFilter.ALL;
@@ -33,7 +33,6 @@ public class PlantsTable extends Table {
         this.upgradeBar = upgradeBar;
         this.cardWidth = cardWidth;
         this.cardHeight = cardHeight;
-        build();
     }
 
     public void applyFilters(PlantFamily family, LockFilter lockFilter, boolean upgradeableOnly) {
@@ -63,7 +62,7 @@ public class PlantsTable extends Table {
         return true;
     }
 
-    private void build(){
+    public void build(){
         this.clear();
         User user = App.getCurrentUser();
         if (user == null) return;

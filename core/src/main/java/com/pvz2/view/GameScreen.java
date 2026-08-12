@@ -7,20 +7,31 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.FillViewport;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.pvz2.Main;
 import com.pvz2.controller.GameMenuController;
+import com.pvz2.controller.PlantMenuController;
 import com.pvz2.models.core.App;
 import com.pvz2.models.enums.Chapter;
+import com.pvz2.models.enums.PlantType;
 import com.pvz2.models.lawnMower.LawnMower;
 import com.pvz2.models.world.GameState;
 import com.pvz2.models.world.GameWorld;
 import pvz.libpvz.pam.PamPlayer;
+import pvz.skin.BorderedTable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
 public class GameScreen extends MenuScreen {
 
@@ -48,7 +59,14 @@ public class GameScreen extends MenuScreen {
     private float panStartX;
     private boolean introFinished = false;
 
+    private static final int STREET_ARRIVAL_STEP_INDEX = 1;
+    private boolean introPausedAtStreet = false;
+    private Table streetTable;
+    private PlantDetailsTable plantDetailsTable;
+
     private CrazyDaveOverlay daveOverlay;
+
+    private PlantMenuController plantMenuController = new PlantMenuController();
 
     private record PanStep(float targetCenterX, float duration, boolean isTravel) {
     }
@@ -91,6 +109,11 @@ public class GameScreen extends MenuScreen {
     protected void buildUI() {
         hud = new GameHUD(game, skin, this::restartLevel);
         mainStack.addActor(hud);
+        hud.setInGameDetailsVisibility(false);
+
+
+        buildStreetTable();
+        streetTable.setVisible(false);
 
         List<String> starting = world.getStartingDialogs();
         if (starting == null) {
@@ -115,6 +138,48 @@ public class GameScreen extends MenuScreen {
         }
         daveOverlay = new CrazyDaveOverlay(game, starting, world);
         modalStack.addActor(daveOverlay);
+    }
+
+    public void buildStreetTable() {
+        if (streetTable == null){
+            streetTable = new Table();
+        }
+        streetTable.clear();
+        streetTable.setFillParent(true);
+        streetTable.bottom().left().defaults().pad(10);
+
+        Table panel = new BorderedTable();
+        panel.left();
+
+        plantDetailsTable = new PlantDetailsTable(PlantType.SUNFLOWER, App.getCurrentUser(), game
+            , this);
+        panel.add(plantDetailsTable).left().pad(5).row();
+        PlantsTable plantsTable = new PlantsTable(4, 1, true, 150, 100, createSelectCardMethod());
+        plantsTable.build();
+        Table wrapper = new Table();
+        wrapper.add(plantsTable).pad(15);
+        ScrollPane scrollPane = new ScrollPane(wrapper, game.skin);
+        scrollPane.setFadeScrollBars(true);
+        scrollPane.setScrollingDisabled(true, false);
+        panel.add(scrollPane).padTop(10).expandX().fillX();
+
+
+
+        TextButton continueButton = new TextButton("LET'S ROCK!", skin, "purple");
+        continueButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                if (plantMenuController.startGame(GameScreen.this)){
+                    resumeCameraToMain();
+                }
+            }
+        });
+        streetTable.add(panel).padLeft(170).padBottom(20).maxHeight(1000).width(800);
+        streetTable.add().expandX();
+        streetTable.add(continueButton).right().bottom().pad(20);
+
+
+        mainStack.addActor(streetTable);
     }
 
     private String[] getBackgroundKeys(Chapter chapter) {
@@ -170,24 +235,27 @@ public class GameScreen extends MenuScreen {
         float streetCenterX = MathUtils.clamp(mainLawnWidth + rightWidthScaled / 2f, minCameraX, maxCameraX);
 
         introSteps.clear();
-        introSteps.add(new PanStep(houseCenterX, 0.9f, false));
-        introSteps.add(new PanStep(streetCenterX, 2.2f, true));
-        introSteps.add(new PanStep(streetCenterX, 0.9f, false));
-        introSteps.add(new PanStep(mainCenterX, 2.2f, true));
-        introSteps.add(new PanStep(mainCenterX, 0f, false));
+        introSteps.add(new PanStep(houseCenterX, 0.9f, false));    // 0: hold at house
+        introSteps.add(new PanStep(streetCenterX, 2.2f, true));    // 1: travel to street, pan stops here
+        introSteps.add(new PanStep(mainCenterX, 2.2f, true));      // 2: travel to main, resumed via resumeCameraToMain()
+        introSteps.add(new PanStep(mainCenterX, 0f, false));       // 3: hold at main
 
         currentStepIndex = 0;
         stepElapsed = 0f;
         panStartX = houseCenterX;
         introFinished = false;
+        introPausedAtStreet = false;
+        hideStreetTable();
 
         worldCamera.position.set(houseCenterX, mainLawnHeight / 2f, 0);
         worldCamera.update();
     }
 
     private void updateIntroPan(float delta) {
-        if (introFinished || currentStepIndex >= introSteps.size()) {
-            introFinished = true;
+        if (introFinished || introPausedAtStreet || currentStepIndex >= introSteps.size()) {
+            if (currentStepIndex >= introSteps.size()) {
+                introFinished = true;
+            }
             return;
         }
 
@@ -205,11 +273,61 @@ public class GameScreen extends MenuScreen {
 
         if (stepElapsed >= step.duration()) {
             panStartX = step.targetCenterX();
+
+            if (currentStepIndex == STREET_ARRIVAL_STEP_INDEX) {
+                // The camera just reached the street: stop the sequence here and
+                // wait for the player to press "Continue" instead of auto-advancing.
+                pauseCameraAtStreet();
+                return;
+            }
+
             currentStepIndex++;
             stepElapsed = 0f;
             if (currentStepIndex >= introSteps.size()) {
                 introFinished = true;
             }
+        }
+    }
+
+    private void pauseCameraAtStreet() {
+        introPausedAtStreet = true;
+        worldCamera.position.x = introSteps.get(STREET_ARRIVAL_STEP_INDEX).targetCenterX();
+        worldCamera.update();
+        showStreetTable();
+        hud.setSelectedPlantsVisibility();
+    }
+
+    public void resumeCameraToMain() {
+        if (!introPausedAtStreet) {
+            return;
+        }
+        introPausedAtStreet = false;
+        // moving effect
+        hideStreetTable();
+        hud.setInGameDetailsVisibility(true);
+
+        panStartX = worldCamera.position.x;
+        currentStepIndex = STREET_ARRIVAL_STEP_INDEX + 1;
+        stepElapsed = 0f;
+    }
+
+    private void showStreetTable() {
+        if (streetTable != null) {
+            streetTable.addAction(Actions.sequence(
+                Actions.moveBy(0, -1500),
+                Actions.visible(true),
+                Actions.moveBy(0, 1500, 1, Interpolation.bounceIn)
+            ));
+        }
+    }
+
+    private void hideStreetTable() {
+        if (streetTable != null) {
+            streetTable.addAction(Actions.sequence(
+                Actions.moveBy(0, -1500, 1, Interpolation.bounceOut),
+                Actions.visible(false),
+                Actions.moveBy(0, 1500)
+            ));
         }
     }
 
@@ -331,5 +449,35 @@ public class GameScreen extends MenuScreen {
         if (hud != null) {
             hud.resize(stage.getWidth(), stage.getHeight());
         }
+    }
+
+    public GameHUD getHud() {
+        return hud;
+    }
+
+    public PlantMenuController getPlantMenuController() {
+        return plantMenuController;
+    }
+
+    private Consumer<PlantCardView> createSelectCardMethod(){
+        return new Consumer<PlantCardView>() {
+            @Override
+            public void accept(PlantCardView plantCardView) {
+                PlantType plantType = plantCardView.getType();
+                if (hud.getSelectedPlantsList().hasPlant(plantType)){
+                    plantMenuController.removePlant(plantType.name(),
+                        GameScreen.this);
+                    hud.getSelectedPlantsList().removePlant(plantType);
+                    hud.getSelectedPlantsList().build();
+                }
+                else{
+                    plantDetailsTable.reset(plantType);
+                    if (plantMenuController.addPlant(plantType.name(), GameScreen.this)){
+                        hud.getSelectedPlantsList().addPlant(plantType);
+                        hud.getSelectedPlantsList().build();
+                    }
+                }
+            }
+        };
     }
 }

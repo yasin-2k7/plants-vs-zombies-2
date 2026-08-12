@@ -43,7 +43,7 @@ public class PlantCardView extends Stack {
         build();
     }
 
-    private void build(){
+    public void build(){
         add(new Image(App.getGameApp().textureBank.region(
             boost ? "IMAGE_UI_PACKETS_BOOST" : "IMAGE_UI_PACKETS_MODERNDAY")));
 
@@ -126,6 +126,10 @@ public class PlantCardView extends Stack {
 
     public int getCostAmount() {
         return costAmount;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
     }
 
     public void setClickMethod(Consumer<PlantCardView> onClick) {
