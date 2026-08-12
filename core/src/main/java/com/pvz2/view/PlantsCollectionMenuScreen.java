@@ -90,6 +90,7 @@ public class PlantsCollectionMenuScreen extends MenuScreen{
                 if (collectionMenuScreen.getController().purchasePlant(plantType)){
                     buildUI();
                     collectionMenuScreen.getResourcesTable().update();
+                    collectionMenuScreen.getPlantsTable().build();
                 }
             }
         });

@@ -231,4 +231,8 @@ public class CollectionMenuScreen extends MenuScreen{
     public ResourcesTable getResourcesTable() {
         return resourcesTable;
     }
+
+    public PlantsTable getPlantsTable() {
+        return plantsTable;
+    }
 }

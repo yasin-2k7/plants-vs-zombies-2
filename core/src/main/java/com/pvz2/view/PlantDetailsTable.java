@@ -33,7 +33,7 @@ public class PlantDetailsTable extends Table {
         this.setBackground(tenPatchDrawable);
         this.add(new Label(type.name(), game.skin, "secondary")).center().row();
         Table leftColumn = new Table();
-        leftColumn.add(PlantsCollectionMenuScreen.createCardAppearanceTable(type, game, 0.7f)).row();
+        leftColumn.add(PlantsCollectionMenuScreen.createCardAppearanceTable(type, game, 0.5f)).row();
         int cardLevel = user.getUnlockedPlantsLevels().getOrDefault(type, 0);
         if (cardLevel < 4){
             leftColumn.add(PlantsTable.createProgressStack(user, type, Math.max(1, cardLevel),

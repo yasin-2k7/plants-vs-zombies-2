@@ -4,16 +4,20 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.viewport.FillViewport;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
@@ -43,6 +47,9 @@ public class GameScreen extends MenuScreen {
     private final Viewport worldViewport;
 
     private GameHUD hud;
+
+    private Texture imitaterOverlayBg;
+    private Table imitaterOverlay;
 
     private final TextureRegion bgLeft;
     private final TextureRegion bgMain;
@@ -472,6 +479,14 @@ public class GameScreen extends MenuScreen {
                 }
                 else{
                     plantDetailsTable.reset(plantType);
+                    if (plantType == PlantType.IMITATER){
+                        if (App.getCurrentUser().getUnlockedPlantsLevels().getOrDefault(PlantType.IMITATER, 0) > 0){
+                            showImitatorTable();
+                        }
+                        // create overlay and table
+
+                        return;
+                    }
                     if (plantMenuController.addPlant(plantType.name(), GameScreen.this)){
                         hud.getSelectedPlantsList().addPlant(plantType);
                         hud.getSelectedPlantsList().build();
@@ -479,5 +494,77 @@ public class GameScreen extends MenuScreen {
                 }
             }
         };
+    }
+
+    private Consumer<PlantCardView> createImitaterSelectMethod(){
+        return new Consumer<PlantCardView>() {
+            @Override
+            public void accept(PlantCardView plantCardView) {
+                if (plantMenuController.addPlant(PlantType.IMITATER.name(),
+                    plantCardView.getType().name(), GameScreen.this)){
+                    hud.getSelectedPlantsList().addPlant(PlantType.IMITATER);
+                    hud.getSelectedPlantsList().setImitatorCardType(plantCardView.getType());
+                    hud.getSelectedPlantsList().build();
+                    hideImitatorTable();
+                    //remove overlay
+
+                }
+            }
+        };
+    }
+
+    private void showImitatorTable(){
+        if (imitaterOverlay != null) {
+            return; // already open, ignore double-click
+        }
+
+        imitaterOverlay = new Table();
+        imitaterOverlay.setFillParent(true);
+        imitaterOverlay.setTouchable(Touchable.enabled); // block clicks to what's behind it
+
+        Pixmap pixmap = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
+        pixmap.setColor(new Color(0, 0, 0, 0.6f));
+        pixmap.fill();
+        imitaterOverlayBg = new Texture(pixmap);
+        imitaterOverlay.setBackground(new TextureRegionDrawable(new TextureRegion(imitaterOverlayBg)));
+        pixmap.dispose();
+
+        BorderedTable panel = new BorderedTable();
+        panel.pad(20);
+
+        Label title = new Label("CHOOSE A PLANT TO IMITATE", skin, "big");
+        panel.add(title).padBottom(15).row();
+
+        PlantsTable imitaterChoices = new PlantsTable(4, 10, false, 135, 90,
+            createImitaterSelectMethod());
+        imitaterChoices.build();
+
+        ScrollPane scrollPane = new ScrollPane(imitaterChoices, skin);
+        scrollPane.setFadeScrollBars(true);
+        scrollPane.setScrollingDisabled(true, false);
+        panel.add(scrollPane).width(600).height(400).row();
+
+        TextButton cancelBtn = new TextButton("CANCEL", skin, "brown");
+        cancelBtn.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                hideImitatorTable();
+            }
+        });
+        panel.add(cancelBtn).padTop(10);
+
+        imitaterOverlay.add(panel);
+        modalStack.addActor(imitaterOverlay);
+    }
+
+    private void hideImitatorTable(){
+        if (imitaterOverlay != null) {
+            imitaterOverlay.remove();
+            imitaterOverlay = null;
+        }
+        if (imitaterOverlayBg != null) {
+            imitaterOverlayBg.dispose();
+            imitaterOverlayBg = null;
+        }
     }
 }

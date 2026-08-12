@@ -340,6 +340,7 @@ public class GameHUD extends Group {
     public static class SelectedPlantsList extends PlantsTable{
         private final PlantType[] slots = new PlantType[8];
         private final Main game;
+        private PlantType imitatorCardType;
 
         public SelectedPlantsList(int column, int pad, boolean upgradeBar,
                                   int cardWidth, int cardHeight, Consumer<PlantCardView> cardClickMethod, Main game) {
@@ -363,7 +364,17 @@ public class GameHUD extends Group {
                 }
                 else{
                     int cardLevel = user.getUnlockedPlantsLevels().getOrDefault(plantType, 0);
-                    PlantCard card = PlantCardFactory.createCard(plantType, Math.max(1, cardLevel));
+                    PlantCard card;
+                    if (plantType == PlantType.IMITATER ){
+                        if (imitatorCardType == null) return;
+                        int targetLevel = user.getUnlockedPlantsLevels().getOrDefault(imitatorCardType, 0);
+                        card = PlantCardFactory.createImitatorCard(imitatorCardType, targetLevel,
+                            cardLevel);
+                        cardLevel = targetLevel;
+                    }
+                    else{
+                        card = PlantCardFactory.createCard(plantType, Math.max(1, cardLevel));
+                    }
                     PlantCardView plantCardView = new PlantCardView(false, user.hasBoost(plantType), false
                         , cardLevel, card.getSunCost(), plantType);
                     cardTable.add(plantCardView).size(cardWidth, cardHeight);
@@ -377,6 +388,12 @@ public class GameHUD extends Group {
                 }
             }
         }
+
+        public void setImitatorCardType(PlantType imitatorCardType) {
+            this.imitatorCardType = imitatorCardType;
+        }
+
+
 
         public boolean hasPlant(PlantType plantType){
             for (PlantType type : slots){
