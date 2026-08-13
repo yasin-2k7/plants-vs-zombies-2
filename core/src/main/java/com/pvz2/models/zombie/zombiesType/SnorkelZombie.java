@@ -16,12 +16,12 @@ public class SnorkelZombie extends Zombie {
     }
 
     @Override
-    public void update() {
+    public void update(float delta) {
         if (isDead) return;
 
         GameWorld game = App.getCurrentGame();
         if (game == null) {
-            super.update();
+            super.update(delta);
             return;
         }
 
@@ -41,7 +41,7 @@ public class SnorkelZombie extends Zombie {
             underwater = inWater;
         }
 
-        super.update();
+        super.update(delta);
     }
 
     public boolean isUnderwater() {

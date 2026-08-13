@@ -22,7 +22,7 @@ public class DirectionalMeleeComponent implements GameComponent {
     }
 
     @Override
-    public void update(Plant owner) {
+    public void update(Plant owner, float delta) {
         lastAttackTick++;
 
         if (lastAttackTick >= attackIntervalTicks) {

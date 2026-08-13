@@ -47,7 +47,7 @@ public abstract class GameWorld {
     protected List<Obstacle> activeObstacles;
     protected LawnMowerManager lawnMowerManager;
     private GameState state;
-    private int currentTick = 0;
+    private float elapsedTime = 0f;
     private Chapter currentChapter;
     private boolean willUnlockLevel = false;
     private int currentSun;
@@ -119,7 +119,7 @@ public abstract class GameWorld {
         sunsPool = new GenericObjectPool<>(Sun::new);
         projectilesPool = new GenericObjectPool<>(Projectile::new);
 
-        currentTick = 0;
+        elapsedTime = 0;
         currentSun = 50;
         isPlantSelected = false;
         selectedPlant = null;
@@ -268,8 +268,8 @@ public abstract class GameWorld {
             }
             KillEvent event = new KillEvent(
                     zombie,
-                    zombie.getSpawnTick(),
-                    this.currentTick,
+                    zombie.getSpawnTime(),
+                    (long) this.elapsedTime,
                     simultaneousKills,
                     isSplashDamage,
                     zombie.hasEatenPlant()
@@ -291,23 +291,23 @@ public abstract class GameWorld {
             }
         }
     }
-    private void updateAll() {
-        activePlants.forEach(Plant::update);
-        activeCollectables.forEach(Collectable::update);
+    private void updateAll(float delta) {
+        activePlants.forEach(plant -> plant.update(delta));
+        activeCollectables.forEach(collectable -> collectable.update(delta));
         List<Projectile> projectileSnapshot = new ArrayList<>(activeProjectiles);
-        projectileSnapshot.forEach(Projectile::update);
+        projectileSnapshot.forEach(projectile -> projectile.update(delta));
         List<Zombie> zombieSnapshot = new ArrayList<>(activeZombies);
-        zombieSnapshot.forEach(Zombie::update);
-        if (!isConveyorMode) for (PlantCard card : plantLists) card.update();
+        zombieSnapshot.forEach(zombie -> zombie.update(delta));
+        if (!isConveyorMode) for (PlantCard card : plantLists) card.update(delta);
         for (Sun sun : activeSuns) {
             if (sun.getProducer() == null && sun.isExpired()) {
                 sun.collect();
             }
         }
-        lawnMowerManager.updateMowers(activeZombies, 0.016f);
+        lawnMowerManager.updateMowers(activeZombies, delta);
         for (Cell[] cells : grid){
             for (Cell cell : cells){
-                cell.update();
+                cell.update(delta);
             }
         }
     }
@@ -341,10 +341,10 @@ public abstract class GameWorld {
         applyChapterRules();
     }
     protected abstract void applyChapterRules();
-    public void tick() {
+    public void tick(float delata) {
         if (state != GameState.PLAYING) return;
-        currentTick++;
-        updateAll();
+        elapsedTime += delata;
+        updateAll(delata);
         cleanupDeadZombies();
         removeIfDead();
         for (Cell[] row : grid) {
@@ -491,9 +491,10 @@ public abstract class GameWorld {
     public LawnMowerManager getLawnMowerManager() {
         return lawnMowerManager;
     }
-    public int getCurrentTick() {
-        return currentTick;
+    public float getElapsedTime() {
+        return elapsedTime;
     }
+
     public void addZombie(Zombie zombie) {
         activeZombies.add(zombie);
     }

@@ -18,8 +18,8 @@ import java.util.List;
 import java.util.Random;
 
 public class FrostbiteCavesWorld extends GameWorld {
-    private final int icyWindTicks = 50;
-    private int lastIcyWindTick = 0;
+    private final float icyWindTime = 5.0f;
+    private float lastIcyWindTime = 0f;
     private Random random = new Random();
 
     private List<PlantType> lockedPlants;
@@ -32,16 +32,16 @@ public class FrostbiteCavesWorld extends GameWorld {
 
 
     @Override
-    public void tick() {
-        super.tick();
+    public void tick(float delta) {
+        super.tick(delta);
         updateIcyWinds();
     }
 
     private void updateIcyWinds() {
-        int currentTick = getCurrentTick();
+        float currentTime = getElapsedTime();
 
-        if (currentTick - lastIcyWindTick >= icyWindTicks) {
-            lastIcyWindTick = currentTick;
+        if (currentTime - lastIcyWindTime >= icyWindTime) {
+            lastIcyWindTime = currentTime;
             int winds = random.nextInt(3) + 1;
 
             List<Integer> pool = new ArrayList<>(List.of(0, 1, 2, 3, 4));

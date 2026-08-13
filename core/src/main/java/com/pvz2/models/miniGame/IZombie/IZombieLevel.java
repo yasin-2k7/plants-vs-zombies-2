@@ -1,5 +1,6 @@
 package com.pvz2.models.miniGame.IZombie;
 
+import com.pvz2.models.core.App;
 import com.pvz2.models.world.GameWorld;
 import com.pvz2.models.world.levelSetup.LevelSetup;
 import com.pvz2.models.world.loseCondition.LoseCondition;
@@ -15,7 +16,6 @@ public class IZombieLevel extends GameWorld {
     private List<Brain> brains;
     private List<SunProducer> sunProducers;
     private int redLineCol;
-    private long currentTick = 0;
 
     public IZombieLevel(LevelSetup levelSetup,
                         ArrayList<LoseCondition> loseConditions,
@@ -32,9 +32,8 @@ public class IZombieLevel extends GameWorld {
     }
 
     @Override
-    public void tick() {
-        currentTick++;
-        super.tick();
+    public void tick(float delta) {
+        super.tick(delta);
 
         for (SunProducer sp : getSunProducers()) {
             if (!sp.isDead() && getActiveZombies().contains(sp)) {
@@ -54,10 +53,7 @@ public class IZombieLevel extends GameWorld {
                 }
             }
         }
-
-
     }
-
 
     public String placeZombie(Zombie zombie, float x, float y) {
         int col = (int) (x / 100);
@@ -123,10 +119,4 @@ public class IZombieLevel extends GameWorld {
     public void setAvailableZombies(List<Zombie> availableZombies) {
         this.availableZombies = availableZombies;
     }
-
-    @Override
-    public int getCurrentTick() {
-        return Math.toIntExact(currentTick);
-    }
-
 }

@@ -13,10 +13,10 @@ import java.util.List;
 import java.util.Random;
 
 public class PusherZombie extends Zombie {
-    private static final int ROW_SWITCH_INTERVAL = 50;
+    private static final float ROW_SWITCH_INTERVAL = 5.0f;
     private String objectName;
     private int objectHealth;
-    private int rowSwitchCooldown = 0;
+    private float rowSwitchCooldown = 0f;
     private Random random = new Random();
 
     public PusherZombie(int health, double speed, int damage, String pushedObjectName, int objHealth) {
@@ -42,11 +42,11 @@ public class PusherZombie extends Zombie {
     }
 
     @Override
-    public void update() {
+    public void update(float delta) {
         if (isDead) return;
         GameWorld game = App.getCurrentGame();
         if (game == null) {
-            super.update();
+            super.update(delta);
             return;
         }
         Cell zombieCell = Cell.findZombieCell(game.getGrid(), this);
@@ -81,13 +81,13 @@ public class PusherZombie extends Zombie {
                 switchNearbyZombies(game);
                 rowSwitchCooldown = ROW_SWITCH_INTERVAL;
             } else {
-                rowSwitchCooldown--;
+                rowSwitchCooldown-= delta;
             }
         }
         if (!crushed) {
-            super.update();
+            super.update(delta);
         } else {
-            this.move();
+            this.move(delta);
         }
     }
 

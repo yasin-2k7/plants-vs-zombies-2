@@ -10,23 +10,23 @@ import com.pvz2.models.world.GameWorld;
 import com.pvz2.models.zombie.Zombie;
 
 public class FishermanZombie extends Zombie {
-    private static final int HOOK_INTERVAL = 45;
-    private int hookCooldown;
+    private static final float HOOK_INTERVAL = 4.5f;
+    private float hookCooldown;
 
     public FishermanZombie(int health, int damage) {
         super(Zombies.FISHERMAN, health, 0, damage);
-        this.hookCooldown = 0;
+        this.hookCooldown = 0f;
     }
 
     @Override
-    public void update() {
+    public void update(float delta) {
         if (isDead) return;
 
         if (hookCooldown <= 0) {
             tryHook();
             hookCooldown = HOOK_INTERVAL;
         } else {
-            hookCooldown--;
+            hookCooldown-= delta;
         }
     }
 
@@ -71,7 +71,5 @@ public class FishermanZombie extends Zombie {
                 ") to (" + targetCell.getX() + ", " + targetCell.getY() + ")");
     }
 
-    @Override
-    public void move() {
-    }
+
 }

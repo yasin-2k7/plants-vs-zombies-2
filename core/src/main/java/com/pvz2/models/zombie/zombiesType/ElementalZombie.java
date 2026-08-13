@@ -40,7 +40,7 @@ public class ElementalZombie extends Zombie {
     }
 
     @Override
-    public void update() {
+    public void update(float delta) {
         if (isDead) return;
 
         if (!isExplorer && isIgnited && !hasExploded) {
@@ -49,7 +49,7 @@ public class ElementalZombie extends Zombie {
                 explode();
             }
         }
-        super.update();
+        super.update(delta);
 
         if (isExplorer && isIgnited) {
             GameWorld game = App.getCurrentGame();
@@ -142,15 +142,15 @@ public class ElementalZombie extends Zombie {
     }
 
     @Override
-    public void applySlow(int ticks, double factor, boolean canWorkInFrostbite) {
-        super.applySlow(ticks, factor, canWorkInFrostbite);
+    public void applySlow(float delta, double factor, boolean canWorkInFrostbite) {
+        super.applySlow(delta, factor, canWorkInFrostbite);
         if (isExplorer && isIgnited) {
             extinguish();
         }
     }
 
     @Override
-    public void move() {
+    public void move(float delta) {
         if (!isExplorer && hasExploded) {
             float newX = (float) (this.x - this.speed);
 
@@ -162,7 +162,7 @@ public class ElementalZombie extends Zombie {
             }
             this.x = newX;
         } else {
-            super.move();
+            super.move(delta);
         }
     }
 }

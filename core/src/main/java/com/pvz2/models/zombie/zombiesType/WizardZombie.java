@@ -12,32 +12,32 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class WizardZombie extends Zombie {
-    private static final int COOLDOWN_MAX = 20;
+    private static final float COOLDOWN_MAX = 3.0f;
     private List<Plant> transformedPlants;
-    private int cooldown;
+    private float cooldown;
 
     public WizardZombie(int health, double speed, int damage) {
         super(Zombies.WIZARD, health, speed, damage);
         this.transformedPlants = new ArrayList<>();
-        this.cooldown = 0;
+        this.cooldown = 0f;
         this.currentState = null;
     }
 
     @Override
-    public void update() {
+    public void update(float delta) {
         if (isDead) return;
         Cell currentCell = Cell.findZombieCell(App.getCurrentGame().getGrid(), this);
         if (currentCell != null && currentCell.getSlippingDir() != 0) {
             y += App.getCellHeight() * currentCell.getSlippingDir();
         }
 
-        move();
+        move(delta);
 
         if (cooldown <= 0) {
             castSpell();
             cooldown = COOLDOWN_MAX;
         } else {
-            cooldown--;
+            cooldown-= delta;
         }
     }
 

@@ -10,11 +10,11 @@ import com.pvz2.models.world.Cell;
 public class ExplosivesComponent implements GameComponent {
     private ExplosiveBehavior explosiveBehavior;
     private ExplosiveTrigger triggerStrategy;
-    private int postTriggerDelay = 7;
-    private int maxPostTriggerDelay = 7;
+    private float postTriggerDelay = 2.0f;
+    private float maxPostTriggerDelay = 2.0f;
     private boolean isArmed;
     private boolean isTriggered = false;
-    private int armTimer;
+    private float armTimer;
     private int lives = 1;
     private Cell target;
 
@@ -41,10 +41,10 @@ public class ExplosivesComponent implements GameComponent {
     }
 
 
-    public void update(Plant owner) {
+    public void update(Plant owner, float delta) {
 
         if (!isArmed) {
-            armTimer--;
+            armTimer-= delta;
             if (armTimer <= 0) {
                 isArmed = true;
             }
@@ -52,7 +52,7 @@ public class ExplosivesComponent implements GameComponent {
         }
 
         if (isTriggered) {
-            postTriggerDelay--;
+            postTriggerDelay-=delta;
             if (postTriggerDelay <= 0) {
                 lives--;
                 explosiveBehavior.execute(owner);

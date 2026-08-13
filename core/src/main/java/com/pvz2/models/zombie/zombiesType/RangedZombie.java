@@ -12,9 +12,9 @@ import com.pvz2.models.zombie.Zombie;
 import java.util.List;
 
 public class RangedZombie extends Zombie {
-    private final int cooldownMax = 120;
+    private final float cooldownMax = 12f;
     private String projectileType;
-    private int cooldown;
+    private float cooldown;
 
     public RangedZombie(int health, double speed, int damage, String projectileType) {
         super(Zombies.RANGED, health, speed, damage);
@@ -73,14 +73,14 @@ public class RangedZombie extends Zombie {
     }
 
     @Override
-    public void update() {
+    public void update(float delta) {
         if (isDead) return;
-        super.update();
+        super.update(delta);
         if (cooldown <= 0) {
             throwProjectile();
             cooldown = cooldownMax;
         } else {
-            cooldown--;
+            cooldown-= delta;
         }
     }
 }

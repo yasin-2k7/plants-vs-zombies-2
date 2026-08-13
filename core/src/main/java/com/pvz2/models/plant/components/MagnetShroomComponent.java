@@ -11,8 +11,8 @@ import java.util.List;
 
 public class MagnetShroomComponent implements GameComponent {
     int radius;
-    int currentDisableTick = 0;
-    int disableTicks = 150;
+    float currentDisableTime = 0f;
+    float disableTime = 15f;
     boolean disable = false;
 
     public MagnetShroomComponent(int radius) {
@@ -20,10 +20,10 @@ public class MagnetShroomComponent implements GameComponent {
     }
 
     @Override
-    public void update(Plant owner) {
+    public void update(Plant owner, float delta) {
         if (disable) {
-            currentDisableTick--;
-            if (currentDisableTick <= 0) {
+            currentDisableTime-= delta;
+            if (currentDisableTime <= 0) {
                 disable = false;
             }
             return;
@@ -34,7 +34,7 @@ public class MagnetShroomComponent implements GameComponent {
             if (zombie instanceof ArmoredZombie armoredZombie) {
                 armoredZombie.stripArmor();
                 disable = true;
-                currentDisableTick = disableTicks;
+                currentDisableTime = disableTime;
                 return;
             }
         }

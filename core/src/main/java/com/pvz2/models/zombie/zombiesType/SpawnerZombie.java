@@ -9,14 +9,14 @@ import com.pvz2.models.zombie.ZombieFactory;
 
 public class SpawnerZombie extends Zombie {
     private boolean isGargantuar;
-    private int spawnCooldown;
-    private int currentCooldown;
+    private float spawnCooldown;
+    private float currentCooldown;
     private boolean hasThrownImp;
 
     public SpawnerZombie(int health, double speed, int damage, boolean isGargantuar) {
         super(Zombies.SPAWNER, health, speed, damage);
         this.isGargantuar = isGargantuar;
-        this.spawnCooldown = 50;
+        this.spawnCooldown = 5.0f;
         this.currentCooldown = spawnCooldown;
         this.hasThrownImp = false;
 
@@ -27,9 +27,9 @@ public class SpawnerZombie extends Zombie {
     }
 
     @Override
-    public void update() {
+    public void update(float delta) {
         if (isDead) return;
-        super.update();
+        super.update(delta);
 
         if (isGargantuar) {
             if (!hasThrownImp && this.health <= this.maxHealth / 2) {
@@ -41,7 +41,7 @@ public class SpawnerZombie extends Zombie {
                 knightNearbyZombie();
                 currentCooldown = spawnCooldown;
             } else {
-                currentCooldown--;
+                currentCooldown-= delta;
             }
         }
     }
@@ -91,10 +91,10 @@ public class SpawnerZombie extends Zombie {
     }
 
     @Override
-    public void move() {
+    public void move(float delta) {
         if (!isGargantuar) {
             return;
         }
-        super.move();
+        super.move(delta);
     }
 }

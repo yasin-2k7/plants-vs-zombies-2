@@ -20,6 +20,9 @@ public class VaseBreakerLevel extends GameWorld {
                             WinCondition winCondition,
                             ArrayList<Mechanic> mechanics) {
         super(levelSetup, loseConditions, winCondition, mechanics);
+        if (this.droppedSeeds == null) {
+            this.droppedSeeds = new ArrayList<>();
+        }
 
     }
 
@@ -29,8 +32,8 @@ public class VaseBreakerLevel extends GameWorld {
     }
 
     @Override
-    public void tick() {
-        super.tick();
+    public void tick(float delta) {
+        super.tick(delta);
 
         for (SeedPacket seed : droppedSeeds) {
             seed.tick();

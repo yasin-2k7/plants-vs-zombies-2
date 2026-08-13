@@ -27,15 +27,15 @@ public class LifespanComponent implements GameComponent {
     }
 
     @Override
-    public void update(Plant owner) {
-        timer++;
+    public void update(Plant owner, float delta) {
+        timer+=delta;
         if (timer >= maxLifeTime) {
             owner.die();
         }
     }
 
     @Override
-    public void onDeath(Plant owner) {
+    public void onDeath(Plant owner, float delta) {
         if (App.getCurrentGame() != null){
             App.getCurrentGame().unregisterPuffShroom(this);
         }

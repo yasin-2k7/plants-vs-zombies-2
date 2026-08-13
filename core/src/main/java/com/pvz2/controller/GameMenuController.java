@@ -101,7 +101,7 @@ public class GameMenuController implements MenuController {
         GameWorld game = App.getCurrentGame();
         for (int i = 0; i < count; i++) {
 //            if (game != null && AppView.currentScreen instanceof GameMenuView && game.getState() == GameState.PLAYING) {
-                game.tick();
+                game.tick(App.getCurrentGame().getElapsedTime());
 //            } else return;
         }
     }

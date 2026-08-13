@@ -54,7 +54,7 @@ public class Projectile implements Resettable {
         }
     }
 
-    public void update() {
+    public void update(float delta) {
         double oldX = x;
         double oldY = y;
         movementStrategy.move(this);

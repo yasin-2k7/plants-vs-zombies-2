@@ -131,8 +131,8 @@ public class WallNutFactory {
                             ExplosivesComponent explosivesComponent = new ExplosivesComponent(InstantTrigger.INSTANCE,
                                     new AreaDamageBehavior(damage, new CircularRange(1)), 0);
                             explosivesComponent.setPostTriggerDelay(0);
-                            explosivesComponent.update(owner);
-                            explosivesComponent.update(owner);
+                            explosivesComponent.update(owner, App.getCurrentGame().getElapsedTime());
+                            explosivesComponent.update(owner, App.getCurrentGame().getElapsedTime());
                         }
                     });
                 } else {
@@ -141,12 +141,12 @@ public class WallNutFactory {
             }
 
             @Override
-            public void onDeath(Plant owner) {
+            public void onDeath(Plant owner, float delta) {
                 ExplosivesComponent explosivesComponent = new ExplosivesComponent(InstantTrigger.INSTANCE,
                         new AreaDamageBehavior(damage, new CircularRange(1)), 0);
                 explosivesComponent.setPostTriggerDelay(0);
-                explosivesComponent.update(owner);
-                explosivesComponent.update(owner);
+                explosivesComponent.update(owner, delta);
+                explosivesComponent.update(owner, delta);
             }
         });
         return p;

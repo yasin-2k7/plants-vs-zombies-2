@@ -181,7 +181,7 @@ public class ExplosiveFactory {
                 new FreezeZombieBehavior(new CircularRange(0), freezeTime), 0);
         component.setPlantFoodBehavior((_, _) -> {
             App.getCurrentGame().getActiveZombies()
-                    .forEach(zombie -> zombie.freeze(40));
+                    .forEach(zombie -> zombie.freeze(7.0f));
         });
         p.addComponent(component);
         return p;

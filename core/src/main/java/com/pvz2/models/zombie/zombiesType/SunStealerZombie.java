@@ -12,11 +12,11 @@ import com.pvz2.models.zombie.Zombie;
 import java.util.List;
 
 public class SunStealerZombie extends Zombie {
-    private static final int STEAL_INTERVAL = 15;
-    private static final int LASER_DELAY = 75;
+    private static final float STEAL_INTERVAL = 3.0f;
+    private static final float LASER_DELAY = 7.5f;
     private int stolenSun;
     private boolean isRa;
-    private int stealTimer;
+    private float stealTimer;
     private boolean isStealing;
 
     public SunStealerZombie(int health, double speed, int damage, boolean isRa) {
@@ -28,9 +28,9 @@ public class SunStealerZombie extends Zombie {
     }
 
     @Override
-    public void update() {
+    public void update(float delta) {
         if (isDead) return;
-        super.update();
+        super.update(delta);
         GameWorld game = App.getCurrentGame();
         if (game == null) return;
         if (isRa) {
@@ -53,14 +53,14 @@ public class SunStealerZombie extends Zombie {
                     boolean hasPlant = neighborCells.stream().anyMatch(cell -> !cell.isEmpty());
                     if (hasPlant) {
                         isStealing = true;
-                        stealTimer = 0;
+                        stealTimer = 0f;
                         GameMenuController.updateState("Turquoise started stealing suns!");
                     }
                 }
             }
 
             if (isStealing) {
-                stealTimer++;
+                stealTimer+= delta;
                 if (stealTimer % STEAL_INTERVAL == 0) {
                     int stolen = game.stealSunFromPlayer(25);
                     stolenSun += stolen;
@@ -69,7 +69,7 @@ public class SunStealerZombie extends Zombie {
                 if (stealTimer >= LASER_DELAY) {
                     fireLaser(game);
                     isStealing = false;
-                    stealTimer = 0;
+                    stealTimer = 0f;
                 }
             }
         }
