@@ -5,10 +5,12 @@ import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
@@ -19,6 +21,9 @@ import com.pvz2.Main;
 import com.pvz2.models.core.App;
 import com.pvz2.models.core.User;
 import com.pvz2.models.core.UserDataManager;
+import com.pvz2.models.enums.PlantType;
+import com.pvz2.models.plant.card.PlantCard;
+import com.pvz2.models.plant.card.PlantCardFactory;
 import com.pvz2.models.world.GameState;
 import com.pvz2.models.world.GameWorld;
 import com.pvz2.models.zombie.wave.WaveManager;
@@ -26,6 +31,10 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import pvz.skin.BorderedTable;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.function.Consumer;
 
 public class GameHUD extends Group {
 
@@ -36,6 +45,7 @@ public class GameHUD extends Group {
     private final WaveProgressBar waveProgressBar;
     private final ResourcesTable resourcesTable;
     private final PlantFoodBank plantFoodBank;
+    private final SelectedPlantsList selectedPlantsList;
 
     private PauseMenuOverlay activeOverlay;
 
@@ -46,6 +56,8 @@ public class GameHUD extends Group {
         waveProgressBar = new WaveProgressBar(game);
         resourcesTable = new ResourcesTable(user, game);
         plantFoodBank = new PlantFoodBank(game);
+        selectedPlantsList = new SelectedPlantsList(1, 1, false,
+            150, 100, null, game);
 
         ImageButton pauseBtn = new ImageButton(skin, "ingame_pause");
 
@@ -73,21 +85,14 @@ public class GameHUD extends Group {
                 }
             }
         });
-        TextButton backBtn = new TextButton("Back", skin);
-        backBtn.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                game.setScreen(new LevelMenuScreen(game));
-            }
-        });
 
         topBar = new Table();
-        topBar.add(backBtn).left().pad(MARGIN);
         topBar.add(sunCounter).left().pad(MARGIN);
 
         topBar.add(waveProgressBar).expandX().center().padTop(MARGIN);
         topBar.add(resourcesTable).right().pad(MARGIN);
-        topBar.add(pauseBtn).right().pad(MARGIN);
+        topBar.add(pauseBtn).right().pad(MARGIN).row();
+        topBar.add(selectedPlantsList).left().pad(MARGIN);
 
         addActor(topBar);
         addActor(plantFoodBank);
@@ -100,7 +105,7 @@ public class GameHUD extends Group {
         topBar.validate();
         topBar.setPosition(0, stageHeight - topBar.getHeight());
 
-        plantFoodBank.setPosition(MARGIN, MARGIN);
+        plantFoodBank.setPosition(10*MARGIN, MARGIN);
     }
 
     public void update(GameWorld world, float delta) {
@@ -330,5 +335,135 @@ public class GameHUD extends Group {
                 batch.draw(solidGreen, cx - pipSize / 2f, cy - pipSize / 2f, pipSize, pipSize);
             }
         }
+    }
+
+    public static class SelectedPlantsList extends PlantsTable{
+        private final PlantType[] slots = new PlantType[8];
+        private final Main game;
+        private PlantType imitatorCardType;
+
+        public SelectedPlantsList(int column, int pad, boolean upgradeBar,
+                                  int cardWidth, int cardHeight, Consumer<PlantCardView> cardClickMethod, Main game) {
+            super(column, pad, upgradeBar, cardWidth, cardHeight, cardClickMethod);
+            this.game = game;
+            build();
+        }
+
+        @Override
+        public void build(){
+            this.clear();
+            User user = App.getCurrentUser();
+            if (user == null) return;
+            int i = 1;
+            for (PlantType plantType : slots){
+                Table cardTable = new Table();
+                if (plantType == null){
+                    Stack stack = new Stack();
+                    stack.add(new Image(game.textureBank.region("IMAGE_UI_PACKETS_EMPTY_PACKET")));
+                    cardTable.add(stack).size(cardWidth, cardHeight);
+                }
+                else{
+                    int cardLevel = user.getUnlockedPlantsLevels().getOrDefault(plantType, 0);
+                    PlantCard card;
+                    if (plantType == PlantType.IMITATER ){
+                        if (imitatorCardType == null) return;
+                        int targetLevel = user.getUnlockedPlantsLevels().getOrDefault(imitatorCardType, 0);
+                        card = PlantCardFactory.createImitatorCard(imitatorCardType, targetLevel,
+                            cardLevel);
+                        cardLevel = targetLevel;
+                    }
+                    else{
+                        card = PlantCardFactory.createCard(plantType, Math.max(1, cardLevel));
+                    }
+                    PlantCardView plantCardView = new PlantCardView(false, user.hasBoost(plantType), false
+                        , cardLevel, card.getSunCost(), plantType);
+                    cardTable.add(plantCardView).size(cardWidth, cardHeight);
+                    plantCardView.setClickMethod(cardClickMethod);
+                }
+                this.add(cardTable).top();
+                i++;
+                if (i > column){
+                    i = 1;
+                    this.row();
+                }
+            }
+        }
+
+        public void setImitatorCardType(PlantType imitatorCardType) {
+            this.imitatorCardType = imitatorCardType;
+        }
+
+
+
+        public boolean hasPlant(PlantType plantType){
+            for (PlantType type : slots){
+                if (type == plantType){
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public void removePlant(PlantType type){
+            for (int i = 0; i < 8; i++){
+                if (slots[i] == type){
+                    slots[i] = null;
+                    for (int j = i + 1; j < 8; j++){
+                        if (slots[j] != null){
+                            slots[j-1] = slots[j];
+                            slots[j] = null;
+                        }
+                    }
+                    break;
+                }
+            }
+        }
+
+        public void addPlant(PlantType type){
+            for (int i = 0; i < 8; i++){
+                if (slots[i] == null){
+                    slots[i] = type;
+                    break;
+                }
+            }
+        }
+
+        public PlantType[] getSlots() {
+            return slots;
+        }
+    }
+
+    public void setInGameDetailsVisibility(boolean state){
+        if (!state){
+            sunCounter.setVisible(false);
+            waveProgressBar.setVisible(false);
+            plantFoodBank.setVisible(false);
+            selectedPlantsList.setVisible(false);
+            return;
+        }
+
+        moveAndSetVisible(sunCounter, 0, -200);
+        moveAndSetVisible(waveProgressBar, 0, -200);
+        moveAndSetVisible(plantFoodBank,0, 200);
+    }
+
+    public void setSelectedPlantsVisibility(){
+        moveAndSetVisible(selectedPlantsList, 250, 0);
+    }
+
+    private void moveAndSetVisible(Actor actor, float xAmount, float yAmount){
+        actor.addAction(Actions.sequence(
+            Actions.moveBy(-xAmount, -yAmount),
+            Actions.visible(true),
+            Actions.moveBy(xAmount, yAmount, 1f, Interpolation.bounceIn)
+        ));
+    }
+
+    public ResourcesTable getResourcesTable() {
+        return resourcesTable;
+    }
+
+    public SelectedPlantsList getSelectedPlantsList() {
+        return selectedPlantsList;
     }
 }

@@ -33,6 +33,7 @@ public class CollectionMenuScreen extends MenuScreen{
     @Override
     protected void buildUI() {
         plantsTable = new PlantsTable(8, 30, true, 150, 100, createCollectionMenuCardsMethod());
+        plantsTable.build();
         zombiesTable = new ZombiesTable(createCollectionMenuZombieCardsMethod());
         if (currentTable == null){
             currentTable = plantsTable;
@@ -229,5 +230,9 @@ public class CollectionMenuScreen extends MenuScreen{
 
     public ResourcesTable getResourcesTable() {
         return resourcesTable;
+    }
+
+    public PlantsTable getPlantsTable() {
+        return plantsTable;
     }
 }
