@@ -9,6 +9,7 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
@@ -45,7 +46,7 @@ public class GameHUD extends Group {
         sunCounter = new SunCounter(game, skin);
         waveProgressBar = new WaveProgressBar(game);
         resourcesTable = new ResourcesTable(user, game);
-        plantFoodBank = new PlantFoodBank(game);
+        plantFoodBank = new PlantFoodBank(game, skin);
 
         ImageButton pauseBtn = new ImageButton(skin, "ingame_pause");
 
@@ -284,50 +285,99 @@ public class GameHUD extends Group {
         }
     }
 
-
-    private static class PlantFoodBank extends Actor {
+    private static class PlantFoodBank extends Group {
         private static final int MAX_PLANT_FOOD = 3;
+        private static final float[] PIP_OFFSET_X_PCT = {0.422f, 0.545f, 0.655f};
+        private static final float PIP_OFFSET_Y_PCT = 0.5f;
 
-        private final TextureRegion bankIcon;
-        private final TextureRegion solidGreen;
+        private final BankVisual visual;
+        private final CheckBox[] pips = new CheckBox[MAX_PLANT_FOOD];
 
-        private final float[][] pipOffsetsPct = {
-            {0.42f, 0.5f},
-            {0.58f, 0.5f},
-            {0.74f, 0.5f}
-        };
-        private final float pipSizePct = 0.14f;
+        PlantFoodBank(Main game, Skin skin) {
+            visual = new BankVisual(game);
+            addActor(visual);
+            setSize(visual.getWidth(), visual.getHeight());
 
-        private int currentPlantFoods = 0;
+            for (int i = 0; i < MAX_PLANT_FOOD; i++) {
+                CheckBox pip = new CheckBox("", skin);
+                pip.setTouchable(Touchable.disabled);
+                pips[i] = pip;
+                addActor(pip);
+            }
+            positionPips();
 
-        PlantFoodBank(Main game) {
-            bankIcon = game.textureBank.region("IMAGE_UI_HUD_INGAME_PLANTFOOD_BANK");
-            solidGreen = UiUtils.getSolidColorRegion(new Color(0.35f, 0.85f, 0.25f, 1f));
+            if (App.isDebugMode()) {
+                ImageButton buyBtn = MainMenuScreen.createImageButton("IMAGE_UI_HUD_INGAME_COIN_BUY",
+                    "IMAGE_UI_HUD_INGAME_COIN_BUY_DOWN", game.textureBank);
+                float btnSize = 38f;
+                buyBtn.setSize(btnSize, btnSize);
+                buyBtn.setPosition(visual.getWidth() + 8f, visual.getHeight() / 2f - btnSize / 2f);
+                buyBtn.addListener(new ClickListener() {
+                    @Override
+                    public void clicked(InputEvent event, float x, float y) {
+                        GameWorld world = App.getCurrentGame();
+                        if (world != null && world.getPlantFoods() < MAX_PLANT_FOOD) {
+                            world.setPlantFoods(world.getPlantFoods() + 1);
+                            update(world);
+                        }
+                    }
+                });
+                addActor(buyBtn);
+                setSize(visual.getWidth() + btnSize + 8f, visual.getHeight());
+            }
+        }
 
-            if (bankIcon != null) {
-                setSize(bankIcon.getRegionWidth(), bankIcon.getRegionHeight());
-            } else {
-                setSize(220f, 90f);
+        private void positionPips() {
+            float w = visual.getWidth();
+            float h = visual.getHeight();
+            for (int i = 0; i < MAX_PLANT_FOOD; i++) {
+                CheckBox pip = pips[i];
+                pip.pack();
+                float cx = w * PIP_OFFSET_X_PCT[i];
+                float cy = h * PIP_OFFSET_Y_PCT;
+                pip.setPosition(cx - pip.getWidth() / 2f, cy - pip.getHeight() / 2f);
             }
         }
 
         void update(GameWorld world) {
             if (world == null) return;
-            currentPlantFoods = Math.min(MAX_PLANT_FOOD, world.getPlantFoods());
+            int current = Math.min(MAX_PLANT_FOOD, world.getPlantFoods());
+            for (int i = 0; i < MAX_PLANT_FOOD; i++) {
+                pips[i].setChecked(i < current);
+            }
         }
 
-        @Override
-        public void draw(Batch batch, float parentAlpha) {
-            float x = getX(), y = getY(), w = getWidth(), h = getHeight();
+        private static class BankVisual extends Actor {
+            private static final float LEAF_OFFSET_X_PCT = 0.22f;
+            private static final float LEAF_OFFSET_Y_PCT = 0.52f;
+            private static final float LEAF_SIZE_PCT = 0.46f;
 
-            if (bankIcon != null) batch.draw(bankIcon, x, y, w, h);
+            private final TextureRegion bankIcon;
+            private final TextureRegion leafIcon;
 
-            float pipSize = Math.min(w, h) * pipSizePct;
-            for (int i = 0; i < MAX_PLANT_FOOD; i++) {
-                if (i >= currentPlantFoods) continue;
-                float cx = x + w * pipOffsetsPct[i][0];
-                float cy = y + h * pipOffsetsPct[i][1];
-                batch.draw(solidGreen, cx - pipSize / 2f, cy - pipSize / 2f, pipSize, pipSize);
+            BankVisual(Main game) {
+                bankIcon = game.textureBank.region("IMAGE_UI_HUD_INGAME_PLANTFOOD_BANK");
+                leafIcon = game.textureBank.region("IMAGE_UI_HUD_INGAME_PLANTFOOD_BUTTON_DOWN");
+
+                if (bankIcon != null) {
+                    setSize(bankIcon.getRegionWidth(), bankIcon.getRegionHeight());
+                } else {
+                    setSize(220f, 90f);
+                }
+            }
+
+            @Override
+            public void draw(Batch batch, float parentAlpha) {
+                float x = getX(), y = getY(), w = getWidth(), h = getHeight();
+
+                if (bankIcon != null) batch.draw(bankIcon, x, y, w, h);
+
+                if (leafIcon != null) {
+                    float leafSize = h * LEAF_SIZE_PCT;
+                    float lx = x + w * LEAF_OFFSET_X_PCT - leafSize / 2f;
+                    float ly = y + h * LEAF_OFFSET_Y_PCT - leafSize / 2f;
+                    batch.draw(leafIcon, lx, ly, leafSize, leafSize);
+                }
             }
         }
     }

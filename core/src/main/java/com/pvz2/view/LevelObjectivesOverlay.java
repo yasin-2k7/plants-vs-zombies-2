@@ -40,6 +40,7 @@ public class LevelObjectivesOverlay extends Table {
         frame.pad(40, 30, 30, 30);
 
         Label title = new Label("LEVEL OBJECTIVES", skin, "big");
+        title.setColor(Color.BLACK);
         title.setAlignment(Align.center);
 
         Table objectivesTable = new Table();
@@ -50,6 +51,7 @@ public class LevelObjectivesOverlay extends Table {
 
             Image bullet = new Image(UiUtils.getSolidColorRegion(new Color(0.95f, 0.95f, 0.85f, 1f)));
             Label text = new Label(objective, skin, "medium");
+            text.setColor(Color.BLACK);
             text.setWrap(true);
 
             row.add(bullet).size(16f).padRight(12f).top().padTop(6f);
