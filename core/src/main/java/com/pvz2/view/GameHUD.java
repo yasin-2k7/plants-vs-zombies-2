@@ -57,7 +57,6 @@ public class GameHUD extends Group {
         waveProgressBar = new WaveProgressBar(game);
         resourcesTable = new ResourcesTable(user, game);
         plantFoodBank = new PlantFoodBank(game, skin);
-        plantFoodBank = new PlantFoodBank(game);
         selectedPlantsList = new SelectedPlantsList(1, 1, false,
             150, 100, null, game);
 

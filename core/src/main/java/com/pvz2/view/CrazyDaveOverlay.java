@@ -289,6 +289,14 @@ public class CrazyDaveOverlay extends WidgetGroup {
         this.stateTime = 0f;
         this.currentAnim = "anim_enter";
     }
+    public void startPresentation(Runnable onComplete) {
+        if (dialogs.isEmpty()) {
+            if (onComplete != null) onComplete.run();
+            return;
+        }
+        this.onCompleteAction = onComplete;
+        startPresentation();
+    }
 
     @Override
     public void draw(Batch batch, float parentAlpha) {

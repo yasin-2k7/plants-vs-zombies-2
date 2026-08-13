@@ -35,10 +35,16 @@ public abstract class MenuScreen implements Screen {
     protected static class Notif {
         String title;
         String message;
+        boolean urgent;
 
         public Notif(String title, String message) {
+            this(title, message, false);
+        }
+
+        public Notif(String title, String message, boolean urgent) {
             this.title = title;
             this.message = message;
+            this.urgent = urgent;
         }
     }
 
@@ -152,7 +158,7 @@ public abstract class MenuScreen implements Screen {
         ));
     }
 
-    public Table createToastNotification(String title, String message) {
+    public Table createToastNotification(String title, String message, boolean urgent) {
         Table toast = new Table();
 
         toast.setBackground(getDimBackground());
@@ -164,7 +170,6 @@ public abstract class MenuScreen implements Screen {
         Label titleLabel = new Label(title, skin, "big");
         titleLabel.setColor(Color.GOLD);
 
-
         Label messageLabel = new Label(message, skin, "medium");
 
         textTable.add(titleLabel).left().row();
@@ -175,9 +180,13 @@ public abstract class MenuScreen implements Screen {
         return toast;
     }
 
-    public void addToast(String title, String message){
-        toastQueue.addLast(new Notif(title, message));
-        if (!hasNotification){
+    public void addToast(String title, String message) {
+        addToast(title, message, false);
+    }
+
+    public void addToast(String title, String message, boolean urgent) {
+        toastQueue.addLast(new Notif(title, message, urgent));
+        if (!hasNotification) {
             showNextToast();
         }
     }
@@ -187,11 +196,21 @@ public abstract class MenuScreen implements Screen {
             hasNotification = false;
             return;
         }
-
         hasNotification = true;
         Notif notif = toastQueue.removeFirst();
 
-        final Table toastTable = createToastNotification(notif.title, notif.message);
+        //**  toastهای معمولی (Added/Removed/Error و...) فعلاً غیرفعالن
+        if (!notif.urgent) {
+            showNextToast();
+            return;
+        }
+        //**
+
+        presentToast(notif);
+    }
+
+    protected void presentToast(Notif notif) {
+        final Table toastTable = createToastNotification(notif.title, notif.message, notif.urgent);
         final Table wrapper = new Table();
         wrapper.pad(10).right().top();
 

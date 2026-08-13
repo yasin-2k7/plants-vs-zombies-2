@@ -121,12 +121,6 @@ public class GameScreen extends MenuScreen {
         stage.getViewport().update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
 
         activeInstance = this;
-        if (!pendingAnnouncements.isEmpty()) {
-            for (String msg : pendingAnnouncements) {
-                addToast("", msg);
-            }
-            pendingAnnouncements.clear();
-        }
     }
 
     @Override
@@ -139,10 +133,18 @@ public class GameScreen extends MenuScreen {
 
     public static void announce(String message) {
         if (activeInstance != null) {
-            activeInstance.addToast("", message);
+            activeInstance.addToast("", message, true);
         } else {
             pendingAnnouncements.add(message);
         }
+    }
+
+    private void flushPendingAnnouncements() {
+        if (pendingAnnouncements.isEmpty()) return;
+        for (String msg : pendingAnnouncements) {
+            addToast("", msg, true);
+        }
+        pendingAnnouncements.clear();
     }
 
     @Override
@@ -207,8 +209,6 @@ public class GameScreen extends MenuScreen {
         scrollPane.setFadeScrollBars(true);
         scrollPane.setScrollingDisabled(true, false);
         panel.add(scrollPane).padTop(10).expandX().fillX();
-
-
 
         TextButton continueButton = new TextButton("LET'S ROCK!", skin, "purple");
         continueButton.addListener(new ClickListener() {
@@ -384,7 +384,7 @@ public class GameScreen extends MenuScreen {
                     updateIntroPan(delta);
                 } else {
                     if (daveOverlay != null && !daveOverlay.isStarted() && world.getState() == GameState.PLAYING) {
-                        daveOverlay.startPresentation();
+                        daveOverlay.startPresentation(this::flushPendingAnnouncements);
                     }
 
                     if (!world.isEndGameHandled()) {
@@ -499,12 +499,15 @@ public class GameScreen extends MenuScreen {
     }
 
     @Override
-    public Table createToastNotification(String title, String message) {
+    public Table createToastNotification(String title, String message, boolean urgent) {
+        if (!urgent) {
+            return super.createToastNotification(title, message, urgent);
+        }
         Table toast = new Table();
         toast.pad(10);
 
         Label messageLabel = new Label(message, skin, "big_outline");
-        messageLabel.setColor(new Color(0.95f, 0.16f, 0.14f, 1f)); // قرمز
+        messageLabel.setColor(new Color(0.95f, 0.16f, 0.14f, 1f));
         messageLabel.setAlignment(Align.center);
         messageLabel.setWrap(true);
         messageLabel.setFontScale(1.3f);
@@ -514,16 +517,13 @@ public class GameScreen extends MenuScreen {
     }
 
     @Override
-    protected void showNextToast() {
-        if (toastQueue.isEmpty()) {
-            hasNotification = false;
+    protected void presentToast(Notif notif) {
+        if (!notif.urgent) {
+            super.presentToast(notif);
             return;
         }
 
-        hasNotification = true;
-        Notif notif = toastQueue.removeFirst();
-
-        final Table toastTable = createToastNotification(notif.title, notif.message);
+        final Table toastTable = createToastNotification(notif.title, notif.message, true);
         final Table wrapper = new Table();
         wrapper.setFillParent(true);
         wrapper.center();
@@ -541,10 +541,7 @@ public class GameScreen extends MenuScreen {
                 Actions.fadeIn(0.3f),
                 Actions.scaleTo(1f, 1f, 0.35f, Interpolation.swingOut)
             ),
-            Actions.repeat(2, Actions.sequence(
-                Actions.scaleTo(1.06f, 1.06f, 0.4f, Interpolation.sine),
-                Actions.scaleTo(1f, 1f, 0.4f, Interpolation.sine)
-            )),
+            Actions.delay(2.4f),
             Actions.fadeOut(0.4f),
             Actions.run(new Runnable() {
                 @Override
@@ -555,7 +552,6 @@ public class GameScreen extends MenuScreen {
             })
         ));
     }
-
 
 
     public GameHUD getHud() {
