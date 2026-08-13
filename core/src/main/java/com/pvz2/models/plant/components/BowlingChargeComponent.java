@@ -17,16 +17,16 @@ import java.util.function.Supplier;
 public class BowlingChargeComponent implements GameComponent {
 
     private final Bulb[] bulbs = new Bulb[3];
-    private final int shootingTime;
+    private final float shootingTime;
     private final VisionStrategy visionStrategy = new StraightVisionStrategy(1000, App.getCellHeight(), false);
     private final CombinedDamageStrategy[] damageStrategies = new CombinedDamageStrategy[3];
     private final CheckStrike strikeStrategy = new CheckStraightStrike();
     private final Supplier<MovementStrategy> movementStrategy;
     private final CombinedDamageStrategy plantFoodDamageStrategy;
-    private int shootingTimer = 0;
+    private float shootingTimer = 0f;
     private boolean activePlantFood;
     private int plantFoodProjectileCount = 0;
-    public BowlingChargeComponent(int shootingTime,
+    public BowlingChargeComponent(float shootingTime,
                                   CombinedDamageStrategy firstDamageStrategy,
                                   CombinedDamageStrategy secondDamageStrategy,
                                   CombinedDamageStrategy thirdDamageStrategy,
@@ -55,19 +55,19 @@ public class BowlingChargeComponent implements GameComponent {
     }
 
     @Override
-    public void update(Plant owner) {
+    public void update(Plant owner, float delta) {
         if (activePlantFood) {
-            plantFoodHandler(owner);
+            plantFoodHandler(owner, delta);
             return;
         }
 
         for (Bulb bulb : bulbs) {
-            bulb.update();
+            bulb.update(delta);
         }
 
         if (visionStrategy.findZombie(owner) != null) {
             if (shootingTimer > 0) {
-                shootingTimer--;
+                shootingTimer-= delta;
             } else {
                 tryShooting(owner);
             }
@@ -89,9 +89,9 @@ public class BowlingChargeComponent implements GameComponent {
         }
     }
 
-    private void plantFoodHandler(Plant owner) {
+    private void plantFoodHandler(Plant owner, float delta) {
         if (shootingTimer > 0) {
-            shootingTimer--;
+            shootingTimer-= delta;
         } else {
             plantFoodProjectileCount--;
             shootingTimer = shootingTime;
@@ -107,22 +107,21 @@ public class BowlingChargeComponent implements GameComponent {
 
     private static class Bulb {
         private final ProjectileType projectileType;
-        private final int chargeTime;
-        private int currentCharge = 0;
+        private final float chargeTime;
+        private float currentCharge = 0f;
         private boolean isReady;
 
-
-        public Bulb(ProjectileType projectileType, int chargeTime) {
+        public Bulb(ProjectileType projectileType, float chargeTime) {
             this.projectileType = projectileType;
             this.chargeTime = chargeTime;
         }
 
-        public void update() {
+        public void update(float delta) {
             if (!isReady) {
-                currentCharge++;
+                currentCharge += delta;
                 if (currentCharge >= chargeTime) {
                     isReady = true;
-                    currentCharge = 0;
+                    currentCharge = 0f;
                 }
             }
         }

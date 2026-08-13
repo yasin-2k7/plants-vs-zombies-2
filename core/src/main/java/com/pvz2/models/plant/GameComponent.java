@@ -3,7 +3,7 @@ package com.pvz2.models.plant;
 import com.pvz2.models.zombie.Zombie;
 
 public interface GameComponent {
-    void update(Plant owner);
+    void update(Plant owner, float delta);
 
     void activatePlantFood(Plant owner);
 
@@ -11,6 +11,6 @@ public interface GameComponent {
         return damageAmount;
     }
 
-    default void onDeath(Plant owner) {
+    default void onDeath(Plant owner, float delta) {
     }
 }

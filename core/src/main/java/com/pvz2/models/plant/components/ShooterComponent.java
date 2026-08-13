@@ -19,7 +19,7 @@ import java.util.function.Supplier;
 
 public class ShooterComponent implements GameComponent {
     private static final int BURST_DELAY_MAX = 1;
-    private final int shootingTime;
+    private final float shootingTime;
     public PlantFoodBehavior plantFoodBehavior;
     Damageable target = null;
     private ProjectileType bulletType;
@@ -29,8 +29,8 @@ public class ShooterComponent implements GameComponent {
     private int burstProjectileNumberOnPlantFood;
     private int burstDelayMax = BURST_DELAY_MAX;
     private int projectilesLeftForShoot;
-    private int shootingTimer = 0;
-    private int burstDelayTimer;
+    private float shootingTimer = 0f;
+    private float burstDelayTimer;
     private boolean hasGiant;
     private int giantCount;
     private boolean activePlantFood;
@@ -44,7 +44,7 @@ public class ShooterComponent implements GameComponent {
     private AttackCallback attackCallback;
 
     public ShooterComponent(ProjectileType bulletType, ProjectileType giantType,
-                            int shootingTime, int burstProjectileNumber,
+                            float shootingTime, int burstProjectileNumber,
                             int burstProjectileNumberOnPlantFood, boolean hasGiant,
                             Supplier<CombinedDamageStrategy> damageStrategy, CheckStrike strikeStrategy,
                             int giantCount, int normalPierce, int giantPierce, int giantDamageFactor) {
@@ -76,9 +76,9 @@ public class ShooterComponent implements GameComponent {
     }
 
     @Override
-    public void update(Plant owner) {
+    public void update(Plant owner, float delta) {
         if (projectilesLeftForShoot > 0) {
-            burstHandler(owner);
+            burstHandler(owner, delta);
             return;
         }
 
@@ -87,14 +87,14 @@ public class ShooterComponent implements GameComponent {
             if (visionStrategy.findZombie(owner) != null) {
                 target = visionStrategy.findZombie(owner);
                 if (shootingTimer > 0) {
-                    shootingTimer--;
+                    shootingTimer-= delta;
                 } else {
                     if (attackCallback != null) {
                         attackCallback.onAttack(owner);
                     }
                     this.projectilesLeftForShoot = burstProjectileNumber;
                     burstDelayMax = BURST_DELAY_MAX;
-                    burstDelayTimer = 0;
+                    burstDelayTimer = 0f;
                     shootingTimer = shootingTime;
                 }
                 break;
@@ -103,9 +103,9 @@ public class ShooterComponent implements GameComponent {
 
     }
 
-    private void burstHandler(Plant owner) {
+    private void burstHandler(Plant owner, float delta) {
         if (burstDelayTimer > 0) {
-            burstDelayTimer--;
+            burstDelayTimer-= delta;
         } else {
             for (Supplier<MovementStrategy> movementStrategy : movementStrategies) {
                 Projectile p = App.getCurrentGame().getProjectilesPool().acquire();

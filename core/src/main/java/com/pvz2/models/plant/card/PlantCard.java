@@ -16,7 +16,7 @@ public class PlantCard {
         this.maxCooldownTicks = maxCooldownTicks;
     }
 
-    public void update() {
+    public void update(float delta) {
         if (!activeCooldown) return;
         if (ready) return;
         currentCooldownTicks++;

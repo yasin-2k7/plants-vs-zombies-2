@@ -1,33 +1,33 @@
 package com.pvz2.view;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
+import com.badlogic.gdx.utils.Scaling;
 import com.badlogic.gdx.utils.viewport.FillViewport;
 import com.pvz2.Main;
 import com.pvz2.controller.GreenhouseMenuController;
 import com.pvz2.models.core.App;
+import com.pvz2.models.core.User;
 import com.pvz2.models.greenhouse.GreenHouse;
 import com.pvz2.models.greenhouse.Pot;
-import pvz.libpvz.pam.PamPlayer;
 
 public class GreenhouseMenuScreen extends MenuScreen {
 
     private final GreenhouseMenuController controller = new GreenhouseMenuController();
     private Table gridTable;
     private Label statusLabel;
+    private ResourcesTable resourcesTable;
+    private Table seedBoxContainer;
 
     private static final String TEX_BG = "IMAGE_BACKGROUNDS_ZEN_GARDEN";
     private static final String TEX_POT_EMPTY = "IMAGE_ZEN_GARDEN_GROWING_PLANT_SLOT_GROWING_PLANT_SLOT_184X161";
     private static final String TEX_POT_LOCKED = "IMAGE_ZEN_GARDEN_LOCKED_POT_ICON";
-    private static final String TEX_PLANT_PREFIX = "768/INITIAL/PLANT/";
 
     private static final Color READY_COLOR = Color.WHITE;
     private static final Color GROWING_TINT = new Color(0.6f, 0.6f, 0.6f, 1f);
@@ -44,18 +44,41 @@ public class GreenhouseMenuScreen extends MenuScreen {
         backgroundImage.setFillParent(true);
         mainStack.add(backgroundImage);
 
+        // --- ساخت نوار بالایی (Top Bar) ---
         Table topTable = new Table();
-        topTable.top().left().setFillParent(true);
+        topTable.top().setFillParent(true);
+        topTable.pad(60f, 70f, 0f, 70f); // padTop برای پایین‌تر آوردن دکمه‌ها
 
+        // ۱. دکمه‌های سمت چپ (برگشت + شاپ)
         Button backBtn = createBackButton();
-        topTable.add(backBtn).size(60, 60).pad(15);
+        Button shopBtn = createShopButton();
+
+        topTable.add(backBtn).size(65, 65).padRight(15).padLeft(120);
+        topTable.add(shopBtn).size(65, 65);
+
+        topTable.add().expandX(); // اسپیسر
+
+        // ۲. بخش منابع سمت راست با ResourcesTable
+        User currentUser = App.getCurrentUser();
+        resourcesTable = new ResourcesTable(currentUser, game);
+
+        seedBoxContainer = new Table();
+        updateSeedBox();
+
+        Table rightContainer = new Table();
+        rightContainer.add(resourcesTable).padRight(15);
+        rightContainer.add(seedBoxContainer).padRight(120);
+
+        topTable.add(rightContainer).right();
         mainStack.add(topTable);
 
+        // --- گرید گلدان‌ها ---
         gridTable = new Table();
         gridTable.setFillParent(true);
         gridTable.top().padTop(280);
         mainStack.add(gridTable);
 
+        // --- Label پیام‌ها ---
         statusLabel = new Label("", skin);
         statusLabel.setColor(Color.YELLOW);
         statusLabel.setAlignment(Align.center);
@@ -68,7 +91,61 @@ public class GreenhouseMenuScreen extends MenuScreen {
         refreshGrid();
     }
 
+    private void updateSeedBox() {
+        seedBoxContainer.clearChildren();
+
+        Table box = new Table();
+        TextureRegion bgRegion = game.textureBank.region("IMAGE_UI_GENERIC_BUTTON_GENERIC_LTECURRENCY");
+        if (bgRegion != null) {
+            box.setBackground(new TextureRegionDrawable(bgRegion));
+        }
+
+        User currentUser = App.getCurrentUser();
+        int totalSeeds = 0;
+        if (currentUser != null && currentUser.getSeedPackets() != null) {
+            totalSeeds = currentUser.getSeedPackets().values().stream()
+                .mapToInt(Integer::intValue)
+                .sum();
+        }
+
+        TextureRegion iconTex = game.textureBank.region(
+            "IMAGE_ZEN_GARDEN_GROWING_PLANT_SLOT_GROWING_PLANT_SLOT_122X161");
+        Image icon = (iconTex != null) ? new Image(iconTex) : new Image();
+        icon.setScaling(Scaling.fit);
+
+        Label label = new Label("x" + totalSeeds, skin);
+
+        box.add(icon).height(60).padLeft(-8);
+        box.add().expandX();
+        box.add(label);
+        box.add().expandX();
+
+        seedBoxContainer.add(box);
+    }
+
+    private Button createShopButton() {
+        TextureRegion shopNorm = game.textureBank.region("IMAGE_UI_HUD_WORLDMAP_BUTTONS_HUD_STORE_NORMAL");
+        TextureRegion shopPress = game.textureBank.region("IMAGE_UI_HUD_WORLDMAP_BUTTONS_HUD_STORE_SELECTED");
+
+            ImageButton.ImageButtonStyle style = new ImageButton.ImageButtonStyle();
+            style.up = new TextureRegionDrawable(shopNorm);
+            if (shopPress != null) style.down = new TextureRegionDrawable(shopPress);
+
+            ImageButton btn = new ImageButton(style);
+            btn.addListener(new ClickListener() {
+                @Override
+                public void clicked(InputEvent event, float x, float y) {
+                    fadeAndSwitchScreen(new ShopMenuScreen(game));
+                }
+            });
+            return btn;
+
+    }
+
     private void refreshGrid() {
+        if (resourcesTable != null) resourcesTable.update();
+        updateSeedBox();
+
         gridTable.clearChildren();
 
         GreenHouse greenHouse = (App.getCurrentUser() != null) ? App.getCurrentUser().getGreenhouse() : null;
@@ -98,7 +175,6 @@ public class GreenhouseMenuScreen extends MenuScreen {
         final Stack potStack = new Stack();
 
         if (pot.isLocked()) {
-            // ۱. تصویر قفل و دکمه خرید روی گلدان قفل شده
             Image lockImage = new Image(game.textureBank.region(TEX_POT_LOCKED));
             potStack.add(lockImage);
 
@@ -110,8 +186,6 @@ public class GreenhouseMenuScreen extends MenuScreen {
             buyBtn.addListener(new ClickListener() {
                 @Override
                 public void clicked(InputEvent event, float cx, float cy) {
-                    //String resultMessage = controller.unlockPot(x, y);
-                    //showToast(resultMessage);
                     refreshGrid();
                 }
             });
@@ -127,7 +201,9 @@ public class GreenhouseMenuScreen extends MenuScreen {
             potStack.addListener(new ClickListener() {
                 @Override
                 public void clicked(InputEvent event, float cx, float cy) {
-                    showSeedChooserDialog(x, y);
+                    String resultMessage = controller.plantPot(x, y);
+                    showToast(resultMessage);
+                    refreshGrid();
                 }
             });
 
@@ -207,74 +283,10 @@ public class GreenhouseMenuScreen extends MenuScreen {
         return cell;
     }
 
-    private void showSeedChooserDialog(final int x, final int y) {
-        final Table overlay = new Table();
-        overlay.setFillParent(true);
-        overlay.setTouchable(Touchable.enabled);
-
-        Table dialogBox = new Table();
-        try {
-            TextureRegion bgRegion = game.textureBank.region("IMAGE_UI_MAINMENU_DIALOG_BG");
-            if (bgRegion != null) dialogBox.background(new TextureRegionDrawable(bgRegion));
-        } catch (Exception ignored) {}
-
-        dialogBox.pad(20);
-
-        Label titleLabel = new Label("Choose a sprout to plant:", skin);
-        dialogBox.add(titleLabel).colspan(3).padBottom(15).row();
-
-        String[] seeds = {"PEASHOOTER", "SUNFLOWER", "WALLNUT"};
-
-        for (final String seedName : seeds) {
-            Table seedCard = new Table();
-
-            String plantTex = "IMAGE_UI_PACKETS_" + seedName;
-            Image seedImg;
-
-            try {
-                TextureRegion reg = game.textureBank.region(plantTex);
-                seedImg = (reg != null) ? new Image(reg) : new Image(game.textureBank.region(TEX_POT_EMPTY));
-            } catch (Exception e) {
-                seedImg = new Image(game.textureBank.region(TEX_POT_EMPTY));
-            }
-            seedCard.add(seedImg).size(60, 60).row();
-
-            TextButton plantBtn = new TextButton("Plant", skin);
-            plantBtn.getLabel().setFontScale(0.5f);
-            plantBtn.addListener(new ClickListener() {
-                @Override
-                public void clicked(InputEvent event, float cx, float cy) {
-                    String resultMessage = controller.plantPot(x, y);
-                    showToast(resultMessage);
-                    refreshGrid();
-                    overlay.remove();
-                }
-            });
-
-            seedCard.add(plantBtn).width(60).height(25).padTop(5);
-            dialogBox.add(seedCard).pad(10);
-        }
-
-        dialogBox.row();
-        TextButton closeBtn = new TextButton("Cancel", skin);
-        closeBtn.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float cx, float cy) {
-                overlay.remove(); // بستن دیالوگ
-            }
-        });
-
-        dialogBox.add(closeBtn).colspan(3).padTop(15);
-        overlay.add(dialogBox);
-
-        stage.addActor(overlay);
-    }
-
     private Button createBackButton() {
         TextureRegion backNorm = game.textureBank.region("IMAGE_UI_MAINMENU_BACK_BTN_NORMAL");
         TextureRegion backPress = game.textureBank.region("IMAGE_UI_MAINMENU_BACK_BTN_PRESSED");
 
-        if (backNorm != null) {
             ImageButton.ImageButtonStyle style = new ImageButton.ImageButtonStyle();
             style.up = new TextureRegionDrawable(backNorm);
             if (backPress != null) style.down = new TextureRegionDrawable(backPress);
@@ -287,16 +299,7 @@ public class GreenhouseMenuScreen extends MenuScreen {
                 }
             });
             return btn;
-        }
 
-        TextButton textBtn = new TextButton("Back", skin, "purple");
-        textBtn.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                fadeAndSwitchScreen(new MainMenuScreen(game));
-            }
-        });
-        return textBtn;
     }
 
     private void showToast(String message) {

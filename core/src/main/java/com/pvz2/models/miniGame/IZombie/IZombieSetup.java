@@ -72,7 +72,7 @@ public class IZombieSetup implements LevelSetup {
                 SunProducer sp = new SunProducer(Zombies.ARMORED, 1100, 0.4, 20);
                 sp.setX(8 * 100 + 50);
                 sp.setY(r * 100 + 50);
-                sp.initSpawnTick(level.getCurrentTick());
+                sp.initSpawnTick(level.getElapsedTime());
                 level.getSunProducers().add(sp);
                 level.addZombie(sp);
             }

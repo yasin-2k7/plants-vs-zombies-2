@@ -19,12 +19,12 @@ import java.util.ArrayList;
 import java.util.Random;
 
 public class BigWaveBeachWorld extends GameWorld {
-    private final int tideCycleTicks = 300;
-    private final int lowLyingCoastSpawnTicks = 250;
+    private final float tideCycleTime = 30.0f;
+    private final float lowLyingCoastSpawnTime = 25.0f;
     private int tideLineCol;
     private int currentTideCol;
-    private int lastTideChangeTick = 0;
-    private int lastLowLyingCoastSpawnTick = 0;
+    private float lastTideChangeTime = 0f;
+    private float lastLowLyingCoastSpawnTime = 0f;
     private Random random = new Random();
 
     public BigWaveBeachWorld(LevelSetup levelSetup, ArrayList<LoseCondition> loseConditions,
@@ -57,17 +57,17 @@ public class BigWaveBeachWorld extends GameWorld {
     }
 
     @Override
-    public void tick() {
-        super.tick();
+    public void tick(float delta) {
+        super.tick(delta);
         updateLowLyingCoasts();
         updateTide();
     }
 
     private void updateLowLyingCoasts() {
-        int currentTick = getCurrentTick();
+        float currentTime = getElapsedTime();
 
-        if (currentTick - lastLowLyingCoastSpawnTick >= lowLyingCoastSpawnTicks) {
-            lastLowLyingCoastSpawnTick = currentTick;
+        if (currentTime - lastLowLyingCoastSpawnTime >= lowLyingCoastSpawnTime) {
+            lastLowLyingCoastSpawnTime = currentTime;
 
             for (Cell[] cells : grid) {
                 for (Cell cell : cells) {
@@ -90,10 +90,10 @@ public class BigWaveBeachWorld extends GameWorld {
     }
 
     private void updateTide() {
-        int currentTick = getCurrentTick();
+        float currentTime = getElapsedTime();
 
-        if (currentTick - lastTideChangeTick >= tideCycleTicks) {
-            lastTideChangeTick = currentTick;
+        if (currentTime - lastTideChangeTime >= tideCycleTime) {
+            lastTideChangeTime = currentTime;
 
             int minCol = tideLineCol;
             int maxCol = getCols();

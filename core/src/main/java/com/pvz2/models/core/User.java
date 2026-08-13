@@ -213,17 +213,21 @@ public class User {
 
     public List<PlantType> getUnlockedPlantTypesWithPlantFood() {
         List<PlantType> result = new ArrayList<>();
+        if (unlockedPlantsLevels == null) return result;
         for (PlantType type : unlockedPlantsLevels.keySet()) {
             if (type != PlantType.MARIGOLD && hasPlantFoodAbility(type)) {
                 result.add(type);
             }
+        }
+        if (result.isEmpty()) {
+            result.add(PlantType.PEASHOOTER);
         }
         return result;
     }
 
 
     private boolean hasPlantFoodAbility(PlantType type) {
-        if (type == PlantType.MARIGOLD) return false;
+        if (type == null || type == PlantType.MARIGOLD) return false;
         switch (type) {
             case GOLD_BLOOM:
             case CHERRY_BOMB:

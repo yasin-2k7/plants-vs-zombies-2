@@ -49,7 +49,7 @@ public class MeleeFactory {
         int level = App.getCurrentUser().getUnlockedPlantsLevels().getOrDefault(PlantType.PHAT_BEET, 1);
         int damage = (level >= 2) ? 25 : 15;
         int health = (level >= 4) ? 500 : 300;
-        int interval = (level >= 3) ? 18 : 20;
+        float interval = (level >= 3) ? 3.0f : 4.0f;
 
         Plant plant = new Plant(PlantType.PHAT_BEET, health, damage);
         plant.addComponent(new SquareMeleeComponent(damage, interval));
@@ -63,7 +63,7 @@ public class MeleeFactory {
         int maxStage = (level >= 4) ? 4 : 3;
 
         Plant plant = new Plant(PlantType.KIWIBEAST, health, baseDamage);
-        plant.addComponent(new SquareMeleeComponent(baseDamage, 20, true, maxStage));
+        plant.addComponent(new SquareMeleeComponent(baseDamage, 3.0f, true, maxStage));
         return plant;
     }
 
@@ -72,14 +72,14 @@ public class MeleeFactory {
 
         int health = (level >= 3) ? 500 : 300;
 
-        int digestSeconds = 40;
+        float digestSeconds = 40f;
         if (level >= 2) digestSeconds -= 2;
         if (level >= 4) digestSeconds -= 3;
 
-        int digestTicks = digestSeconds * 10;
+
 
         Plant plant = new Plant(PlantType.CHOMPER, health, 9999);
-        plant.addComponent(new ChomperMeleeComponent(digestTicks));
+        plant.addComponent(new ChomperMeleeComponent(digestSeconds));
 
         return plant;
     }

@@ -13,8 +13,8 @@ import com.pvz2.models.world.GameWorld;
 import com.pvz2.models.zombie.Zombie;
 
 public class PeashooterZombie extends Zombie {
-    private static final int COOLDOWN_TICKS = 15;
-    private int shootCooldown = 0;
+    private static final float COOLDOWN_TICKS = 1.5f;
+    private float shootCooldown = 0f;
 
     public PeashooterZombie(Zombies name, int health, double speed, int damage) {
         super(name, health, speed, damage);
@@ -47,16 +47,16 @@ public class PeashooterZombie extends Zombie {
     }
 
     @Override
-    public void update() {
+    public void update(float delta) {
         if (isDead) return;
-        super.update();
+        super.update(delta);
         if (isDead) return;
 
         if (shootCooldown <= 0) {
             shoot();
             shootCooldown = COOLDOWN_TICKS;
         } else {
-            shootCooldown--;
+            shootCooldown-= delta;
         }
     }
 }

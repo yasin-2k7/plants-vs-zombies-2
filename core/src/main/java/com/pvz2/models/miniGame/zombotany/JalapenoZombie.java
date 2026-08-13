@@ -8,8 +8,8 @@ import com.pvz2.models.world.GameWorld;
 import com.pvz2.models.zombie.Zombie;
 
 public class JalapenoZombie extends Zombie {
-    private static final int EXPLODE_AFTER_TICKS = 50;
-    private int ticksSinceSpawn = 0;
+    private static final float EXPLODE_AFTER_TIME = 10f;
+    private float timeSinceSpawn = 0f;
     private boolean exploded = false;
 
     public JalapenoZombie(Zombies name, int health, double speed, int damage) {
@@ -17,13 +17,13 @@ public class JalapenoZombie extends Zombie {
     }
 
     @Override
-    public void update() {
+    public void update(float delta) {
         if (isDead || exploded) return;
-        super.update();
+        super.update(delta);
         if (isDead) return;
 
-        ticksSinceSpawn++;
-        if (ticksSinceSpawn >= EXPLODE_AFTER_TICKS) {
+        timeSinceSpawn+= delta;
+        if (timeSinceSpawn >= EXPLODE_AFTER_TIME) {
             explodeRow();
         }
     }

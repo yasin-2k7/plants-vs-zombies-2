@@ -9,22 +9,22 @@ import com.pvz2.models.world.SunType;
 import java.util.Random;
 
 public class SunSpawnMechanic implements Mechanic {
-    private long lastSpawnTick = 0;
-    private int spawnInterval = 120; //ms
+    private float lastSpawnTime = 0f;
+    private float spawnInterval = 12f; //ms
 
     @Override
     public void applyMechanic(GameWorld world) {
-        long now = world.getCurrentTick();
+        float now = world.getElapsedTime();
 
         int difficulty = App.getCurrentUser().getGameDifficulty();
         double increaseFactor = DifficultyCalculator.increaseFactor(difficulty);
         int adjustedInterval = (int) Math.round(spawnInterval * increaseFactor);
 
 
-        if (now - lastSpawnTick >= adjustedInterval) {
+        if (now - lastSpawnTime >= adjustedInterval) {
             spawnRandomSun(world);
-            spawnInterval = Math.max((int) (6 + 0.05 * world.getCurrentTick()), 120);
-            lastSpawnTick = now;
+            spawnInterval = Math.max((float) (6f + 0.05f * world.getElapsedTime()), 12f);
+            lastSpawnTime = now;
         }
 
     }

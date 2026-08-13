@@ -3,10 +3,10 @@ package com.pvz2.models.world.loseCondition;
 import com.pvz2.models.world.GameWorld;
 
 public class TimedWarLose implements LoseCondition {
-    private long timeLimit;
+    private float timeLimit;
     private int targetKills;
     private int currentKills = 0;
-    private long startTime = -1;
+    private float startTime = -1;
 
     public TimedWarLose(long timeLimit, int targetKills) {
         this.timeLimit = timeLimit;
@@ -21,9 +21,9 @@ public class TimedWarLose implements LoseCondition {
     @Override
     public boolean checkLose(GameWorld game) {
         if (startTime == -1) {
-            startTime = game.getCurrentTick();
+            startTime = game.getElapsedTime();
         }
-        long elapsed = game.getCurrentTick() - startTime;
+        float elapsed = game.getElapsedTime() - startTime;
 
         return elapsed >= timeLimit && currentKills < targetKills;
     }

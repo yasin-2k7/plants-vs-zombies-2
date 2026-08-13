@@ -10,46 +10,46 @@ import java.util.List;
 
 public class SquareMeleeComponent implements GameComponent {
     private final int maxStage;
-    private final int stage2Ticks = 240;
-    private final int stage3Ticks = 720;
-    private final int stage4Ticks = 1440;
+    private final float stage2Time = 24f;
+    private final float stage3Time = 72f;
+    private final float stage4Time = 144f;
     private final int baseDamage;
-    private int plantationTicks = 0;
+    private float plantationTime = 0f;
     private int currentStage = 1;
     private boolean hasGrowing;
-    private int attackIntervalTicks;
-    private int lastAttackTick = 0;
+    private float attackIntervalTime;
+    private float lastAttackTime = 0f;
 
-    public SquareMeleeComponent(int baseDamage, int attackIntervalTicks, boolean hasGrowing, int maxStage) {
+    public SquareMeleeComponent(int baseDamage, float attackIntervalTime, boolean hasGrowing, int maxStage) {
         this.baseDamage = baseDamage;
         this.maxStage = maxStage;
         this.hasGrowing = hasGrowing;
-        this.attackIntervalTicks = attackIntervalTicks;
+        this.attackIntervalTime = attackIntervalTime;
     }
 
-    public SquareMeleeComponent(int baseDamage, int attackIntervalTicks) {
-        this(baseDamage, attackIntervalTicks, false, 1);
+    public SquareMeleeComponent(int baseDamage, float attackIntervalTime) {
+        this(baseDamage, attackIntervalTime, false, 1);
     }
 
     @Override
-    public void update(Plant owner) {
-        plantationTicks++;
-        lastAttackTick++;
+    public void update(Plant owner, float delta) {
+        plantationTime+= delta;
+        lastAttackTime+= delta;
 
         if (hasGrowing) checkGrowth();
 
-        if (lastAttackTick >= attackIntervalTicks) {
+        if (lastAttackTime >= attackIntervalTime) {
             performSonicWaveAttack(owner);
-            lastAttackTick = 0;
+            lastAttackTime = 0f;
         }
     }
 
     private void checkGrowth() {
-        if (currentStage == 1 && plantationTicks >= stage2Ticks) {
+        if (currentStage == 1 && plantationTime >= stage2Time) {
             currentStage = 2;
-        } else if (currentStage == 2 && plantationTicks >= stage3Ticks) {
+        } else if (currentStage == 2 && plantationTime >= stage3Time) {
             currentStage = 3;
-        } else if (currentStage == 3 && maxStage >= 4 && plantationTicks >= stage4Ticks) {
+        } else if (currentStage == 3 && maxStage >= 4 && plantationTime >= stage4Time) {
             currentStage = 4;
         }
     }
@@ -75,7 +75,7 @@ public class SquareMeleeComponent implements GameComponent {
     @Override
     public void activatePlantFood(Plant owner) {
         this.currentStage = maxStage;
-        this.plantationTicks = (maxStage == 4) ? stage4Ticks : stage3Ticks;
+        this.plantationTime = (maxStage == 4) ? stage4Time : stage3Time;
 
         Cell cell = owner.getCell();
         if (cell != null) {

@@ -13,7 +13,7 @@ public class MoveZombieComponent implements GameComponent {
     }
 
     @Override
-    public void update(Plant owner) {
+    public void update(Plant owner, float delta) {
         strategy.onUpdate(owner);
     }
 

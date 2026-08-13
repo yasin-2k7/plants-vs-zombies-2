@@ -16,7 +16,7 @@ public class DeflectorZombie extends Zombie {
     private static final double SPIN_SPEED_MULTIPLIER = 1.8;
     private final boolean isJuggler;
     private boolean isSpinning = false;
-    private int spinTicks = 0;
+    private float spinTime = 0f;
     private double originalSpeed;
 
     public DeflectorZombie(int health, double speed, int damage, boolean isJuggler) {
@@ -26,7 +26,7 @@ public class DeflectorZombie extends Zombie {
     }
 
     @Override
-    public void update() {
+    public void update(float delta) {
         if (isDead) return;
 
         if (isJuggler) {
@@ -50,13 +50,13 @@ public class DeflectorZombie extends Zombie {
                 if (!isSpinning) {
                     startSpinning();
                 } else {
-                    spinTicks = 30;
+                    spinTime = 3.0f;
                 }
             }
 
             if (isSpinning) {
-                spinTicks--;
-                if (spinTicks <= 0) {
+                spinTime-= delta;
+                if (spinTime <= 0) {
                     stopSpinning();
                 }
                 this.speed = originalSpeed * SPIN_SPEED_MULTIPLIER;
@@ -65,7 +65,7 @@ public class DeflectorZombie extends Zombie {
             }
         }
 
-        super.update();
+        super.update(delta);
     }
 
     public boolean tryDeflect(Projectile projectile) {
@@ -76,7 +76,7 @@ public class DeflectorZombie extends Zombie {
                 if (!isSpinning) {
                     startSpinning();
                 } else {
-                    spinTicks = 30;
+                    spinTime = 3.0f;
                 }
                 deflectProjectile(projectile);
                 return true;
@@ -92,9 +92,8 @@ public class DeflectorZombie extends Zombie {
 
     private void startSpinning() {
         isSpinning = true;
-        spinTicks = 30;
+        spinTime = 3.0f;
         System.out.println("Juggler starts spinning!");
-        spinTicks = 30;
         GameMenuController.updateState("Juggler starts spinning!");
     }
 

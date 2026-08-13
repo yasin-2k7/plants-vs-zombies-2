@@ -12,21 +12,21 @@ import java.util.Comparator;
 import java.util.List;
 
 public class ChomperMeleeComponent implements GameComponent {
-    private final int digestTimeTicks;
+    private final float digestTime;
     private boolean isDigesting = false;
-    private int digestProgressTicks = 0;
+    private float digestProgressTime = 0f;
 
-    public ChomperMeleeComponent(int digestTimeTicks) {
-        this.digestTimeTicks = digestTimeTicks;
+    public ChomperMeleeComponent(float digestTime) {
+        this.digestTime = digestTime;
     }
 
     @Override
-    public void update(Plant owner) {
+    public void update(Plant owner, float delta) {
         if (isDigesting) {
-            digestProgressTicks++;
-            if (digestProgressTicks >= digestTimeTicks) {
+            digestProgressTime+= delta;
+            if (digestProgressTime >= digestTime) {
                 isDigesting = false;
-                digestProgressTicks = 0;
+                digestProgressTime = 0f;
             }
             return;
         }
@@ -59,7 +59,7 @@ public class ChomperMeleeComponent implements GameComponent {
         if (zombie.isBoss()) return;
         zombie.takeDamage(zombie.getHealth(), "NORMAL");
         this.isDigesting = true;
-        this.digestProgressTicks = 0;
+        this.digestProgressTime = 0;
     }
 
     @Override
@@ -83,7 +83,7 @@ public class ChomperMeleeComponent implements GameComponent {
         }
 
         this.isDigesting = false;
-        this.digestProgressTicks = 0;
+        this.digestProgressTime = 0;
     }
 
 }

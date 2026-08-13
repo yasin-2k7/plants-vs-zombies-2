@@ -13,25 +13,25 @@ public class SunProducerComponent implements GameComponent {
     private final ArrayList<Sun> componentSuns = new ArrayList<>();
     private int sunSize; //مقدار خورشید تولیدی
     private int sunNumber;
-    private int lastProductionTicks;
-    private int productionTime;
+    private float lastProductionTime;
+    private float productionTime;
     private boolean doubleSunChance;
     private boolean shroom;
-    private long plantationTime;
+    private float plantationTime;
     private int sunNumberWithPlantFood;
     private boolean checkShroomSize;
     private boolean enable;
-    private int growTimeToReduce;
+    private float growTimeToReduce;
     private boolean isInstant;
 
-    public SunProducerComponent(int sunSize, int sunNumber, int productionTime, boolean doubleSunChance,
-                                boolean shroom, int sunNumberWithPlantFood, int growTimeToReduce) {
+    public SunProducerComponent(int sunSize, int sunNumber, float productionTime, boolean doubleSunChance,
+                                boolean shroom, int sunNumberWithPlantFood, float growTimeToReduce) {
         this(sunSize, sunNumber, productionTime, doubleSunChance, shroom, sunNumberWithPlantFood,
                 growTimeToReduce, false);
     }
 
-    public SunProducerComponent(int sunSize, int sunNumber, int productionTime, boolean doubleSunChance,
-                                boolean shroom, int sunNumberWithPlantFood, int growTimeToReduce, boolean isInstant) {
+    public SunProducerComponent(int sunSize, int sunNumber, float productionTime, boolean doubleSunChance,
+                                boolean shroom, int sunNumberWithPlantFood, float growTimeToReduce, boolean isInstant) {
         this.sunSize = sunSize;
         this.sunNumber = sunNumber;
         this.productionTime = productionTime;
@@ -41,14 +41,14 @@ public class SunProducerComponent implements GameComponent {
         this.sunNumberWithPlantFood = sunNumberWithPlantFood;
         this.growTimeToReduce = growTimeToReduce;
         this.isInstant = isInstant;
-        this.lastProductionTicks = productionTime * 10 - 10;
+        this.lastProductionTime = productionTime * 10 - 10;
     }
 
     @Override
-    public void update(Plant owner) {
+    public void update(Plant owner, float delta) {
 
         if (App.getCurrentGame() instanceof IZombieLevel) return;
-        tick();
+        tick(delta);
 
         if (shroom && checkShroomSize) {
             if (plantationTime > 10 * (72 - growTimeToReduce)) {
@@ -59,9 +59,9 @@ public class SunProducerComponent implements GameComponent {
             }
         }
 
-        if (lastProductionTicks >= productionTime * 10 || isInstant) {
+        if (lastProductionTime >= productionTime * 10 || isInstant) {
             enable = false;
-            lastProductionTicks = 0;
+            lastProductionTime = 0;
             for (int i = 0; i < sunNumber; i++) {
                 if (doubleSunChance && Math.random() < 0.2) componentSuns.add(produceSun(owner));
                 componentSuns.add(produceSun(owner));
@@ -107,10 +107,10 @@ public class SunProducerComponent implements GameComponent {
         this.sunSize = newSize;
     }
 
-    private void tick() {
-        plantationTime++;
+    private void tick(float delta) {
+        plantationTime += delta;
         if (enable) {
-            lastProductionTicks++;
+            lastProductionTime += delta;
         }
     }
 

@@ -38,19 +38,19 @@ public class DodoRiderZombie extends Zombie {
     }
 
     @Override
-    public void update() {
+    public void update(float delta) {
         if (isDead) return;
 
         GameWorld game = App.getCurrentGame();
         if (game == null) {
-            super.update();
+            super.update(delta);
             return;
         }
 
         int col = (int) (this.x / App.getCellWidth());
         int row = (int) (this.y / App.getCellHeight());
         if (row < 0 || row >= game.getRows() || col < 0 || col >= game.getCols()) {
-            super.update();
+            super.update(delta);
             return;
         }
 
@@ -70,7 +70,7 @@ public class DodoRiderZombie extends Zombie {
             }
         }
 
-        super.update();
+        super.update(delta);
     }
 
     private void handleObstacle(Plant plant, Cell cell) {

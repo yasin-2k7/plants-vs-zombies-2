@@ -28,18 +28,18 @@ public abstract class Zombie implements Damageable {
     protected float x, y;
     protected ZombieState currentState;
     protected List<String> armorTypes = new ArrayList<>();
-    private int slowTicksRemaining = 0;
+    private float slowTimeRemaining = 0f;
     private double slowFactor = 0.5;
-    private int disabledTicksRemaining;
-    private int freezedTicksRemaining;
-    private int onPoisonTicksRemaining;
+    private float disabledTimeRemaining;
+    private float freezedTimeRemaining;
+    private float onPoisonTimeRemaining;
     private int poisonDamage;
     private int iceHealth = 0;
     private boolean glowing = false;
 
     private PlantType killerPlantType;
 
-    private long spawnTick;
+    private float spawnTime;
     private boolean hasEatenPlant = false;
     private GameWorld world;
 
@@ -48,7 +48,7 @@ public abstract class Zombie implements Damageable {
         this.name = name;
         this.health = health;
         this.maxHealth = health;
-        this.speed = speed * 10;
+        this.speed = speed * 60;
         this.damage = damage / 10;
         this.currentState = new WalkingState();
         this.originalSpeed = this.speed;
@@ -56,7 +56,7 @@ public abstract class Zombie implements Damageable {
 
     public Zombie(Zombies name, int health, double speed, int damage, GameWorld world) {
         this.world = world;
-        this.spawnTick = world.getCurrentTick();
+        this.spawnTime = world.getElapsedTime();
 
         this.name = name;
         this.health = health;
@@ -67,28 +67,28 @@ public abstract class Zombie implements Damageable {
         this.originalSpeed = this.speed;
     }
 
-    public void update() {
+    public void update(float delta) {
         if (isDead || health <= 0 || iceHealth > 0) return;
-        if (freezedTicksRemaining > 0) {
-            freezedTicksRemaining--;
-            if (freezedTicksRemaining == 0) applySlow(20, 0.5, true);
+        if (freezedTimeRemaining > 0) {
+            freezedTimeRemaining -= delta;
+            if (freezedTimeRemaining == 0) applySlow(5.0f, 0.5, true);
             return;
         }
-        if (onPoisonTicksRemaining > 0) {
-            onPoisonTicksRemaining--;
+        if (onPoisonTimeRemaining > 0) {
+            onPoisonTimeRemaining-= delta;
             health -= poisonDamage;
             if (health <= 0) die();
         }
-        if (slowTicksRemaining > 0) {
-            slowTicksRemaining--;
-            if (slowTicksRemaining == 0) {
+        if (slowTimeRemaining > 0) {
+            slowTimeRemaining-= delta;
+            if (slowTimeRemaining == 0f) {
                 resetSpeed();
             }
         }
 
 
-        if (disabledTicksRemaining > 0) {
-            disabledTicksRemaining--;
+        if (disabledTimeRemaining > 0) {
+            disabledTimeRemaining-= delta;
             return;
         }
 
@@ -104,8 +104,8 @@ public abstract class Zombie implements Damageable {
         }
     }
 
-    public void move() {
-        this.x -= this.speed; // حرکت به چپ
+    public void move(float delta) {
+        this.x -= (float) (this.speed * delta); // حرکت به چپ
     }
 
     @Override
@@ -126,8 +126,8 @@ public abstract class Zombie implements Damageable {
 
     public void unfreeze() {
         iceHealth = 0;
-        freezedTicksRemaining = 0;
-        slowTicksRemaining = 0;
+        freezedTimeRemaining = 0f;
+        slowTimeRemaining = 0;
         this.speed = originalSpeed;
     }
 
@@ -165,38 +165,38 @@ public abstract class Zombie implements Damageable {
                 " is dead at (" + (int) x + ", " + (int) y + ")");
     }
 
-    public void applySlow(int ticks, double factor, boolean canWorkInFrostbite) {
+    public void applySlow(float delta, double factor, boolean canWorkInFrostbite) {
         if (!canWorkInFrostbite && App.getCurrentGame() instanceof FrostbiteCavesWorld) {
             return;
         }
-        if (ticks <= 0) return;
-        if (slowTicksRemaining == 0) {
+        if (delta <= 0) return;
+        if (slowTimeRemaining == 0) {
             this.originalSpeed = this.speed;
         }
         if (factor < slowFactor) {
             slowFactor = factor;
             this.speed = (originalSpeed * slowFactor);
         }
-        if (ticks > slowTicksRemaining) {
-            slowTicksRemaining = ticks;
+        if (delta > slowTimeRemaining) {
+            slowTimeRemaining = delta;
         }
     }
 
     public void makePoisoned(int damageOnTick) {
-        onPoisonTicksRemaining = 5;
+        onPoisonTimeRemaining = 1.0f;
         poisonDamage = damageOnTick;
     }
 
-    public void disableFor(int ticks) {
-        disabledTicksRemaining = ticks;
+    public void disableFor(float delta) {
+        disabledTimeRemaining = delta;
     }
 
-    public void freeze(int ticks) {
-        freezedTicksRemaining = ticks;
+    public void freeze(float delta) {
+        freezedTimeRemaining = delta;
     }
 
     public boolean isSlowed() {
-        return slowTicksRemaining > 0;
+        return slowTimeRemaining > 0;
     }
 
     public void resetSpeed() {
@@ -204,7 +204,7 @@ public abstract class Zombie implements Damageable {
             originalSpeed = this.speed;
         }
         this.speed = originalSpeed;
-        this.slowTicksRemaining = 0;
+        this.slowTimeRemaining = 0;
         this.slowFactor = 1.0;
     }
 
@@ -248,21 +248,21 @@ public abstract class Zombie implements Damageable {
 
     public void setSpeed(double speed) {
         this.speed = speed;
-        if (slowTicksRemaining == 0) {
+        if (slowTimeRemaining == 0) {
             this.originalSpeed = speed;
         }
     }
 
-    public int getSlowTicksRemaining() {
-        return slowTicksRemaining;
+    public float getSlowTicksRemaining() {
+        return slowTimeRemaining;
     }
 
-    public int getDisabledTicksRemaining() {
-        return disabledTicksRemaining;
+    public float getDisabledTicksRemaining() {
+        return disabledTimeRemaining;
     }
 
-    public int getFreezedTicksRemaining() {
-        return freezedTicksRemaining;
+    public float getFreezedTicksRemaining() {
+        return freezedTimeRemaining;
     }
 
     public int getHealth() {
@@ -309,8 +309,8 @@ public abstract class Zombie implements Damageable {
         return armorTypes;
     }
 
-    public long getSpawnTick() {
-        return spawnTick;
+    public float getSpawnTime() {
+        return spawnTime;
     }
 
     public boolean hasEatenPlant() {
@@ -334,8 +334,8 @@ public abstract class Zombie implements Damageable {
 
     }
 
-    public int getOnPoisonTicksRemaining() {
-        return onPoisonTicksRemaining;
+    public float getOnPoisonTicksRemaining() {
+        return onPoisonTimeRemaining;
     }
 
     public void eatBrainAndLeave() {

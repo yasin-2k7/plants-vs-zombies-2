@@ -6,7 +6,7 @@ public class Collectable {
     private float x, y;
     private CollectableType type;
     private int lifeTime = 70;
-    private int currentTime = 0;
+    private float currentTime = 0f;
     private boolean dead = false;
 
     public Collectable(float x, float y, CollectableType type) {
@@ -15,8 +15,8 @@ public class Collectable {
         this.type = type;
     }
 
-    public void update() {
-        currentTime++;
+    public void update(float delta) {
+        currentTime += delta;
         if (currentTime >= lifeTime) {
             dead = true;
         }

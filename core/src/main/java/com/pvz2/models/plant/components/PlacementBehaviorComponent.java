@@ -31,7 +31,7 @@ public class PlacementBehaviorComponent implements GameComponent {
     }
 
     @Override
-    public void update(Plant owner) {
+    public void update(Plant owner, float delta) {
 
     }
 

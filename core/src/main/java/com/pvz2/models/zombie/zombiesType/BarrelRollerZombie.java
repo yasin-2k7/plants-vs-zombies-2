@@ -23,27 +23,27 @@ public class BarrelRollerZombie extends Zombie {
     }
 
     @Override
-    public void update() {
+    public void update(float delta) {
         if (isDead) return;
 
         GameWorld game = App.getCurrentGame();
         if (game == null) {
-            super.update();
+            super.update(delta);
             return;
         }
 
         Cell zombieCell = Cell.findZombieCell(game.getGrid(), this);
         if (zombieCell == null) {
-            super.update();
+            super.update(delta);
             return;
         }
         this.currentCell = zombieCell;
 
         if (barrelIntact && barrelHealth > 0) {
             crushPlants(zombieCell, game);
-            super.update();
+            super.update(delta);
         } else {
-            super.update();
+            super.update(delta);
             if (!barrelIntact && !hasSpawnedImps) {
                 spawnImps(zombieCell, game);
                 hasSpawnedImps = true;

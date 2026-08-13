@@ -133,7 +133,7 @@ public class ShooterFactory {
             public void activate(Plant owner, ShooterComponent shooterComponent) {
                 for (Zombie zombie : Cell.getZombiesInCells(Cell.getCellsInRow(p.getCell(),
                         LevelMenuController.getGameCells()))){
-                    zombie.freeze(20);
+                    zombie.freeze(5.0f);
                     BurstPlantFood.INSTANCE.activate(p, newComponent);
                 }
             }

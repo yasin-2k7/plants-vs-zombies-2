@@ -1,5 +1,6 @@
 package com.pvz2.models.zombie.state;
 
+import com.badlogic.gdx.Gdx;
 import com.pvz2.models.core.App;
 import com.pvz2.models.plant.Plant;
 import com.pvz2.models.world.GameWorld;
@@ -8,7 +9,8 @@ import com.pvz2.models.zombie.Zombie;
 public class WalkingState implements ZombieState {
     @Override
     public void handleAction(Zombie zombie) {
-        zombie.move();
+        float delta = Gdx.graphics.getDeltaTime();
+        zombie.move(delta);
 
         GameWorld game = App.getCurrentGame();
         if (game == null) return;

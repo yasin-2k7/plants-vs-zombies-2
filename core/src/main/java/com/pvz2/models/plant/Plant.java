@@ -50,26 +50,28 @@ public class Plant implements Damageable {
         components.add(comp);
     }
 
-    public void update() {
+    public void update(float delta) {
         if (disabled || freeze || cat) return;
         if (plantFoodInStart) {
             activatePlantFood();
             plantFoodInStart = false;
         }
         for (GameComponent comp : components) {
-            comp.update(this);
+            comp.update(this, delta);
         }
         if (isFire) {
-            checkFire();
+            checkFire(delta);
         }
     }
 
-    private void checkFire() {
+    private void checkFire(float delta) {
+        int meltAmount = Math.round(120f * delta);
+
         List<Cell> neighborCells = Cell.getNeighborCells(cell, App.getCurrentGame().getGrid(), warmRadius);
         for (Cell cell1 : neighborCells) {
             if (cell1.getPlant() == null) continue;
             if (cell1.getPlant().freeze) {
-                cell1.getPlant().iceHealth -= 6;
+                cell1.getPlant().iceHealth -= meltAmount;
                 if (cell1.getPlant().iceHealth <= 0) {
                     cell1.getPlant().unfreeze();
                 }
@@ -126,7 +128,7 @@ public class Plant implements Damageable {
 
         this.dead = true;
         for (GameComponent component : components) {
-            component.onDeath(this);
+            component.onDeath(this, App.getCurrentGame().getElapsedTime());
         }
 
         if (this.cell != null) {

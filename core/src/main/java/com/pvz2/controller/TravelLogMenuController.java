@@ -2,12 +2,16 @@ package com.pvz2.controller;
 
 import com.pvz2.models.core.App;
 import com.pvz2.models.core.User;
+import com.pvz2.models.enums.Chapter;
 import com.pvz2.models.miniGame.MiniGameFactory;
 import com.pvz2.models.miniGame.MiniGameLevels;
 import com.pvz2.models.miniGame.MiniGames;
+import com.pvz2.models.miniGame.vaseBreaker.VaseBreakerLevel;
 import com.pvz2.models.quest.Quest;
 import com.pvz2.models.quest.reward.Reward;
 import com.pvz2.models.world.GameWorld;
+import com.pvz2.view.GameScreen;
+import com.pvz2.view.VaseBreakerScreen;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -176,6 +180,18 @@ public class TravelLogMenuController implements MenuController {
         try {
             GameWorld world = MiniGameFactory.createMiniGameLevel(selected, level);
             App.setCurrentGame(world);
+            switch (selected) {
+                case VASE_BREAKER -> {
+                    // اگر مستقیم وارد بازی می‌شود
+                    App.getGameApp().setScreen(new VaseBreakerScreen(App.getGameApp(), (VaseBreakerLevel) world));
+                }
+                default -> {
+                    // مینی‌گیم‌هایی که نیاز به انتخاب کارت گیاهان دارند (مثل Bowling یا Beghouled)
+                    // یا مستقیم به GameScreen می‌روند:
+                    App.getGameApp().setScreen(new GameScreen(App.getGameApp(), world, Chapter.EGYPT));
+                    // یا: App.getGame().setScreen(new GameScreen(App.getGame(), world));
+                }
+                }
             // needs edit: wire up screen switch once GameMenuView / PlantMenuView are ready
         } catch (IllegalArgumentException e) {
             // needs edit: surface e.getMessage() to the UI

@@ -7,35 +7,35 @@ import com.pvz2.models.zombie.Zombie;
 
 public class SunProducer extends Zombie {
     private int baseSunRate;
-    private long spawnTick;
-    private long lastSunProduceTick;
+    private float spawnTime;
+    private float lastSunProduceTime;
     private boolean initialized = false;
 
     public SunProducer(Zombies name, int health, double speed, int damage) {
         super(name, health, speed, damage);
         this.baseSunRate = 50;
-        this.spawnTick = 0;
-        this.lastSunProduceTick = 0;
+        this.spawnTime = 0f;
+        this.lastSunProduceTime = 0f;
     }
 
-    public void initSpawnTick(long currentTick) {
-        this.spawnTick = currentTick;
-        this.lastSunProduceTick = currentTick;
+    public void initSpawnTick(float currentTime) {
+        this.spawnTime = currentTime;
+        this.lastSunProduceTime = currentTime;
         this.initialized = true;
     }
 
-    public int calculateSunAmount(long currentTick) {
-        long elapsedTicks = currentTick - spawnTick;
+    public int calculateSunAmount(float currentTime) {
+        float elapsedTicks = currentTime - spawnTime;
         return 15 + (int) (elapsedTicks / 100) * 5;
     }
 
     public void updateSunGeneration(IZombieLevel level) {
-        long currentTick = level.getCurrentTick();
-        if (currentTick - lastSunProduceTick >= baseSunRate) {
-            int sunAmount = calculateSunAmount(currentTick);
+        float currentTime = level.getElapsedTime();
+        if (currentTime - lastSunProduceTime >= baseSunRate) {
+            int sunAmount = calculateSunAmount(currentTime);
             System.out.println("SunProducer generated " + sunAmount + " suns! ☀️");
             level.addSunToPlayer(sunAmount);
-            lastSunProduceTick = currentTick;
+            lastSunProduceTime = currentTime;
         }
     }
 
@@ -45,12 +45,12 @@ public class SunProducer extends Zombie {
     }
 
     @Override
-    public void update() {
-        super.update();
+    public void update(float delta) {
+        super.update(delta);
         GameWorld currentGame = App.getCurrentGame();
         if (currentGame instanceof IZombieLevel level) {
             if (!initialized) {
-                initSpawnTick(level.getCurrentTick());
+                initSpawnTick(level.getElapsedTime());
             }
 
             updateSunGeneration(level);

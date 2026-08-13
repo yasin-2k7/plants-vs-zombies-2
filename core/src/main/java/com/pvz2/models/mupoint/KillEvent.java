@@ -4,17 +4,17 @@ import com.pvz2.models.zombie.Zombie;
 
 public class KillEvent {
     private Zombie zombie;
-    private long spawnTick;
-    private long deathTick;
+    private float spawnTime;
+    private float deathTime;
     private int simultaneousKills;
     private boolean bySplashDamage;
     private boolean plantEatenInLine;
 
-    public KillEvent(Zombie zombie, long spawnTick, long deathTick,
+    public KillEvent(Zombie zombie, float spawnTime, float deathTime,
                      int simultaneousKills, boolean bySplashDamage, boolean plantEatenInLine) {
         this.zombie = zombie;
-        this.spawnTick = spawnTick;
-        this.deathTick = deathTick;
+        this.spawnTime = spawnTime;
+        this.deathTime = deathTime;
         this.simultaneousKills = simultaneousKills;
         this.bySplashDamage = bySplashDamage;
         this.plantEatenInLine = plantEatenInLine;
@@ -24,8 +24,8 @@ public class KillEvent {
         return zombie;
     }
 
-    public long getSurvivalTicks() {
-        return deathTick - spawnTick;
+    public float getSurvivalTime() {
+        return deathTime - spawnTime;
     }
 
     public int getSimultaneousKills() {

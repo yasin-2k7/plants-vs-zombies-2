@@ -11,7 +11,7 @@ import java.util.List;
 
 public class FreezeZombieBehavior implements ExplosiveBehavior {
     private ExplosionRange area;
-    private int freezeTime;
+    private float freezeTime;
 
     public FreezeZombieBehavior(ExplosionRange area, int freezeTime) {
         this.area = area;

@@ -12,7 +12,7 @@ import com.pvz2.models.projectile.strikeStrategies.CheckStrike;
 public class Sun implements Resettable {
     private float x, y;
     private float finalX, finalY;
-    private int spawnTime;
+    private float spawnTime;
     private boolean isCollected;
     private SunProducerComponent producer;
     private int size;
@@ -33,7 +33,7 @@ public class Sun implements Resettable {
             }
         }
 
-        int elapsed = game.getCurrentTick() - spawnTime;
+        float elapsed = game.getElapsedTime() - spawnTime;
         return elapsed > 100; //ms
     }
 
@@ -51,7 +51,7 @@ public class Sun implements Resettable {
         this.y = 0;
         this.type = type;
         this.size = type.amount;
-        this.spawnTime = game.getCurrentTick();
+        this.spawnTime = game.getElapsedTime();
         this.isCollected = false;
         this.producer = null;
         GameMenuController.updateState("New " + type + " sun is dropping at position (" + finalX + ", " + finalY + ")");

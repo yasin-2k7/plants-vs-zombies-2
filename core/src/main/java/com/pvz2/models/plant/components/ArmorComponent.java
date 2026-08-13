@@ -14,7 +14,7 @@ public class ArmorComponent implements GameComponent {
     }
 
     @Override
-    public void update(Plant owner) {
+    public void update(Plant owner, float delta) {
     }
 
     @Override

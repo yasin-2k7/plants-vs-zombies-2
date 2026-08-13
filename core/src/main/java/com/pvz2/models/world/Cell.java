@@ -47,7 +47,7 @@ public class Cell {
         this.terrain = initialTerrain;
     }
 
-    public void update(){
+    public void update(float delta){
         if (craterTime > 0){
             craterTime--;
         }

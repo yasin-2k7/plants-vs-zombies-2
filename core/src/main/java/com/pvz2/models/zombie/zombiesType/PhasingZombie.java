@@ -52,12 +52,12 @@ public class PhasingZombie extends Zombie {
     }
 
     @Override
-    public void update() {
+    public void update(float delta) {
         if (isDead) return;
 
         boolean wasEating = (this.currentState instanceof EatingState);
 
-        super.update();
+        super.update(delta);
 
         if (!isNewspaper && !hasKilledPlant) {
             if (wasEating && !(this.currentState instanceof EatingState)) {

@@ -13,7 +13,7 @@ public class SquashZombie extends Zombie {
     }
 
     @Override
-    public void update() {
+    public void update(float delta) {
         if (isDead) return;
 
         GameWorld game = App.getCurrentGame();
@@ -26,6 +26,6 @@ public class SquashZombie extends Zombie {
             }
         }
 
-        super.update();
+        super.update(delta);
     }
 }
