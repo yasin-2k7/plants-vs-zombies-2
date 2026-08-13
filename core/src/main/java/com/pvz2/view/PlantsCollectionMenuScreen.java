@@ -6,6 +6,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.pvz2.Main;
+import com.pvz2.controller.CollectionMenuController;
 import com.pvz2.models.core.App;
 import com.pvz2.models.enums.PlantType;
 
@@ -19,9 +20,6 @@ public class PlantsCollectionMenuScreen extends MenuScreen{
         super(game);
         this.plantType = plantType;
         this.collectionMenuScreen = collectionMenuScreen;
-
-
-
     }
 
     @Override
@@ -52,7 +50,7 @@ public class PlantsCollectionMenuScreen extends MenuScreen{
             .padBottom(80)
             .row();
         Table leftColumn = new Table();
-        leftColumn.add(createCardAppearanceTable()).size(350).row();
+        leftColumn.add(createCardAppearanceTable(plantType, game, 0.8f)).size(350).row();
         int cardLevel =
             (App.getCurrentUser() != null && App.getCurrentUser().getUnlockedPlantsLevels().get(plantType) != null)
             ? App.getCurrentUser().getUnlockedPlantsLevels().getOrDefault(plantType, 1) : 1;
@@ -70,7 +68,7 @@ public class PlantsCollectionMenuScreen extends MenuScreen{
             leftColumn.add(createUpgradeBtn()).pad(10).growX();
         }
         centerTable.add(leftColumn).top().padRight(80);
-        centerTable.add(createCardFieldsTable()).top().size(350).row();
+        centerTable.add(createCardFieldsTable(plantType, game, "medium", true)).top().size(350).row();
         mainTable.add(centerTable).expand().center().row();
         mainTable.setBackground(new TextureRegionDrawable(
             game.textureBank.region("IMAGE_MAINMENU_BACKGROUND")
@@ -92,6 +90,7 @@ public class PlantsCollectionMenuScreen extends MenuScreen{
                 if (collectionMenuScreen.getController().purchasePlant(plantType)){
                     buildUI();
                     collectionMenuScreen.getResourcesTable().update();
+                    collectionMenuScreen.getPlantsTable().build();
                 }
             }
         });
@@ -112,44 +111,48 @@ public class PlantsCollectionMenuScreen extends MenuScreen{
         return textButton;
     }
 
-    private Table createCardFieldsTable() {
-        int[] result = collectionMenuScreen.getController().showPlant(plantType);
+    public static Table createCardFieldsTable(PlantType plantType, Main game, String style,
+                                              boolean showFamily) {
+        int[] result = CollectionMenuController.showPlant(plantType);
         Table table = new Table();
         table.top().left();
         table.add(createFieldTable("IMAGE_UI_ALMANAC_ALMANAC_STAT_ICON_SUNCOST", "SUN COST",
-            result, 0)).left().pad(20);
+            result, 0, game, style)).left().pad(20);
         table.add(createFieldTable("IMAGE_UI_ALMANAC_PLANTS_RECHARGE_ICON", "RECHARGE",
-            result, 1)).pad(20).row();
+            result, 1, game, style)).pad(20).row();
         table.add(createFieldTable("IMAGE_UI_ALMANAC_PLANTS_TOUGHNESS_ICON", "TOUGHNESS",
-            result, 2)).left().pad(20);
+            result, 2, game, style)).left().pad(20);
         table.add(createFieldTable("IMAGE_UI_ALMANAC_PLANTS_DAMAGE_ICON", "DAMAGE",
-            result, 3)).pad(20).row();
-        Image familyImg = new Image(game.textureBank.region(PlantsTable.getPlantsFamilyMap().get(plantType.family)));
-        Label familyLbl = new Label(plantType.family.name(), skin, "medium");
-        table.add(familyImg).pad(5);
-        table.add(familyLbl).row();
-        if (plantType.hasAnyTag()){
-            String tags = String.join(", ", plantType.tags);
-            Label tagsLbl = new Label("TAGS: " + tags, skin, "medium");
-            table.add(tagsLbl).colspan(2).pad(10);
+            result, 3, game, style)).pad(20).row();
+        if (showFamily) {
+            Image familyImg = new Image(game.textureBank.region(PlantsTable.getPlantsFamilyMap().get(plantType.family)));
+            Label familyLbl = new Label(plantType.family.name(), game.skin, "medium");
+            table.add(familyImg).pad(5);
+            table.add(familyLbl).row();
+            if (plantType.hasAnyTag()) {
+                String tags = String.join(", ", plantType.tags);
+                Label tagsLbl = new Label("TAGS: " + tags, game.skin, "medium");
+                table.add(tagsLbl).colspan(2).pad(10);
+            }
         }
         return table;
     }
 
-    private Table createFieldTable(String address, String text, int[] result, int index) {
+    private static Table createFieldTable(String address, String text, int[] result, int index,
+                                          Main game, String style) {
         Table table = new Table();
         table.add(new Image(game.textureBank.region(address))).pad(5);
         Table details = new Table();
-        details.left().add(new Label(text, skin, "medium")).expandX().row();
-        details.add(new Label(Integer.toString(result[index]), skin, "medium")).expandX();
+        details.left().add(new Label(text, game.skin, style)).expandX().row();
+        details.add(new Label(Integer.toString(result[index]), game.skin, style)).expandX();
         table.add(details);
         return table;
     }
 
-    private Table createCardAppearanceTable() {
+    public static Table createCardAppearanceTable(PlantType plantType, Main game, float scale) {
         String path = getPlantAnimAddress(plantType);
         String clip = getPlantInitialClip(plantType);
-        PamActor plantPam = new PamActor(game.pamPlayer, path, clip, 0.8f, null);
+        PamActor plantPam = new PamActor(game.pamPlayer, path, clip, scale, null);
 
 
         Table table = new Table();

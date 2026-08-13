@@ -53,7 +53,11 @@ public class GameMenuController implements MenuController {
         }
 //        AppView.setCurrentScreen(MainMenuView.getInstance());
         App.setCurrentGame(null);
-        App.getCurrentUser().getPlantBoosts().clear();
+        if (!gameWorld.isConveyorMode()){
+            for (PlantCard plantCard : gameWorld.getPlantLists()){
+                App.getCurrentUser().getPlantBoosts().remove(plantCard.getType());
+            }
+        }
     }
 
     public static void handleLosing(GameWorld gameWorld) {

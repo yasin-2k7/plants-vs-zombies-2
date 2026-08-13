@@ -36,7 +36,7 @@ public class CollectionMenuController implements MenuController {
 
 
 
-    public int[] showPlant(PlantType type) {
+    public static int[] showPlant(PlantType type) {
         if (type == PlantType.IMITATER){
             return new int[]{0,0,0,0};
         }
@@ -72,12 +72,15 @@ public class CollectionMenuController implements MenuController {
         return result;
     }
 
+    public boolean upgradePlant(PlantType type){
+        return upgradePlant(type, plantsCollectionMenuScreen);
+    }
 
-    public boolean upgradePlant(PlantType type) {
+    public static boolean upgradePlant(PlantType type, MenuScreen menuScreen) {
         int plantLevel = App.getCurrentUser().getUnlockedPlantsLevels().get(type);
         if (plantLevel == 4) {
-            if (plantsCollectionMenuScreen != null){
-                plantsCollectionMenuScreen.addToast("Error", "This plant has max level.");
+            if (menuScreen != null){
+                menuScreen.addToast("Error", "This plant has max level.");
             }
             return false;
         }
@@ -86,23 +89,23 @@ public class CollectionMenuController implements MenuController {
         int currentCoin = App.getCurrentUser().getCoins();
         int neededCoin = plantLevel * 100;
         if (currentSeedPacket < neededSeedPacket) {
-            if (plantsCollectionMenuScreen != null){
-                plantsCollectionMenuScreen.addToast("Error", "You need " + neededSeedPacket +
+            if (menuScreen != null){
+                menuScreen.addToast("Error", "You need " + neededSeedPacket +
                     " seed packets.");
             }
             return false;
         }
         if (currentCoin < neededCoin) {
-            if (plantsCollectionMenuScreen != null){
-                plantsCollectionMenuScreen.addToast("Error", "You need " + neededCoin + " coins.");
+            if (menuScreen != null){
+                menuScreen.addToast("Error", "You need " + neededCoin + " coins.");
             }
             return false;
         }
         App.getCurrentUser().getUnlockedPlantsLevels().put(type, plantLevel + 1);
         App.getCurrentUser().spendCoins(neededCoin);
         App.getCurrentUser().getSeedPackets().put(type, currentSeedPacket - neededSeedPacket);
-        if (plantsCollectionMenuScreen != null){
-            plantsCollectionMenuScreen.addToast("plant " + type + " upgraded.",
+        if (menuScreen != null){
+            menuScreen.addToast("plant " + type + " upgraded.",
                 "new level: " + plantLevel + 1);
         }
         return true;
