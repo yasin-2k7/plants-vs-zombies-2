@@ -4,6 +4,8 @@ import com.pvz2.controller.GameMenuController;
 import com.pvz2.models.enums.PlantType;
 import com.pvz2.models.plant.Plant;
 import com.pvz2.models.world.Cell;
+import com.pvz2.view.GameScreen;
+import com.pvz2.view.PlantGraphic;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -36,6 +38,16 @@ public class PlantFactory {
         newPlant.setX(x);
         newPlant.setY(y);
         return newPlant;
+    }
+
+    public static Plant createPlant(PlantType type, int x, int y, Cell cell, GameScreen gameScreen){
+        Plant plant = createPlant(type, x, y, cell);
+        if (plant != null){
+            gameScreen.getPlantGraphics().add(new PlantGraphic(plant,
+                gameScreen.getGame().pamPlayer));
+            return plant;
+        }
+        return null;
     }
 
 }

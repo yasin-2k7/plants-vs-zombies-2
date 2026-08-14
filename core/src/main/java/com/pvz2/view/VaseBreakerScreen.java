@@ -29,8 +29,6 @@ import java.util.Random;
 public class VaseBreakerScreen extends MenuScreen {
 
     private final VaseBreakerLevel world;
-    private OrthographicCamera worldCamera;
-    private Viewport worldViewport;
 
     private TextureRegion lawnBackground;
     private final List<VaseGraphic> vaseGraphics = new ArrayList<>();
@@ -64,10 +62,7 @@ public class VaseBreakerScreen extends MenuScreen {
     public void show() {
         super.show();
 
-        worldCamera = new OrthographicCamera();
-        worldViewport = new FillViewport(1800, 1000, worldCamera);
-        worldCamera.position.set(1800 / 2f, 1000 / 2f, 0);
-        worldCamera.update();
+        initWorldCamera(1800, 1000);
 
         lawnBackground = game.textureBank.region("IMAGE_BACKGROUNDS_JOUST_TEXTURE");
 
@@ -94,8 +89,7 @@ public class VaseBreakerScreen extends MenuScreen {
 
         plantGraphics.removeIf(PlantGraphic::isDead);
 
-        worldViewport.apply();
-        game.batch.setProjectionMatrix(worldCamera.combined);
+        applyWorldViewport();
         game.batch.begin();
 
         if (lawnBackground != null) {

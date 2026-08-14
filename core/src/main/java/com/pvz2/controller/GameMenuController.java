@@ -257,16 +257,18 @@ public class GameMenuController implements MenuController {
         App.getCurrentGame().setSelectedPlant(null);
         App.getCurrentGame().setPlantSelected(false);
     }
-    public void plantSelectedPlant(float x, float y) {
+    public static boolean plantSelectedPlant(float x, float y, MenuScreen screen) {
         if (App.getCurrentGame().getSelectedPlant() == null) {
-//            GameMenuView.getInstance().showResult("select a plant first!");
-            return;
+            return false;
         }
-        plantPlant(App.getCurrentGame().getSelectedPlant(), x, y);
-        unselectPlant();
+        if (plantPlant(App.getCurrentGame().getSelectedPlant(), x, y, screen)){
+            unselectPlant();
+            return true;
+        }
+        return false;
     }
 
-    public void plantPlant(PlantType type, float x, float y) {
+    public static boolean plantPlant(PlantType type, float x, float y, MenuScreen screen) {
         PlantCard selectedCard = null;
         List<PlantCard> gamePlants = App.getCurrentGame().isConveyorMode()?
                 App.getCurrentGame().getConveyorBelt() : App.getCurrentGame().getPlantLists();
@@ -277,43 +279,39 @@ public class GameMenuController implements MenuController {
             }
         }
         if (selectedCard == null) {
-//            GameMenuView.getInstance().showResult(type + " is not in your plants!");
-            return;
+            return false;
         }
-        plantPlant(selectedCard, x, y);
+        return plantPlant(selectedCard, x, y, screen);
     }
 
-    private Cell findCellAt(GameWorld game, float x, float y) {return Cell.findCell(x, y, game.getGrid());}
+    private static Cell findCellAt(GameWorld game, float x, float y) {return Cell.findCell(x, y,
+        game.getGrid());}
 
-    public void plantPlant(PlantCard card, float x, float y) {
-        if (App.getCurrentGame().getSun() < card.getSunCost()) {
-//            GameMenuView.getInstance().showResult("you haven't enough suns!");
-            return;
-        }
-        if (!card.isReady()) {
-//            GameMenuView.getInstance().showResult("this plant isn't ready!");
-            return;
-        }
+    public static boolean plantPlant(PlantCard card, float x, float y, MenuScreen screen) {
         Cell selectedCell = findCellAt(App.getCurrentGame(), x, y);
         if (selectedCell == null) {
-//            GameMenuView.getInstance().showResult("you cannot plant in that place!");
-            return;
+            return false;
         }
         String error;
         PlantType type;
+        GameScreen gameScreen = screen instanceof GameScreen gameScreen1 ? gameScreen1 : null;
         if (card instanceof ImitatorCard imitatorCard) {
             type = imitatorCard.getTargetType();
             error = selectedCell.handlePlanting(type,
-                    App.getCurrentUser().getUnlockedPlantsLevels().get(PlantType.IMITATER)>=4);
+                    App.getCurrentUser().getUnlockedPlantsLevels().get(PlantType.IMITATER)>=4, gameScreen);
         } else {
             type = card.getType();
-            error = selectedCell.handlePlanting(type, App.getCurrentUser().hasBoost(type));
+            error = selectedCell.handlePlanting(type, App.getCurrentUser().hasBoost(type), gameScreen);
         }
-//        if (error != null) GameMenuView.getInstance().showResult(error);
-//        else {
-//            card.setReady(false);
-//            App.getCurrentGame().setSun(App.getCurrentGame().getSun() - card.getSunCost());
-//            }
+        if (error != null){
+            screen.addToast("Error", error);
+            return false;
+        }
+        else {
+            card.setReady(false);
+            App.getCurrentGame().setSun(App.getCurrentGame().getSun() - card.getSunCost());
+            return true;
+            }
     }
 
     public void removeCooldown() {

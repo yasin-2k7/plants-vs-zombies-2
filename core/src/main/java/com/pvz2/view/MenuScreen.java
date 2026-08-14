@@ -3,6 +3,7 @@ package com.pvz2.view;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -15,6 +16,8 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Queue;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
+import com.badlogic.gdx.utils.viewport.FillViewport;
+import com.badlogic.gdx.utils.viewport.Viewport;
 import com.pvz2.Main;
 
 public abstract class MenuScreen implements Screen {
@@ -27,6 +30,9 @@ public abstract class MenuScreen implements Screen {
     protected Stack modalStack;
     protected Stack toastStack;
     protected Stack mainStack;
+
+    protected OrthographicCamera worldCamera;
+    protected Viewport worldViewport;
 
     protected final Queue<Notif> toastQueue = new Queue<>();
     protected boolean hasNotification = false;
@@ -45,6 +51,20 @@ public abstract class MenuScreen implements Screen {
             this.title = title;
             this.message = message;
             this.urgent = urgent;
+        }
+    }
+
+    protected void initWorldCamera(float worldWidth, float worldHeight) {
+        worldCamera = new OrthographicCamera();
+        worldViewport = new FillViewport(worldWidth, worldHeight, worldCamera);
+        worldCamera.position.set(worldWidth / 2f, worldHeight / 2f, 0);
+        worldCamera.update();
+    }
+
+    protected void applyWorldViewport() {
+        if (worldViewport != null) {
+            worldViewport.apply();
+            game.batch.setProjectionMatrix(worldCamera.combined);
         }
     }
 
@@ -219,10 +239,12 @@ public abstract class MenuScreen implements Screen {
         toastStack.addActor(wrapper);
 
         toastTable.addAction(Actions.sequence(
+            Actions.visible(false),
             Actions.moveBy(0, 200f),
-            Actions.moveBy(0, -200, 0.5f, Interpolation.bounceIn),
-            Actions.delay(0.5f),
-            Actions.fadeOut(0.4f),
+            Actions.visible(true),
+            Actions.moveBy(0, -200, 0.2f, Interpolation.bounceIn),
+            Actions.delay(0.4f),
+            Actions.fadeOut(0.3f),
             Actions.run(new Runnable() {
                 @Override
                 public void run() {

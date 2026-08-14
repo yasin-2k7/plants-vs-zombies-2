@@ -19,8 +19,8 @@ public class PlantGraphic {
     public PlantGraphic(Plant plant, PamPlayer pamPlayer) {
         this.plant = plant;
 
-        int col = (int) plant.getX();
-        int row = (int) plant.getY();
+        int col = plant.getCell().getCol();
+        int row = plant.getCell().getRow();
 
         this.worldX = LawnGrid.getCellX(col);
         this.worldY = LawnGrid.getCellY(row);

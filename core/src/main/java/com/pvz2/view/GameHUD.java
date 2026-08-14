@@ -111,6 +111,8 @@ public class GameHUD extends Group {
                     }
                     if (isSelected){
                         plantCardView.setSelectedState(true);
+                        screen.getPlantPlacementManager().selectPlant(plantCardView.getType(),
+                            null);
                     }
                 }
             }
