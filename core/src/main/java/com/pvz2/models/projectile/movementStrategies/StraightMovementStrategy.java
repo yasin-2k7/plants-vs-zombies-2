@@ -19,7 +19,7 @@ public class StraightMovementStrategy implements MovementStrategy {
     }
 
     @Override
-    public void move(Projectile projectile) {
+    public void move(Projectile projectile, float delta) {
         projectile.setX(projectile.getX() + (speedX * 12));
         projectile.setY(projectile.getY() + (speedY * 12));
         // delta in the future...

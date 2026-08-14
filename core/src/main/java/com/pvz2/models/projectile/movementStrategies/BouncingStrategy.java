@@ -21,7 +21,7 @@ public class BouncingStrategy implements MovementStrategy {
     }
 
     @Override
-    public void move(Projectile projectile) {
+    public void move(Projectile projectile, float delta) {
         if (projectile.getX() <= 0 && speedX < 0) {
             speedX = -speedX;
             bounceCount++;

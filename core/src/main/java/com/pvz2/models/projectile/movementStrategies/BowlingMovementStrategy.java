@@ -22,7 +22,7 @@ public class BowlingMovementStrategy implements MovementStrategy {
     }
 
     @Override
-    public void move(Projectile projectile) {
+    public void move(Projectile projectile, float delta) {
         if (projectile.getY() >= (App.getFirstCellY() + App.getCellHeight() * 5) && speedY > 0) {
             speedY *= -1;
         } else if (projectile.getY() <= App.getFirstCellY() && speedY < 0) {
