@@ -43,9 +43,16 @@ public class ZombieGraphic {
         float renderY = zombie.getY();
 
         if (visibilities != null) {
-            pamPlayer.draw(batch, pamPath, currentClip, animTime, renderX, renderY, isLoop, visibilities);
+            pamPlayer.draw(batch, pamPath, currentClip, animTime, renderX,
+                renderY-LawnGrid.CELL_HEIGHT/3,0.8f
+                , 0.8f,
+                isLoop,
+                visibilities);
         } else {
-            pamPlayer.draw(batch, pamPath, currentClip, animTime, renderX, renderY, isLoop);
+            pamPlayer.draw(batch, pamPath, currentClip, animTime, renderX,
+                renderY-LawnGrid.CELL_HEIGHT/3,0.8f
+                , 0.8f,
+                isLoop);
         }
     }
 

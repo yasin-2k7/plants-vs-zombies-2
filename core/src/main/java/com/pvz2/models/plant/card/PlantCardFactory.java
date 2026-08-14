@@ -37,7 +37,7 @@ public class PlantCardFactory {
         PlantCard baseTargetCard = createCard(targetType, targetLevel);
 
         int finalSunCost = baseTargetCard.getSunCost();
-        int finalMaxCooldownTicks = baseTargetCard.getMaxCooldownTicks();
+        float finalMaxCooldownTicks = baseTargetCard.getMaxCooldownTicks();
 
         if (upgradeRules != null && upgradeRules.containsKey(PlantType.IMITATER.name())) {
             UpgradeConfig imitatorConfig = upgradeRules.get(PlantType.IMITATER.name()).get(imitatorLevel);

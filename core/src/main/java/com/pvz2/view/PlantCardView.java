@@ -3,6 +3,7 @@ package com.pvz2.view;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
@@ -13,6 +14,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.pvz2.models.core.App;
 import com.pvz2.models.enums.PlantType;
+import com.pvz2.models.plant.card.PlantCard;
 
 import java.util.function.Consumer;
 
@@ -22,6 +24,8 @@ public class PlantCardView extends Stack {
     private Consumer<PlantCardView> onClick;
     private CooldownOverlay overlay;
     private PlantType type;
+    private PlantCard card;
+    private Image selectedImg;
 
 
     public PlantCardView(boolean active, boolean boost, boolean lock,
@@ -92,6 +96,21 @@ public class PlantCardView extends Stack {
             this.add(lockTable);
         }
         this.add(detailsTable);
+        selectedImg = new Image(App.getGameApp().textureBank.region("IMAGE_UI_PACKETS_SELECT"));
+        this.add(selectedImg);
+        selectedImg.setVisible(false);
+    }
+
+    public void update(){
+        if (card == null) return;
+        if (card.isReady()){
+            this.active = true;
+            overlay.setProgress(0);
+        }
+        else{
+            this.active = false;
+            overlay.setProgress(1-(card.getMaxCooldownTicks()-card.getCurrentCooldownTicks()));
+        }
     }
 
     private TextureRegion createSolidColor(Color color) {
@@ -132,7 +151,15 @@ public class PlantCardView extends Stack {
         this.active = active;
     }
 
+    public void setSelectedState(boolean state){
+        selectedImg.setVisible(state);
+    }
+
     public void setClickMethod(Consumer<PlantCardView> onClick) {
         this.onClick = onClick;
+    }
+
+    public void setCard(PlantCard card) {
+        this.card = card;
     }
 }

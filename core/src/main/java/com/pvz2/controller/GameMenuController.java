@@ -1,6 +1,7 @@
 package com.pvz2.controller;
 
 
+import com.badlogic.gdx.Screen;
 import com.pvz2.models.core.App;
 import com.pvz2.models.core.User;
 import com.pvz2.models.core.UserDataManager;
@@ -24,6 +25,7 @@ import com.pvz2.models.zombie.Zombie;
 import com.pvz2.models.zombie.ZombieFactory;
 import com.pvz2.models.zombie.wave.WaveManager;
 import com.pvz2.view.GameScreen;
+import com.pvz2.view.MenuScreen;
 
 import java.util.List;
 
@@ -220,7 +222,14 @@ public class GameMenuController implements MenuController {
         }
     }
 
-    public void selectPlant(PlantType type) {
+    public static boolean selectAndUnselectPlant(PlantType type, MenuScreen screen) {
+        if (App.getCurrentGame().isPlantSelected()){
+            if (App.getCurrentGame().getSelectedPlant() == type){
+                unselectPlant();
+                return false;
+            }
+            unselectPlant();
+        }
         List<PlantCard> gamePlants = App.getCurrentGame().getPlantLists();
         PlantCard selectedCard = null;
         for (PlantCard card : gamePlants) {
@@ -230,13 +239,21 @@ public class GameMenuController implements MenuController {
             }
         }
         if (selectedCard == null) {
-//            GameMenuView.getInstance().showResult(type + " is not in your plants!");
-            return;
+            return false;
+        }
+        if (!selectedCard.isReady()){
+            screen.addToast("Error", "This plant isn't ready!");
+            return false;
+        }
+        if (!(selectedCard.getSunCost() <= App.getCurrentGame().getSun())){
+            screen.addToast("Error", "You don't have enough suns!");
+            return false;
         }
         App.getCurrentGame().setPlantSelected(true);
         App.getCurrentGame().setSelectedPlant(selectedCard.getType());
+        return true;
     }
-    public void unselectPlant() {
+    public static void unselectPlant() {
         App.getCurrentGame().setSelectedPlant(null);
         App.getCurrentGame().setPlantSelected(false);
     }

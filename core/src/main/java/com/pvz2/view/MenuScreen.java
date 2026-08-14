@@ -199,13 +199,6 @@ public abstract class MenuScreen implements Screen {
         hasNotification = true;
         Notif notif = toastQueue.removeFirst();
 
-        //**  toastهای معمولی (Added/Removed/Error و...) فعلاً غیرفعالن
-        if (!notif.urgent) {
-            showNextToast();
-            return;
-        }
-        //**
-
         presentToast(notif);
     }
 

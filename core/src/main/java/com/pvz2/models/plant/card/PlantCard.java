@@ -5,26 +5,26 @@ import com.pvz2.models.enums.PlantType;
 public class PlantCard {
     private final PlantType type;
     private int sunCost;
-    private int maxCooldownTicks;
-    private int currentCooldownTicks = 0;
+    private float maxCooldown;
+    private float currentCooldown = 0;
     private boolean ready = true;
     private boolean activeCooldown = true;
 
-    public PlantCard(PlantType type, int sunCost, int maxCooldownTicks) {
+    public PlantCard(PlantType type, int sunCost, float maxCooldownTicks) {
         this.type = type;
         this.sunCost = sunCost;
-        this.maxCooldownTicks = maxCooldownTicks;
+        this.maxCooldown = maxCooldownTicks;
     }
 
     public void update(float delta) {
         if (!activeCooldown) return;
         if (ready) return;
-        currentCooldownTicks++;
+        currentCooldown += delta;
 
-        if (currentCooldownTicks >= maxCooldownTicks) {
+        if (currentCooldown >= maxCooldown) {
 
             ready = true;
-            currentCooldownTicks = 0;
+            currentCooldown = 0;
         }
     }
 
@@ -49,7 +49,7 @@ public class PlantCard {
 
     public void reset() {
         ready = true;
-        currentCooldownTicks = 0;
+        currentCooldown = 0;
     }
 
     public int getSunCost() {
@@ -60,16 +60,16 @@ public class PlantCard {
         this.sunCost = sunCost;
     }
 
-    public int getMaxCooldownTicks() {
-        return maxCooldownTicks;
+    public float getMaxCooldownTicks() {
+        return maxCooldown;
     }
 
-    public void setMaxCooldownTicks(int maxCooldownTicks) {
-        this.maxCooldownTicks = maxCooldownTicks;
+    public void setMaxCooldownTicks(float maxCooldown) {
+        this.maxCooldown = maxCooldown;
     }
 
-    public int getCurrentCooldownTicks() {
-        return currentCooldownTicks;
+    public float getCurrentCooldownTicks() {
+        return currentCooldown;
     }
 
 

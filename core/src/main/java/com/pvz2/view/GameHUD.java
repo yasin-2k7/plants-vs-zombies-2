@@ -14,11 +14,11 @@ import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Scaling;
 import com.pvz2.Main;
+import com.pvz2.controller.GameMenuController;
 import com.pvz2.models.core.App;
 import com.pvz2.models.core.User;
 import com.pvz2.models.core.UserDataManager;
@@ -29,12 +29,9 @@ import com.pvz2.models.world.GameState;
 import com.pvz2.models.world.GameWorld;
 import com.pvz2.models.zombie.wave.WaveManager;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import pvz.skin.BorderedTable;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.function.Consumer;
 
 public class GameHUD extends Group {
@@ -47,10 +44,12 @@ public class GameHUD extends Group {
     private final ResourcesTable resourcesTable;
     private final PlantFoodBank plantFoodBank;
     private final SelectedPlantsList selectedPlantsList;
+    private final GameScreen screen;
 
     private PauseMenuOverlay activeOverlay;
 
-    public GameHUD(Main game, Skin skin, Runnable onRestart) {
+    public GameHUD(Main game, Skin skin, GameScreen screen, Runnable onRestart) {
+        this.screen = screen;
         User user = App.getCurrentUser();
 
         sunCounter = new SunCounter(game, skin);
@@ -58,7 +57,7 @@ public class GameHUD extends Group {
         resourcesTable = new ResourcesTable(user, game);
         plantFoodBank = new PlantFoodBank(game, skin);
         selectedPlantsList = new SelectedPlantsList(1, 1, false,
-            150, 100, null, game);
+            150, 100, createSelectingMethod(), game);
 
         ImageButton pauseBtn = new ImageButton(skin, "ingame_pause");
 
@@ -99,6 +98,25 @@ public class GameHUD extends Group {
         addActor(plantFoodBank);
     }
 
+   private Consumer<PlantCardView> createSelectingMethod(){
+
+        return new Consumer<PlantCardView>() {
+            @Override
+            public void accept(PlantCardView plantCardView) {
+                if (plantCardView.isActive()){
+                    boolean isSelected =
+                        GameMenuController.selectAndUnselectPlant(plantCardView.getType(), screen);
+                    for (PlantCardView cardView : selectedPlantsList.plantCardViewList){
+                        cardView.setSelectedState(false);
+                    }
+                    if (isSelected){
+                        plantCardView.setSelectedState(true);
+                    }
+                }
+            }
+        };
+   }
+
     public void resize(float stageWidth, float stageHeight) {
         topBar.pack();
         topBar.setSize(stageWidth, topBar.getHeight());
@@ -114,6 +132,7 @@ public class GameHUD extends Group {
         plantFoodBank.update(world);
         resourcesTable.update();
         waveProgressBar.update(world != null ? world.getWaveManager() : null, delta);
+        selectedPlantsList.update();
     }
 
     private static class PauseMenuOverlay extends Table {
@@ -389,8 +408,10 @@ public class GameHUD extends Group {
 
     public static class SelectedPlantsList extends PlantsTable{
         private final PlantType[] slots = new PlantType[8];
+        private final ArrayList<PlantCardView> plantCardViewList = new ArrayList<PlantCardView>();
         private final Main game;
         private PlantType imitatorCardType;
+        private boolean isAcitve = false;
 
         public SelectedPlantsList(int column, int pad, boolean upgradeBar,
                                   int cardWidth, int cardHeight, Consumer<PlantCardView> cardClickMethod, Main game) {
@@ -402,6 +423,7 @@ public class GameHUD extends Group {
         @Override
         public void build(){
             this.clear();
+            plantCardViewList.clear();
             User user = App.getCurrentUser();
             if (user == null) return;
             int i = 1;
@@ -429,6 +451,7 @@ public class GameHUD extends Group {
                         , cardLevel, card.getSunCost(), plantType);
                     cardTable.add(plantCardView).size(cardWidth, cardHeight);
                     plantCardView.setClickMethod(cardClickMethod);
+                    plantCardViewList.add(plantCardView);
                 }
                 this.add(cardTable).top();
                 i++;
@@ -443,6 +466,24 @@ public class GameHUD extends Group {
             this.imitatorCardType = imitatorCardType;
         }
 
+        public void activate(java.util.List<PlantCard> cards){
+            isAcitve = true;
+            for (PlantCardView plantCardView : plantCardViewList){
+                for (PlantCard card : cards){
+                    if (plantCardView.getType() == card.getType()){
+                        plantCardView.setCard(card);
+                        break;
+                    }
+                }
+            }
+        }
+
+        public void update(){
+            if (!isAcitve) return;
+            for (PlantCardView plantCardView : plantCardViewList){
+                plantCardView.update();
+            }
+        }
 
 
         public boolean hasPlant(PlantType plantType){

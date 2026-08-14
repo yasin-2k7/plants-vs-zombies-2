@@ -45,7 +45,7 @@ public class CollectionMenuController implements MenuController {
             App.getCurrentUser().getUnlockedPlantsLevels().getOrDefault(type,1));
         int[] result = new int[4];
         result[0] = card.getSunCost();
-        result[1] = card.getMaxCooldownTicks()/10;
+        result[1] = (int) card.getMaxCooldownTicks();
         result[2] = plant.getHealth();
         result[3] = plant.getDamage();
         return result;

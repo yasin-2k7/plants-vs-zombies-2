@@ -149,7 +149,7 @@ public class GameScreen extends MenuScreen {
 
     @Override
     protected void buildUI() {
-        hud = new GameHUD(game, skin, this::restartLevel);
+        hud = new GameHUD(game, skin, this, this::restartLevel);
         mainStack.addActor(hud);
         hud.setInGameDetailsVisibility(false);
 
@@ -173,6 +173,10 @@ public class GameScreen extends MenuScreen {
     public void restartLevel() {
         world.reset();
         world.setEndGameHandled(false);
+        for (int i = 0; i < 8; i++){
+            hud.getSelectedPlantsList().getSlots()[i] = null;
+        }
+        hud.getSelectedPlantsList().build();
 
         buildIntroPanSequence();
 
@@ -216,6 +220,9 @@ public class GameScreen extends MenuScreen {
             public void clicked(InputEvent event, float x, float y) {
                 if (plantMenuController.startGame(GameScreen.this)){
                     resumeCameraToMain();
+                    if (!world.isConveyorMode()){
+                        hud.getSelectedPlantsList().activate(world.getPlantLists());
+                    }
                 }
             }
         });
