@@ -378,6 +378,7 @@ public class GameScreen extends MenuScreen {
 
     @Override
     protected void drawBackground(float delta) {
+        world.tick(delta);
         if (world.getState() != GameState.PAUSED) {
             if (objectivesDismissed) {
                 if (!introFinished) {
