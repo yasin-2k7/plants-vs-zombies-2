@@ -23,8 +23,8 @@ public class LawnMowerManager {
         this.cellWidth = App.getCellWidth();
         this.cellHeight = App.getCellHeight();
 
-        this.startX = cellWidth * 2.0;
-        this.maxX = world.getCols() * cellWidth + cellWidth;
+        this.startX = App.getFirstCellX() - cellWidth;
+        this.maxX = App.getFirstCellX() + world.getCols() * cellWidth + cellWidth;
 
         this.mowers = new ArrayList<>();
         resetMowers();

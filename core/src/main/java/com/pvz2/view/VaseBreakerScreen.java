@@ -6,12 +6,19 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.viewport.FillViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.pvz2.Main;
+import com.pvz2.models.core.App;
+import com.pvz2.models.enums.PlantLayer;
+import com.pvz2.models.enums.PlantType;
 import com.pvz2.models.miniGame.vaseBreaker.Vase;
 import com.pvz2.models.miniGame.vaseBreaker.VaseBreakerLevel;
 import com.pvz2.models.miniGame.vaseBreaker.VaseType;
+import com.pvz2.models.plant.Plant;
+import com.pvz2.models.plant.factory.PlantFactory;
+import com.pvz2.models.world.Cell;
 import com.pvz2.models.zombie.Zombie;
 import pvz.libpvz.pam.PamPlayer;
 
@@ -22,16 +29,19 @@ import java.util.Random;
 public class VaseBreakerScreen extends MenuScreen {
 
     private final VaseBreakerLevel world;
-    private OrthographicCamera worldCamera;
-    private Viewport worldViewport;
 
     private TextureRegion lawnBackground;
     private final List<VaseGraphic> vaseGraphics = new ArrayList<>();
 
     private final List<ZombieGraphic> zombieGraphics = new ArrayList<>();
+    private final List<PlantGraphic> plantGraphics = new ArrayList<>();
 
     private final FileHandle assetsFolder;
     private PamPlayer pamPlayer;
+
+    private final List<PlantCardView> seedPackets = new ArrayList<>();
+
+    private final PlantPlacementManager plantPlacementManager = new PlantPlacementManager();
 
     public enum VaseState {
         DROPPING,
@@ -52,10 +62,7 @@ public class VaseBreakerScreen extends MenuScreen {
     public void show() {
         super.show();
 
-        worldCamera = new OrthographicCamera();
-        worldViewport = new FillViewport(1800, 1000, worldCamera);
-        worldCamera.position.set(1800 / 2f, 1000 / 2f, 0);
-        worldCamera.update();
+        initWorldCamera(1800, 1000);
 
         lawnBackground = game.textureBank.region("IMAGE_BACKGROUNDS_JOUST_TEXTURE");
 
@@ -80,8 +87,9 @@ public class VaseBreakerScreen extends MenuScreen {
 
         world.tick(delta);
 
-        worldViewport.apply();
-        game.batch.setProjectionMatrix(worldCamera.combined);
+        plantGraphics.removeIf(PlantGraphic::isDead);
+
+        applyWorldViewport();
         game.batch.begin();
 
         if (lawnBackground != null) {
@@ -93,10 +101,24 @@ public class VaseBreakerScreen extends MenuScreen {
             vg.draw();
         }
 
+        for (PlantGraphic pg : plantGraphics) {
+            pg.update(delta);
+            pg.draw(game.batch, pamPlayer);
+        }
+
         for (ZombieGraphic zg : zombieGraphics) {
             zg.update(delta, pamPlayer);
             zg.draw(game.batch, pamPlayer);
         }
+
+        for (PlantCardView card : seedPackets) {
+            card.draw(game.batch, 1f);
+        }
+
+        Vector3 cursorWorldPos = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
+        worldViewport.unproject(cursorWorldPos);
+
+        plantPlacementManager.drawPreview(game.batch, cursorWorldPos);
 
         game.batch.end();
     }
@@ -121,10 +143,53 @@ public class VaseBreakerScreen extends MenuScreen {
     }
 
     private void handleInput() {
-        if (Gdx.input.justTouched()) {
-            Vector3 touchPoint = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
+        Vector3 touchPoint = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
+        worldViewport.unproject(touchPoint);
 
-            worldViewport.unproject(touchPoint);
+        if (Gdx.input.justTouched()) {
+            if (plantPlacementManager.isPlantSelected()) {
+                int row = LawnGrid.getRowFromY(touchPoint.y);
+                int col = LawnGrid.getColFromX(touchPoint.x);
+
+                if (row >= 0 && col >= 0) {
+                    PlantType selectedPlant = plantPlacementManager.getSelectedPlant();
+
+                    boolean success = plantPlacementManager.tryPlace(row, col);
+
+                    if (success) {
+                        Cell cell = null;
+                        Cell[][] grid = App.getCurrentGame().getGrid();
+                        if (grid != null && row < grid.length && col < grid[0].length) {
+                            cell = grid[row][col];
+                        }
+
+                        Plant plantModel = com.pvz2.models.plant.factory.PlantFactory.createPlant(
+                            selectedPlant, col, row, cell);
+
+                        if (plantModel != null) {
+                            if (cell != null) {
+                                cell.setPlant(plantModel, PlantLayer.MAIN);
+                            }
+                            plantGraphics.add(new PlantGraphic(plantModel, pamPlayer));
+                        }
+                    }
+                } else {
+                    plantPlacementManager.cancelSelection();
+                }
+                return;
+            }
+
+            for (int i = seedPackets.size() - 1; i >= 0; i--) {
+                PlantCardView card = seedPackets.get(i);
+                if (touchPoint.x >= card.getX() && touchPoint.x <= card.getX() + card.getWidth() &&
+                    touchPoint.y >= card.getY() && touchPoint.y <= card.getY() + card.getHeight()) {
+
+                    if (card.isActive()) {
+                        plantPlacementManager.selectPlant(card.getType(), () -> seedPackets.remove(card));
+                    }
+                    return;
+                }
+            }
 
             for (int i = vaseGraphics.size() - 1; i >= 0; i--) {
                 VaseGraphic vg = vaseGraphics.get(i);
@@ -244,6 +309,34 @@ public class VaseBreakerScreen extends MenuScreen {
                 zombie.setY(startY);
 
                 zombieGraphics.add(new ZombieGraphic(zombie));
+            }
+            else if (vase.getHiddenSeed() != null) {
+                PlantType plantType = vase.getHiddenSeed().getPlantType();
+                float x = LawnGrid.getCellX(vase.getCol());
+                float y = LawnGrid.getCellY(vase.getRow());
+
+                int level = App.getCurrentUser() != null ?
+                    App.getCurrentUser().getUnlockedPlantsLevels().getOrDefault(plantType, 1) : 1;
+                int cost = 0;
+
+                PlantCardView card = new PlantCardView(true, false, false, level, cost, plantType);
+
+                float width = 100f;
+                float height = 130f;
+                card.setSize(width, height);
+
+                card.clearChildren();
+                card.build();
+
+                card.setPosition(x - width / 2f, y - height / 2f);
+
+                card.setClickMethod(clickedCard -> {
+                    plantPlacementManager.selectPlant(clickedCard.getType(), () -> {
+                        seedPackets.remove(clickedCard);
+                    });
+                });
+
+                seedPackets.add(card);
             }
         }
 

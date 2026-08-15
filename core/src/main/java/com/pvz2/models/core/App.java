@@ -7,9 +7,10 @@ import com.pvz2.models.world.GameWorld;
 
 public class App {
     private static final PlantFactory FACTORY = new PlantFactory();
-    private static final float CELL_HEIGHT = 100;
-    private static final float CELL_WIDTH = 100;
-    private static final float FIRST_CELL_Y = 0;
+    private static final float CELL_HEIGHT = 125f;
+    private static final float CELL_WIDTH = 140f;
+    private static final float FIRST_CELL_Y = 220f;
+    private static final float FIRST_CELL_X = 530f;
     private static User currentUser;
     private static GameWorld currentGame;
     private static boolean debugMode = true;
@@ -33,6 +34,10 @@ public class App {
 
     public static float getCellHeight() {
         return CELL_HEIGHT;
+    }
+
+    public static float getFirstCellX() {
+        return FIRST_CELL_X;
     }
 
     public static float getCellWidth() {

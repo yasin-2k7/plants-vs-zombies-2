@@ -57,7 +57,7 @@ public class Projectile implements Resettable {
     public void update(float delta) {
         double oldX = x;
         double oldY = y;
-        movementStrategy.move(this);
+        movementStrategy.move(this, delta);
         GameWorld game = App.getCurrentGame();
         if (hitStrategy instanceof PlantDamageStrategy) {
             checkProjectilesTowardPlants(oldX, oldY);

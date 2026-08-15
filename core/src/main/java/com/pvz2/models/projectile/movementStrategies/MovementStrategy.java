@@ -5,7 +5,7 @@ import com.pvz2.models.projectile.Projectile;
 public interface MovementStrategy {
     float changeOriginY();
 
-    void move(Projectile projectile);
+    void move(Projectile projectile, float delta);
 
     boolean isDead(Projectile projectile);
 }

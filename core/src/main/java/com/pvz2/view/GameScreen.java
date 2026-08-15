@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
@@ -26,8 +27,11 @@ import com.pvz2.controller.GameMenuController;
 import com.pvz2.controller.PlantMenuController;
 import com.pvz2.models.core.App;
 import com.pvz2.models.enums.Chapter;
+import com.pvz2.models.enums.PlantLayer;
 import com.pvz2.models.enums.PlantType;
 import com.pvz2.models.lawnMower.LawnMower;
+import com.pvz2.models.plant.Plant;
+import com.pvz2.models.world.Cell;
 import com.pvz2.models.world.GameState;
 import com.pvz2.models.world.GameWorld;
 import pvz.libpvz.pam.PamPlayer;
@@ -47,9 +51,6 @@ public class GameScreen extends MenuScreen {
     private final GameWorld world;
     private final Chapter chapter;
 
-    private final OrthographicCamera worldCamera;
-    private final Viewport worldViewport;
-
     private GameHUD hud;
 
     private Texture imitaterOverlayBg;
@@ -64,6 +65,8 @@ public class GameScreen extends MenuScreen {
     private float leftWidthScaled;
     private float rightWidthScaled;
 
+    private Vector3 cursorWorldPos = new Vector3(0, 0, 0);
+    private final List<PlantGraphic> plantGraphics = new ArrayList<>();
     private final List<PanStep> introSteps = new ArrayList<>();
     private int currentStepIndex = 0;
     private float stepElapsed = 0f;
@@ -86,6 +89,8 @@ public class GameScreen extends MenuScreen {
 
     private PlantMenuController plantMenuController = new PlantMenuController();
 
+    private final PlantPlacementManager plantPlacementManager = new PlantPlacementManager();
+
     private record PanStep(float targetCenterX, float duration, boolean isTravel) {
     }
 
@@ -99,11 +104,10 @@ public class GameScreen extends MenuScreen {
         bgMain = game.textureBank.region(keys[1]);
         bgRight = game.textureBank.region(keys[2]);
 
-        mainLawnWidth = world.getCols() * App.getCellWidth();
-        mainLawnHeight = world.getRows() * App.getCellHeight();
+        mainLawnWidth = 1800;
+        mainLawnHeight = 1000;
 
-        worldCamera = new OrthographicCamera();
-        worldViewport = new FillViewport(mainLawnWidth, mainLawnHeight, worldCamera);
+        initWorldCamera(mainLawnWidth, mainLawnHeight);
 
         FileHandle assetsFolder = Gdx.files.internal("");
         pamPlayer = new PamPlayer(game.textureBank, assetsFolder);
@@ -151,7 +155,7 @@ public class GameScreen extends MenuScreen {
 
     @Override
     protected void buildUI() {
-        hud = new GameHUD(game, skin, this::restartLevel);
+        hud = new GameHUD(game, skin, this, this::restartLevel);
         mainStack.addActor(hud);
         hud.setInGameDetailsVisibility(false);
 
@@ -175,6 +179,10 @@ public class GameScreen extends MenuScreen {
     public void restartLevel() {
         world.reset();
         world.setEndGameHandled(false);
+        for (int i = 0; i < 8; i++){
+            hud.getSelectedPlantsList().getSlots()[i] = null;
+        }
+        hud.getSelectedPlantsList().build();
 
         if (endGameOverlay != null) {
             endGameOverlay.remove();
@@ -232,6 +240,9 @@ public class GameScreen extends MenuScreen {
                 if (plantMenuController.startGame(GameScreen.this)){
                     resumeCameraToMain();
                     pendingAnnouncements.add(0, "Prepare your petals!\nIt's time to garden or die");
+                    if (!world.isConveyorMode()){
+                        hud.getSelectedPlantsList().activate(world.getPlantLists());
+                    }
                 }
             }
         });
@@ -392,6 +403,7 @@ public class GameScreen extends MenuScreen {
 
     @Override
     protected void drawBackground(float delta) {
+        world.tick(delta);
         if (world.getState() != GameState.PAUSED) {
             if (objectivesDismissed) {
                 if (!introFinished) {
@@ -430,11 +442,16 @@ public class GameScreen extends MenuScreen {
             }
         }
 
-        worldViewport.apply();
-        game.batch.setProjectionMatrix(worldCamera.combined);
+        applyWorldViewport();
         game.batch.begin();
         drawLawnBackground();
         renderWorldContent(delta);
+        worldViewport.unproject(cursorWorldPos);
+        plantPlacementManager.drawPreview(game.batch, cursorWorldPos);
+        for (PlantGraphic pg : plantGraphics){
+            pg.update(delta);
+            pg.draw(game.batch, pamPlayer);
+        }
         game.batch.end();
 
         if (hud != null) {
@@ -457,28 +474,17 @@ public class GameScreen extends MenuScreen {
 
     private void renderWorldContent(float delta) {
         if (world.getLawnMowerManager() != null) {
-            float gridOffsetY = App.getCellHeight() * 0.8f;
-            float visualRowHeight = App.getCellHeight() * 0.68f;
-
             for (LawnMower mower : world.getLawnMowerManager().getMowers()) {
                 if (!mower.isSpent()) {
                     float x = (float) mower.getPositionX();
-                    float y = gridOffsetY + (mower.getRow() * visualRowHeight);
+                    float y = LawnGrid.getCellY(mower.getRow()) - 40f;
                     String pamPath = getMowerPamPath(chapter);
                     String animStateName = getMowerAnimStateName(mower.getState());
 
                     try {
-                        com.badlogic.gdx.math.Matrix4 oldMatrix = game.batch.getTransformMatrix().cpy();
-                        com.badlogic.gdx.math.Matrix4 newMatrix = new com.badlogic.gdx.math.Matrix4(oldMatrix);
-                        float scale = Math.min(0.45f, App.getCellHeight() / 200f);
+                        pamPlayer.draw(game.batch, pamPath, animStateName, mower.getStateTime(),
+                            x, y, 0.8f, 0.8f, true);
 
-                        newMatrix.translate(x, y, 0);
-                        newMatrix.scale(scale, scale, 1f);
-                        newMatrix.translate(-x, -y, 0);
-
-                        game.batch.setTransformMatrix(newMatrix);
-                        pamPlayer.draw(game.batch, pamPath, animStateName, mower.getStateTime(), x, y, true);
-                        game.batch.setTransformMatrix(oldMatrix);
 
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -671,6 +677,35 @@ public class GameScreen extends MenuScreen {
         modalStack.addActor(imitaterOverlay);
     }
 
+    @Override
+    public void render(float delta) {
+        super.render(delta);
+        cursorWorldPos.set(Gdx.input.getX(), Gdx.input.getY(), 0);
+        handleInput();
+    }
+
+    private void handleInput() {
+        Vector3 touchPoint = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
+        worldViewport.unproject(touchPoint);
+
+        if (Gdx.input.justTouched()) {
+            if (plantPlacementManager.isPlantSelected()) {
+                int row = LawnGrid.getRowFromY(touchPoint.y);
+                int col = LawnGrid.getColFromX(touchPoint.x);
+
+                if (row >= 0 && col >= 0) {
+                    boolean success = plantPlacementManager.tryPlace(row, col);
+
+                    if (success){
+                        GameMenuController.plantSelectedPlant(col*App.getCellWidth()+App.getCellWidth()/2,
+                            row*App.getCellHeight()+App.getCellHeight()/2, this);
+                    }
+                }
+                plantPlacementManager.cancelSelection();
+            }
+        }
+    }
+
     private void hideImitatorTable(){
         if (imitaterOverlay != null) {
             imitaterOverlay.remove();
@@ -680,5 +715,13 @@ public class GameScreen extends MenuScreen {
             imitaterOverlayBg.dispose();
             imitaterOverlayBg = null;
         }
+    }
+
+    public List<PlantGraphic> getPlantGraphics() {
+        return plantGraphics;
+    }
+
+    public PlantPlacementManager getPlantPlacementManager() {
+        return plantPlacementManager;
     }
 }

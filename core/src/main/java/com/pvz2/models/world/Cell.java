@@ -14,6 +14,7 @@ import com.pvz2.models.world.cellTerrains.CellTerrain;
 import com.pvz2.models.world.obstacles.Grave;
 import com.pvz2.models.world.obstacles.Obstacle;
 import com.pvz2.models.zombie.Zombie;
+import com.pvz2.view.GameScreen;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -185,13 +186,21 @@ public class Cell {
         return basePlant == null && mainPlant == null && shieldPlant == null;
     }
 
-    private Plant checkPlantable(PlantType type, boolean boost){
+    private Plant checkPlantable(PlantType type, boolean boost, GameScreen screen){
         if (!this.isPlantable()) {
             if (!(this.obstacle instanceof Grave && type == PlantType.GRAVE_BUSTER))
                 return null;
         }
         if (craterTime > 0) return null;
-        Plant newPlant = PlantFactory.createPlant(type, (int) x, (int) y, this);
+        Plant newPlant;
+        if (screen == null){
+            newPlant = PlantFactory.createPlant(type, (int) x, (int) y, this);
+        }
+        else {
+            newPlant = PlantFactory.createPlant(type, (int) x, (int) y, this, screen);
+            System.out.println(newPlant.getY());
+        }
+
         if (boost) newPlant.setPlantFoodInStart(true);
         if (((this.obstacle instanceof Grave) != (type == PlantType.GRAVE_BUSTER))
                 || !(this.terrain.canPlant(newPlant, this))
@@ -201,8 +210,8 @@ public class Cell {
         return newPlant;
     }
 
-    public String handlePlanting(PlantType type, boolean boost) {
-        Plant newPlant = checkPlantable(type, boost);
+    public String handlePlanting(PlantType type, boolean boost, GameScreen screen) {
+        Plant newPlant = checkPlantable(type, boost, screen);
         if (newPlant == null) return "you cannot plant in that place!";
         PlacementBehaviorComponent behavior = newPlant.getComponent(PlacementBehaviorComponent.class);
         PlantLayer layer = (behavior != null) ? behavior.getTargetLayer() : PlantLayer.MAIN;
@@ -245,7 +254,7 @@ public class Cell {
     }
 
     public String handlePlanting(PlantType type) {
-        return handlePlanting(type, false);
+        return handlePlanting(type, false, null);
     }
 
     public void removePlant() {
