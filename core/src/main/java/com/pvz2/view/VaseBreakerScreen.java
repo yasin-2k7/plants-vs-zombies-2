@@ -163,14 +163,14 @@ public class VaseBreakerScreen extends MenuScreen {
                             cell = grid[row][col];
                         }
 
-                        Plant plantModel = com.pvz2.models.plant.factory.PlantFactory.createPlant(
-                            selectedPlant, col, row, cell);
+                        if (cell != null) {
+                            Plant plantModel = com.pvz2.models.plant.factory.PlantFactory.createPlant(
+                                selectedPlant, (int) cell.getX(), (int) cell.getY(), cell);
 
-                        if (plantModel != null) {
-                            if (cell != null) {
+                            if (plantModel != null) {
                                 cell.setPlant(plantModel, PlantLayer.MAIN);
+                                plantGraphics.add(new PlantGraphic(plantModel, pamPlayer));
                             }
-                            plantGraphics.add(new PlantGraphic(plantModel, pamPlayer));
                         }
                     }
                 } else {

@@ -198,7 +198,6 @@ public class Cell {
         }
         else {
             newPlant = PlantFactory.createPlant(type, (int) x, (int) y, this, screen);
-            System.out.println(newPlant.getY());
         }
 
         if (boost) newPlant.setPlantFoodInStart(true);

@@ -12,6 +12,7 @@ public class PlantGraphic {
     private final float worldY;
 
     private final String pamPath;
+    private String initialClip;
     private String currentClip;
     private float animTime = 0f;
     private boolean isLoop = true;
@@ -27,6 +28,7 @@ public class PlantGraphic {
 
         this.pamPath = PlantsCollectionMenuScreen.getPlantAnimAddress(plant.getType());
         this.currentClip = PlantsCollectionMenuScreen.getPlantInitialClip(plant.getType());
+        this.initialClip = currentClip;
 
         if (pamPath != null && pamPlayer != null) {
             pamPlayer.loadAsync(pamPath, null);
@@ -35,11 +37,27 @@ public class PlantGraphic {
 
     public void update(float delta) {
         animTime += delta;
+        if (plant.getState() != Plant.State.IDLE && currentClip.equals(initialClip)){
+            if (plant.getState() == Plant.State.SPECIAL ||
+                plant.getType() == PlantType.PUFF_SHROOM ||
+                plant.getType() == PlantType.PUFF_SHROOM){
+                playClip(PlantsCollectionMenuScreen.getSpecialClip(plant.getType()), false);
+            }
+            else if (plant.getState() == Plant.State.ATTACK){
+                playClip("attack", false);
+            }
+        }
+        else if (plant.getState() == Plant.State.IDLE && !currentClip.equals(initialClip)){
+            playClip(initialClip, true);
+        }
+        else{
+            currentClip = initialClip;
+            isLoop = true;
+        }
     }
 
     public void draw(SpriteBatch batch, PamPlayer pamPlayer) {
         if (plant == null || plant.isDead() || pamPath == null || pamPlayer == null) return;
-
         pamPlayer.draw(batch, pamPath, currentClip, animTime, worldX, worldY, isLoop);
     }
 
@@ -54,4 +72,12 @@ public class PlantGraphic {
     public int getCol() { return (int) plant.getX(); }
     public PlantType getPlantType() { return plant.getType(); }
     public boolean isDead() { return plant.isDead(); }
+
+    public String getCurrentClip() {
+        return currentClip;
+    }
+
+    public String getInitialClip() {
+        return initialClip;
+    }
 }

@@ -91,7 +91,7 @@ public abstract class GameWorld {
         this.activeCollectables = new ArrayList<>();
         this.activeObstacles = new ArrayList<>();
         this.sunsPool = new GenericObjectPool<>(Sun::new);
-        currentSun = 50;
+        currentSun = 2450;
         this.state = GameState.PLAYING;
         this.plantLists = new ArrayList<>();
         this.levelSetup.groundSetup(this);

@@ -217,5 +217,13 @@ public class PlantsCollectionMenuScreen extends MenuScreen{
         return clip;
     }
 
+    public static String getSpecialClip(PlantType type){
+        if (type.hasTag("Wramp-up") || type == PlantType.PUFF_SHROOM){
+            return type == PlantType.KIWIBEAST ? "attack_stage3" : "special_stage3";
+        }
+        if (type == PlantType.GOLD_BLOOM) return "attack";
+        return "special";
+    }
+
 
 }

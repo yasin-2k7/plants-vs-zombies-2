@@ -25,7 +25,7 @@ public class MeleeFactory {
 
         int health = (level >= 4) ? 500 : 300;
         int damage = (level >= 2) ? 20 : 15;
-        int interval = (level >= 3) ? 2 : 3;
+        float interval = (level >= 3) ? 0.2f : 0.3f;
 
         Plant plant = new Plant(PlantType.BONK_CHOY, health, damage);
         plant.addComponent(new DirectionalMeleeComponent(damage, interval, 1.5f * App.getCellWidth()));
@@ -40,7 +40,7 @@ public class MeleeFactory {
         float rangeX = ((level >= 3) ? 2.5f : 1.5f) * App.getCellWidth();
 
         Plant plant = new Plant(PlantType.WASABI_WHIP, health, damage);
-        plant.addComponent(new DirectionalMeleeComponent(damage, 20, rangeX));
+        plant.addComponent(new DirectionalMeleeComponent(damage, 2, rangeX));
         plant.setFire(true);
         return plant;
     }

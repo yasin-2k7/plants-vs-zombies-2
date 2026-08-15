@@ -30,6 +30,13 @@ public class Plant implements Damageable {
     private boolean isFire = false;
     private int warmRadius = 1;
     private boolean plantFoodInStart = false;
+    private State state = State.IDLE;
+
+    public enum State {
+        IDLE,
+        SPECIAL,
+        ATTACK
+    }
 
     public Plant(PlantType type, int health, int damage) {
         this.type = type;
@@ -252,5 +259,13 @@ public class Plant implements Damageable {
 
     public void setCat(boolean cat) {
         this.cat = cat;
+    }
+
+    public State getState() {
+        return state;
+    }
+
+    public void setState(State state) {
+        this.state = state;
     }
 }

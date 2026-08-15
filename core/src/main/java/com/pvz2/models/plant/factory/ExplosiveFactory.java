@@ -43,7 +43,7 @@ public class ExplosiveFactory {
 
     private static Plant buildPotatoMine() {
         int level = App.getCurrentUser().getUnlockedPlantsLevels().getOrDefault(PlantType.POTATO_MINE, 1);
-        int armTime = level >= 2 ? 120 : 150;
+        int armTime = level >= 2 ? 12 : 15;
         int damage = level >= 4 ? 2400 : 1800;
         Plant p = new Plant(PlantType.POTATO_MINE, 300, damage);
         ExplosivesComponent component = new ExplosivesComponent(
@@ -66,7 +66,7 @@ public class ExplosiveFactory {
 
     private static Plant buildPrimalPotatoMine() {
         int level = App.getCurrentUser().getUnlockedPlantsLevels().getOrDefault(PlantType.PRIMAL_POTATO_MINE, 1);
-        int armTime = level >= 2 ? 40 : 50;
+        int armTime = level >= 2 ? 4 : 5;
         int damage = level >= 4 ? 2800 : 2400;
         Plant p = new Plant(PlantType.PRIMAL_POTATO_MINE, 300, damage);
         ExplosivesComponent component = new ExplosivesComponent(
@@ -174,7 +174,7 @@ public class ExplosiveFactory {
 
     private static Plant buildIcebergLettuce() {
         int level = App.getCurrentUser().getUnlockedPlantsLevels().getOrDefault(PlantType.ICEBURG, 1);
-        int freezeTime = level >= 3 ? 60 : 40;
+        int freezeTime = level >= 3 ? 6 : 4;
         Plant p = new Plant(PlantType.ICEBURG, 1000, 0);
         ExplosivesComponent component = new ExplosivesComponent(
                 new ProximityTrigger(App.getCellWidth()),
@@ -189,7 +189,7 @@ public class ExplosiveFactory {
 
     private static Plant buildIceShroom() {
         int level = App.getCurrentUser().getUnlockedPlantsLevels().getOrDefault(PlantType.ICE_SHROOM, 1);
-        int freezeTime = level >= 2 ? 60 : 40;
+        int freezeTime = level >= 2 ? 6 : 4;
         int damage = level >= 4 ? 50 : 0;
         Plant p = new Plant(PlantType.ICE_SHROOM, 1000, damage);
         p.addComponent(new ExplosivesComponent(InstantTrigger.INSTANCE,

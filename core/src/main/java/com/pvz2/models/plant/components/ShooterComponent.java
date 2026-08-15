@@ -42,12 +42,15 @@ public class ShooterComponent implements GameComponent {
     private List<Supplier<MovementStrategy>> movementStrategies = new ArrayList<>();
     private CombinedDamageStrategy plantFoodStrategy;
     private AttackCallback attackCallback;
+    private final float actionTimeInterval;
+    private final float actionTime;
+    private float currentActionTimer = 0;
 
     public ShooterComponent(ProjectileType bulletType, ProjectileType giantType,
                             float shootingTime, int burstProjectileNumber,
                             int burstProjectileNumberOnPlantFood, boolean hasGiant,
                             Supplier<CombinedDamageStrategy> damageStrategy, CheckStrike strikeStrategy,
-                            int giantCount, int normalPierce, int giantPierce, int giantDamageFactor) {
+                            int giantCount, int normalPierce, int giantPierce, int giantDamageFactor, float actionTimeInterval, float actionTime) {
         this.bulletType = bulletType;
         this.giantType = giantType;
         this.shootingTime = shootingTime;
@@ -59,6 +62,8 @@ public class ShooterComponent implements GameComponent {
         this.giantCount = giantCount;
         this.normalPierce = normalPierce;
         this.giantPierce = giantPierce;
+        this.actionTimeInterval = actionTimeInterval;
+        this.actionTime = actionTime;
         this.plantFoodBehavior = BurstPlantFood.INSTANCE;
         plantFoodStrategy = damageStrategy.get().changeDamage(damageStrategy.get().getDamage() * giantDamageFactor);
     }
@@ -81,14 +86,24 @@ public class ShooterComponent implements GameComponent {
             burstHandler(owner, delta);
             return;
         }
-
-
+        if (currentActionTimer >= actionTime){
+            currentActionTimer += delta;
+            if (currentActionTimer >= actionTimeInterval){
+                currentActionTimer = 0;
+                owner.setState(Plant.State.IDLE);
+            }
+        }
         for (VisionStrategy visionStrategy : visions) {
             if (visionStrategy.findZombie(owner) != null) {
                 target = visionStrategy.findZombie(owner);
                 if (shootingTimer > 0) {
                     shootingTimer-= delta;
                 } else {
+                    if (owner.getState() == Plant.State.IDLE){
+                        owner.setState(Plant.State.ATTACK);
+                    }
+                    currentActionTimer += delta;
+                    if (currentActionTimer < actionTime) return;
                     if (attackCallback != null) {
                         attackCallback.onAttack(owner);
                     }
@@ -142,6 +157,7 @@ public class ShooterComponent implements GameComponent {
                         this.defaultMovementStrategies.clear();
                     }
                 }
+                owner.setState(Plant.State.IDLE);
             }
         }
     }

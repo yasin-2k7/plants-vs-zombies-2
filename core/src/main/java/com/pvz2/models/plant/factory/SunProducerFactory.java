@@ -23,7 +23,8 @@ public class SunProducerFactory {
         int prodTime = level >= 2 ? 24 : 22;
         boolean doubleSunChance = level == 4;
         Plant p = new Plant(PlantType.SUNFLOWER, health, 0);
-        p.addComponent(new SunProducerComponent(50, 1, prodTime, doubleSunChance, false, 3, 0));
+        p.addComponent(new SunProducerComponent(50, 1, prodTime, doubleSunChance, false, 3, 0, 1 ,
+            2.4f));
         return p;
     }
 
@@ -32,7 +33,7 @@ public class SunProducerFactory {
         int health = level >= 3 ? 450 : 300;
         int prodTime = level >= 2 ? 24 : 22;
         Plant p = new Plant(PlantType.TWIN_SUNFLOWER, health, 0);
-        p.addComponent(new SunProducerComponent(50, 2, prodTime, false, false, 5, 0));
+        p.addComponent(new SunProducerComponent(50, 2, prodTime, false, false, 5, 0, 0.5f, 1.7f));
         return p;
     }
 
@@ -42,7 +43,8 @@ public class SunProducerFactory {
         int growTimeReduce = level >= 2 ? 5 : 0;
         boolean doubleSunChance = level == 4;
         Plant p = new Plant(PlantType.SUN_SHROOM, health, 0);
-        p.addComponent(new SunProducerComponent(25, 1, 24, doubleSunChance, true, 3, growTimeReduce));
+        p.addComponent(new SunProducerComponent(25, 1, 24, doubleSunChance, true, 3,
+            growTimeReduce, 0.6f, 2.1f));
         return p;
     }
 
@@ -51,15 +53,16 @@ public class SunProducerFactory {
         int health = level >= 3 ? 450 : 300;
         int prodTime = level >= 2 ? 24 : 22;
         Plant p = new Plant(PlantType.PRIMAL_SUNFLOWER, health, 0);
-        p.addComponent(new SunProducerComponent(75, 1, prodTime, false, false, 3, 0));
+        p.addComponent(new SunProducerComponent(75, 1, prodTime, false, false, 3, 0, 0.7f, 1.9f));
         return p;
     }
 
     private static Plant buildGoldBloom() {
         int level = App.getCurrentUser().getUnlockedPlantsLevels().getOrDefault(PlantType.GOLD_BLOOM, 1);
         Plant p = new Plant(PlantType.GOLD_BLOOM, 0, 0);
-        int sunNumber = level >= 3 ? 17 : 15;
-        p.addComponent(new SunProducerComponent(25, sunNumber, 0, false, false, 0, 0, true));
+        int sunSize = level >= 3 ? 150 : 125;
+        p.addComponent(new SunProducerComponent(sunSize, 3, 0, false, false, 0, 0, true, 0.5f,
+            2.5f));
         return p;
     }
 }

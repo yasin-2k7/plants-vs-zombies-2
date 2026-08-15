@@ -20,18 +20,23 @@ public class SunProducerComponent implements GameComponent {
     private float plantationTime;
     private int sunNumberWithPlantFood;
     private boolean checkShroomSize;
-    private boolean enable;
+    private boolean enable = true;
     private float growTimeToReduce;
     private boolean isInstant;
+    private final float actionTimeInterval;
+    private final float actionTime;
+    private float currentActionTimer = 0;
 
     public SunProducerComponent(int sunSize, int sunNumber, float productionTime, boolean doubleSunChance,
-                                boolean shroom, int sunNumberWithPlantFood, float growTimeToReduce) {
+                                boolean shroom, int sunNumberWithPlantFood, float growTimeToReduce, float actionTime, float actionTimeInterval) {
         this(sunSize, sunNumber, productionTime, doubleSunChance, shroom, sunNumberWithPlantFood,
-                growTimeToReduce, false);
+                growTimeToReduce, false, actionTime, actionTimeInterval);
     }
 
     public SunProducerComponent(int sunSize, int sunNumber, float productionTime, boolean doubleSunChance,
-                                boolean shroom, int sunNumberWithPlantFood, float growTimeToReduce, boolean isInstant) {
+                                boolean shroom, int sunNumberWithPlantFood,
+                                float growTimeToReduce, boolean isInstant, float actionTime,
+                                float actionTimeInterval) {
         this.sunSize = sunSize;
         this.sunNumber = sunNumber;
         this.productionTime = productionTime;
@@ -41,25 +46,33 @@ public class SunProducerComponent implements GameComponent {
         this.sunNumberWithPlantFood = sunNumberWithPlantFood;
         this.growTimeToReduce = growTimeToReduce;
         this.isInstant = isInstant;
-        this.lastProductionTime = productionTime * 10 - 10;
+        this.lastProductionTime = productionTime - 2;
+        this.actionTimeInterval = actionTimeInterval;
+        this.actionTime = actionTime;
     }
 
     @Override
     public void update(Plant owner, float delta) {
 
         if (App.getCurrentGame() instanceof IZombieLevel) return;
-        tick(delta);
+        tick(owner, delta);
 
         if (shroom && checkShroomSize) {
-            if (plantationTime > 10 * (72 - growTimeToReduce)) {
+            if (plantationTime > (72 - growTimeToReduce)) {
                 checkShroomSize = false;
                 setSunSize(75);
-            } else if (plantationTime > 10 * (24 - growTimeToReduce)) {
+            } else if (plantationTime > (24 - growTimeToReduce)) {
                 setSunSize(50);
             }
         }
 
-        if (lastProductionTime >= productionTime * 10 || isInstant) {
+        if (lastProductionTime >= productionTime || isInstant) {
+            if (owner.getState() == Plant.State.IDLE){
+                owner.setState(Plant.State.SPECIAL);
+            }
+            currentActionTimer += delta;
+            if (currentActionTimer < actionTime) return;
+
             enable = false;
             lastProductionTime = 0;
             for (int i = 0; i < sunNumber; i++) {
@@ -107,8 +120,15 @@ public class SunProducerComponent implements GameComponent {
         this.sunSize = newSize;
     }
 
-    private void tick(float delta) {
+    private void tick(Plant owner, float delta) {
         plantationTime += delta;
+        if (currentActionTimer >= actionTime){
+            currentActionTimer += delta;
+            if (currentActionTimer >= actionTimeInterval){
+                currentActionTimer = 0;
+                owner.setState(Plant.State.IDLE);
+            }
+        }
         if (enable) {
             lastProductionTime += delta;
         }

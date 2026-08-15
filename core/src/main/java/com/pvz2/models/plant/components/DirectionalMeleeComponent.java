@@ -11,11 +11,11 @@ import java.util.List;
 
 public class DirectionalMeleeComponent implements GameComponent {
     private final int damage;
-    private final int attackIntervalTicks;
+    private final float attackIntervalTicks;
     private final float rangeX;
-    private int lastAttackTick = 0;
+    private float lastAttackTick = 0;
 
-    public DirectionalMeleeComponent(int damage, int attackIntervalTicks, float rangeX) {
+    public DirectionalMeleeComponent(int damage, float attackIntervalTicks, float rangeX) {
         this.damage = damage;
         this.attackIntervalTicks = attackIntervalTicks;
         this.rangeX = rangeX;
@@ -23,7 +23,7 @@ public class DirectionalMeleeComponent implements GameComponent {
 
     @Override
     public void update(Plant owner, float delta) {
-        lastAttackTick++;
+        lastAttackTick += delta;
 
         if (lastAttackTick >= attackIntervalTicks) {
             List<Zombie> targets;
