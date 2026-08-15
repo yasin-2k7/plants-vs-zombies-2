@@ -242,6 +242,7 @@ public class GameHUD extends Group {
         private final TextureRegion meterBackground;
         private final TextureRegion zombieHead;
         private final TextureRegion solidGreen;
+        private final TextureRegion waveFlag;
 
         private float fillInsetLeftPct = 0.05f;
         private float fillInsetRightPct = 0.08f;
@@ -249,11 +250,13 @@ public class GameHUD extends Group {
         private float fillInsetBottomPct = 0.30f;
 
         private float displayedProgress = 0f;
+        private int totalWaves = 0;
 
         WaveProgressBar(Main game) {
             meterBackground = game.textureBank.region("IMAGE_UI_HUD_INGAME_ZOMBOSS_PROGRESS_METER");
             zombieHead = game.textureBank.region("IMAGE_UI_HUD_INGAME_PROGRESS_METER_ZOMBIEHEAD");
             solidGreen = UiUtils.getSolidColorRegion(new Color(0.35f, 0.85f, 0.25f, 1f));
+            waveFlag = game.textureBank.region("IMAGE_UI_CLAIM_SMALL");
 
             if (meterBackground != null) {
                 setSize(meterBackground.getRegionWidth(), meterBackground.getRegionHeight());
@@ -265,6 +268,7 @@ public class GameHUD extends Group {
         void update(WaveManager waveManager, float delta) {
             float target = (waveManager != null) ? MathUtils.clamp(waveManager.getOverallProgress(), 0f, 1f) : 0f;
             displayedProgress = MathUtils.lerp(displayedProgress, target, Math.min(1f, delta * 4f));
+            totalWaves = (waveManager != null) ? waveManager.getTotalWavesCount() : 0;
         }
 
         @Override
@@ -280,6 +284,16 @@ public class GameHUD extends Group {
 
             float fillW = trackW * displayedProgress;
             if (fillW > 0f) batch.draw(solidGreen, trackX, trackY, fillW, trackH);
+
+            if (waveFlag != null && totalWaves > 1) {
+                float flagSize = h * 0.9f;
+                for (int i = 1; i < totalWaves; i++) {
+                    float frac = (float) i / totalWaves;
+                    float flagX = trackX + trackW * frac - flagSize / 2f;
+                    float flagY = y + h / 2f - flagSize / 2f;
+                    batch.draw(waveFlag, flagX, flagY, flagSize, flagSize);
+                }
+            }
 
             if (zombieHead != null) {
                 float headSize = h * 1.3f;

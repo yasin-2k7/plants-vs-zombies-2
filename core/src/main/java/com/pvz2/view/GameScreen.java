@@ -82,6 +82,8 @@ public class GameScreen extends MenuScreen {
     private LevelObjectivesOverlay objectivesOverlay;
     private boolean objectivesDismissed = false;
 
+    private GameEndOverlay endGameOverlay;
+
     private PlantMenuController plantMenuController = new PlantMenuController();
 
     private record PanStep(float targetCenterX, float duration, boolean isTravel) {
@@ -174,6 +176,11 @@ public class GameScreen extends MenuScreen {
         world.reset();
         world.setEndGameHandled(false);
 
+        if (endGameOverlay != null) {
+            endGameOverlay.remove();
+            endGameOverlay = null;
+        }
+
         buildIntroPanSequence();
 
         if (daveOverlay != null) {
@@ -185,6 +192,14 @@ public class GameScreen extends MenuScreen {
         }
         daveOverlay = new CrazyDaveOverlay(game, starting, world);
         modalStack.addActor(daveOverlay);
+    }
+
+    private void showEndGameOverlay() {
+        if (endGameOverlay != null) {
+            endGameOverlay.remove();
+        }
+        endGameOverlay = new GameEndOverlay(game, skin, world, this::restartLevel);
+        modalStack.addActor(endGameOverlay);
     }
 
     public void buildStreetTable() {
@@ -216,6 +231,7 @@ public class GameScreen extends MenuScreen {
             public void clicked(InputEvent event, float x, float y) {
                 if (plantMenuController.startGame(GameScreen.this)){
                     resumeCameraToMain();
+                    pendingAnnouncements.add(0, "Prepare your petals!\nIt's time to garden or die");
                 }
             }
         });
@@ -320,8 +336,6 @@ public class GameScreen extends MenuScreen {
             panStartX = step.targetCenterX();
 
             if (currentStepIndex == STREET_ARRIVAL_STEP_INDEX) {
-                // The camera just reached the street: stop the sequence here and
-                // wait for the player to press "Continue" instead of auto-advancing.
                 pauseCameraAtStreet();
                 return;
             }
@@ -393,18 +407,22 @@ public class GameScreen extends MenuScreen {
                             if (daveOverlay != null) {
                                 daveOverlay.startPresentation(world.getWinningDialogs(), () -> {
                                     GameMenuController.handleWinning(world);
+                                    showEndGameOverlay();
                                 });
                             } else {
                                 GameMenuController.handleWinning(world);
+                                showEndGameOverlay();
                             }
                         } else if (world.getState() == GameState.LOST) {
                             world.setEndGameHandled(true);
                             if (daveOverlay != null) {
                                 daveOverlay.startPresentation(world.getLosingDialogs(), () -> {
                                     GameMenuController.handleLosing(world);
+                                    showEndGameOverlay();
                                 });
                             } else {
                                 GameMenuController.handleLosing(world);
+                                showEndGameOverlay();
                             }
                         }
                     }
@@ -611,12 +629,12 @@ public class GameScreen extends MenuScreen {
 
     private void showImitatorTable(){
         if (imitaterOverlay != null) {
-            return; // already open, ignore double-click
+            return;
         }
 
         imitaterOverlay = new Table();
         imitaterOverlay.setFillParent(true);
-        imitaterOverlay.setTouchable(Touchable.enabled); // block clicks to what's behind it
+        imitaterOverlay.setTouchable(Touchable.enabled);
 
         Pixmap pixmap = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
         pixmap.setColor(new Color(0, 0, 0, 0.6f));
