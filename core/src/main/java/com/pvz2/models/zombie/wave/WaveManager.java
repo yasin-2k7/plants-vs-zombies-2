@@ -8,6 +8,7 @@ import com.pvz2.models.world.GameWorld;
 import com.pvz2.models.zombie.Zombie;
 import com.pvz2.models.zombie.ZombieFactory;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -18,6 +19,7 @@ public class WaveManager {
     private int totalZombiesInCurrentWave;
     private int killedZombiesInCurrentWave;
     private boolean levelCompleted;
+    private final int totalZombiesOverall;   // <<< جدید
 
     private boolean repeatForever = false;
     private boolean wavesStarted = true;
@@ -30,6 +32,13 @@ public class WaveManager {
         this.waves = waves;
         this.currentWaveIndex = 0;
         this.wavesStarted = autoStart;
+
+        int sum = 0;
+        for (Wave w : waves) {
+            sum += w.getTotalZombieCount();
+        }
+        this.totalZombiesOverall = sum;
+
         if (!waves.isEmpty()) {
             this.currentWave = waves.get(0);
             this.totalZombiesInCurrentWave = currentWave.getTotalZombieCount();
@@ -41,6 +50,7 @@ public class WaveManager {
         }
         this.killedZombiesInCurrentWave = 0;
     }
+
 
     public void startWaves() {
         if (wavesStarted || levelCompleted) return;
@@ -96,7 +106,6 @@ public class WaveManager {
         }
     }
 
-    // متد اسپاون زامبی
     public void spawnNextZombie(int lane, GameWorld game) {
         if (!wavesStarted || levelCompleted || currentWave == null) return;
         WaveSpawnEntry entry = currentWave.getNextSpawn();
@@ -107,7 +116,6 @@ public class WaveManager {
 
         String alias = entry.getZombieAlias();
 
-        // اگر زامبی جدید است، آن را به لیست دیده‌شده‌ها اضافه کن و اطلاع‌رسانی کن
         User user = App.getCurrentUser();
         if (user != null) {
             if (!user.getShowedZombies().containsKey(alias)) {
@@ -117,7 +125,6 @@ public class WaveManager {
             }
         }
 
-        // محاسبه موقعیت اسپاون
         int spawnCol = game.getCols();
         if (currentWave.isFlagWave() && game.isSandstormActive()) {
             int columnsForward = 1 + new Random().nextInt(4);
@@ -126,8 +133,8 @@ public class WaveManager {
                     "A zombie rides a sandstorm and enters " + columnsForward + " columns ahead!");
         }
 
-        float x = spawnCol * App.getCellWidth();
-        float y = lane * App.getCellHeight() + App.getCellHeight() / 2;
+        float x = App.getFirstCellX() + spawnCol * App.getCellWidth();
+        float y = App.getFirstCellY() + lane * App.getCellHeight() + App.getCellHeight() / 2;
         zombie.setX(x);
         zombie.setY(y);
 
@@ -198,5 +205,15 @@ public class WaveManager {
 
         float progress = (currentWaveIndex + currentWaveProgress) / (float) totalWaves;
         return levelCompleted ? 1f : Math.min(1f, progress);
+    }
+
+    public List<String> getAllZombieAliases() {
+        List<String> aliases = new ArrayList<>();
+        for (Wave w : waves) {
+            for (WaveSpawnEntry entry : w.getSpawnEntries()) {
+                aliases.add(entry.getZombieAlias());
+            }
+        }
+        return aliases;
     }
 }

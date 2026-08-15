@@ -43,8 +43,8 @@ public class Cell {
     public Cell(int row, int col, CellTerrain initialTerrain) {
         this.row = row;
         this.col = col;
-        x = (col) * App.getCellWidth() + App.getCellWidth() / 2;
-        y = (row) * App.getCellHeight() + App.getCellHeight() / 2;
+        x = App.getFirstCellX() + (col) * App.getCellWidth() + App.getCellWidth() / 2;
+        y = App.getFirstCellY() + (row) * App.getCellHeight() + App.getCellHeight() / 2;
         this.terrain = initialTerrain;
     }
 

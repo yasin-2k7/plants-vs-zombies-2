@@ -111,13 +111,12 @@ public class Wave {
     public int getTotalZombieCount() {
         return spawnEntries.size();
     }
-
     public int getWaveNumber() {
         return waveNumber;
     }
-
-
     public boolean isFlagWave() {
         return isFinalWave;
     }
+    public int getSpawnedCount() {return currentIndex;}
+    public List<WaveSpawnEntry> getSpawnEntries() {return spawnEntries;}
 }

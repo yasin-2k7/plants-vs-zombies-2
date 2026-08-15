@@ -46,7 +46,7 @@ public class LawnMowerManager {
             List<Zombie> zombiesInRow = getZombiesInRow(allZombies, mower.getRow());
 
             for (Zombie z : zombiesInRow) {
-                if (!z.isDead() && z.getX() <= 0) {
+                if (!z.isDead() && z.getX() <= App.getFirstCellX()) {   // <<< فیکس شد
                     if (!mower.isSpent() && !mower.isActive()) {
                         mower.activate();
                     } else if (mower.isSpent()) {
@@ -63,6 +63,11 @@ public class LawnMowerManager {
         }
     }
 
+    private int getRowFromY(float y) {
+        int row = (int) ((y - App.getFirstCellY()) / cellHeight);
+        return Math.max(0, Math.min(row, totalRows - 1));
+    }
+
     private List<Zombie> getZombiesInRow(List<Zombie> allZombies, int row) {
         List<Zombie> zombiesInRow = new ArrayList<>();
         for (Zombie z : allZombies) {
@@ -71,11 +76,6 @@ public class LawnMowerManager {
             }
         }
         return zombiesInRow;
-    }
-
-    private int getRowFromY(float y) {
-        int row = (int) (y / cellHeight);
-        return Math.max(0, Math.min(row, totalRows - 1));
     }
 
     public List<LawnMower> getMowers() {

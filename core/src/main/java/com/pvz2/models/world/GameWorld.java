@@ -116,6 +116,9 @@ public abstract class GameWorld {
             plantLists.clear();
         }
 
+        mechanics.clear();
+        zombieKillListeners.clear();
+
         sunsPool = new GenericObjectPool<>(Sun::new);
         projectilesPool = new GenericObjectPool<>(Projectile::new);
 
@@ -127,7 +130,6 @@ public abstract class GameWorld {
         isDialogActive = false;
         isEndGameHandled = false;
         sandstormActive = false;
-
 
         this.levelSetup.groundSetup(this);
         this.lawnMowerManager = new LawnMowerManager(this);
@@ -163,8 +165,8 @@ public abstract class GameWorld {
         }
     }
     public Plant getPlantAtPosition(float x, float y) {
-        int col = (int) (x / App.getCellWidth());
-        int row = (int) (y / App.getCellHeight());
+        int col = (int) ((x - App.getFirstCellX()) / App.getCellWidth());
+        int row = (int) ((y - App.getFirstCellY()) / App.getCellHeight());
         if (row >= 0 && row < rows && col >= 0 && col < cols) {
             if (Math.abs(x - grid[row][col].getX()) < App.getCellWidth() / 4) {
                 return grid[row][col].getPlant();
@@ -189,8 +191,8 @@ public abstract class GameWorld {
         return nearest;
     }
     public void createGrave(int x, int y) {
-        int col = (int) (x / App.getCellWidth());
-        int row = (int) (y / App.getCellHeight());
+        int col = (int) ((x - App.getFirstCellX()) / App.getCellWidth());
+        int row = (int) ((y - App.getFirstCellY()) / App.getCellHeight());
         if (row < 0 || row >= rows || col < 0 || col >= cols) return;
         Cell cell = grid[row][col];
         if (cell.hasObstacle() || !cell.isEmpty()) {
@@ -242,8 +244,8 @@ public abstract class GameWorld {
                 stats.incrementZombiesKilledInFirstWave();
             }
         }
-        int col = (int) (zombie.getX() / App.getCellWidth()); // کوست14
-        int row = (int) (zombie.getY() / App.getCellHeight());
+        int col = (int) ((zombie.getX() - App.getFirstCellX()) / App.getCellWidth());
+        int row = (int) ((zombie.getY() - App.getFirstCellY()) / App.getCellHeight());
         if (col == 0) {
             LawnMower mower = null;
             if (lawnMowerManager != null && row < lawnMowerManager.getMowers().size()) {
@@ -341,10 +343,10 @@ public abstract class GameWorld {
         applyChapterRules();
     }
     protected abstract void applyChapterRules();
-    public void tick(float delata) {
-        if (state != GameState.PLAYING) return;
-        elapsedTime += delata;
-        updateAll(delata);
+    public void tick(float delta) {
+        if (state != GameState.PLAYING || isDialogActive) return;   // <<< انتقال به بالا
+        elapsedTime += delta;
+        updateAll(delta);
         cleanupDeadZombies();
         removeIfDead();
         for (Cell[] row : grid) {
@@ -376,7 +378,6 @@ public abstract class GameWorld {
                 state = GameState.LOST;
             }
         }
-        if (getState() != GameState.PLAYING || isDialogActive) return;
     }
     private void handleWinCondition() {
         if (!winCondition.checkWin(this)) return;
