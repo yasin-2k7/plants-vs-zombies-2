@@ -35,11 +35,13 @@ public class SquareMeleeComponent implements GameComponent {
     public void update(Plant owner, float delta) {
         plantationTime+= delta;
         lastAttackTime+= delta;
+        owner.setState(Plant.State.IDLE);
 
         if (hasGrowing) checkGrowth();
 
         if (lastAttackTime >= attackIntervalTime) {
             performSonicWaveAttack(owner);
+            owner.setState(Plant.State.ATTACK);
             lastAttackTime = 0f;
         }
     }

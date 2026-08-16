@@ -38,6 +38,10 @@ public class Plant implements Damageable {
         ATTACK,
         UNARMED,
         TRIGGERED,
+        HIT_RIGHT,
+        HIT_LEFT,
+        HIT_RIGHT_AND_LEFT,
+        SPECIAL_IDLE
     }
 
     public Plant(PlantType type, int health, int damage) {

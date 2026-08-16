@@ -102,6 +102,9 @@ public class Sun implements Resettable {
             explode();
             return;
         }
+        if (producer != null){
+            producer.getComponentSuns().remove(this);
+        }
         this.isCollected = true;
         this.isExpired = true;
     }

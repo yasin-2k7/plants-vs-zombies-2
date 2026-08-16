@@ -79,5 +79,8 @@
   },
   "PEPPER_PULT": {
     "attack": { "duration": 2.1, "releaseTime": 0.4 }
+  },
+  "CHOMPER": {
+    "special": { "duration": 1.95 }
   }
 }

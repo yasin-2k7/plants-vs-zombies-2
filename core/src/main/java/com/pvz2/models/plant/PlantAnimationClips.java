@@ -31,6 +31,15 @@ public class PlantAnimationClips {
         return null;
     }
 
+    public static String getHitClip(Plant.State plantState){
+        return switch (plantState){
+            case HIT_RIGHT -> "attack";
+            case HIT_LEFT -> "attack2";
+            case HIT_RIGHT_AND_LEFT -> "attack3";
+            default -> "idle";
+        };
+    }
+
     public static String getExplosionClip(PlantType type) {
         if (type == PlantType.POTATO_MINE || type == PlantType.PRIMAL_POTATO_MINE) return "animation";
         if (type == PlantType.CHERRY_BOMB) return "explosion";

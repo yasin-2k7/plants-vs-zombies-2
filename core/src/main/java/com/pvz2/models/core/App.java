@@ -8,9 +8,9 @@ import com.pvz2.models.world.GameWorld;
 public class App {
     private static final PlantFactory FACTORY = new PlantFactory();
     private static final float CELL_HEIGHT = 125f;
-    private static final float CELL_WIDTH = 140f;
-    private static final float FIRST_CELL_Y = 220f;
-    private static final float FIRST_CELL_X = 530f;
+    private static final float CELL_WIDTH = 142f;
+    private static final float FIRST_CELL_Y = 175f;
+    private static final float FIRST_CELL_X = 532f;
     private static User currentUser;
     private static GameWorld currentGame;
     private static boolean debugMode = true;

@@ -333,26 +333,15 @@ public class GameMenuController implements MenuController {
     }
 
 
-    public void cheatSpawnZombie(String type, float x, float y) {
+    public static void cheatSpawnZombie(String type, int col, int row) {
         Zombie zombie = new ZombieFactory().createZombie(type);
         if (zombie == null) {
-//            GameMenuView.getInstance().showResult("❌invalid zombie type!: " + type);
             return;
         }
-        float newY = -1;
-        for (Cell[] cells : App.getCurrentGame().getGrid()) {
-            if (cells[0].getY() + App.getCellHeight() / 2 >= y && cells[0].getY() - App.getCellHeight() / 2 <= y) {
-                newY = cells[0].getY();
-            }
-        }
-        if (x < 0 || x > App.getCellWidth() * 9 || newY == -1) {
-//            GameMenuView.getInstance().showResult("you cannot spawn zombie in that place!");
-            return;
-        }
-        zombie.setX(x);
-        zombie.setY(newY);
+        Cell cell = App.getCurrentGame().getGrid()[row][col];
+        zombie.setX(cell.getX());
+        zombie.setY(cell.getY());
         App.getCurrentGame().getActiveZombies().add(zombie);
-//        GameMenuView.getInstance().showResult("Spawned " + type + " at (" + x + ", " + newY + ")");
     }
     //miniGames
     public void breakVase(int row, int col) {

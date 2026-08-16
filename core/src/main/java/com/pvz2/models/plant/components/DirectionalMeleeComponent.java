@@ -24,21 +24,32 @@ public class DirectionalMeleeComponent implements GameComponent {
     @Override
     public void update(Plant owner, float delta) {
         lastAttackTick += delta;
+        if (owner.getState() != Plant.State.IDLE) owner.setState(Plant.State.IDLE);
+
 
         if (lastAttackTick >= attackIntervalTicks) {
-            List<Zombie> targets;
-            if ((targets = checkRight(owner)) != null) {
-                if (!targets.isEmpty()) {
-                    attack(targets);
+            List<Zombie> rightTargets;
+            List<Zombie> leftTargets;
+            if ((rightTargets = checkRight(owner)) != null) {
+                if (!rightTargets.isEmpty()) {
+                    attack(rightTargets);
                     lastAttackTick = 0;
-                    return;
+                    if (owner.getState() != Plant.State.HIT_RIGHT) owner.setState(Plant.State.HIT_RIGHT);
                 }
             }
-            if ((targets = checkLeft(owner)) != null) {
-                if (!targets.isEmpty()) {
-                    attack(targets);
+            if ((leftTargets = checkLeft(owner)) != null) {
+                if (!leftTargets.isEmpty()) {
+                    attack(leftTargets);
                     lastAttackTick = 0;
+                    if (rightTargets != null && !rightTargets.isEmpty()){
+                        owner.setState(Plant.State.HIT_RIGHT_AND_LEFT);
+                        return;
+                    }
+                    if (owner.getState() != Plant.State.HIT_LEFT) owner.setState(Plant.State.HIT_LEFT);
                 }
+            }
+            if ((rightTargets != null && !rightTargets.isEmpty()) || (leftTargets != null && !leftTargets.isEmpty())){
+                return;
             }
         }
     }
@@ -76,6 +87,7 @@ public class DirectionalMeleeComponent implements GameComponent {
     private void attack(List<Zombie> targets) {
         for (Zombie zombie : targets) {
             zombie.takeDamage(damage, "NORMAL");
+            System.out.println(damage);
         }
     }
 

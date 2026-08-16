@@ -68,6 +68,8 @@ public class SunProducerComponent implements GameComponent {
 
         if (App.getCurrentGame() instanceof IZombieLevel) return;
         tick(owner, delta);
+        System.out.println(lastProductionTime);
+
 
         if (shroom && checkShroomSize) {
             if (plantationTime > (72 - growTimeToReduce)) {

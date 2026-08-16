@@ -2,6 +2,7 @@ package com.pvz2.models.plant.components;
 
 import com.pvz2.controller.LevelMenuController;
 import com.pvz2.models.core.App;
+import com.pvz2.models.plant.AnimationDurations;
 import com.pvz2.models.plant.GameComponent;
 import com.pvz2.models.plant.Plant;
 import com.pvz2.models.world.Cell;
@@ -12,28 +13,56 @@ import java.util.Comparator;
 import java.util.List;
 
 public class ChomperMeleeComponent implements GameComponent {
+    private static final String BITE_CLIP = "special";
+    private static final float DEFAULT_BITE_DURATION = 0.6f;
+
     private final float digestTime;
     private boolean isDigesting = false;
     private float digestProgressTime = 0f;
+    private float biteAnimTimer = 0f;
+
+    // resolved lazily once the owner's PlantType is known
+    private float biteDuration = -1f;
 
     public ChomperMeleeComponent(float digestTime) {
         this.digestTime = digestTime;
     }
 
+    private void ensureBiteDurationLoaded(Plant owner) {
+        if (biteDuration >= 0f) return;
+        biteDuration = AnimationDurations.getDuration(owner.getType(), BITE_CLIP, DEFAULT_BITE_DURATION);
+    }
+
     @Override
     public void update(Plant owner, float delta) {
+        ensureBiteDurationLoaded(owner);
+
         if (isDigesting) {
-            digestProgressTime+= delta;
+            digestProgressTime += delta;
+
+            if (owner.getState() == Plant.State.SPECIAL) {
+                biteAnimTimer += delta;
+                if (biteAnimTimer >= biteDuration) {
+                    owner.setState(Plant.State.SPECIAL_IDLE);
+                }
+            }
+
             if (digestProgressTime >= digestTime) {
                 isDigesting = false;
                 digestProgressTime = 0f;
+                biteAnimTimer = 0f;
+                owner.setState(Plant.State.IDLE);
             }
             return;
         }
 
+        if (owner.getState() != Plant.State.IDLE) {
+            owner.setState(Plant.State.IDLE);
+        }
+
         Zombie target = findTargetZombie(owner);
         if (target != null) {
-            swallowZombie(target);
+            swallowZombie(owner, target);
         }
     }
 
@@ -55,11 +84,13 @@ public class ChomperMeleeComponent implements GameComponent {
         return null;
     }
 
-    private void swallowZombie(Zombie zombie) {
+    private void swallowZombie(Plant owner, Zombie zombie) {
         if (zombie.isBoss()) return;
         zombie.takeDamage(zombie.getHealth(), "NORMAL");
         this.isDigesting = true;
-        this.digestProgressTime = 0;
+        this.digestProgressTime = 0f;
+        this.biteAnimTimer = 0f;
+        owner.setState(Plant.State.SPECIAL);
     }
 
     @Override
@@ -72,18 +103,23 @@ public class ChomperMeleeComponent implements GameComponent {
         if (rowZombies.isEmpty()) return;
 
         List<Zombie> targets = rowZombies.stream()
-                .filter(zombie -> zombie.getX() >= owner.getX())
-                .sorted(Comparator.comparingDouble(Zombie::getX))
-                .limit(3)
-                .toList();
+            .filter(zombie -> zombie.getX() >= owner.getX())
+            .sorted(Comparator.comparingDouble(Zombie::getX))
+            .limit(3)
+            .toList();
 
+        boolean swallowedAny = false;
         for (Zombie target : targets) {
             if (target.isBoss()) continue;
             target.takeDamage(target.getHealth(), "NORMAL");
+            swallowedAny = true;
         }
 
-        this.isDigesting = false;
-        this.digestProgressTime = 0;
+        if (swallowedAny) {
+            this.isDigesting = true;
+            this.digestProgressTime = 0f;
+            this.biteAnimTimer = 0f;
+            owner.setState(Plant.State.SPECIAL);
+        }
     }
-
 }

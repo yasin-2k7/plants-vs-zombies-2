@@ -77,6 +77,7 @@ public class PlantGraphic {
             return new ClipInfo(PlantsCollectionMenuScreen.getSpecialClip(plant.getType()), false);
         }
         if (state == Plant.State.ATTACK) {
+            if (plant.getType() == PlantType.KIWIBEAST) return new ClipInfo("attack_stage3", false);
             return new ClipInfo("attack", false);
         }
         if (state == Plant.State.TRIGGERED) {
@@ -84,6 +85,12 @@ public class PlantGraphic {
         }
         if (state == Plant.State.UNARMED) {
             return new ClipInfo(PlantAnimationClips.getUnarmedClip(plant.getType()), true);
+        }
+        if(state == Plant.State.HIT_LEFT || state == Plant.State.HIT_RIGHT || state == Plant.State.HIT_RIGHT_AND_LEFT){
+            return new ClipInfo(PlantAnimationClips.getHitClip(state), false);
+        }
+        if (state == Plant.State.SPECIAL_IDLE){
+            return new ClipInfo("special_idle", true);
         }
         return null;
     }
@@ -99,7 +106,7 @@ public class PlantGraphic {
 
     public void draw(SpriteBatch batch, PamPlayer pamPlayer) {
         if (plant == null || plant.isDead() || pamPath == null || pamPlayer == null) return;
-        pamPlayer.draw(batch, pamPath, currentClip, animTime, worldX - 5f, worldY - 30f, 0.8f, 0.8f,
+        pamPlayer.draw(batch, pamPath, currentClip, animTime, worldX, worldY, 0.8f, 0.8f,
             isLoop);
     }
 

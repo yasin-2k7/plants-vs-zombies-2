@@ -99,7 +99,7 @@ public class Cell {
 
         return activeZombies.stream()
                 .filter(zombie -> affectedCells.stream().anyMatch(cell ->
-                        zombie.getY() == cell.getY() &&
+                        Math.abs(zombie.getY() - cell.getY()) < 5 &&
                                 cell.containsX(zombie.getX())
                 ))
                 .toList();

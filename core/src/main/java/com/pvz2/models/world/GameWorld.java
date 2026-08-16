@@ -91,7 +91,7 @@ public abstract class GameWorld {
         this.activeCollectables = new ArrayList<>();
         this.activeObstacles = new ArrayList<>();
         this.sunsPool = new GenericObjectPool<>(Sun::new);
-        currentSun = 2450;
+        currentSun = 50;
         this.state = GameState.PLAYING;
         this.plantLists = new ArrayList<>();
         this.levelSetup.groundSetup(this);
@@ -168,7 +168,7 @@ public abstract class GameWorld {
         int col = (int) ((x - App.getFirstCellX()) / App.getCellWidth());
         int row = (int) ((y - App.getFirstCellY()) / App.getCellHeight());
         if (row >= 0 && row < rows && col >= 0 && col < cols) {
-            if (Math.abs(x - grid[row][col].getX()) < App.getCellWidth() / 20) {
+            if (Math.abs(x - grid[row][col].getX()) < App.getCellWidth() / 4) {
                 return grid[row][col].getPlant();
             }
         }

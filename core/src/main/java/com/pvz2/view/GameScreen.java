@@ -1,6 +1,7 @@
 package com.pvz2.view;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -64,6 +65,8 @@ public class GameScreen extends MenuScreen {
     private float leftWidthScaled;
     private float rightWidthScaled;
 
+    private LawnGridDebugRenderer lawnGridDebugRenderer;
+
     private Vector3 cursorWorldPos = new Vector3(0, 0, 0);
     private final List<PlantGraphic> plantGraphics = new ArrayList<>();
     private final List<ExplosionEffectGraphic> explosionGraphics = new ArrayList<>();
@@ -115,6 +118,7 @@ public class GameScreen extends MenuScreen {
         mainLawnHeight = 1000;
 
         initWorldCamera(mainLawnWidth, mainLawnHeight);
+        lawnGridDebugRenderer = new LawnGridDebugRenderer();
 
         FileHandle assetsFolder = Gdx.files.internal("");
         pamPlayer = new PamPlayer(game.textureBank, assetsFolder);
@@ -496,6 +500,9 @@ public class GameScreen extends MenuScreen {
         }
         game.batch.end();
 
+        if (App.isDebugMode()) {
+            lawnGridDebugRenderer.draw(worldCamera);
+        }
         if (hud != null) {
             hud.update(world, delta);
         }
@@ -727,6 +734,9 @@ public class GameScreen extends MenuScreen {
     }
 
     private void handleInput() {
+        if (Gdx.input.isKeyJustPressed(Input.Keys.SHIFT_LEFT)){
+            GameMenuController.cheatSpawnZombie("ZombieDefault", 6, 1);
+        }
         Vector3 touchPoint = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
         worldViewport.unproject(touchPoint);
 
@@ -815,6 +825,14 @@ public class GameScreen extends MenuScreen {
 
     public List<PlantGraphic> getPlantGraphics() {
         return plantGraphics;
+    }
+
+    @Override
+    public void dispose() {
+        super.dispose();
+        if (lawnGridDebugRenderer != null) {
+            lawnGridDebugRenderer.dispose();
+        }
     }
 
     public PlantPlacementManager getPlantPlacementManager() {
