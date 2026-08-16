@@ -66,7 +66,7 @@ public class LevelFactory {
             new WaveSpawnEntry("ZombieArmor2", 300),
             new WaveSpawnEntry("ZombieArmor4", 400),
             new WaveSpawnEntry("ZombieTombRaiser", 300),
-            new WaveSpawnEntry("ZombieRa", 100),
+            new WaveSpawnEntry("ZombieRa", 200),
             new WaveSpawnEntry("ZombieNewspaper", 450),
             new WaveSpawnEntry("ZombieExplorer", 250)
         );

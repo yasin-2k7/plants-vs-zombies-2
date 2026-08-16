@@ -47,7 +47,7 @@ public class ExplosiveFactory {
         int damage = level >= 4 ? 2400 : 1800;
         Plant p = new Plant(PlantType.POTATO_MINE, 300, damage);
         ExplosivesComponent component = new ExplosivesComponent(
-                new ProximityTrigger(App.getCellWidth()),
+                new ProximityTrigger(App.getCellWidth()/8),
                 new AreaDamageBehavior(damage, new CircularRange(0)), armTime, 0.65f);
         component.setPlantFoodBehavior((_, comp) -> {
             comp.instantArm();
@@ -70,7 +70,7 @@ public class ExplosiveFactory {
         int damage = level >= 4 ? 2800 : 2400;
         Plant p = new Plant(PlantType.PRIMAL_POTATO_MINE, 300, damage);
         ExplosivesComponent component = new ExplosivesComponent(
-                new ProximityTrigger(App.getCellWidth()),
+                new ProximityTrigger(App.getCellWidth()/8),
                 new AreaDamageBehavior(damage, new CircularRange(1)), armTime, 0.65f);
         component.setPlantFoodBehavior((_, comp) -> {
             comp.instantArm();
@@ -93,7 +93,7 @@ public class ExplosiveFactory {
         Plant p = new Plant(PlantType.CHERRY_BOMB, 1000, damage);
         p.addComponent(new ExplosivesComponent(
                 InstantTrigger.INSTANCE,
-                new AreaDamageBehavior(damage, new CircularRange(1)), 0, 0.4f));
+                new AreaDamageBehavior(damage, new CircularRange(1)), 0, 0.65f));
         return p;
     }
 
@@ -102,7 +102,7 @@ public class ExplosiveFactory {
         int damage = level >= 3 ? 2400 : 1800;
         Plant p = new Plant(PlantType.SQUASH, 1000, damage);
         ExplosivesComponent component = new ExplosivesComponent(
-                new ProximityTrigger(App.getCellWidth() * 3),
+                new ProximityTrigger(App.getCellWidth() * 2),
                 new AreaDamageBehavior(damage, new CircularRange(0)), 0, 0.8f);
         if (level >= 4) component.setLives(2);
         p.addComponent(component);
@@ -134,7 +134,7 @@ public class ExplosiveFactory {
         Plant p = new Plant(PlantType.JALAPENO, 1000, damage);
         p.addComponent(new ExplosivesComponent(InstantTrigger.INSTANCE,
                 new CompositeBehavior(new AreaDamageBehavior(damage, LineRange.INSTANCE),
-                        new MeltIceBehavior(LineRange.INSTANCE)), 0, 0.4f));
+                        new MeltIceBehavior(LineRange.INSTANCE)), 0, 0.65f));
         p.setFire(true);
         return p;
     }
@@ -154,7 +154,7 @@ public class ExplosiveFactory {
         int level = App.getCurrentUser().getUnlockedPlantsLevels().getOrDefault(PlantType.TANGLE_KELP, 1);
         Plant p = new Plant(PlantType.TANGLE_KELP, 1000, 20000);
         ExplosivesComponent component = new ExplosivesComponent(
-                new ProximityTrigger(App.getCellWidth()),
+                new ProximityTrigger(App.getCellWidth()/3),
                 new SingleTargetDamageBehavior(new CircularRange(0)), 0, 2.5f);
         if (level >= 3) component.setLives(2);
         component.setPlantFoodBehavior((_, _) -> {
@@ -179,7 +179,7 @@ public class ExplosiveFactory {
         int freezeTime = level >= 3 ? 6 : 4;
         Plant p = new Plant(PlantType.ICEBURG, 1000, 0);
         ExplosivesComponent component = new ExplosivesComponent(
-                new ProximityTrigger(App.getCellWidth()),
+                new ProximityTrigger(App.getCellWidth()/3),
                 new FreezeZombieBehavior(new CircularRange(0), freezeTime), 0, 1.5f);
         component.setPlantFoodBehavior((_, _) -> {
             App.getCurrentGame().getActiveZombies()

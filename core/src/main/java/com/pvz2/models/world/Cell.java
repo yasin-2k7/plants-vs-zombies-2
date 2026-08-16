@@ -202,6 +202,7 @@ public class Cell {
                 || (this.hasIcyZombie())) {
             return null;
         }
+        System.out.println(y);
         return newPlant;
     }
 

@@ -735,8 +735,8 @@ public class GameScreen extends MenuScreen {
 
                     if (success){
                         Plant newPlant = GameMenuController.plantSelectedPlant(
-                            col*App.getCellWidth()+App.getCellWidth()/2,
-                            row*App.getCellHeight()+App.getCellHeight()/2);
+                            App.getFirstCellX()+col*App.getCellWidth()+App.getCellWidth()/2,
+                            App.getFirstCellY()+row*App.getCellHeight()+App.getCellHeight()/2);
                         if (newPlant != null){
                             PlantGraphic pg = new PlantGraphic(newPlant, pamPlayer);
                             plantGraphics.add(pg);
@@ -762,13 +762,11 @@ public class GameScreen extends MenuScreen {
                     float y=pg.getWorldY(),scaleX = 1,scaleY = 1;
                     if (newPlant.getType() == PlantType.CHERRY_BOMB){
                         y = pg.getWorldY()+100;
-                        scaleX = 1;
-                        scaleY = 1;
                     }
                     else if (newPlant.getType() == PlantType.JALAPENO){
-                        y = pg.getWorldY();
-                        scaleX = 100;
-                        scaleY = 2;
+                        y = pg.getWorldY()+20;
+                        scaleX = 20;
+                        scaleY = 1.5f;
                     }
                     explosionGraphics.add(new ExplosionEffectGraphic(
                         fxPath, fxClip, pg.getWorldX(), y, pamPlayer, scaleX,

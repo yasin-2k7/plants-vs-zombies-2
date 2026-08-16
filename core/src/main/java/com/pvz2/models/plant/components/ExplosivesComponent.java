@@ -32,6 +32,7 @@ public class ExplosivesComponent implements GameComponent {
         this.armTimer = armTime;
         this.isArmed = (armTime <= 0);
         this.maxPostTriggerDelay = maxPostTriggerDelay;
+        this.postTriggerDelay = maxPostTriggerDelay;
     }
 
 
@@ -104,7 +105,7 @@ public class ExplosivesComponent implements GameComponent {
         this.plantFoodBehavior = plantFoodBehavior;
     }
 
-    public void setPostTriggerDelay(int postTriggerDelay) {
+    public void setPostTriggerDelay(float postTriggerDelay) {
         this.postTriggerDelay = postTriggerDelay;
     }
 

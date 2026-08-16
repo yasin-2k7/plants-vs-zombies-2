@@ -30,6 +30,6 @@ public class ExplosionEffectGraphic {
 
     public void draw(SpriteBatch batch, PamPlayer pamPlayer) {
         if (pamPlayer == null) return;
-        pamPlayer.draw(batch, pamPath, clip, animTime, x, y, false);
+        pamPlayer.draw(batch, pamPath, clip, animTime, x, y, scaleX, scaleY, false);
     }
 }

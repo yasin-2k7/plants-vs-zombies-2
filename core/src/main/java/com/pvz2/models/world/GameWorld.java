@@ -168,7 +168,7 @@ public abstract class GameWorld {
         int col = (int) ((x - App.getFirstCellX()) / App.getCellWidth());
         int row = (int) ((y - App.getFirstCellY()) / App.getCellHeight());
         if (row >= 0 && row < rows && col >= 0 && col < cols) {
-            if (Math.abs(x - grid[row][col].getX()) < App.getCellWidth() / 4) {
+            if (Math.abs(x - grid[row][col].getX()) < App.getCellWidth() / 20) {
                 return grid[row][col].getPlant();
             }
         }
