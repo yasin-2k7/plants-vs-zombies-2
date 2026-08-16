@@ -36,6 +36,7 @@ import com.pvz2.models.plant.components.ExplosivesComponent;
 import com.pvz2.models.world.Cell;
 import com.pvz2.models.world.GameState;
 import com.pvz2.models.world.GameWorld;
+import com.pvz2.models.zombie.Zombie;
 import pvz.libpvz.pam.PamPlayer;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
@@ -44,7 +45,9 @@ import com.badlogic.gdx.utils.Align;
 import pvz.skin.BorderedTable;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 
 public class GameScreen extends MenuScreen {
@@ -88,9 +91,14 @@ public class GameScreen extends MenuScreen {
     private LevelObjectivesOverlay objectivesOverlay;
     private boolean objectivesDismissed = false;
 
+    private GameEndOverlay endGameOverlay;
+
     private PlantMenuController plantMenuController = new PlantMenuController();
 
     private final PlantPlacementManager plantPlacementManager = new PlantPlacementManager();
+
+    private ZombiePreviewManager zombiePreviewManager;
+    private boolean zombiePreviewVisible = true;
 
     private record PanStep(float targetCenterX, float duration, boolean isTravel) {
     }
@@ -99,6 +107,8 @@ public class GameScreen extends MenuScreen {
         super(game);
         this.world = world;
         this.chapter = chapter;
+
+        zombiePreviewManager = new ZombiePreviewManager(world.getWaveManager(), world.getRows(), world.getCols());  // <<< اضافه شد
 
         String[] keys = getBackgroundKeys(chapter);
         bgLeft = game.textureBank.region(keys[0]);
@@ -185,6 +195,15 @@ public class GameScreen extends MenuScreen {
         }
         hud.getSelectedPlantsList().build();
 
+        plantGraphics.clear();
+        zombieGraphics.clear();
+        zombiePreviewManager = new ZombiePreviewManager(world.getWaveManager(), world.getRows(), world.getCols());  // <<< اضافه شد
+
+        if (endGameOverlay != null) {
+            endGameOverlay.remove();
+            endGameOverlay = null;
+        }
+
         buildIntroPanSequence();
 
         if (daveOverlay != null) {
@@ -196,6 +215,14 @@ public class GameScreen extends MenuScreen {
         }
         daveOverlay = new CrazyDaveOverlay(game, starting, world);
         modalStack.addActor(daveOverlay);
+    }
+
+    private void showEndGameOverlay() {
+        if (endGameOverlay != null) {
+            endGameOverlay.remove();
+        }
+        endGameOverlay = new GameEndOverlay(game, skin, world, this::restartLevel);
+        modalStack.addActor(endGameOverlay);
     }
 
     public void buildStreetTable() {
@@ -227,6 +254,7 @@ public class GameScreen extends MenuScreen {
             public void clicked(InputEvent event, float x, float y) {
                 if (plantMenuController.startGame(GameScreen.this)){
                     resumeCameraToMain();
+                    pendingAnnouncements.add(0, "Prepare your petals!\nIt's time to garden or die");
                     if (!world.isConveyorMode()){
                         hud.getSelectedPlantsList().activate(world.getPlantLists());
                     }
@@ -294,16 +322,17 @@ public class GameScreen extends MenuScreen {
         float streetCenterX = MathUtils.clamp(mainLawnWidth + rightWidthScaled / 2f, minCameraX, maxCameraX);
 
         introSteps.clear();
-        introSteps.add(new PanStep(houseCenterX, 0.9f, false));    // 0: hold at house
-        introSteps.add(new PanStep(streetCenterX, 2.2f, true));    // 1: travel to street, pan stops here
-        introSteps.add(new PanStep(mainCenterX, 2.2f, true));      // 2: travel to main, resumed via resumeCameraToMain()
-        introSteps.add(new PanStep(mainCenterX, 0f, false));       // 3: hold at main
+        introSteps.add(new PanStep(houseCenterX, 0.9f, false));
+        introSteps.add(new PanStep(streetCenterX, 2.2f, true));
+        introSteps.add(new PanStep(mainCenterX, 2.2f, true));
+        introSteps.add(new PanStep(mainCenterX, 0f, false));
 
         currentStepIndex = 0;
         stepElapsed = 0f;
         panStartX = houseCenterX;
         introFinished = false;
         introPausedAtStreet = false;
+        zombiePreviewVisible  = true;
         hideStreetTable();
 
         worldCamera.position.set(houseCenterX, mainLawnHeight / 2f, 0);
@@ -334,8 +363,6 @@ public class GameScreen extends MenuScreen {
             panStartX = step.targetCenterX();
 
             if (currentStepIndex == STREET_ARRIVAL_STEP_INDEX) {
-                // The camera just reached the street: stop the sequence here and
-                // wait for the player to press "Continue" instead of auto-advancing.
                 pauseCameraAtStreet();
                 return;
             }
@@ -361,6 +388,7 @@ public class GameScreen extends MenuScreen {
             return;
         }
         introPausedAtStreet = false;
+        zombiePreviewVisible = false;
         // moving effect
         hideStreetTable();
         hud.setInGameDetailsVisibility(true);
@@ -408,18 +436,22 @@ public class GameScreen extends MenuScreen {
                             if (daveOverlay != null) {
                                 daveOverlay.startPresentation(world.getWinningDialogs(), () -> {
                                     GameMenuController.handleWinning(world);
+                                    showEndGameOverlay();
                                 });
                             } else {
                                 GameMenuController.handleWinning(world);
+                                showEndGameOverlay();
                             }
                         } else if (world.getState() == GameState.LOST) {
                             world.setEndGameHandled(true);
                             if (daveOverlay != null) {
                                 daveOverlay.startPresentation(world.getLosingDialogs(), () -> {
                                     GameMenuController.handleLosing(world);
+                                    showEndGameOverlay();
                                 });
                             } else {
                                 GameMenuController.handleLosing(world);
+                                showEndGameOverlay();
                             }
                         }
                     }
@@ -433,6 +465,21 @@ public class GameScreen extends MenuScreen {
         renderWorldContent(delta);
         worldViewport.unproject(cursorWorldPos);
         plantPlacementManager.drawPreview(game.batch, cursorWorldPos);
+
+        if (zombiePreviewManager != null && zombiePreviewVisible) {
+            zombiePreviewManager.update(delta, pamPlayer);
+            zombiePreviewManager.draw(game.batch, pamPlayer);
+        }
+
+        syncZombieGraphics();
+        List<ZombieGraphic> sortedZombies = new ArrayList<>(zombieGraphics.values());
+        sortedZombies.sort((z1, z2) -> Float.compare(z2.getZombie().getY(), z1.getZombie().getY()));
+
+        for (ZombieGraphic zg : sortedZombies) {
+            zg.update(delta, pamPlayer);
+            zg.draw(game.batch, pamPlayer);
+        }
+
         for (PlantGraphic pg : plantGraphics){
             pg.update(delta);
             pg.draw(game.batch, pamPlayer);
@@ -625,12 +672,12 @@ public class GameScreen extends MenuScreen {
 
     private void showImitatorTable(){
         if (imitaterOverlay != null) {
-            return; // already open, ignore double-click
+            return;
         }
 
         imitaterOverlay = new Table();
         imitaterOverlay.setFillParent(true);
-        imitaterOverlay.setTouchable(Touchable.enabled); // block clicks to what's behind it
+        imitaterOverlay.setTouchable(Touchable.enabled);
 
         Pixmap pixmap = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
         pixmap.setColor(new Color(0, 0, 0, 0.6f));
@@ -741,6 +788,15 @@ public class GameScreen extends MenuScreen {
             imitaterOverlayBg.dispose();
             imitaterOverlayBg = null;
         }
+    }
+
+    private final Map<Zombie, ZombieGraphic> zombieGraphics = new HashMap<>();
+
+    private void syncZombieGraphics() {
+        for (Zombie z : world.getActiveZombies()) {
+            zombieGraphics.computeIfAbsent(z, ZombieGraphic::new);
+        }
+        zombieGraphics.keySet().removeIf(z -> !world.getActiveZombies().contains(z));
     }
 
     public List<PlantGraphic> getPlantGraphics() {

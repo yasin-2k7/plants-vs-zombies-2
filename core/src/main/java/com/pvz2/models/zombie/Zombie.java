@@ -48,7 +48,7 @@ public abstract class Zombie implements Damageable {
         this.name = name;
         this.health = health;
         this.maxHealth = health;
-        this.speed = speed * 60;
+        this.speed = speed * 100;
         this.damage = damage / 10;
         this.currentState = new WalkingState();
         this.originalSpeed = this.speed;
@@ -185,6 +185,13 @@ public abstract class Zombie implements Damageable {
     public void makePoisoned(int damageOnTick) {
         onPoisonTimeRemaining = 1.0f;
         poisonDamage = damageOnTick;
+    }
+
+    public String getAnimationClip() {
+        if (isDead) return "die";
+        if (freezedTimeRemaining > 0 || iceHealth > 0) return "idle";
+        if (disabledTimeRemaining > 0) return "idle";
+        return currentState != null ? currentState.getAnimationClip() : "idle";
     }
 
     public void disableFor(float delta) {

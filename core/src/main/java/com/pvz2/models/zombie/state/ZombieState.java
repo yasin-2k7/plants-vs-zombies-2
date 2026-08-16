@@ -4,4 +4,5 @@ import com.pvz2.models.zombie.Zombie;
 
 public interface ZombieState {
     void handleAction(Zombie zombie);
+    String getAnimationClip();
 }

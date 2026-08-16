@@ -20,4 +20,8 @@ public class WalkingState implements ZombieState {
             zombie.setState(new EatingState(targetPlant));
         }
     }
+    @Override
+    public String getAnimationClip() {
+        return "walk";
+    }
 }

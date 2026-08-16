@@ -27,13 +27,29 @@ public class ZombieGraphic {
     }
 
     public void update(float delta, PamPlayer pamPlayer) {
+        if (zombie.isDead() && !currentClip.equals("die")) {
+            playClip(resolveClip("die"), false);
+        }
         if (zombie.isDead()) return;
 
         animTime += delta;
 
+        String targetClip = resolveClip(zombie.getAnimationClip());
+        if (!targetClip.equals(currentClip)) {
+            playClip(targetClip, true);
+        }
+
         if (pamPath != null) {
             pamPlayer.loadAsync(pamPath, null);
         }
+    }
+
+    private String resolveClip(String baseClip) {
+        String specificName = zombie.getSpecificName();
+        if ("ZombieNewspaper".equals(specificName) && baseClip.equals("idle")) {
+            return "idle_newspaper";
+        }
+        return baseClip;
     }
 
     public void draw(SpriteBatch batch, PamPlayer pamPlayer) {
@@ -44,15 +60,10 @@ public class ZombieGraphic {
 
         if (visibilities != null) {
             pamPlayer.draw(batch, pamPath, currentClip, animTime, renderX,
-                renderY-LawnGrid.CELL_HEIGHT/3,0.8f
-                , 0.8f,
-                isLoop,
-                visibilities);
+                renderY - LawnGrid.CELL_HEIGHT / 3, 0.8f, 0.8f, isLoop, visibilities);
         } else {
             pamPlayer.draw(batch, pamPath, currentClip, animTime, renderX,
-                renderY-LawnGrid.CELL_HEIGHT/3,0.8f
-                , 0.8f,
-                isLoop);
+                renderY - LawnGrid.CELL_HEIGHT / 3, 0.8f, 0.8f, isLoop);
         }
     }
 
