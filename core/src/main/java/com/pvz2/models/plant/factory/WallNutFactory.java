@@ -129,7 +129,7 @@ public class WallNutFactory {
                         @Override
                         protected void onDestroy(Plant owner) {
                             ExplosivesComponent explosivesComponent = new ExplosivesComponent(InstantTrigger.INSTANCE,
-                                    new AreaDamageBehavior(damage, new CircularRange(1)), 0);
+                                    new AreaDamageBehavior(damage, new CircularRange(1)), 0, 0);
                             explosivesComponent.setPostTriggerDelay(0);
                             explosivesComponent.update(owner, App.getCurrentGame().getElapsedTime());
                             explosivesComponent.update(owner, App.getCurrentGame().getElapsedTime());
@@ -143,7 +143,7 @@ public class WallNutFactory {
             @Override
             public void onDeath(Plant owner, float delta) {
                 ExplosivesComponent explosivesComponent = new ExplosivesComponent(InstantTrigger.INSTANCE,
-                        new AreaDamageBehavior(damage, new CircularRange(1)), 0);
+                        new AreaDamageBehavior(damage, new CircularRange(1)), 0, 0);
                 explosivesComponent.setPostTriggerDelay(0);
                 explosivesComponent.update(owner, delta);
                 explosivesComponent.update(owner, delta);

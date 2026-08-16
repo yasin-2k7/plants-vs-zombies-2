@@ -1,5 +1,6 @@
 package com.pvz2.models.world;
 
+import com.pvz2.controller.GameMenuController;
 import com.pvz2.models.core.App;
 import com.pvz2.models.core.User;
 import com.pvz2.models.enums.PlantFamily;
@@ -68,6 +69,7 @@ public class Cell {
 
     public static List<Cell> getNeighborCells(Cell inputCell, Cell[][] grid, int radius) {
         List<Cell> neighbors = new ArrayList<>();
+        if (inputCell == null) return neighbors;
 
         int centerCol = inputCell.getCol();
         int centerLane = inputCell.getRow();
@@ -186,20 +188,14 @@ public class Cell {
         return basePlant == null && mainPlant == null && shieldPlant == null;
     }
 
-    private Plant checkPlantable(PlantType type, boolean boost, GameScreen screen){
+    private Plant checkPlantable(PlantType type, boolean boost){
         if (!this.isPlantable()) {
             if (!(this.obstacle instanceof Grave && type == PlantType.GRAVE_BUSTER))
                 return null;
         }
         if (craterTime > 0) return null;
         Plant newPlant;
-        if (screen == null){
-            newPlant = PlantFactory.createPlant(type, (int) x, (int) y, this);
-        }
-        else {
-            newPlant = PlantFactory.createPlant(type, (int) x, (int) y, this, screen);
-        }
-
+        newPlant = PlantFactory.createPlant(type, (int) x, (int) y, this);
         if (boost) newPlant.setPlantFoodInStart(true);
         if (((this.obstacle instanceof Grave) != (type == PlantType.GRAVE_BUSTER))
                 || !(this.terrain.canPlant(newPlant, this))
@@ -209,9 +205,12 @@ public class Cell {
         return newPlant;
     }
 
-    public String handlePlanting(PlantType type, boolean boost, GameScreen screen) {
-        Plant newPlant = checkPlantable(type, boost, screen);
-        if (newPlant == null) return "you cannot plant in that place!";
+    public Plant handlePlanting(PlantType type, boolean boost) {
+        Plant newPlant = checkPlantable(type, boost);
+        if (newPlant == null){
+            GameMenuController.updateState("Error", "you cannot plant in that place!");
+            return null;
+        }
         PlacementBehaviorComponent behavior = newPlant.getComponent(PlacementBehaviorComponent.class);
         PlantLayer layer = (behavior != null) ? behavior.getTargetLayer() : PlantLayer.MAIN;
         if (behavior != null && behavior.isStackable() && !isLayerEmpty(layer)) {
@@ -247,13 +246,14 @@ public class Cell {
                     stats.incrementSunProducerPlantsInLevel();
                 }
             }
-            return null;
+            return newPlant;
         }
-        return "that place isn't empty!";
+        GameMenuController.updateState("Error", "that place isn't empty!");
+        return null;
     }
 
-    public String handlePlanting(PlantType type) {
-        return handlePlanting(type, false, null);
+    public Plant handlePlanting(PlantType type) {
+        return handlePlanting(type, false);
     }
 
     public void removePlant() {

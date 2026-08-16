@@ -2,7 +2,9 @@ package com.pvz2.view;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.pvz2.models.enums.PlantType;
+import com.pvz2.models.plant.AnimationDurations;
 import com.pvz2.models.plant.Plant;
+import com.pvz2.models.plant.PlantAnimationClips;
 import pvz.libpvz.pam.PamPlayer;
 
 public class PlantGraphic {
@@ -16,6 +18,8 @@ public class PlantGraphic {
     private String currentClip;
     private float animTime = 0f;
     private boolean isLoop = true;
+
+    private Plant.State lastState = Plant.State.IDLE;
 
     public PlantGraphic(Plant plant, PamPlayer pamPlayer) {
         this.plant = plant;
@@ -37,28 +41,66 @@ public class PlantGraphic {
 
     public void update(float delta) {
         animTime += delta;
-        if (plant.getState() != Plant.State.IDLE && currentClip.equals(initialClip)){
-            if (plant.getState() == Plant.State.SPECIAL ||
-                plant.getType() == PlantType.PUFF_SHROOM ||
-                plant.getType() == PlantType.PUFF_SHROOM){
-                playClip(PlantsCollectionMenuScreen.getSpecialClip(plant.getType()), false);
+
+        Plant.State state = plant.getState();
+        boolean stateJustEntered = state != lastState;
+        lastState = state;
+
+        if (state != Plant.State.IDLE) {
+            if (stateJustEntered) {
+                ClipInfo info = resolveClipFor(state);
+                if (info != null) {
+                    playClip(info.clipName, info.loop);
+                }
             }
-            else if (plant.getState() == Plant.State.ATTACK){
-                playClip("attack", false);
-            }
+            return; // keep playing whatever clip is active for this state
         }
-        else if (plant.getState() == Plant.State.IDLE && !currentClip.equals(initialClip)){
+
+        // state == IDLE
+        if (currentClip.equals(initialClip)) {
+            return; // already on the idle clip
+        }
+
+        // Looping clips (e.g. "unarmed") have no natural finish point, so cut
+        // over immediately once the model returns to IDLE. One-shot clips
+        // (e.g. "attack") still wait to visually finish first.
+        float duration = AnimationDurations.getDuration(plant.getType(), currentClip, 0.5f);
+        boolean readyToReturnToIdle = isLoop || animTime >= duration;
+        if (readyToReturnToIdle) {
             playClip(initialClip, true);
         }
-        else{
-            currentClip = initialClip;
-            isLoop = true;
+    }
+
+    private ClipInfo resolveClipFor(Plant.State state) {
+        if (state == Plant.State.SPECIAL || plant.getType() == PlantType.PUFF_SHROOM ||
+            plant.getType() == PlantType.FUME_SHROOM) {
+            return new ClipInfo(PlantsCollectionMenuScreen.getSpecialClip(plant.getType()), false);
+        }
+        if (state == Plant.State.ATTACK) {
+            return new ClipInfo("attack", false);
+        }
+        if (state == Plant.State.TRIGGERED) {
+            return new ClipInfo(PlantAnimationClips.getTriggerClip(plant.getType()), false);
+        }
+        if (state == Plant.State.UNARMED) {
+            return new ClipInfo(PlantAnimationClips.getUnarmedClip(plant.getType()), true);
+        }
+        return null;
+    }
+
+    private static class ClipInfo {
+        final String clipName;
+        final boolean loop;
+        ClipInfo(String clipName, boolean loop) {
+            this.clipName = clipName;
+            this.loop = loop;
         }
     }
 
     public void draw(SpriteBatch batch, PamPlayer pamPlayer) {
         if (plant == null || plant.isDead() || pamPath == null || pamPlayer == null) return;
-        pamPlayer.draw(batch, pamPath, currentClip, animTime, worldX, worldY, isLoop);
+        pamPlayer.draw(batch, pamPath, currentClip, animTime, worldX - 5f, worldY - 30f, 0.8f, 0.8f,
+            isLoop);
     }
 
     public void playClip(String clipName, boolean loop) {
@@ -73,11 +115,9 @@ public class PlantGraphic {
     public PlantType getPlantType() { return plant.getType(); }
     public boolean isDead() { return plant.isDead(); }
 
-    public String getCurrentClip() {
-        return currentClip;
-    }
+    public float getWorldX() { return worldX; }
+    public float getWorldY() { return worldY; }
 
-    public String getInitialClip() {
-        return initialClip;
-    }
+    public String getCurrentClip() { return currentClip; }
+    public String getInitialClip() { return initialClip; }
 }

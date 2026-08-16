@@ -47,8 +47,7 @@ public class TorchwoodComponent implements GameComponent {
     public void onDeath(Plant owner, float delta) {
         if (explodeOnDeath) {
             ExplosivesComponent explosivesComponent = new ExplosivesComponent(InstantTrigger.INSTANCE,
-                    new AreaDamageBehavior(200, new CircularRange(1)), 0);
-            explosivesComponent.setPostTriggerDelay(0);
+                    new AreaDamageBehavior(200, new CircularRange(1)), 0, 0);
             explosivesComponent.update(owner, delta);
         }
     }

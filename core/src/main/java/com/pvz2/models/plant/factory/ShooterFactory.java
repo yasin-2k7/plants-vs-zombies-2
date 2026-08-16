@@ -66,7 +66,7 @@ public class ShooterFactory {
             null, 1.5f, 1,
             20, false, () -> combinedDamageStrategy,
             new CheckStraightStrike(), 0, 1,
-            0, 0, 1.5f, 0.5f);
+            0, 0);
         newComponent.getVisions().add(new StraightVisionStrategy(2000, App.getCellHeight(), false));
         MovementStrategy movementStrategy = new StraightMovementStrategy(5, 0, 0);
         newComponent.getMovementStrategies().add(() -> movementStrategy);
@@ -83,7 +83,7 @@ public class ShooterFactory {
             ProjectileType.GIANT_PEA, 1.5f, 2,
             30, true, () -> combinedDamageStrategy,
             new CheckStraightStrike(), 1, 1,
-            1, 20, 1.5f, 0.5f);
+            1, 20);
         newComponent.getVisions().add(new StraightVisionStrategy(2000, App.getCellHeight(), false));
         MovementStrategy movementStrategy = new StraightMovementStrategy(5, 0, 0);
         newComponent.getMovementStrategies().add(() -> movementStrategy);
@@ -100,7 +100,7 @@ public class ShooterFactory {
             null, 1.5f, 1,
             30, false, () -> combinedDamageStrategy,
             new CheckStraightStrike(), 0, 1,
-            0, 0, 1.5f, 0.5f);
+            0, 0);
         newComponent.getVisions().add(new StraightVisionStrategy(2000, 3 * App.getCellHeight(), false));
         for (int i = -1; i <= 1; i++) {
             final int finalI = i;
@@ -124,7 +124,7 @@ public class ShooterFactory {
             null, 1.5f, 1,
             20, false, () -> combinedDamageStrategy,
             new CheckStraightStrike(), 0, 1,
-            0, 0, 1.9f, 0.5f);
+            0, 0);
         newComponent.getVisions().add(new StraightVisionStrategy(2000, App.getCellHeight(), false));
         MovementStrategy movementStrategy = new StraightMovementStrategy(5, 0, 0);
         newComponent.getMovementStrategies().add(() -> movementStrategy);
@@ -153,7 +153,7 @@ public class ShooterFactory {
                 null, 1.5f, 1,
                 20, false, () -> combinedDamageStrategy,
                 new CheckStraightStrike(), 0, 1,
-                0, 0, 2.2f, 1);
+                0, 0);
             final int finalI = i;
             shooterComponent.getVisions().add(new RotatedVisionStrategy(
                 (float) (i * Math.PI / 2 + Math.PI / 4), 100, 1000));
@@ -176,7 +176,7 @@ public class ShooterFactory {
             1.5f, 1, 1,
             true, () -> combinedDamageStrategy, new CheckStraightStrike(),
             1, 1, 1,
-            20, 1.5f, 0.7f);
+            20);
         newComponent.getVisions().add(new StraightVisionStrategy(2000, App.getCellHeight(), false));
         MovementStrategy movementStrategy = new StraightMovementStrategy(5, 0, 0);
         newComponent.getMovementStrategies().add(() -> movementStrategy);
@@ -195,7 +195,7 @@ public class ShooterFactory {
                 null, 1.7f, i + 1,
                 20, false, () -> combinedDamageStrategy,
                 new CheckStraightStrike(), 0, 1,
-                0, 0, 1.3f, 0.5f);
+                0, 0);
             final int finalI = i;
             newComponent.getVisions().add(new StraightVisionStrategy(
                 1000 * (float) Math.cos(i * Math.PI), App.getCellHeight(), false));
@@ -216,7 +216,7 @@ public class ShooterFactory {
             ProjectileType.PLASMA, chargeTime, 1,
             1, true, () -> combinedDamageStrategy,
             new CheckStraightStrike(), 1, 1,
-            100, 20, 1.8f, 0.4f);
+            100, 20);
         newComponent.getVisions().add(new StraightVisionStrategy(2000, App.getCellHeight(), false));
         MovementStrategy movementStrategy = new StraightMovementStrategy(5, 0, 0);
         newComponent.getMovementStrategies().add(() -> movementStrategy);
@@ -235,7 +235,7 @@ public class ShooterFactory {
         Plant p = new Plant(PlantType.BOWLING_BULB, 300, 0);
         p.addComponent(new BowlingChargeComponent(
             20, first, second, third, () -> new BowlingMovementStrategy(
-            5, 0), special, 10 - regenReduce, 5 - regenReduce, 2 - regenReduce, 2.9f, 0.6f));
+            5, 0), special, 10 - regenReduce, 5 - regenReduce, 2 - regenReduce, 2.7f, 0.6f));
         return p;
     }
     private static Plant buildCactus() {
@@ -248,7 +248,7 @@ public class ShooterFactory {
             ProjectileType.CACTUS_SPECIAL, 1.5f, 1,
             20, true, () -> combinedDamageStrategy,
             new CheckStraightStrike(), 20, pierce,
-            100, 4, 1.5f, 0.5f);
+            100, 4);
         newComponent.getVisions().add(new StraightVisionStrategy(2000, App.getCellHeight(), false));
         MovementStrategy movementStrategy = new StraightMovementStrategy(5, 0, 0);
         newComponent.getMovementStrategies().add(() -> movementStrategy);
@@ -266,7 +266,7 @@ public class ShooterFactory {
             null, 1.5f, 1,
             20, false, () -> combinedDamageStrategy,
             new CheckStraightStrike(), 0, 1,
-            0, 0, 1.5f, 0.5f);
+            0, 0);
         newComponent.getVisions().add(new StraightVisionStrategy(2000, App.getCellHeight(), false));
         MovementStrategy movementStrategy = new StraightMovementStrategy(5, 0, 0);
         newComponent.getMovementStrategies().add(() -> movementStrategy);
@@ -284,7 +284,7 @@ public class ShooterFactory {
             null, shootingTime, 1,
             20, false, () -> combinedDamageStrategy,
             new CheckStraightStrike(), 0, 1,
-            0, 0, 1.5f, 0.6f);
+            0, 0);
         float angel = (float) -Math.PI / 3;
         for (int i = 0; i < 5; i++) {
             int changeFactor = i == 1 ? 2 : 3;
@@ -314,7 +314,7 @@ public class ShooterFactory {
             ProjectileType.GOO_SPECIAL, 1.5f, 1,
             20, true, () -> combinedDamageStrategy,
             new CheckStraightStrike(), 20, 1,
-            1, 1, 2.1f, 0.4f);
+            1, 1);
         newComponent.setPlantFoodStrategy(plantFoodStrategy);
         newComponent.getVisions().add(new StraightVisionStrategy(2000, App.getCellHeight(), false));
         MovementStrategy movementStrategy = new StraightMovementStrategy(5, 0, 0);
@@ -332,7 +332,7 @@ public class ShooterFactory {
             ProjectileType.GIANT_PEA, 1.5f, 4,
             30, true, () -> combinedDamageStrategy,
             new CheckStraightStrike(), 4, 1,
-            1, 20, 1.5f, 0.5f);
+            1, 20);
         newComponent.getVisions().add(new StraightVisionStrategy(2000, App.getCellHeight(), false));
         MovementStrategy movementStrategy = new StraightMovementStrategy(5, 0, 0);
         newComponent.getMovementStrategies().add(() -> movementStrategy);
@@ -355,7 +355,7 @@ public class ShooterFactory {
             ProjectileType.SMALL_SHROOM, 1.5f, 1,
             20, false, () -> combinedDamageStrategy,
             new CheckStraightStrike(), 0, 1,
-            0, 0, 1.5f, 0.4f);
+            0, 0);
         newComponent.getVisions().add(new StraightVisionStrategy(range, App.getCellHeight(), false));
         MovementStrategy movementStrategy = new StraightMovementStrategy(5, 0, 0){
             @Override
@@ -383,7 +383,7 @@ public class ShooterFactory {
             ProjectileType.SMALL_SHROOM, 1.5f, 1,
             20, false, () -> combinedDamageStrategy,
             new CheckStraightStrike(), 0, 1,
-            0, 0, 1.5f, 0.4f);
+            0, 0);
         newComponent.getVisions().add(new StraightVisionStrategy(range, App.getCellHeight(), false));
         MovementStrategy movementStrategy = new StraightMovementStrategy(5, 0, 0){
             @Override
@@ -409,7 +409,7 @@ public class ShooterFactory {
             ProjectileType.FUME_SPECIAL, 1.5f, 1,
             1, true, () -> combinedDamageStrategy,
             new CheckStraightStrike(), 1, 100,
-            100, 2, 2.3f, 0.5f);
+            100, 2);
         CombinedDamageStrategy plantFoodStrategy = new CombinedDamageStrategy(damage, ProjectileType.FUME_SPECIAL);
         plantFoodStrategy.setElement("MOVE");
         newComponent.setPlantFoodStrategy(plantFoodStrategy);
@@ -436,7 +436,7 @@ public class ShooterFactory {
             ProjectileType.SPECIAL_CABBAGE, shootingTime, 1,
             0, false, () -> combinedDamageStrategy,
             new CheckLobbedStrike(), 0, 1,
-            0, 5, 2.1f, 0.55f);
+            0, 5);
         newComponent.getVisions().add(new StraightVisionStrategy(2000, App.getCellHeight(), true));
         newComponent.getMovementStrategies().add(LobbedMovementStrategy::new);
         newComponent.setPlantFoodBehavior(new RandomTargetPlantFood(6));
@@ -453,7 +453,7 @@ public class ShooterFactory {
             ProjectileType.BUTTER, 2.9f, 1,
             0, false, () -> new CombinedDamageStrategy(20 + damageAddition, ProjectileType.KERNEL),
             new CheckLobbedStrike(), 0, 1,
-            0, 0, 2.3f, 0.6f);
+            0, 0);
         newComponent.getVisions().add(new StraightVisionStrategy(2000, App.getCellHeight(), true));
         newComponent.getMovementStrategies().add(LobbedMovementStrategy::new);
         newComponent.setAttackCallback(_ -> {
@@ -488,7 +488,7 @@ public class ShooterFactory {
             ProjectileType.SPECIAL_MELON, 2.9f, 1,
             0, false, () -> combinedDamageStrategy,
             new CheckLobbedStrike(), 0, 1,
-            0, 4, 2.4f, 0.7f);
+            0, 4);
         newComponent.getVisions().add(new StraightVisionStrategy(2000, App.getCellHeight(), true));
         newComponent.getMovementStrategies().add(LobbedMovementStrategy::new);
         newComponent.setPlantFoodBehavior(new RandomTargetPlantFood(6));
@@ -506,7 +506,7 @@ public class ShooterFactory {
             ProjectileType.SPECIAL_ICE_MELON, 2.9f, 1,
             0, false, () -> combinedDamageStrategy,
             new CheckLobbedStrike(), 0, 1,
-            0, 4, 2.6f, 0.8f);
+            0, 4);
         newComponent.getVisions().add(new StraightVisionStrategy(2000, App.getCellHeight(), true));
         newComponent.getMovementStrategies().add(LobbedMovementStrategy::new);
         newComponent.setPlantFoodBehavior(new RandomTargetPlantFood(6));
@@ -524,7 +524,7 @@ public class ShooterFactory {
             ProjectileType.SPECIAL_PEPPER, 2.9f, 1,
             0, false, () -> combinedDamageStrategy,
             new CheckLobbedStrike(), 0, 1,
-            0, 4, 2.5f, 0.4f);
+            0, 4);
         newComponent.getVisions().add(new StraightVisionStrategy(2000, App.getCellHeight(), true));
         newComponent.getMovementStrategies().add(LobbedMovementStrategy::new);
         newComponent.setPlantFoodBehavior(new RandomTargetPlantFood(6));

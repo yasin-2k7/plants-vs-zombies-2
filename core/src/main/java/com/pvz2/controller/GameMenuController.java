@@ -15,6 +15,7 @@ import com.pvz2.models.miniGame.beghouled.GridPosition;
 import com.pvz2.models.miniGame.bowling.BowlingMechanics;
 import com.pvz2.models.miniGame.vaseBreaker.VaseBreakerLevel;
 import com.pvz2.models.mupoint.MupointManager;
+import com.pvz2.models.plant.Plant;
 import com.pvz2.models.plant.card.ImitatorCard;
 import com.pvz2.models.plant.card.PlantCard;
 import com.pvz2.models.world.*;
@@ -30,6 +31,7 @@ import com.pvz2.view.MenuScreen;
 import java.util.List;
 
 public class GameMenuController implements MenuController {
+    private static MenuScreen screen;
     public static void handleWinning(GameWorld gameWorld) {
         if (gameWorld instanceof IZombieLevel) {
 //            GameMenuView.getInstance().showResult("Delicious! You ate all the brains and WON the level! 🧠😋");
@@ -87,8 +89,15 @@ public class GameMenuController implements MenuController {
         App.setCurrentGame(null);
         App.getCurrentUser().getPlantBoosts().clear();
     }
+
     public static void updateState(String state) {
-//        GameMenuView.getInstance().showResult(state);
+
+    }
+
+    public static void updateState(String title, String state) {
+        if (screen != null){
+            screen.addToast(title, state);
+        }
     }
     @Override
     public void changeMenu() {}
@@ -257,19 +266,16 @@ public class GameMenuController implements MenuController {
         App.getCurrentGame().setSelectedPlant(null);
         App.getCurrentGame().setPlantSelected(false);
     }
-    public static boolean plantSelectedPlant(float x, float y, MenuScreen screen) {
+    public static Plant plantSelectedPlant(float x, float y) {
         if (App.getCurrentGame().getSelectedPlant() == null) {
-            return false;
+            return null;
         }
-        if (plantPlant(App.getCurrentGame().getSelectedPlant(), x, y, screen)){
-            unselectPlant();
-            return true;
-        }
-        return false;
+        return plantPlant(App.getCurrentGame().getSelectedPlant(), x, y);
     }
 
-    public static boolean plantPlant(PlantType type, float x, float y, MenuScreen screen) {
+    public static Plant plantPlant(PlantType type, float x, float y) {
         PlantCard selectedCard = null;
+        unselectPlant();
         List<PlantCard> gamePlants = App.getCurrentGame().isConveyorMode()?
                 App.getCurrentGame().getConveyorBelt() : App.getCurrentGame().getPlantLists();
         for (PlantCard card : gamePlants) {
@@ -279,39 +285,35 @@ public class GameMenuController implements MenuController {
             }
         }
         if (selectedCard == null) {
-            return false;
+            return null;
         }
-        return plantPlant(selectedCard, x, y, screen);
+        return plantPlant(selectedCard, x, y);
     }
 
     private static Cell findCellAt(GameWorld game, float x, float y) {return Cell.findCell(x, y,
         game.getGrid());}
 
-    public static boolean plantPlant(PlantCard card, float x, float y, MenuScreen screen) {
+    public static Plant plantPlant(PlantCard card, float x, float y) {
         Cell selectedCell = findCellAt(App.getCurrentGame(), x, y);
         if (selectedCell == null) {
-            return false;
+            return null;
         }
-        String error;
+        Plant plant;
         PlantType type;
-        GameScreen gameScreen = screen instanceof GameScreen gameScreen1 ? gameScreen1 : null;
         if (card instanceof ImitatorCard imitatorCard) {
             type = imitatorCard.getTargetType();
-            error = selectedCell.handlePlanting(type,
-                    App.getCurrentUser().getUnlockedPlantsLevels().get(PlantType.IMITATER)>=4, gameScreen);
+            plant = selectedCell.handlePlanting(type,
+                    App.getCurrentUser().getUnlockedPlantsLevels().get(PlantType.IMITATER)>=4);
         } else {
             type = card.getType();
-            error = selectedCell.handlePlanting(type, App.getCurrentUser().hasBoost(type), gameScreen);
+            plant = selectedCell.handlePlanting(type, App.getCurrentUser().hasBoost(type));
         }
-        if (error != null){
-            screen.addToast("Error", error);
-            return false;
-        }
-        else {
+        if (plant != null){
             card.setReady(false);
             App.getCurrentGame().setSun(App.getCurrentGame().getSun() - card.getSunCost());
-            return true;
-            }
+            return plant;
+        }
+        return null;
     }
 
     public void removeCooldown() {
@@ -418,8 +420,8 @@ public class GameMenuController implements MenuController {
             return;
         }
 
-        String error = selectedCell.handlePlanting(heldType);
-        if (error != null) {
+        Plant plant = selectedCell.handlePlanting(heldType);
+        if (plant == null) {
 //            GameMenuView.getInstance().showResult(error);
         } else {
             level.clearHeldSeed();
@@ -521,5 +523,9 @@ public class GameMenuController implements MenuController {
 
     public static void showAnnouncement(String message) {
         GameScreen.announce(message);
+    }
+
+    public static void setScreen(MenuScreen screen) {
+        GameMenuController.screen = screen;
     }
 }

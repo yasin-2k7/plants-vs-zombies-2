@@ -3,15 +3,20 @@ package com.pvz2.models.plant.components;
 import com.pvz2.controller.GameMenuController;
 import com.pvz2.models.core.App;
 import com.pvz2.models.miniGame.IZombie.IZombieLevel;
+import com.pvz2.models.plant.AnimationDurations;
 import com.pvz2.models.plant.GameComponent;
 import com.pvz2.models.plant.Plant;
+import com.pvz2.models.plant.PlantAnimationClips;
 import com.pvz2.models.world.Sun;
 
 import java.util.ArrayList;
 
 public class SunProducerComponent implements GameComponent {
+    private static final float DEFAULT_ACTION_TIME = 0.3f;
+    private static final float DEFAULT_ACTION_TIME_INTERVAL = 0.6f;
+
     private final ArrayList<Sun> componentSuns = new ArrayList<>();
-    private int sunSize; //مقدار خورشید تولیدی
+    private int sunSize;
     private int sunNumber;
     private float lastProductionTime;
     private float productionTime;
@@ -23,20 +28,21 @@ public class SunProducerComponent implements GameComponent {
     private boolean enable = true;
     private float growTimeToReduce;
     private boolean isInstant;
-    private final float actionTimeInterval;
-    private final float actionTime;
+
+    // resolved lazily from AnimationDurations once the owner's PlantType is known
+    private float actionTime = -1f;
+    private float actionTimeInterval = -1f;
     private float currentActionTimer = 0;
 
     public SunProducerComponent(int sunSize, int sunNumber, float productionTime, boolean doubleSunChance,
-                                boolean shroom, int sunNumberWithPlantFood, float growTimeToReduce, float actionTime, float actionTimeInterval) {
+                                boolean shroom, int sunNumberWithPlantFood, float growTimeToReduce) {
         this(sunSize, sunNumber, productionTime, doubleSunChance, shroom, sunNumberWithPlantFood,
-                growTimeToReduce, false, actionTime, actionTimeInterval);
+            growTimeToReduce, false);
     }
 
     public SunProducerComponent(int sunSize, int sunNumber, float productionTime, boolean doubleSunChance,
                                 boolean shroom, int sunNumberWithPlantFood,
-                                float growTimeToReduce, boolean isInstant, float actionTime,
-                                float actionTimeInterval) {
+                                float growTimeToReduce, boolean isInstant) {
         this.sunSize = sunSize;
         this.sunNumber = sunNumber;
         this.productionTime = productionTime;
@@ -47,12 +53,18 @@ public class SunProducerComponent implements GameComponent {
         this.growTimeToReduce = growTimeToReduce;
         this.isInstant = isInstant;
         this.lastProductionTime = productionTime - 2;
-        this.actionTimeInterval = actionTimeInterval;
-        this.actionTime = actionTime;
+    }
+
+    private void ensureTimingLoaded(Plant owner) {
+        if (actionTime >= 0f) return;
+        String clip = PlantAnimationClips.getSpecialClip(owner.getType());
+        actionTime = AnimationDurations.getReleaseTime(owner.getType(), clip, DEFAULT_ACTION_TIME);
+        actionTimeInterval = AnimationDurations.getDuration(owner.getType(), clip, DEFAULT_ACTION_TIME_INTERVAL);
     }
 
     @Override
     public void update(Plant owner, float delta) {
+        ensureTimingLoaded(owner);
 
         if (App.getCurrentGame() instanceof IZombieLevel) return;
         tick(owner, delta);
@@ -79,17 +91,11 @@ public class SunProducerComponent implements GameComponent {
                 if (doubleSunChance && Math.random() < 0.2) componentSuns.add(produceSun(owner));
                 componentSuns.add(produceSun(owner));
             }
-            if (isInstant) {
-                owner.die();
-                return;
-            }
         }
 
         if (!isInstant && componentSuns.isEmpty()) {
             enable = true;
         }
-
-
     }
 
     @Override
@@ -101,11 +107,8 @@ public class SunProducerComponent implements GameComponent {
         Sun newSun = App.getCurrentGame().getSunsPool().acquire();
         newSun.reset(owner.getX(), owner.getY(), sunSize, this);
         App.getCurrentGame().getActiveSuns().add(newSun);
-        GameMenuController.updateState("plant " + owner.getType().name() +
-                " produced a sun at (" + owner.getX() + ", " + owner.getY() + ")");
         return newSun;
     }
-
 
     public void plantFoodEffect(Plant owner) {
         if (shroom) {
@@ -127,6 +130,10 @@ public class SunProducerComponent implements GameComponent {
             if (currentActionTimer >= actionTimeInterval){
                 currentActionTimer = 0;
                 owner.setState(Plant.State.IDLE);
+                if (isInstant){
+                    owner.die();
+                    return;
+                }
             }
         }
         if (enable) {

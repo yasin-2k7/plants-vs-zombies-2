@@ -70,7 +70,7 @@ public class LevelFactory {
             new WaveSpawnEntry("ZombieNewspaper", 450),
             new WaveSpawnEntry("ZombieExplorer", 250)
         );
-        List<Wave> waves = Wave.generateWaves(3, 500, availableZombies, 20);
+        List<Wave> waves = Wave.generateWaves(10, 150, availableZombies, 5);
         LevelSetup levelSetup = new NormalLevelSetup(rows, cols, waves);
         LoseCondition loseCondition = new NormalLose();
         WinCondition winCondition = new NormalWin();

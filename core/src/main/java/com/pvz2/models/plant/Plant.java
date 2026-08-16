@@ -35,7 +35,9 @@ public class Plant implements Damageable {
     public enum State {
         IDLE,
         SPECIAL,
-        ATTACK
+        ATTACK,
+        UNARMED,
+        TRIGGERED,
     }
 
     public Plant(PlantType type, int health, int damage) {
@@ -142,8 +144,6 @@ public class Plant implements Damageable {
             this.cell.findAndRemovePlant();
             this.cell = null;
         }
-        GameMenuController.updateState(
-                "Plant " + this.getType().name() + " at (" + this.x + ", " + this.y + ") is destroyed.");
     }
 
     public boolean isDead() {
@@ -219,7 +219,6 @@ public class Plant implements Damageable {
     }
 
     public void activatePlantFood() {
-        GameMenuController.updateState("plant food is activated on " + type);
         for (GameComponent component : components) {
             component.activatePlantFood(this);
         }

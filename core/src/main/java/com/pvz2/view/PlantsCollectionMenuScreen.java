@@ -9,6 +9,7 @@ import com.pvz2.Main;
 import com.pvz2.controller.CollectionMenuController;
 import com.pvz2.models.core.App;
 import com.pvz2.models.enums.PlantType;
+import com.pvz2.models.plant.PlantAnimationClips;
 
 public class PlantsCollectionMenuScreen extends MenuScreen{
     private PlantType plantType;
@@ -90,7 +91,7 @@ public class PlantsCollectionMenuScreen extends MenuScreen{
                 if (collectionMenuScreen.getController().purchasePlant(plantType)){
                     buildUI();
                     collectionMenuScreen.getResourcesTable().update();
-                    collectionMenuScreen.getPlantsTable().build();
+                    collectionMenuScreen.resetMainTable();
                 }
             }
         });
@@ -218,11 +219,7 @@ public class PlantsCollectionMenuScreen extends MenuScreen{
     }
 
     public static String getSpecialClip(PlantType type){
-        if (type.hasTag("Wramp-up") || type == PlantType.PUFF_SHROOM){
-            return type == PlantType.KIWIBEAST ? "attack_stage3" : "special_stage3";
-        }
-        if (type == PlantType.GOLD_BLOOM) return "attack";
-        return "special";
+        return PlantAnimationClips.getSpecialClip(type);
     }
 
 

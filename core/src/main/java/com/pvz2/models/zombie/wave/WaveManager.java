@@ -110,9 +110,10 @@ public class WaveManager {
         // اگر زامبی جدید است، آن را به لیست دیده‌شده‌ها اضافه کن و اطلاع‌رسانی کن
         User user = App.getCurrentUser();
         if (user != null) {
-            if (!user.getShowedZombies().containsKey(alias)) {
-                user.getShowedZombies().put(alias, true);
-                user.notifyZombieUnlock(alias);
+            String inGameName = App.getArmoredZombieName(alias);
+            if (!user.getShowedZombies().containsKey(inGameName)) {
+                user.getShowedZombies().put(inGameName, true);
+                user.notifyZombieUnlock(inGameName);
                 UserDataManager.saveUser(App.getCurrentUser());
             }
         }
@@ -130,6 +131,7 @@ public class WaveManager {
         float y = lane * App.getCellHeight() + App.getCellHeight() / 2;
         zombie.setX(x);
         zombie.setY(y);
+        System.out.println(y);
 
         game.addZombie(zombie);
 

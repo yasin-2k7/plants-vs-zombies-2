@@ -31,6 +31,8 @@ import com.pvz2.models.enums.PlantLayer;
 import com.pvz2.models.enums.PlantType;
 import com.pvz2.models.lawnMower.LawnMower;
 import com.pvz2.models.plant.Plant;
+import com.pvz2.models.plant.PlantAnimationClips;
+import com.pvz2.models.plant.components.ExplosivesComponent;
 import com.pvz2.models.world.Cell;
 import com.pvz2.models.world.GameState;
 import com.pvz2.models.world.GameWorld;
@@ -67,6 +69,7 @@ public class GameScreen extends MenuScreen {
 
     private Vector3 cursorWorldPos = new Vector3(0, 0, 0);
     private final List<PlantGraphic> plantGraphics = new ArrayList<>();
+    private final List<ExplosionEffectGraphic> explosionGraphics = new ArrayList<>();
     private final List<PanStep> introSteps = new ArrayList<>();
     private int currentStepIndex = 0;
     private float stepElapsed = 0f;
@@ -434,6 +437,11 @@ public class GameScreen extends MenuScreen {
             pg.update(delta);
             pg.draw(game.batch, pamPlayer);
         }
+        for (ExplosionEffectGraphic eg : explosionGraphics) {
+            eg.update(delta);
+            eg.draw(game.batch, pamPlayer);
+        }
+        explosionGraphics.removeIf(eg -> eg.isFinished(pamPlayer));
         game.batch.end();
 
         if (hud != null) {
@@ -679,12 +687,48 @@ public class GameScreen extends MenuScreen {
                     boolean success = plantPlacementManager.tryPlace(row, col);
 
                     if (success){
-                        GameMenuController.plantSelectedPlant(col*App.getCellWidth()+App.getCellWidth()/2,
-                            row*App.getCellHeight()+App.getCellHeight()/2, this);
+                        Plant newPlant = GameMenuController.plantSelectedPlant(
+                            col*App.getCellWidth()+App.getCellWidth()/2,
+                            row*App.getCellHeight()+App.getCellHeight()/2);
+                        if (newPlant != null){
+                            PlantGraphic pg = new PlantGraphic(newPlant, pamPlayer);
+                            plantGraphics.add(pg);
+                            checkExplosion(newPlant, pg);
+
+                        }
                     }
                 }
-                plantPlacementManager.cancelSelection();
             }
+            hud.getSelectedPlantsList().unselectPlants();
+            plantPlacementManager.cancelSelection();
+        }
+    }
+
+    private void checkExplosion(Plant newPlant, PlantGraphic pg){
+        ExplosivesComponent explosives =
+            newPlant.getComponent(ExplosivesComponent.class);
+        if (explosives != null) {
+            explosives.setExplodeCallback(owner -> {
+                String fxPath = PlantAnimationClips.getExplosionPamPath(owner.getType());
+                String fxClip = PlantAnimationClips.getExplosionClip(owner.getType());
+                if (fxPath != null) {
+                    float y=pg.getWorldY(),scaleX = 1,scaleY = 1;
+                    if (newPlant.getType() == PlantType.CHERRY_BOMB){
+                        y = pg.getWorldY()+100;
+                        scaleX = 1;
+                        scaleY = 1;
+                    }
+                    else if (newPlant.getType() == PlantType.JALAPENO){
+                        y = pg.getWorldY();
+                        scaleX = 100;
+                        scaleY = 2;
+                    }
+                    explosionGraphics.add(new ExplosionEffectGraphic(
+                        fxPath, fxClip, pg.getWorldX(), y, pamPlayer, scaleX,
+                        scaleY
+                    ));
+                }
+            });
         }
     }
 

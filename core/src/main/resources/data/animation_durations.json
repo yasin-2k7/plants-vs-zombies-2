@@ -1,0 +1,83 @@
+{
+  "SUNFLOWER": {
+    "special": { "duration": 2.4, "releaseTime": 1 }
+  },
+  "TWIN_SUNFLOWER": {
+    "special": { "duration": 1.7, "releaseTime": 0.5 }
+  },
+  "SUN_SHROOM": {
+    "special_stage3": { "duration": 2.1, "releaseTime": 0.6 }
+  },
+  "PRIMAL_SUNFLOWER": {
+    "special": { "duration": 1.9, "releaseTime": 0.7 }
+  },
+  "GOLD_BLOOM": {
+    "attack": { "duration": 2.9, "releaseTime": 0.5 }
+  },
+  "PEASHOOTER": {
+    "attack": { "duration": 1, "releaseTime": 0.5 }
+  },
+  "REPEATER": {
+    "attack": { "duration": 1.1, "releaseTime": 0.5 }
+  },
+  "THREEPEATER": {
+    "attack": { "duration": 1.1, "releaseTime": 0.5 }
+  },
+  "SNOW_PEA": {
+    "attack": { "duration": 1.5, "releaseTime": 0.5 }
+  },
+  "ROTOBAGA": {
+    "attack": { "duration": 1.8, "releaseTime": 1 }
+  },
+  "PEA_POD": {
+    "attack": { "duration": 1.1, "releaseTime": 0.7 }
+  },
+  "SPLIT_PEA": {
+    "attack": { "duration": 1, "releaseTime": 0.5 }
+  },
+  "CITRON": {
+    "attack": { "duration": 1.4, "releaseTime": 0.4 }
+  },
+  "BOWLING_BULB": {
+    "special": { "duration": 2.7, "releaseTime": 0.6 }
+  },
+  "CACTUS": {
+    "attack": { "duration": 1.1, "releaseTime": 0.5 }
+  },
+  "FIRE_PEASHOOTER": {
+    "attack": { "duration": 1.1, "releaseTime": 0.5 }
+  },
+  "STARFRUIT": {
+    "attack": { "duration": 1.1, "releaseTime": 0.6 }
+  },
+  "POISON_PEASHOOTER": {
+    "attack": { "duration": 1.7, "releaseTime": 0.4 }
+  },
+  "MEGA_GATLING": {
+    "attack": { "duration": 1.1, "releaseTime": 0.5 }
+  },
+  "SEA_SHROOM": {
+    "attack": { "duration": 1.1, "releaseTime": 0.4 }
+  },
+  "PUFF_SHROOM": {
+    "special": { "duration": 0.9, "releaseTime": 0.4 }
+  },
+  "FUME_SHROOM": {
+    "special": { "duration": 1.9, "releaseTime": 0.5 }
+  },
+  "CABBAGE_PULT": {
+    "attack": { "duration": 1.7, "releaseTime": 0.55 }
+  },
+  "KERNEL_PULT": {
+    "attack": { "duration": 1.5, "releaseTime": 0.6 }
+  },
+  "MELON_PULT": {
+    "attack": { "duration": 2, "releaseTime": 0.7 }
+  },
+  "WINTER_MELON": {
+    "attack": { "duration": 2.2, "releaseTime": 0.8 }
+  },
+  "PEPPER_PULT": {
+    "attack": { "duration": 2.1, "releaseTime": 0.4 }
+  }
+}

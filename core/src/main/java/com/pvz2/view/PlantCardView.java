@@ -109,7 +109,9 @@ public class PlantCardView extends Stack {
         }
         else{
             this.active = false;
-            overlay.setProgress(1-(card.getMaxCooldownTicks()-card.getCurrentCooldownTicks()));
+            float remainingFraction = (card.getMaxCooldownTicks() - card.getCurrentCooldownTicks())
+                / (float) card.getMaxCooldownTicks();
+            overlay.setProgress(remainingFraction);
         }
     }
 

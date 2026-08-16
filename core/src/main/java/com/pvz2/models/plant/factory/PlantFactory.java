@@ -39,15 +39,4 @@ public class PlantFactory {
         newPlant.setY(y);
         return newPlant;
     }
-
-    public static Plant createPlant(PlantType type, int x, int y, Cell cell, GameScreen gameScreen){
-        Plant plant = createPlant(type, x, y, cell);
-        if (plant != null){
-            gameScreen.getPlantGraphics().add(new PlantGraphic(plant,
-                gameScreen.getGame().pamPlayer));
-            return plant;
-        }
-        return null;
-    }
-
 }
