@@ -1,6 +1,7 @@
 package com.pvz2.view;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -19,28 +20,23 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
-import com.badlogic.gdx.utils.viewport.FillViewport;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
-import com.badlogic.gdx.utils.viewport.Viewport;
 import com.pvz2.Main;
 import com.pvz2.controller.GameMenuController;
 import com.pvz2.controller.PlantMenuController;
 import com.pvz2.models.core.App;
 import com.pvz2.models.enums.Chapter;
-import com.pvz2.models.enums.PlantLayer;
 import com.pvz2.models.enums.PlantType;
 import com.pvz2.models.lawnMower.LawnMower;
 import com.pvz2.models.plant.Plant;
-import com.pvz2.models.world.Cell;
+import com.pvz2.models.plant.PlantAnimationClips;
+import com.pvz2.models.plant.components.ExplosivesComponent;
 import com.pvz2.models.world.GameState;
 import com.pvz2.models.world.GameWorld;
 import com.pvz2.models.world.Sun;
 import com.pvz2.models.world.obstacles.Grave;
 import com.pvz2.models.zombie.Zombie;
 import pvz.libpvz.pam.PamPlayer;
-import com.badlogic.gdx.scenes.scene2d.actions.Actions;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.Align;
 import pvz.skin.BorderedTable;
 
@@ -70,8 +66,11 @@ public class GameScreen extends MenuScreen {
     private float leftWidthScaled;
     private float rightWidthScaled;
 
+    private LawnGridDebugRenderer lawnGridDebugRenderer;
+
     private Vector3 cursorWorldPos = new Vector3(0, 0, 0);
     private final List<PlantGraphic> plantGraphics = new ArrayList<>();
+    private final List<ExplosionEffectGraphic> explosionGraphics = new ArrayList<>();
     private final List<PanStep> introSteps = new ArrayList<>();
     private int currentStepIndex = 0;
     private float stepElapsed = 0f;
@@ -121,6 +120,7 @@ public class GameScreen extends MenuScreen {
         mainLawnHeight = 1000;
 
         initWorldCamera(mainLawnWidth, mainLawnHeight);
+        lawnGridDebugRenderer = new LawnGridDebugRenderer();
 
         FileHandle assetsFolder = Gdx.files.internal("");
         pamPlayer = new PamPlayer(game.textureBank, assetsFolder);
@@ -490,6 +490,11 @@ public class GameScreen extends MenuScreen {
             pg.update(delta);
             pg.draw(game.batch, pamPlayer);
         }
+        for (ExplosionEffectGraphic eg : explosionGraphics) {
+            eg.update(delta);
+            eg.draw(game.batch, pamPlayer);
+        }
+        explosionGraphics.removeIf(eg -> eg.isFinished(pamPlayer));
         syncSunGraphics();
 
         for (SunGraphic sg : new ArrayList<>(sunGraphics.values())) {
@@ -498,6 +503,9 @@ public class GameScreen extends MenuScreen {
         }
         game.batch.end();
 
+        if (App.isDebugMode()) {
+            lawnGridDebugRenderer.draw(worldCamera);
+        }
         if (hud != null) {
             hud.update(world, delta);
         }
@@ -521,7 +529,7 @@ public class GameScreen extends MenuScreen {
             for (LawnMower mower : world.getLawnMowerManager().getMowers()) {
                 if (!mower.isSpent()) {
                     float x = (float) mower.getPositionX();
-                    float y = LawnGrid.getCellY(mower.getRow()) - 40f;
+                    float y = LawnGrid.getCellY(mower.getRow());
                     String pamPath = getMowerPamPath(chapter);
                     String animStateName = getMowerAnimStateName(mower.getState());
 
@@ -743,6 +751,9 @@ public class GameScreen extends MenuScreen {
     }
 
     private void handleInput() {
+        if (Gdx.input.isKeyJustPressed(Input.Keys.SHIFT_LEFT)){
+            GameMenuController.cheatSpawnZombie("ZombieDefault", 6, 1);
+        }
         Vector3 touchPoint = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
         worldViewport.unproject(touchPoint);
 
@@ -755,16 +766,49 @@ public class GameScreen extends MenuScreen {
                     boolean success = plantPlacementManager.tryPlace(row, col);
 
                     if (success){
-                        GameMenuController.plantSelectedPlant(
-                            App.getFirstCellX() + col * App.getCellWidth() + App.getCellWidth() / 2,
-                            App.getFirstCellY() + row * App.getCellHeight() + App.getCellHeight() / 2,
-                            this);
+                        Plant newPlant = GameMenuController.plantSelectedPlant(
+                            App.getFirstCellX()+col*App.getCellWidth()+App.getCellWidth()/2,
+                            App.getFirstCellY()+row*App.getCellHeight()+App.getCellHeight()/2);
+                        if (newPlant != null){
+                            PlantGraphic pg = new PlantGraphic(newPlant, pamPlayer);
+                            plantGraphics.add(pg);
+                            checkExplosion(newPlant, pg);
+
+                        }
                     }
                 }
                 plantPlacementManager.cancelSelection();
             } else {
                 GameMenuController.collectSun(touchPoint.x, touchPoint.y);
             }
+            hud.getSelectedPlantsList().unselectPlants();
+            plantPlacementManager.cancelSelection();
+        }
+
+    }
+    private void checkExplosion(Plant newPlant, PlantGraphic pg){
+        ExplosivesComponent explosives =
+            newPlant.getComponent(ExplosivesComponent.class);
+        if (explosives != null) {
+            explosives.setExplodeCallback(owner -> {
+                String fxPath = PlantAnimationClips.getExplosionPamPath(owner.getType());
+                String fxClip = PlantAnimationClips.getExplosionClip(owner.getType());
+                if (fxPath != null) {
+                    float y=pg.getWorldY(),scaleX = 1,scaleY = 1;
+                    if (newPlant.getType() == PlantType.CHERRY_BOMB){
+                        y = pg.getWorldY()+100;
+                    }
+                    else if (newPlant.getType() == PlantType.JALAPENO){
+                        y = pg.getWorldY()+20;
+                        scaleX = 20;
+                        scaleY = 1.5f;
+                    }
+                    explosionGraphics.add(new ExplosionEffectGraphic(
+                        fxPath, fxClip, pg.getWorldX(), y, pamPlayer, scaleX,
+                        scaleY
+                    ));
+                }
+            });
         }
     }
 
@@ -798,6 +842,14 @@ public class GameScreen extends MenuScreen {
 
     public List<PlantGraphic> getPlantGraphics() {
         return plantGraphics;
+    }
+
+    @Override
+    public void dispose() {
+        super.dispose();
+        if (lawnGridDebugRenderer != null) {
+            lawnGridDebugRenderer.dispose();
+        }
     }
 
     public PlantPlacementManager getPlantPlacementManager() {

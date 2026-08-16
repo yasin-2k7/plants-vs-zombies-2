@@ -3,6 +3,7 @@ package com.pvz2.models.plant.components;
 import com.pvz2.models.Damageable;
 import com.pvz2.models.core.App;
 import com.pvz2.models.enums.ProjectileType;
+import com.pvz2.models.plant.AnimationDurations;
 import com.pvz2.models.plant.GameComponent;
 import com.pvz2.models.plant.Plant;
 import com.pvz2.models.plant.components.shooterPlantFoodBehaviors.BurstPlantFood;
@@ -19,6 +20,10 @@ import java.util.function.Supplier;
 
 public class ShooterComponent implements GameComponent {
     private static final int BURST_DELAY_MAX = 1;
+    private static final float DEFAULT_ACTION_TIME = 0.3f;
+    private static final float DEFAULT_ACTION_TIME_INTERVAL = 0.5f;
+    private static final String ATTACK_CLIP = "attack";
+
     private final float shootingTime;
     public PlantFoodBehavior plantFoodBehavior;
     Damageable target = null;
@@ -43,6 +48,10 @@ public class ShooterComponent implements GameComponent {
     private CombinedDamageStrategy plantFoodStrategy;
     private AttackCallback attackCallback;
 
+    // resolved lazily from AnimationDurations once the owner's PlantType is known
+    private float actionTime = -1f;
+    private float currentActionTimer = 0f;
+
     public ShooterComponent(ProjectileType bulletType, ProjectileType giantType,
                             float shootingTime, int burstProjectileNumber,
                             int burstProjectileNumberOnPlantFood, boolean hasGiant,
@@ -63,6 +72,11 @@ public class ShooterComponent implements GameComponent {
         plantFoodStrategy = damageStrategy.get().changeDamage(damageStrategy.get().getDamage() * giantDamageFactor);
     }
 
+    private void ensureTimingLoaded(Plant owner) {
+        if (actionTime >= 0f) return;
+        actionTime = AnimationDurations.getReleaseTime(owner.getType(), ATTACK_CLIP, DEFAULT_ACTION_TIME);
+    }
+
     public void setPlantFoodBehavior(PlantFoodBehavior plantFoodBehavior) {
         this.plantFoodBehavior = plantFoodBehavior;
     }
@@ -77,55 +91,65 @@ public class ShooterComponent implements GameComponent {
 
     @Override
     public void update(Plant owner, float delta) {
+        ensureTimingLoaded(owner);
+
         if (projectilesLeftForShoot > 0) {
             burstHandler(owner, delta);
             return;
         }
 
-
         for (VisionStrategy visionStrategy : visions) {
             if (visionStrategy.findZombie(owner) != null) {
                 target = visionStrategy.findZombie(owner);
+
                 if (shootingTimer > 0) {
-                    shootingTimer-= delta;
-                } else {
-                    if (attackCallback != null) {
-                        attackCallback.onAttack(owner);
-                    }
-                    this.projectilesLeftForShoot = burstProjectileNumber;
-                    burstDelayMax = BURST_DELAY_MAX;
-                    burstDelayTimer = 0f;
-                    shootingTimer = shootingTime;
+                    shootingTimer -= delta;
+                    break;
                 }
+
+                if (owner.getState() == Plant.State.IDLE) {
+                    owner.setState(Plant.State.ATTACK);
+                    currentActionTimer = 0f;
+                }
+
+                currentActionTimer += delta;
+                if (currentActionTimer < actionTime) {
+                    break;
+                }
+
+                if (attackCallback != null) {
+                    attackCallback.onAttack(owner);
+                }
+                this.projectilesLeftForShoot = burstProjectileNumber;
+                burstDelayMax = BURST_DELAY_MAX;
+                burstDelayTimer = 0f;
+                shootingTimer = shootingTime;
                 break;
             }
         }
-
     }
 
     private void burstHandler(Plant owner, float delta) {
         if (burstDelayTimer > 0) {
-            burstDelayTimer-= delta;
+            burstDelayTimer -= delta;
         } else {
             for (Supplier<MovementStrategy> movementStrategy : movementStrategies) {
                 Projectile p = App.getCurrentGame().getProjectilesPool().acquire();
 
                 if (activePlantFood && projectilesLeftForShoot <= giantCount && hasGiant) {
                     p.reset(owner.getX(), owner.getY() + movementStrategy.get().changeOriginY(),
-                            plantFoodStrategy, movementStrategy.get(), strikeStrategy, giantType);
+                        plantFoodStrategy, movementStrategy.get(), strikeStrategy, giantType);
                     if (giantPierce != 1) {
                         p.setPierce(giantPierce);
                     }
                 } else {
                     p.reset(owner.getX(), owner.getY() + movementStrategy.get().changeOriginY(),
-                            damageStrategy.get(), movementStrategy.get(), strikeStrategy, bulletType);
+                        damageStrategy.get(), movementStrategy.get(), strikeStrategy, bulletType);
                     if (normalPierce != 1) {
                         p.setPierce(normalPierce);
                     }
                 }
                 p.setPlantType(owner.getType());
-                System.out.println("shoot");
-
                 p.setTarget(target);
                 App.getCurrentGame().getActiveProjectiles().add(p);
             }
@@ -142,6 +166,7 @@ public class ShooterComponent implements GameComponent {
                         this.defaultMovementStrategies.clear();
                     }
                 }
+                owner.setState(Plant.State.IDLE);
             }
         }
     }

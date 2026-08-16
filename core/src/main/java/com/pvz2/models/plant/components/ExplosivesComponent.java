@@ -23,42 +23,49 @@ public class ExplosivesComponent implements GameComponent {
 
 
     private ExplosiveBehavior delayedBehavior;
-
-    public ExplosivesComponent(ExplosiveTrigger trigger, ExplosiveBehavior behavior, int armTime) {
-        this.triggerStrategy = trigger;
-        this.explosiveBehavior = behavior;
-        this.armTimer = armTime;
-        this.isArmed = (armTime <= 0);
-    }
+    private ExplodeCallback explodeCallback;
 
     public ExplosivesComponent(ExplosiveTrigger trigger, ExplosiveBehavior behavior,
-                               int armTime, int maxPostTriggerDelay) {
+                               float armTime, float maxPostTriggerDelay) {
         this.triggerStrategy = trigger;
         this.explosiveBehavior = behavior;
         this.armTimer = armTime;
         this.isArmed = (armTime <= 0);
         this.maxPostTriggerDelay = maxPostTriggerDelay;
+        this.postTriggerDelay = maxPostTriggerDelay;
     }
 
 
     public void update(Plant owner, float delta) {
-
         if (!isArmed) {
-            armTimer-= delta;
+            if (owner.getState() != Plant.State.UNARMED) {
+                owner.setState(Plant.State.UNARMED);
+            }
+            armTimer -= delta;
             if (armTimer <= 0) {
                 isArmed = true;
+                owner.setState(Plant.State.IDLE);
             }
             return;
         }
 
         if (isTriggered) {
-            postTriggerDelay-=delta;
+            if (owner.getState() != Plant.State.TRIGGERED) {
+                owner.setState(Plant.State.TRIGGERED);
+            }
+            postTriggerDelay -= delta;
             if (postTriggerDelay <= 0) {
                 lives--;
                 explosiveBehavior.execute(owner);
+
+                if (explodeCallback != null) {
+                    explodeCallback.onExplode(owner);
+                }
+
                 if (lives > 0) {
                     postTriggerDelay = maxPostTriggerDelay;
                     isTriggered = false;
+                    owner.setState(Plant.State.IDLE);
                 } else {
                     if (delayedBehavior != null) {
                         delayedBehavior.execute(owner);
@@ -68,6 +75,10 @@ public class ExplosivesComponent implements GameComponent {
                 }
             }
             return;
+        }
+
+        if (owner.getState() != Plant.State.IDLE) {
+            owner.setState(Plant.State.IDLE);
         }
 
         if (triggerStrategy.shouldTrigger(owner, this)) {
@@ -94,7 +105,7 @@ public class ExplosivesComponent implements GameComponent {
         this.plantFoodBehavior = plantFoodBehavior;
     }
 
-    public void setPostTriggerDelay(int postTriggerDelay) {
+    public void setPostTriggerDelay(float postTriggerDelay) {
         this.postTriggerDelay = postTriggerDelay;
     }
 
@@ -108,5 +119,13 @@ public class ExplosivesComponent implements GameComponent {
 
     public void instantArm() {
         isArmed = true;
+    }
+
+    public void setExplodeCallback(ExplodeCallback callback) {
+        this.explodeCallback = callback;
+    }
+
+    public interface ExplodeCallback {
+        void onExplode(Plant owner);
     }
 }

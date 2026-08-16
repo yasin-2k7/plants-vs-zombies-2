@@ -19,6 +19,7 @@ import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.FillViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.pvz2.Main;
+import com.pvz2.controller.GameMenuController;
 
 public abstract class MenuScreen implements Screen {
     protected final Main game;
@@ -172,6 +173,7 @@ public abstract class MenuScreen implements Screen {
                 @Override
                 public void run() {
                     game.setScreen(targetScreen);
+                    GameMenuController.setScreen((MenuScreen) targetScreen);
                     currentScreen.dispose();
                 }
             })

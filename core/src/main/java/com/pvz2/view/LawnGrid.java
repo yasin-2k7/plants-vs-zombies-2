@@ -2,11 +2,11 @@ package com.pvz2.view;
 
 public class LawnGrid {
     // نقطه شروع زمین روی صفحه (مبدأ خانه 0,0)
-    public static final float ORIGIN_X = 530f;
-    public static final float ORIGIN_Y = 220f;
+    public static final float ORIGIN_X = 532f;
+    public static final float ORIGIN_Y = 175f;
 
     // ابعاد هر خانه از چمن
-    public static final float CELL_WIDTH = 140f;
+    public static final float CELL_WIDTH = 142f;
     public static final float CELL_HEIGHT = 125f;
 
     public static final int COLS = 9;

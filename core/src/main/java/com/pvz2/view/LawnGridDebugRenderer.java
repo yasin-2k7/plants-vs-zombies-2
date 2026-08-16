@@ -1,0 +1,55 @@
+package com.pvz2.view;
+
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+
+public class LawnGridDebugRenderer {
+
+    private final ShapeRenderer shapeRenderer = new ShapeRenderer();
+
+    public void draw(OrthographicCamera camera) {
+        shapeRenderer.setProjectionMatrix(camera.combined);
+
+        float gridWidth = LawnGrid.COLS * LawnGrid.CELL_WIDTH;
+        float gridHeight = LawnGrid.ROWS * LawnGrid.CELL_HEIGHT;
+        float left = LawnGrid.ORIGIN_X - LawnGrid.CELL_WIDTH / 2f;
+        float bottom = LawnGrid.ORIGIN_Y - LawnGrid.CELL_HEIGHT / 2f;
+
+        // Cell boundaries, matching exactly what getColFromX()/getRowFromY()
+        // consider "inside" a given column/row.
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
+        shapeRenderer.setColor(Color.RED);
+
+        for (int c = 0; c <= LawnGrid.COLS; c++) {
+            float x = left + c * LawnGrid.CELL_WIDTH;
+            shapeRenderer.line(x, bottom, x, bottom + gridHeight);
+        }
+        for (int r = 0; r <= LawnGrid.ROWS; r++) {
+            float y = bottom + r * LawnGrid.CELL_HEIGHT;
+            shapeRenderer.line(left, y, left + gridWidth, y);
+        }
+        shapeRenderer.end();
+
+        // Cross at each cell's logical center per getCellX()/getCellY() —
+        // this is where anything placed "at column c, row r" via LawnGrid
+        // should visually land. If a sprite doesn't sit on its cross, the
+        // sprite's own positioning math (not LawnGrid) is the problem.
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
+        shapeRenderer.setColor(Color.YELLOW);
+        float s = 6f;
+        for (int col = 0; col < LawnGrid.COLS; col++) {
+            for (int row = 0; row < LawnGrid.ROWS; row++) {
+                float cx = LawnGrid.getCellX(col);
+                float cy = LawnGrid.getCellY(row);
+                shapeRenderer.line(cx - s, cy, cx + s, cy);
+                shapeRenderer.line(cx, cy - s, cx, cy + s);
+            }
+        }
+        shapeRenderer.end();
+    }
+
+    public void dispose() {
+        shapeRenderer.dispose();
+    }
+}

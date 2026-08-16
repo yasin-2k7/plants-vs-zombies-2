@@ -40,7 +40,6 @@ public class JalapenoZombie extends Zombie {
                 plant.takeDamage(9999);
             }
         }
-        GameMenuController.updateState("Jalapeno zombie sets the row on fire!");
         die();
     }
 }

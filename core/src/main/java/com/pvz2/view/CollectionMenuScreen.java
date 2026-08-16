@@ -24,6 +24,7 @@ public class CollectionMenuScreen extends MenuScreen{
     private Table currentTable;
     private Table mainTable;
     private ResourcesTable resourcesTable = new ResourcesTable(App.getCurrentUser(), game);
+    private boolean plantsTabActive = true;
 
     public CollectionMenuScreen(Main game, MenuScreen lastScreen) {
         super(game);
@@ -31,13 +32,18 @@ public class CollectionMenuScreen extends MenuScreen{
     }
 
     @Override
+    public void show() {
+        super.show();
+        resetMainTable();
+    }
+
+    @Override
     protected void buildUI() {
         plantsTable = new PlantsTable(8, 30, true, 150, 100, createCollectionMenuCardsMethod());
         plantsTable.build();
         zombiesTable = new ZombiesTable(createCollectionMenuZombieCardsMethod());
-        if (currentTable == null){
-            currentTable = plantsTable;
-        }
+        currentTable = plantsTabActive ? plantsTable : zombiesTable;
+
         pane = new ScrollPane(currentTable, skin);
         pane.setFadeScrollBars(true);
         pane.setScrollingDisabled(true, false);
@@ -67,7 +73,7 @@ public class CollectionMenuScreen extends MenuScreen{
         mainStack.add(topBarWrapper);
     }
 
-    private void resetMainTable() {
+    public void resetMainTable() {
         mainTable.clearChildren();
         mainTable.add(pane).pad(20).row();
         if (currentTable instanceof PlantsTable) mainTable.add(createFilterBar(plantsTable)).center();
@@ -144,6 +150,7 @@ public class CollectionMenuScreen extends MenuScreen{
             public void changed(ChangeEvent event, Actor actor) {
                 if (plantsTab.isChecked()) {
                     currentTable = plantsTable;
+                    plantsTabActive = true;
                     pane.setActor(plantsTable);
                     resetMainTable();
                 }
@@ -154,6 +161,7 @@ public class CollectionMenuScreen extends MenuScreen{
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 if (zombiesTab.isChecked()) {
+                    plantsTabActive = false;
                     currentTable = zombiesTable;
                     pane.setActor(zombiesTable);
                     resetMainTable();

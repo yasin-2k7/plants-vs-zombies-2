@@ -30,6 +30,23 @@ public class Plant implements Damageable {
     private boolean isFire = false;
     private int warmRadius = 1;
     private boolean plantFoodInStart = false;
+    private State state = State.IDLE;
+
+    public enum State {
+        IDLE,
+        SPECIAL,
+        ATTACK,
+        UNARMED,
+        TRIGGERED,
+        HIT_RIGHT,
+        HIT_LEFT,
+        HIT_RIGHT_AND_LEFT,
+        SPECIAL_IDLE,
+        DAMAGE,
+        DAMAGE2,
+        DAMAGE3,
+        INTRO
+    }
 
     public Plant(PlantType type, int health, int damage) {
         this.type = type;
@@ -135,8 +152,6 @@ public class Plant implements Damageable {
             this.cell.findAndRemovePlant();
             this.cell = null;
         }
-        GameMenuController.updateState(
-                "Plant " + this.getType().name() + " at (" + this.x + ", " + this.y + ") is destroyed.");
     }
 
     public boolean isDead() {
@@ -212,7 +227,6 @@ public class Plant implements Damageable {
     }
 
     public void activatePlantFood() {
-        GameMenuController.updateState("plant food is activated on " + type);
         for (GameComponent component : components) {
             component.activatePlantFood(this);
         }
@@ -252,5 +266,13 @@ public class Plant implements Damageable {
 
     public void setCat(boolean cat) {
         this.cat = cat;
+    }
+
+    public State getState() {
+        return state;
+    }
+
+    public void setState(State state) {
+        this.state = state;
     }
 }

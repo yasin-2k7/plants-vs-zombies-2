@@ -26,14 +26,20 @@ public class BowlingChargeComponent implements GameComponent {
     private float shootingTimer = 0f;
     private boolean activePlantFood;
     private int plantFoodProjectileCount = 0;
+    private final float actionTimeInterval;
+    private final float actionTime;
+    private float currentActionTimer = 0;
+
     public BowlingChargeComponent(float shootingTime,
                                   CombinedDamageStrategy firstDamageStrategy,
                                   CombinedDamageStrategy secondDamageStrategy,
                                   CombinedDamageStrategy thirdDamageStrategy,
                                   Supplier<MovementStrategy> movementStrategy,
                                   CombinedDamageStrategy plantFoodDamageStrategy,
-                                  int firstCharge, int secondCharge, int thirdCharge) {
+                                  int firstCharge, int secondCharge, int thirdCharge, float actionTimeInterval, float actionTime) {
         this.shootingTime = shootingTime;
+        this.actionTimeInterval = actionTimeInterval;
+        this.actionTime = actionTime;
         damageStrategies[0] = firstDamageStrategy;
         damageStrategies[1] = secondDamageStrategy;
         damageStrategies[2] = thirdDamageStrategy;
@@ -60,6 +66,13 @@ public class BowlingChargeComponent implements GameComponent {
             plantFoodHandler(owner, delta);
             return;
         }
+        if (currentActionTimer >= actionTime){
+            currentActionTimer += delta;
+            if (currentActionTimer >= actionTimeInterval){
+                currentActionTimer = 0;
+                owner.setState(Plant.State.IDLE);
+            }
+        }
 
         for (Bulb bulb : bulbs) {
             bulb.update(delta);
@@ -69,14 +82,19 @@ public class BowlingChargeComponent implements GameComponent {
             if (shootingTimer > 0) {
                 shootingTimer-= delta;
             } else {
-                tryShooting(owner);
+                tryShooting(owner, delta);
             }
         }
     }
 
-    private void tryShooting(Plant owner) {
+    private void tryShooting(Plant owner, float delta) {
         for (int i = 0; i < 3; i++) {
             if (bulbs[i].isReady) {
+                if (owner.getState() == Plant.State.IDLE){
+                    owner.setState(Plant.State.SPECIAL);
+                }
+                currentActionTimer += delta;
+                if (currentActionTimer < actionTime) return;
                 bulbs[i].isReady = false;
                 shootingTimer = shootingTime;
                 Projectile p = App.getCurrentGame().getProjectilesPool().acquire();

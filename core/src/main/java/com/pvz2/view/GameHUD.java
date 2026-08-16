@@ -103,7 +103,7 @@ public class GameHUD extends Group {
         return new Consumer<PlantCardView>() {
             @Override
             public void accept(PlantCardView plantCardView) {
-                if (plantCardView.isActive()){
+                if (selectedPlantsList.isAcitve){
                     boolean isSelected =
                         GameMenuController.selectAndUnselectPlant(plantCardView.getType(), screen);
                     for (PlantCardView cardView : selectedPlantsList.plantCardViewList){
@@ -475,6 +475,12 @@ public class GameHUD extends Group {
                     i = 1;
                     this.row();
                 }
+            }
+        }
+
+        public void unselectPlants(){
+            for (PlantCardView plantCardView : plantCardViewList){
+                plantCardView.setSelectedState(false);
             }
         }
 

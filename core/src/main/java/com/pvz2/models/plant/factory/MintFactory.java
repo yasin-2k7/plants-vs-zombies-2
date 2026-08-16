@@ -38,7 +38,7 @@ public class MintFactory {
                     card.reset();
                 }
             }
-        }));
+        }, 5f));
         return p;
     }
 }

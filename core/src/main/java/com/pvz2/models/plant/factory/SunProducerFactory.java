@@ -42,7 +42,8 @@ public class SunProducerFactory {
         int growTimeReduce = level >= 2 ? 5 : 0;
         boolean doubleSunChance = level == 4;
         Plant p = new Plant(PlantType.SUN_SHROOM, health, 0);
-        p.addComponent(new SunProducerComponent(25, 1, 24, doubleSunChance, true, 3, growTimeReduce));
+        p.addComponent(new SunProducerComponent(25, 1, 24, doubleSunChance, true, 3,
+            growTimeReduce));
         return p;
     }
 
@@ -58,8 +59,8 @@ public class SunProducerFactory {
     private static Plant buildGoldBloom() {
         int level = App.getCurrentUser().getUnlockedPlantsLevels().getOrDefault(PlantType.GOLD_BLOOM, 1);
         Plant p = new Plant(PlantType.GOLD_BLOOM, 0, 0);
-        int sunNumber = level >= 3 ? 17 : 15;
-        p.addComponent(new SunProducerComponent(25, sunNumber, 0, false, false, 0, 0, true));
+        int sunSize = level >= 3 ? 150 : 125;
+        p.addComponent(new SunProducerComponent(sunSize, 3, 0, false, false, 0, 0, true));
         return p;
     }
 }
