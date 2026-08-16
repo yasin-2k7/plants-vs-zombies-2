@@ -123,47 +123,19 @@ public class GameMenuController implements MenuController {
         }
     }
 
-    public void collectSun(float x, float y) {
+    public static void collectSun(float touchX, float touchY) {
         for (Sun sun : App.getCurrentGame().getActiveSuns()) {
-            if (sun.isCollected()) continue;
-            if (Math.abs(sun.getX() - x) < 2 && Math.abs(sun.getY() - y) < 2) {
+            if (sun.getBounds().contains(touchX, touchY) && !sun.isCollected() && !sun.isExploded()) {
                 if (sun.getType() == SunType.RADIOACTIVE) {
-                    Cell[][] grid = App.getCurrentGame().getGrid();
-                    sun.collect();
-                    Cell sunCell = Cell.findCell(sun.getX(), sun.getY(), grid);
-                    if (sunCell != null) {
-                        List<Cell> zombieCells = Cell.getNeighborCells(sunCell, grid, 2);
-                        List<Zombie> zombies = Cell.getZombiesInCells(zombieCells);
-                        for (Zombie zombie : zombies) {
-                            zombie.takeDamage(150, "NORMAL");
-                        }
-                        List<Cell> plantCells = Cell.getNeighborCells(sunCell, grid, 1);
-                        for (Cell cell : plantCells) {
-                            if (cell.getPlant(PlantLayer.BASE) != null)
-                                cell.getPlant(PlantLayer.BASE).takeDamage(80);
-                            if (cell.getPlant(PlantLayer.MAIN) != null)
-                                cell.getPlant(PlantLayer.MAIN).takeDamage(80);
-                            if (cell.getPlant(PlantLayer.SHIELD) != null)
-                                cell.getPlant(PlantLayer.SHIELD).takeDamage(80);
-                        }
-                    }
+                    sun.explode();
                 } else {
-                    GameWorld game = App.getCurrentGame();
                     sun.collect();
-                    game.setSun(game.getSun() + sun.getSize());
-                    if (sun.getProducer() != null) sun.getProducer().getComponentSuns().remove(sun);
-                    User user = App.getCurrentUser();
-                    if (user != null) {
-                        user.getQuestStats().addSunsCollectedToday(sun.getSize());
-                        user.getQuestManager().checkAllQuests(user, false);
-                    }
+                    App.getCurrentGame().addSunToPlayer(sun.getType().amount);
                 }
-                return;
+                break;
             }
         }
-//        GameMenuView.getInstance().showResult("there is no sun in that place!");
     }
-
     public void collectCollectable(float x, float y, String type) {
         CollectableType selectedType = null;
         for (CollectableType collectableType : CollectableType.values()) {

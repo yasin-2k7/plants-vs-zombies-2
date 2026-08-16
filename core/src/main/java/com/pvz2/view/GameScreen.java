@@ -36,6 +36,7 @@ import com.pvz2.models.plant.components.ExplosivesComponent;
 import com.pvz2.models.world.Cell;
 import com.pvz2.models.world.GameState;
 import com.pvz2.models.world.GameWorld;
+import com.pvz2.models.world.Sun;
 import com.pvz2.models.zombie.Zombie;
 import pvz.libpvz.pam.PamPlayer;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
@@ -100,6 +101,8 @@ public class GameScreen extends MenuScreen {
     private ZombiePreviewManager zombiePreviewManager;
     private boolean zombiePreviewVisible = true;
 
+    private final Map<Sun, SunGraphic> sunGraphics = new HashMap<>();
+
     private record PanStep(float targetCenterX, float duration, boolean isTravel) {
     }
 
@@ -124,6 +127,9 @@ public class GameScreen extends MenuScreen {
         pamPlayer = new PamPlayer(game.textureBank, assetsFolder);
         pamPlayer.loadAsync(getMowerPamPath(chapter), null);
         pamPlayer.loadAsync("768/INITIAL/EFFECTS/MOWER_SPAWN/MOWER_SPAWN.PAM", null);
+
+        pamPlayer.loadAsync("768/INITIAL/EFFECTS/SUN/SUN.PAM", null);
+        pamPlayer.loadAsync("768/FULL/EFFECTS/SUN_BOMB/SUN_BOMB.PAM", null);
 
         computeSideWidths();
         buildIntroPanSequence();
@@ -489,6 +495,12 @@ public class GameScreen extends MenuScreen {
             eg.draw(game.batch, pamPlayer);
         }
         explosionGraphics.removeIf(eg -> eg.isFinished(pamPlayer));
+        syncSunGraphics();
+
+        for (SunGraphic sg : new ArrayList<>(sunGraphics.values())) {
+            sg.update(delta);
+            sg.draw(game.batch, pamPlayer, game);
+        }
         game.batch.end();
 
         if (hud != null) {
@@ -745,6 +757,10 @@ public class GameScreen extends MenuScreen {
                         }
                     }
                 }
+                plantPlacementManager.cancelSelection();
+            } else {
+                GameMenuController.collectSun(touchPoint.x, touchPoint.y);
+            }
             }
             hud.getSelectedPlantsList().unselectPlants();
             plantPlacementManager.cancelSelection();
@@ -795,6 +811,14 @@ public class GameScreen extends MenuScreen {
             zombieGraphics.computeIfAbsent(z, ZombieGraphic::new);
         }
         zombieGraphics.keySet().removeIf(z -> !world.getActiveZombies().contains(z));
+    }
+    private void syncSunGraphics() {
+        for (Sun sun : world.getActiveSuns()) {
+            sunGraphics.computeIfAbsent(sun, SunGraphic::new);
+        }
+        sunGraphics.entrySet().removeIf(entry ->
+            !world.getActiveSuns().contains(entry.getKey()) && entry.getValue().isPopFinished()
+        );
     }
 
     public List<PlantGraphic> getPlantGraphics() {
