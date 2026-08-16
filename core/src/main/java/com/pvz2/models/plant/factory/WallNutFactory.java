@@ -34,6 +34,7 @@ public class WallNutFactory {
         if (level >= 2) health += 1000;
         if (level >= 4) health += 1500;
         Plant p = new Plant(PlantType.WALL_NUT, health, 0);
+        int finalHealth = health;
         p.addComponent(new WallNutsComponent() {
             @Override
             public void activatePlantFood(Plant owner) {
@@ -44,6 +45,12 @@ public class WallNutFactory {
                     armor.setArmorHp(4000);
                 }
             }
+            @Override
+            public void update(Plant owner, float delta) {
+                if (owner.getHealth() < finalHealth / 4) owner.setState(Plant.State.DAMAGE3);
+                else if (owner.getHealth() < finalHealth / 2) owner.setState(Plant.State.DAMAGE2);
+                else if (owner.getHealth() < finalHealth * 3 / 4f) owner.setState(Plant.State.DAMAGE);
+            }
         });
         return p;
     }
@@ -53,6 +60,7 @@ public class WallNutFactory {
         int health = 8000;
         if (level >= 2) health += 2000;
         if (level >= 4) health += 3000;
+        int finalHealth = health;
         Plant p = new Plant(PlantType.TALL_NUT, health, 0);
         p.addComponent(new WallNutsComponent() {
             @Override
@@ -63,6 +71,11 @@ public class WallNutFactory {
                 } else {
                     armor.setArmorHp(8000);
                 }
+            }
+            @Override
+            public void update(Plant owner, float delta) {
+                if (owner.getHealth() < finalHealth / 3) owner.setState(Plant.State.DAMAGE2);
+                else if (owner.getHealth() < finalHealth * 2 / 3f) owner.setState(Plant.State.DAMAGE);
             }
         });
         return p;
@@ -79,7 +92,6 @@ public class WallNutFactory {
                 attacker.takeDamage(owner.getDamage(), "NORMAL");
                 return damageAmount;
             }
-
             @Override
             public void activatePlantFood(Plant owner) {
                 ArmorComponent armor = p.getComponent(ArmorComponent.class);
@@ -91,6 +103,12 @@ public class WallNutFactory {
                 if (owner.getDamage() != damage) return;
                 owner.setDamage(owner.getDamage() + 5);
             }
+            @Override
+            public void update(Plant owner, float delta) {
+                if (owner.getHealth() < health / 4) owner.setState(Plant.State.DAMAGE3);
+                else if (owner.getHealth() < health / 2) owner.setState(Plant.State.DAMAGE2);
+                else if (owner.getHealth() < health * 3 / 4f) owner.setState(Plant.State.DAMAGE);
+            }
         });
         return p;
     }
@@ -100,8 +118,18 @@ public class WallNutFactory {
         int health = 300;
         if (level >= 2) health += 150;
         if (level >= 4) health += 250;
+        int finalHealth = health;
         Plant p = new Plant(PlantType.GARLIC, health, 0);
         p.addComponent(new MoveZombieComponent(new EjectStrategy()));
+        p.addComponent(new WallNutsComponent() {
+            @Override
+            public void activatePlantFood(Plant owner) {}
+            @Override
+            public void update(Plant owner, float delta) {
+                if (owner.getHealth() < finalHealth / 3) owner.setState(Plant.State.DAMAGE2);
+                else if (owner.getHealth() < finalHealth * 2 / 3f) owner.setState(Plant.State.DAMAGE);
+            }
+        });
         return p;
     }
 
@@ -110,8 +138,19 @@ public class WallNutFactory {
         int health = 3000;
         if (level >= 2) health += 1000;
         if (level >= 4) health += 1500;
+        int finalHealth = health;
         Plant p = new Plant(PlantType.SWEET_POTATO, health, 0);
         p.addComponent(new MoveZombieComponent(new AttractStrategy()));
+        p.addComponent(new WallNutsComponent() {
+            @Override
+            public void activatePlantFood(Plant owner) {}
+            @Override
+            public void update(Plant owner, float delta) {
+                if (owner.getHealth() < finalHealth / 4) owner.setState(Plant.State.DAMAGE3);
+                else if (owner.getHealth() < finalHealth / 2) owner.setState(Plant.State.DAMAGE2);
+                else if (owner.getHealth() < finalHealth * 3 / 4f) owner.setState(Plant.State.DAMAGE);
+            }
+        });
         return p;
     }
 
@@ -134,12 +173,17 @@ public class WallNutFactory {
                             explosivesComponent.update(owner, App.getCurrentGame().getElapsedTime());
                             explosivesComponent.update(owner, App.getCurrentGame().getElapsedTime());
                         }
+                        @Override
+                        public void update(Plant owner, float delta) {
+                            if (owner.getHealth() < health / 4) owner.setState(Plant.State.DAMAGE3);
+                            else if (owner.getHealth() < health / 2) owner.setState(Plant.State.DAMAGE2);
+                            else if (owner.getHealth() < health * 3 / 4f) owner.setState(Plant.State.DAMAGE);
+                        }
                     });
                 } else {
                     armor.setArmorHp(4000);
                 }
             }
-
             @Override
             public void onDeath(Plant owner, float delta) {
                 ExplosivesComponent explosivesComponent = new ExplosivesComponent(InstantTrigger.INSTANCE,
@@ -157,6 +201,7 @@ public class WallNutFactory {
         int health = 4000;
         if (level >= 2) health += 1000;
         if (level >= 4) health += 1500;
+        int finalHealth = health;
         Plant p = new Plant(PlantType.PUMPKIN, health, 0);
         p.addComponent(new WallNutsComponent() {
             @Override
@@ -167,6 +212,11 @@ public class WallNutFactory {
                 } else {
                     armor.setArmorHp(4000);
                 }
+            }
+            @Override
+            public void update(Plant owner, float delta) {
+                if (owner.getHealth() < finalHealth / 3) owner.setState(Plant.State.DAMAGE2);
+                else if (owner.getHealth() < finalHealth * 2 / 3f) owner.setState(Plant.State.DAMAGE);
             }
         });
         p.addComponent(new PlacementBehaviorComponent(PlantLayer.SHIELD, false, 0, false));

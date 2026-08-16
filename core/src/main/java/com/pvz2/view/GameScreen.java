@@ -526,7 +526,7 @@ public class GameScreen extends MenuScreen {
             for (LawnMower mower : world.getLawnMowerManager().getMowers()) {
                 if (!mower.isSpent()) {
                     float x = (float) mower.getPositionX();
-                    float y = LawnGrid.getCellY(mower.getRow()) - 40f;
+                    float y = LawnGrid.getCellY(mower.getRow());
                     String pamPath = getMowerPamPath(chapter);
                     String animStateName = getMowerAnimStateName(mower.getState());
 

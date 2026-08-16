@@ -92,6 +92,12 @@ public class PlantGraphic {
         if (state == Plant.State.SPECIAL_IDLE){
             return new ClipInfo("special_idle", true);
         }
+        if (state == Plant.State.INTRO){
+            return new ClipInfo("intro", false);
+        }
+        if (state == Plant.State.DAMAGE || state == Plant.State.DAMAGE2 || state == Plant.State.DAMAGE3){
+            return new ClipInfo(PlantAnimationClips.getDamagedClip(plant.getType(), state), true);
+        }
         return null;
     }
 

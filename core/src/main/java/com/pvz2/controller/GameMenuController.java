@@ -130,7 +130,7 @@ public class GameMenuController implements MenuController {
                     sun.explode();
                 } else {
                     sun.collect();
-                    App.getCurrentGame().addSunToPlayer(sun.getType().amount);
+                    App.getCurrentGame().addSunToPlayer(sun.getSize());
                 }
                 break;
             }

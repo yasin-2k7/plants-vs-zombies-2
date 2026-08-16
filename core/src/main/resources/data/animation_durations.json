@@ -82,5 +82,32 @@
   },
   "CHOMPER": {
     "special": { "duration": 1.95 }
+  },
+  "ENLIGHTEN_MINT": {
+    "intro": {"duration": 3.25}
+  },
+  "APPEASE_MINT": {
+    "intro": {"duration": 2.2}
+  },
+  "ARMA_MINT": {
+    "intro": {"duration": 2.9}
+  },
+  "BOMBARD_MINT": {
+    "intro": {"duration": 1.1}
+  },
+  "ENFORCE_MINT": {
+    "intro": {"duration": 2.8}
+  },
+  "REINFORCE_MINT": {
+    "intro": {"duration": 1.9}
+  },
+  "ENCHANT_MINT": {
+    "intro": {"duration": 1.8}
+  },
+  "SPEAR_MINT": {
+    "intro": {"duration": 1.4}
+  },
+  "CONTAIN_MINT": {
+    "intro": {"duration": 3.3}
   }
 }

@@ -28,6 +28,7 @@ public class SunProducerComponent implements GameComponent {
     private boolean enable = true;
     private float growTimeToReduce;
     private boolean isInstant;
+    private boolean instantProductDone = false;
 
     // resolved lazily from AnimationDurations once the owner's PlantType is known
     private float actionTime = -1f;
@@ -68,7 +69,6 @@ public class SunProducerComponent implements GameComponent {
 
         if (App.getCurrentGame() instanceof IZombieLevel) return;
         tick(owner, delta);
-        System.out.println(lastProductionTime);
 
 
         if (shroom && checkShroomSize) {
@@ -79,6 +79,7 @@ public class SunProducerComponent implements GameComponent {
                 setSunSize(50);
             }
         }
+        if (isInstant && instantProductDone) return;
 
         if (lastProductionTime >= productionTime || isInstant) {
             if (owner.getState() == Plant.State.IDLE){
@@ -92,6 +93,7 @@ public class SunProducerComponent implements GameComponent {
             for (int i = 0; i < sunNumber; i++) {
                 if (doubleSunChance && Math.random() < 0.2) componentSuns.add(produceSun(owner));
                 componentSuns.add(produceSun(owner));
+                instantProductDone = true;
             }
         }
 

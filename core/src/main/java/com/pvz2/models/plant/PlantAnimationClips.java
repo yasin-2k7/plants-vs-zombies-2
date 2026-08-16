@@ -46,4 +46,15 @@ public class PlantAnimationClips {
         if (type == PlantType.JALAPENO) return "idle";
         return null;
     }
+
+    public static String getDamagedClip(PlantType type, Plant.State state) {
+        String num = switch (state){
+            case DAMAGE2 -> "2";
+            case DAMAGE3 -> "3";
+            default -> "";
+        };
+        if (type == PlantType.PUMPKIN) return "idle" + num;
+        if (type == PlantType.GARLIC || type == PlantType.SWEET_POTATO) return "idle_damage" + num;
+        return "damage" + num;
+    }
 }
