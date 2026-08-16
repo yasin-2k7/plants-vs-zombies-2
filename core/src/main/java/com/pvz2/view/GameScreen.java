@@ -19,29 +19,22 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
-import com.badlogic.gdx.utils.viewport.FillViewport;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
-import com.badlogic.gdx.utils.viewport.Viewport;
 import com.pvz2.Main;
 import com.pvz2.controller.GameMenuController;
 import com.pvz2.controller.PlantMenuController;
 import com.pvz2.models.core.App;
 import com.pvz2.models.enums.Chapter;
-import com.pvz2.models.enums.PlantLayer;
 import com.pvz2.models.enums.PlantType;
 import com.pvz2.models.lawnMower.LawnMower;
 import com.pvz2.models.plant.Plant;
 import com.pvz2.models.plant.PlantAnimationClips;
 import com.pvz2.models.plant.components.ExplosivesComponent;
-import com.pvz2.models.world.Cell;
 import com.pvz2.models.world.GameState;
 import com.pvz2.models.world.GameWorld;
 import com.pvz2.models.world.Sun;
 import com.pvz2.models.zombie.Zombie;
 import pvz.libpvz.pam.PamPlayer;
-import com.badlogic.gdx.scenes.scene2d.actions.Actions;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.Align;
 import pvz.skin.BorderedTable;
 
@@ -761,12 +754,11 @@ public class GameScreen extends MenuScreen {
             } else {
                 GameMenuController.collectSun(touchPoint.x, touchPoint.y);
             }
-            }
             hud.getSelectedPlantsList().unselectPlants();
             plantPlacementManager.cancelSelection();
         }
-    }
 
+    }
     private void checkExplosion(Plant newPlant, PlantGraphic pg){
         ExplosivesComponent explosives =
             newPlant.getComponent(ExplosivesComponent.class);
