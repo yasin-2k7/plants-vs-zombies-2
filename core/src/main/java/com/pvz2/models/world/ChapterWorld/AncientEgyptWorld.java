@@ -7,6 +7,7 @@ import com.pvz2.models.world.loseCondition.LoseCondition;
 import com.pvz2.models.world.mechanics.Mechanic;
 import com.pvz2.models.world.obstacles.Grave;
 import com.pvz2.models.world.winCondition.WinCondition;
+import com.pvz2.view.LawnGrid;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -47,8 +48,8 @@ public class AncientEgyptWorld extends GameWorld {
             Cell cell = grid[row][col];
             if (cell.hasObstacle() || !cell.isEmpty()) continue;
 
-            float x = col * 100f + 50f;
-            float y = row * 100f + 50f;
+            float x = LawnGrid.getCellX(col);
+            float y = LawnGrid.getCellY(row);
 
             Grave grave = new Grave(x, y, row, col, Grave.GraveType.NORMAL);
             cell.setObstacle(grave);

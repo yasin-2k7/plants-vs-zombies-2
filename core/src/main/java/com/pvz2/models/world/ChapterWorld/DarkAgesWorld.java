@@ -10,6 +10,7 @@ import com.pvz2.models.world.mechanics.Mechanic;
 import com.pvz2.models.world.mechanics.SunSpawnMechanic;
 import com.pvz2.models.world.obstacles.Grave;
 import com.pvz2.models.world.winCondition.WinCondition;
+import com.pvz2.view.LawnGrid;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -75,8 +76,8 @@ public class DarkAgesWorld extends GameWorld {
     }
 
     private Grave createRandomGrave(int col, int row) {
-        float x = col * 100f + 50f;
-        float y = row * 100f + 50f;
+        float x = LawnGrid.getCellX(col);
+        float y = LawnGrid.getCellY(row);
 
         // احتمال ۲۰٪ قبر دارای خورشید، ۱۰٪ دارای غذای گیاه، بقیه معمولی
         int rand = random.nextInt(100);

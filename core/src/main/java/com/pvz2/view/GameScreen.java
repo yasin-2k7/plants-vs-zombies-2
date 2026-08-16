@@ -35,6 +35,7 @@ import com.pvz2.models.world.Cell;
 import com.pvz2.models.world.GameState;
 import com.pvz2.models.world.GameWorld;
 import com.pvz2.models.world.Sun;
+import com.pvz2.models.world.obstacles.Grave;
 import com.pvz2.models.zombie.Zombie;
 import pvz.libpvz.pam.PamPlayer;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
@@ -99,6 +100,7 @@ public class GameScreen extends MenuScreen {
     private boolean zombiePreviewVisible = true;
 
     private final Map<Sun, SunGraphic> sunGraphics = new HashMap<>();
+    private final List<GraveGraphic> graveGraphics = new ArrayList<>();
 
     private record PanStep(float targetCenterX, float duration, boolean isTravel) {
     }
@@ -141,6 +143,7 @@ public class GameScreen extends MenuScreen {
         stage.getViewport().update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
 
         activeInstance = this;
+        initGraveGraphics();
     }
 
     @Override
@@ -533,6 +536,20 @@ public class GameScreen extends MenuScreen {
                 }
             }
         }
+        for (int i = graveGraphics.size() - 1; i >= 0; i--) {
+            GraveGraphic graphic = graveGraphics.get(i);
+            Grave grave = graphic.getGrave(); // گرفتن مدل از گرافیک
+
+            // آپدیت و رسم انیمیشن
+            graphic.update(delta);
+            graphic.draw(game.batch, pamPlayer, game);
+
+            // اگر انیمیشن تمام شده و قبر نابود شده است
+            if (grave.isDestroyed() && graphic.isBreakFinished()) {
+                graveGraphics.remove(i);       // ۱. حذف از لیست گرافیکی
+                world.removeObstacle(grave);   // ۲. حذف واقعی و نهایی از دنیای بازی (activeObstacles)
+            }
+        }
     }
 
     private String getMowerPamPath(Chapter chapter) {
@@ -785,5 +802,12 @@ public class GameScreen extends MenuScreen {
 
     public PlantPlacementManager getPlantPlacementManager() {
         return plantPlacementManager;
+    }
+
+    public void initGraveGraphics() {
+        graveGraphics.clear();
+        for (Grave grave : world.getGraves()) {
+            graveGraphics.add(new GraveGraphic(grave));
+        }
     }
 }

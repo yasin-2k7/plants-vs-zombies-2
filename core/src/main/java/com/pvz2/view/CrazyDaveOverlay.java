@@ -20,6 +20,8 @@ import com.pvz2.Main;
 import com.pvz2.models.world.GameWorld;
 import pvz.libpvz.pam.PamPlayer;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class CrazyDaveOverlay extends WidgetGroup {
@@ -73,7 +75,7 @@ public class CrazyDaveOverlay extends WidgetGroup {
 
     public CrazyDaveOverlay(Main game, List<String> dialogs, GameWorld world) {
         this.game = game;
-        this.dialogs = dialogs;
+        this.dialogs = new ArrayList<>(dialogs != null ? dialogs : Collections.emptyList());
         this.world = world;
 
         setFillParent(true);

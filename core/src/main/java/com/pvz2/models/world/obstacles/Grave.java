@@ -9,8 +9,13 @@ public class Grave extends Obstacle {
     private boolean isCollected = false;
     private int row;
     private int col;
+
+    private final int maxHealth;
+    public boolean isDying = false;
+
     public Grave(float x, float y, int row, int col, GraveType type) {
         super(x, y, 700);
+        this.maxHealth = 700;
         this.row = row;
         this.col = col;
         this.type = type;
@@ -30,17 +35,27 @@ public class Grave extends Obstacle {
 
 
     public boolean blocksProjectiles() {
-        return !isDestroyed;
+        return !isDestroyed && !isDying;
     }
 
     @Override
     public void takeDamage(int amount, String type) {
-        if (isDestroyed) return;
-        super.takeDamage(amount, type);
+        if (isDestroyed || isDying) return;
+
+        this.health -= amount;
         GameMenuController.updateState("grave in (" + x + ", " + y + ") health: " + health);
-        if (isDestroyed) {
+
+        if (this.health <= 0) {
+            this.health = 0;
+            this.isDying = true; // انیمیشن شکستن شروع می‌شود
             releaseContent();
         }
+    }
+
+    public int getDamageStage() {
+        if (health > (maxHealth * 2) / 3) return 0;
+        if (health > maxHealth / 3) return 1;
+        return 2;
     }
 
     public void releaseContent() {
@@ -62,6 +77,12 @@ public class Grave extends Obstacle {
         }
         isCollected = true;
     }
+
+    public boolean isDying() {
+        return isDying;
+    }
+
+    public void markDestroyed() { this.isDestroyed = true; }
 
     public enum GraveType {
         NORMAL,

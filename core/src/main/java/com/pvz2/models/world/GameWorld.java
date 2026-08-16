@@ -599,4 +599,17 @@ public abstract class GameWorld {
     public void setLosingDialogs(List<String> losingDialogs) { this.losingDialogs = losingDialogs; }
     public boolean isEndGameHandled() { return isEndGameHandled; }
     public void setEndGameHandled(boolean handled) { this.isEndGameHandled = handled; }
+    public List<Grave> getGraves() {
+        List<Grave> graves = new ArrayList<>();
+        for (Obstacle obstacle : activeObstacles) {
+            if (obstacle instanceof Grave grave) {
+                graves.add(grave);
+            }
+        }
+        return graves;
+    }
+
+    public void removeObstacle(Obstacle obstacle) {
+        activeObstacles.remove(obstacle);
+    }
 }
