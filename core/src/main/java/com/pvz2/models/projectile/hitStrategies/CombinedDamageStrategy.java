@@ -76,6 +76,7 @@ public class CombinedDamageStrategy implements HitStrategy {
             bowlingMove.onHit(target, projectile);
         }
         target.takeDamage(damage, type);
+        System.out.println(damage);
         projectile.addTarget(target);
         applySpecialDamage(target);
 

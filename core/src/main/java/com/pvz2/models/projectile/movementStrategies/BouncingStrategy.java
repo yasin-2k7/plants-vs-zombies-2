@@ -22,11 +22,11 @@ public class BouncingStrategy implements MovementStrategy {
 
     @Override
     public void move(Projectile projectile, float delta) {
-        if (projectile.getX() <= 0 && speedX < 0) {
+        if (projectile.getX() <= App.getFirstCellX() && speedX < 0) {
             speedX = -speedX;
             bounceCount++;
             projectile.getLastTarget().clear();
-        } else if (projectile.getX() >= 1000 && speedX > 0) {
+        } else if (projectile.getX() >= App.getFirstCellX()+9*App.getCellWidth() && speedX > 0) {
             speedX = -speedX;
             bounceCount++;
             projectile.getLastTarget().clear();
@@ -45,8 +45,8 @@ public class BouncingStrategy implements MovementStrategy {
             projectile.getLastTarget().clear();
         }
 
-        projectile.setX(projectile.getX() + (speedX * 12));
-        projectile.setY(projectile.getY() + (speedY * 12));
+        projectile.setX(projectile.getX() + (speedX * delta));
+        projectile.setY(projectile.getY() + (speedY * delta));
     }
 
 

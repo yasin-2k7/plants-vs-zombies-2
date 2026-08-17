@@ -17,7 +17,7 @@ public class SunGraphic {
     }
 
     public void update(float delta) {
-        sun.update(delta);
+
         animTime += delta;
 
         if ((sun.isCollected() || sun.isExploded()) && !popping) {

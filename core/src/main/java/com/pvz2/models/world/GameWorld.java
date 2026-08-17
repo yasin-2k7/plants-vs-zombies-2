@@ -302,6 +302,7 @@ public abstract class GameWorld {
         zombieSnapshot.forEach(zombie -> zombie.update(delta));
         if (!isConveyorMode) for (PlantCard card : plantLists) card.update(delta);
         for (Sun sun : activeSuns) {
+            sun.update(delta);
             if (sun.getProducer() == null && sun.isExpired()) {
                 sun.collect();
             }

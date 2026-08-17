@@ -3,8 +3,8 @@ package com.pvz2.models.projectile.movementStrategies;
 import com.pvz2.models.projectile.Projectile;
 
 public class LobbedMovementStrategy implements MovementStrategy {
-    private final float maxArcHeight = 150.0f;
-    private final float speed = 5f;
+    private final float maxArcHeight = 250.0f;
+    private final float speed = 700f;
     private float t = 0f;
 
     @Override
@@ -14,7 +14,7 @@ public class LobbedMovementStrategy implements MovementStrategy {
 
     @Override
     public void move(Projectile projectile, float delta) {
-        float nextX = projectile.getX() + speed * 12;
+        float nextX = projectile.getX() + speed * delta;
         projectile.setX(nextX);
 
         float totalXDistance = projectile.getTargetX() - projectile.getOriginX();

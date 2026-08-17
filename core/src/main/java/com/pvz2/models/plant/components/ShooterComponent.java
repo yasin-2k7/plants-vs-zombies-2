@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.function.Supplier;
 
 public class ShooterComponent implements GameComponent {
-    private static final int BURST_DELAY_MAX = 1;
+    private static final float BURST_DELAY_MAX = 0.1f;
     private static final float DEFAULT_ACTION_TIME = 0.3f;
     private static final float DEFAULT_ACTION_TIME_INTERVAL = 0.5f;
     private static final String ATTACK_CLIP = "attack";
@@ -32,7 +32,7 @@ public class ShooterComponent implements GameComponent {
     private List<Supplier<MovementStrategy>> defaultMovementStrategies = new ArrayList<>();
     private int burstProjectileNumber;
     private int burstProjectileNumberOnPlantFood;
-    private int burstDelayMax = BURST_DELAY_MAX;
+    private float burstDelayMax = BURST_DELAY_MAX;
     private int projectilesLeftForShoot;
     private float shootingTimer = 0f;
     private float burstDelayTimer;

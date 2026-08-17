@@ -14,6 +14,7 @@ import com.pvz2.models.projectile.strikeStrategies.CheckStrike;
 import com.pvz2.models.world.Cell;
 import com.pvz2.models.world.GameWorld;
 import com.pvz2.models.world.obstacles.Grave;
+import com.pvz2.models.world.obstacles.Obstacle;
 import com.pvz2.models.zombie.Zombie;
 import com.pvz2.models.zombie.zombiesType.DeflectorZombie;
 import com.pvz2.models.zombie.zombiesType.SnorkelZombie;
@@ -111,7 +112,9 @@ public class Projectile implements Resettable {
                 return;
             }
         }
-        if (movementStrategy.isDead(this)) dead = true;
+        if (movementStrategy.isDead(this)){
+            dead = true;
+        }
     }
 
     @Override
@@ -187,7 +190,8 @@ public class Projectile implements Resettable {
     public void setTarget(Damageable target) {
         this.target = target;
         if (target != null) {
-            targetX = target.getX();
+            float changeX = target instanceof Obstacle ? -10 : 30f;
+            targetX = target.getX() - changeX;
             targetY = target.getY();
         }
     }
@@ -222,6 +226,10 @@ public class Projectile implements Resettable {
 
     public MovementStrategy getMovementStrategy() {
         return movementStrategy;
+    }
+
+    public int getPierce() {
+        return pierce;
     }
 
     public void setPlantType(PlantType plantType) {

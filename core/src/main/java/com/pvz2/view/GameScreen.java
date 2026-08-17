@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.MathUtils;
@@ -31,6 +32,8 @@ import com.pvz2.models.lawnMower.LawnMower;
 import com.pvz2.models.plant.Plant;
 import com.pvz2.models.plant.PlantAnimationClips;
 import com.pvz2.models.plant.components.ExplosivesComponent;
+import com.pvz2.models.pool.GenericObjectPool;
+import com.pvz2.models.projectile.Projectile;
 import com.pvz2.models.world.GameState;
 import com.pvz2.models.world.GameWorld;
 import com.pvz2.models.world.Sun;
@@ -40,10 +43,7 @@ import pvz.libpvz.pam.PamPlayer;
 import com.badlogic.gdx.utils.Align;
 import pvz.skin.BorderedTable;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Consumer;
 
 public class GameScreen extends MenuScreen {
@@ -71,6 +71,9 @@ public class GameScreen extends MenuScreen {
     private Vector3 cursorWorldPos = new Vector3(0, 0, 0);
     private final List<PlantGraphic> plantGraphics = new ArrayList<>();
     private final List<ExplosionEffectGraphic> explosionGraphics = new ArrayList<>();
+    private final Map<Projectile, ProjectileGraphic> projectileGraphics = new HashMap<>();
+    private final List<ProjectileImpactGraphic> projectileImpacts = new ArrayList<>();
+
     private final List<PanStep> introSteps = new ArrayList<>();
     private int currentStepIndex = 0;
     private float stepElapsed = 0f;
@@ -466,6 +469,10 @@ public class GameScreen extends MenuScreen {
             }
         }
 
+        if (App.isDebugMode()) {
+            lawnGridDebugRenderer.draw(worldCamera);
+        }
+
         applyWorldViewport();
         game.batch.begin();
         drawLawnBackground();
@@ -502,11 +509,11 @@ public class GameScreen extends MenuScreen {
             sg.update(delta);
             sg.draw(game.batch, pamPlayer, game);
         }
+        renderProjectiles(delta, game.batch, pamPlayer);
         game.batch.end();
 
-        if (App.isDebugMode()) {
-            lawnGridDebugRenderer.draw(worldCamera);
-        }
+
+
         if (hud != null) {
             hud.update(world, delta);
         }
@@ -810,6 +817,46 @@ public class GameScreen extends MenuScreen {
                     ));
                 }
             });
+        }
+    }
+
+    private void renderProjectiles(float delta, SpriteBatch batch, PamPlayer pamPlayer) {
+        List<Projectile> active = world.getActiveProjectiles();
+        GenericObjectPool<Projectile> pool = App.getCurrentGame().getProjectilesPool();
+
+        Iterator<Map.Entry<Projectile, ProjectileGraphic>> it = projectileGraphics.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry<Projectile, ProjectileGraphic> entry = it.next();
+            ProjectileGraphic pg = entry.getValue();
+            boolean reused = pool.getGeneration(entry.getKey()) != pg.getGeneration();
+            boolean noLongerActive = !active.contains(entry.getKey());
+            if (reused || noLongerActive) {
+                if (entry.getKey().getPierce() < 1) {
+                    projectileImpacts.add(new ProjectileImpactGraphic(pg.getType(), pg.getLastX(), pg.getLastY()));
+                    it.remove();
+                }
+            }
+        }
+
+        for (Projectile p : active) {
+            int currentGen = pool.getGeneration(p);
+            ProjectileGraphic existing = projectileGraphics.get(p);
+            if (existing == null || existing.getGeneration() != currentGen) {
+                projectileGraphics.put(p, new ProjectileGraphic(p, currentGen));
+            }
+        }
+
+        for (ProjectileGraphic pg : projectileGraphics.values()) {
+            pg.update(delta);
+            pg.draw(batch, pamPlayer);
+        }
+
+        Iterator<ProjectileImpactGraphic> impactIt = projectileImpacts.iterator();
+        while (impactIt.hasNext()) {
+            ProjectileImpactGraphic ig = impactIt.next();
+            ig.update(delta);
+            ig.draw(batch, pamPlayer);
+            if (ig.isFinished(pamPlayer)) impactIt.remove();
         }
     }
 

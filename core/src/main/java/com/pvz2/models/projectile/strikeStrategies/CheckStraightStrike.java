@@ -21,8 +21,11 @@ public class CheckStraightStrike implements CheckStrike {
                 return zombie;
             }
         }
-        for (Obstacle obstacle : App.getCurrentGame().getActiveObstacles()) {
-            if (isCollidingWithCircle(oldX, oldY, x, y, obstacle.getX(), obstacle.getY(), 40)) {
+        List<Obstacle> sortedObstacle = App.getCurrentGame().getActiveObstacles().stream()
+            .sorted(Comparator.comparingDouble(Obstacle::getX))
+            .toList();
+        for (Obstacle obstacle : sortedObstacle) {
+            if (isCollidingWithCircle(oldX, oldY, x, y, obstacle.getX(), obstacle.getY(), 62)) {
                 return obstacle;
             }
         }

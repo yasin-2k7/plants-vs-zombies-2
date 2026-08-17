@@ -20,14 +20,13 @@ public class StraightMovementStrategy implements MovementStrategy {
 
     @Override
     public void move(Projectile projectile, float delta) {
-        projectile.setX(projectile.getX() + (speedX * 12));
-        projectile.setY(projectile.getY() + (speedY * 12));
-        // delta in the future...
+        projectile.setX(projectile.getX() + (speedX * delta));
+        projectile.setY(projectile.getY() + (speedY * delta));
     }
 
     @Override
     public boolean isDead(Projectile projectile) {
-        return projectile.getX() > 1000 || projectile.getX() < 0 || projectile.getY() > 1000 || projectile.getY() < 0;
+        return projectile.getX() > 2000 || projectile.getX() < 0 || projectile.getY() > 2000 || projectile.getY() < 0;
     }
 
 

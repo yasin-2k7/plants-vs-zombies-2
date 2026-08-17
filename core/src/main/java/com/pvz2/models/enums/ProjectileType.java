@@ -14,6 +14,7 @@ public enum ProjectileType {
     GOO("STRAIGHT"),
     GOO_SPECIAL("STRAIGHT"),
     SMALL_SHROOM("STRAIGHT"),
+    SEA_SHROOM("STRAIGHT"),
     FUME("STRAIGHT"),
     FUME_SPECIAL("STRAIGHT"),
     SMALL_BULB("STRAIGHT"),

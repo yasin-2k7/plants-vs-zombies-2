@@ -12,8 +12,8 @@ public class BowlingMovementStrategy implements MovementStrategy {
     Random random = new Random();
 
     public BowlingMovementStrategy(float speedX, float speedY) {
-        this.speedX = speedX*12;
-        this.speedY = speedY*12;
+        this.speedX = speedX;
+        this.speedY = speedY;
     }
 
     @Override
@@ -28,8 +28,8 @@ public class BowlingMovementStrategy implements MovementStrategy {
         } else if (projectile.getY() <= App.getFirstCellY() && speedY < 0) {
             speedY *= -1;
         }
-        projectile.setX(projectile.getX() + (speedX));
-        projectile.setY(projectile.getY() + (speedY));
+        projectile.setX(projectile.getX() + (speedX * delta));
+        projectile.setY(projectile.getY() + (speedY * delta));
     }
 
     public void onHit(Damageable target, Projectile projectile) {
@@ -53,6 +53,6 @@ public class BowlingMovementStrategy implements MovementStrategy {
 
     @Override
     public boolean isDead(Projectile projectile) {
-        return projectile.getX() > 1000 || projectile.getX() < 0 || projectile.getY() > 1000 || projectile.getY() < 0;
+        return projectile.getX() > 2000 || projectile.getX() < 0 || projectile.getY() > 2000 || projectile.getY() < 0;
     }
 }
