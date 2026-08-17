@@ -5,6 +5,7 @@ import com.pvz2.models.Damageable;
 import com.pvz2.models.core.App;
 import com.pvz2.models.core.User;
 import com.pvz2.models.enums.PlantType;
+import com.pvz2.models.plant.components.ImitatorIntroComponent;
 import com.pvz2.models.world.Cell;
 import com.pvz2.models.zombie.Zombie;
 
@@ -26,11 +27,13 @@ public class Plant implements Damageable {
     private transient Cell cell = null;
     private int frozenAmount = 0;
     private boolean freeze = false;
-    private int iceHealth = 0;
+    private float iceHealth = 0;
     private boolean isFire = false;
     private int warmRadius = 1;
     private boolean plantFoodInStart = false;
     private State state = State.IDLE;
+    private boolean isImitate;
+    public static final int MAX_ICE_HEALTH = 600;
 
     public enum State {
         IDLE,
@@ -45,7 +48,10 @@ public class Plant implements Damageable {
         DAMAGE,
         DAMAGE2,
         DAMAGE3,
-        INTRO
+        INTRO,
+        BUSY,
+        IMITATE_IDLE,
+        IMITATE_ATTACK
     }
 
     public Plant(PlantType type, int health, int damage) {
@@ -69,11 +75,14 @@ public class Plant implements Damageable {
 
     public void update(float delta) {
         if (disabled || freeze || cat) return;
-        if (plantFoodInStart) {
-            activatePlantFood();
-            plantFoodInStart = false;
+        if (!isImitate) {
+            if (plantFoodInStart) {
+                activatePlantFood();
+                plantFoodInStart = false;
+            }
         }
         for (GameComponent comp : components) {
+            if (isImitate && !(comp instanceof ImitatorIntroComponent)) continue;
             comp.update(this, delta);
         }
         if (isFire) {
@@ -82,20 +91,18 @@ public class Plant implements Damageable {
     }
 
     private void checkFire(float delta) {
-        int meltAmount = Math.round(120f * delta);
-
         List<Cell> neighborCells = Cell.getNeighborCells(cell, App.getCurrentGame().getGrid(), warmRadius);
         for (Cell cell1 : neighborCells) {
             if (cell1.getPlant() == null) continue;
             if (cell1.getPlant().freeze) {
-                cell1.getPlant().iceHealth -= meltAmount;
+                cell1.getPlant().iceHealth -= 60 * delta;
                 if (cell1.getPlant().iceHealth <= 0) {
                     cell1.getPlant().unfreeze();
                 }
             }
-            for (Zombie zombie : Cell.getZombiesInCell(cell)) {
+            for (Zombie zombie : Cell.getZombiesInCell(cell1)) {
                 if (zombie.getIceHealth() > 0) {
-                    zombie.setIceHealth(zombie.getIceHealth() - 6);
+                    zombie.setIceHealth(zombie.getIceHealth() - 60 * delta);
                 }
             }
         }
@@ -213,7 +220,7 @@ public class Plant implements Damageable {
         if (frozenAmount >= 99) {
             frozenAmount = 0;
             freeze = true;
-            iceHealth = 600;
+            iceHealth = MAX_ICE_HEALTH;
         }
     }
 
@@ -252,7 +259,7 @@ public class Plant implements Damageable {
         this.plantFoodInStart = plantFoodInStart;
     }
 
-    public int getIceHealth() {
+    public float getIceHealth() {
         return iceHealth;
     }
 
@@ -274,5 +281,17 @@ public class Plant implements Damageable {
 
     public void setState(State state) {
         this.state = state;
+    }
+
+    public void setImitate(boolean imitate) {
+        isImitate = imitate;
+    }
+
+    public boolean isImitate() {
+        return isImitate;
+    }
+
+    public int getFrozenAmount() {
+        return frozenAmount;
     }
 }

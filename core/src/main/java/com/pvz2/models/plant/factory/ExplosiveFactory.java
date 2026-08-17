@@ -102,7 +102,7 @@ public class ExplosiveFactory {
         int damage = level >= 3 ? 2400 : 1800;
         Plant p = new Plant(PlantType.SQUASH, 1000, damage);
         ExplosivesComponent component = new ExplosivesComponent(
-                new ProximityTrigger(App.getCellWidth() * 3 / 2),
+                new ProximityTrigger(App.getCellWidth() * 2.9f),
                 new AreaDamageBehavior(damage, new CircularRange(0)), 0, 0.8f);
         if (level >= 4) component.setLives(2);
         p.addComponent(component);
@@ -216,7 +216,7 @@ public class ExplosiveFactory {
 
     private static Plant buildGraveBuster() {
         int level = App.getCurrentUser().getUnlockedPlantsLevels().getOrDefault(PlantType.GRAVE_BUSTER, 1);
-        int delay = level >= 2 ? 30 : 20;
+        int delay = level >= 2 ? 3 : 2;
         Plant p = new Plant(PlantType.GRAVE_BUSTER, 300, 0);
         ExplosivesComponent component = new ExplosivesComponent(
                 InstantTrigger.INSTANCE, new RemoveGraveBehavior(), 0, delay);

@@ -39,7 +39,7 @@ public class StraightVisionStrategy implements VisionStrategy {
             }
             return null;
         } else {
-            float x = 1000f;
+            float x = 3000f;
             Zombie firstZombie = null;
             Obstacle firstObstacle = null;
             for (Zombie zombie : gameWorld.getActiveZombies()) {

@@ -144,6 +144,7 @@ public class GameScreen extends MenuScreen {
 
         activeInstance = this;
         initGraveGraphics();
+        initIcyPlantGraphics();
     }
 
     @Override
@@ -860,6 +861,13 @@ public class GameScreen extends MenuScreen {
         graveGraphics.clear();
         for (Grave grave : world.getGraves()) {
             graveGraphics.add(new GraveGraphic(grave));
+        }
+    }
+
+    public void initIcyPlantGraphics() {
+        plantGraphics.clear();
+        for (Plant plant : world.getActivePlants()) {
+            plantGraphics.add(new PlantGraphic(plant, pamPlayer));
         }
     }
 }

@@ -34,7 +34,7 @@ public abstract class Zombie implements Damageable {
     private float freezedTimeRemaining;
     private float onPoisonTimeRemaining;
     private int poisonDamage;
-    private int iceHealth = 0;
+    private float iceHealth = 0;
     private boolean glowing = false;
 
     private PlantType killerPlantType;
@@ -304,11 +304,11 @@ public abstract class Zombie implements Damageable {
         return killerPlantType;
     }
 
-    public int getIceHealth() {
+    public float getIceHealth() {
         return iceHealth;
     }
 
-    public void setIceHealth(int iceHealth) {
+    public void setIceHealth(float iceHealth) {
         this.iceHealth = iceHealth;
     }
 

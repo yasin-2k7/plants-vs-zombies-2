@@ -18,6 +18,7 @@ import com.pvz2.models.mupoint.MupointManager;
 import com.pvz2.models.plant.Plant;
 import com.pvz2.models.plant.card.ImitatorCard;
 import com.pvz2.models.plant.card.PlantCard;
+import com.pvz2.models.plant.components.ImitatorIntroComponent;
 import com.pvz2.models.world.*;
 import com.pvz2.models.world.levelSetup.DeadLineLevelSetup;
 import com.pvz2.models.world.levelSetup.PlantWhatYouGetLevelSetup;
@@ -272,6 +273,8 @@ public class GameMenuController implements MenuController {
         }
         Plant plant;
         PlantType type;
+        boolean isImitator = card instanceof ImitatorCard;
+
         if (card instanceof ImitatorCard imitatorCard) {
             type = imitatorCard.getTargetType();
             plant = selectedCell.handlePlanting(type,
@@ -281,6 +284,10 @@ public class GameMenuController implements MenuController {
             plant = selectedCell.handlePlanting(type, App.getCurrentUser().hasBoost(type));
         }
         if (plant != null){
+            if (isImitator) {
+                plant.setImitate(true);
+                plant.addComponent(new ImitatorIntroComponent());
+            }
             card.setReady(false);
             App.getCurrentGame().setSun(App.getCurrentGame().getSun() - card.getSunCost());
             return plant;

@@ -62,8 +62,7 @@ public class LevelFactory {
         int cols = 9;
         List<WaveSpawnEntry> availableZombies = List.of(
             new WaveSpawnEntry("ZombieDefault", 100),
-            new WaveSpawnEntry("ZombieTombRaiser", 300),
-            new WaveSpawnEntry("ZombieRa", 200)
+            new WaveSpawnEntry("ZombieArmor2", 200)
         );
         List<Wave> waves = Wave.generateWaves(10, 150, availableZombies, 5);
         LevelSetup levelSetup = new NormalLevelSetup(rows, cols, waves);

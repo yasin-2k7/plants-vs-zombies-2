@@ -25,6 +25,7 @@ public class MagnetShroomComponent implements GameComponent {
             currentDisableTime-= delta;
             if (currentDisableTime <= 0) {
                 disable = false;
+                owner.setState(Plant.State.IDLE);
             }
             return;
         }
@@ -34,6 +35,7 @@ public class MagnetShroomComponent implements GameComponent {
             if (zombie instanceof ArmoredZombie armoredZombie) {
                 armoredZombie.stripArmor();
                 disable = true;
+                owner.setState(Plant.State.BUSY);
                 currentDisableTime = disableTime;
                 return;
             }

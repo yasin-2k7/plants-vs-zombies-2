@@ -90,4 +90,9 @@ public class Grave extends Obstacle {
         PLANT_FOOD
     }
 
+    @Override
+    public void die() {
+        super.die();
+        isDying = true;
+    }
 }
