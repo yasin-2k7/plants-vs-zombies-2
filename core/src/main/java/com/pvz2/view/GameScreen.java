@@ -34,8 +34,10 @@ import com.pvz2.models.plant.PlantAnimationClips;
 import com.pvz2.models.plant.components.ExplosivesComponent;
 import com.pvz2.models.pool.GenericObjectPool;
 import com.pvz2.models.projectile.Projectile;
+import com.pvz2.models.world.ChapterWorld.AncientEgyptWorld;
 import com.pvz2.models.world.GameState;
 import com.pvz2.models.world.GameWorld;
+import com.pvz2.models.world.Sandstorm;
 import com.pvz2.models.world.Sun;
 import com.pvz2.models.world.obstacles.Grave;
 import com.pvz2.models.zombie.Zombie;
@@ -104,6 +106,7 @@ public class GameScreen extends MenuScreen {
     private final Map<Sun, SunGraphic> sunGraphics = new HashMap<>();
     private final List<GraveGraphic> graveGraphics = new ArrayList<>();
 
+    private final Map<Sandstorm, SandstormGraphic> sandstormGraphics = new HashMap<>();
     private record PanStep(float targetCenterX, float duration, boolean isTravel) {
     }
 
@@ -132,6 +135,8 @@ public class GameScreen extends MenuScreen {
 
         pamPlayer.loadAsync("768/INITIAL/EFFECTS/SUN/SUN.PAM", null);
         pamPlayer.loadAsync("768/FULL/EFFECTS/SUN_BOMB/SUN_BOMB.PAM", null);
+
+        pamPlayer.loadAsync("768/INITIAL/EFFECTS/SANDSTORM_TOP/SANDSTORM_TOP.PAM", null);
 
         computeSideWidths();
         buildIntroPanSequence();
@@ -501,6 +506,20 @@ public class GameScreen extends MenuScreen {
         for (ExplosionEffectGraphic eg : explosionGraphics) {
             eg.update(delta);
             eg.draw(game.batch, pamPlayer);
+        }
+        if (world instanceof AncientEgyptWorld) {
+            AncientEgyptWorld egyptWorld = (AncientEgyptWorld) world;
+
+            for (Sandstorm sandstorm : egyptWorld.getActiveSandstorms()) {
+                sandstormGraphics.computeIfAbsent(sandstorm, SandstormGraphic::new);
+            }
+            sandstormGraphics.keySet().removeIf(s ->
+                !egyptWorld.getActiveSandstorms().contains(s) || s.isFinished()
+            );
+
+            for (SandstormGraphic sg : sandstormGraphics.values()) {
+                sg.draw(game.batch, pamPlayer);
+            }
         }
         explosionGraphics.removeIf(eg -> eg.isFinished(pamPlayer));
         syncSunGraphics();
