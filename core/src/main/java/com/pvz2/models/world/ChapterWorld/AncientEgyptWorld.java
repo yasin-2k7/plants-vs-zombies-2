@@ -2,20 +2,25 @@ package com.pvz2.models.world.ChapterWorld;
 
 import com.pvz2.models.world.Cell;
 import com.pvz2.models.world.GameWorld;
+import com.pvz2.models.world.Sandstorm;
 import com.pvz2.models.world.levelSetup.LevelSetup;
 import com.pvz2.models.world.loseCondition.LoseCondition;
 import com.pvz2.models.world.mechanics.Mechanic;
 import com.pvz2.models.world.obstacles.Grave;
 import com.pvz2.models.world.winCondition.WinCondition;
+import com.pvz2.models.zombie.Zombie;
 import com.pvz2.view.LawnGrid;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 public class AncientEgyptWorld extends GameWorld {
     private static final int MIN_GRAVES = 2;
     private static final int MAX_GRAVES = 5;
     private int deadLineCol;
+
+    private final List<Sandstorm> activeSandstorms = new ArrayList<>();
 
     public AncientEgyptWorld(LevelSetup levelSetup, ArrayList<LoseCondition> loseConditions,
                              WinCondition winCondition, ArrayList<Mechanic> mechanics) {
@@ -26,6 +31,20 @@ public class AncientEgyptWorld extends GameWorld {
     protected void applyChapterRules() {
         spawnInitialGraves();
         setSandstormActive(true);
+    }
+
+    @Override
+    public void tick(float delta) {
+        super.tick(delta);
+
+        for (int i = activeSandstorms.size() - 1; i >= 0; i--) {
+            Sandstorm sandstorm = activeSandstorms.get(i);
+            sandstorm.update(delta);
+
+            if (sandstorm.isFinished()) {
+                activeSandstorms.remove(i);
+            }
+        }
     }
 
     private void spawnInitialGraves() {
@@ -64,4 +83,17 @@ public class AncientEgyptWorld extends GameWorld {
         this.deadLineCol = deadLineCol;
     }
 
+    public void spawnSandstorm(Zombie zombie, int lane, int targetCol) {
+        Sandstorm sandstorm = new Sandstorm(zombie, lane, targetCol, getCols());
+        activeSandstorms.add(sandstorm);
+
+        // اضافه کردن زامبی به لیست زامبی‌های دنیای بازی
+        if (zombie != null) {
+            addZombie(zombie);
+        }
+    }
+
+    public List<Sandstorm> getActiveSandstorms() {
+        return activeSandstorms;
+    }
 }

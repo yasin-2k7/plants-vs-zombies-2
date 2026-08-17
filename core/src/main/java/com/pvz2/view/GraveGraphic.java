@@ -32,9 +32,8 @@ public class GraveGraphic {
     }
 
     private String resolvePamPath(Grave grave, GameWorld world) {
-        // اگر فصل Dark Ages بود
         if (world instanceof DarkAgesWorld) {
-            Grave.GraveType type = grave.getType(); // یا متد دریافت نوع قبر در مدل شما
+            Grave.GraveType type = grave.getType();
 
             if (type == Grave.GraveType.SUN) {
                 return DARK_SUN_PAM_PATH;
@@ -45,20 +44,17 @@ public class GraveGraphic {
             }
         }
 
-        // در غیر این صورت (مصر باستان)
         return EGYPT_PAM_PATH;
     }
 
     public void  update(float delta) {
         animTime += delta;
 
-        // اگر قبر نابود شده باشد، انیمیشن شکستن آغاز می‌شود
         if (grave.isDying() && !breakStarted) {
             breakStarted = true;
             animTime = 0f;
         }
 
-        // بعد از پایان انیمیشن شکستن (حدود 0.5 ثانیه)، متد markDestroyed اجرا می‌شود
         if (breakStarted && animTime >= 0.5f) {
             breakFinished = true;
             grave.markDestroyed();
@@ -82,7 +78,6 @@ public class GraveGraphic {
         boolean drawn = false;
 
         try {
-            // رندر انیمیشن PAM مصر باستان
             pamPlayer.draw(
                 batch,
                 pamPath,
@@ -97,10 +92,8 @@ public class GraveGraphic {
             drawn = true;
         } catch (Exception e) {
             e.printStackTrace();
-            // در صورت نبود فریم یا فایل PAM، فال‌بک تکسچر اجرا می‌شود
         }
 
-        // رندر رزرو (Fallback) با Sprite در صورت عدم بارگذاری PAM
     }
 
     public boolean isBreakFinished() { return breakFinished; }

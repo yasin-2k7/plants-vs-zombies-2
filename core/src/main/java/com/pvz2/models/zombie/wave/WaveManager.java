@@ -4,6 +4,7 @@ import com.pvz2.controller.GameMenuController;
 import com.pvz2.models.core.App;
 import com.pvz2.models.core.User;
 import com.pvz2.models.core.UserDataManager;
+import com.pvz2.models.world.ChapterWorld.AncientEgyptWorld;
 import com.pvz2.models.world.GameWorld;
 import com.pvz2.models.zombie.Zombie;
 import com.pvz2.models.zombie.ZombieFactory;
@@ -127,11 +128,18 @@ public class WaveManager {
         }
 
         int spawnCol = game.getCols();
-        if (currentWave.isFlagWave() && game.isSandstormActive()) {
+        boolean isSandstormSpawn = currentWave.isFlagWave()
+            && game.isSandstormActive()
+            && (game instanceof AncientEgyptWorld);
+
+        if (isSandstormSpawn) {
             int columnsForward = 1 + new Random().nextInt(4);
             spawnCol = Math.max(0, spawnCol - columnsForward);
+
+            ((AncientEgyptWorld) game).spawnSandstorm(zombie, lane, spawnCol);
+
             GameMenuController.updateState(
-                    "A zombie rides a sandstorm and enters " + columnsForward + " columns ahead!");
+                "A zombie rides a sandstorm and enters " + columnsForward + " columns ahead!");
         }
 
         float x = App.getFirstCellX() + spawnCol * App.getCellWidth();
