@@ -200,7 +200,7 @@ public class ShooterFactory {
             newComponent.getVisions().add(new StraightVisionStrategy(
                 1000 * (float) Math.cos(i * Math.PI), App.getCellHeight(), false));
             MovementStrategy movementStrategy = new StraightMovementStrategy(
-                5 * (float) Math.cos(finalI * Math.PI), 0, 0);
+                700 * (float) Math.cos(finalI * Math.PI), 0, 0);
             newComponent.getMovementStrategies().add(() -> movementStrategy);
             p.addComponent(newComponent);
         }

@@ -151,6 +151,8 @@ public class ShooterComponent implements GameComponent {
                 }
                 p.setPlantType(owner.getType());
                 p.setTarget(target);
+                System.out.println("p x: " + p.getX());
+                System.out.println("p y: " + p.getY());
                 App.getCurrentGame().getActiveProjectiles().add(p);
             }
 

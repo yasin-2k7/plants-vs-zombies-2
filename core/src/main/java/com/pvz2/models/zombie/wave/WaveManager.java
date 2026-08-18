@@ -143,10 +143,9 @@ public class WaveManager {
         }
 
         float x = App.getFirstCellX() + spawnCol * App.getCellWidth();
-        float y = App.getFirstCellY() + lane * App.getCellHeight() + App.getCellHeight() / 2;
+        float y = App.getCellCenterY(lane);
         zombie.setX(x);
         zombie.setY(y);
-        System.out.println(y);
 
         game.addZombie(zombie);
 

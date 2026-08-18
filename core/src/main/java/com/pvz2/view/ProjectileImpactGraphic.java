@@ -26,14 +26,14 @@ public class ProjectileImpactGraphic {
 
         if (info.kind == ProjectileAssets.Kind.PAM) {
             if (info.impactClip == null) return; // no impact animation configured
-            pamPlayer.draw(batch, info.impactPamPath, info.impactClip, animTime, x - 30, y - 10, false);
+            pamPlayer.draw(batch, info.impactPamPath, info.impactClip, animTime, x - 20, y, false);
         } else {
             if (info.impactTextureRegionKey == null) return; // no impact art — nothing to draw
             TextureRegion region = ProjectileAssets.region(info.impactTextureRegionKey);
             if (region == null) return;
             float w = region.getRegionWidth();
             float h = region.getRegionHeight();
-            batch.draw(region, x - w - 30 / 2f, y - h - 20 / 2f, w, h);
+            batch.draw(region, x - w / 2f, y - h / 2f, w, h);
         }
     }
 
@@ -43,7 +43,7 @@ public class ProjectileImpactGraphic {
 
         if (info.kind == ProjectileAssets.Kind.PAM) {
             if (info.impactClip == null) return true; // nothing was ever drawn — finish immediately
-            return pamPlayer == null || animTime >= pamPlayer.clipDurationSeconds(info.flightPamPath, info.impactClip);
+            return pamPlayer == null || animTime >= pamPlayer.clipDurationSeconds(info.impactPamPath, info.impactClip);
         } else {
             if (info.impactTextureRegionKey == null) return true;
             return animTime >= info.impactDuration;

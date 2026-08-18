@@ -10,7 +10,7 @@ import com.pvz2.models.projectile.movementStrategies.BouncingStrategy;
 import com.pvz2.models.projectile.strikeStrategies.CheckStraightStrike;
 
 public class GrapeshotBehavior implements ExplosiveBehavior {
-    private static final float GRAPE_SPEED = 700f;
+    private static final float GRAPE_SPEED = 800f;
     private final int bounceMax;
 
     public GrapeshotBehavior(int bounceMax) {

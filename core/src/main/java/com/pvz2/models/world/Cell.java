@@ -44,8 +44,8 @@ public class Cell {
     public Cell(int row, int col, CellTerrain initialTerrain) {
         this.row = row;
         this.col = col;
-        x = App.getFirstCellX() + (col) * App.getCellWidth() + App.getCellWidth() / 2;
-        y = App.getFirstCellY() + (row) * App.getCellHeight() + App.getCellHeight() / 2;
+        x = App.getCellCenterX(col);
+        y = App.getCellCenterY(row);
         this.terrain = initialTerrain;
     }
 
@@ -202,7 +202,8 @@ public class Cell {
                 || (this.hasIcyZombie())) {
             return null;
         }
-        System.out.println(y);
+        System.out.println("plant x: " + x);
+        System.out.println("plant y: " + y);
         return newPlant;
     }
 

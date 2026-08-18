@@ -57,6 +57,14 @@ public class App {
         return currentUser.getGreenhouse();
     }
 
+    public static float getCellCenterX(int col) {
+        return getFirstCellX() + col * getCellWidth();
+    }
+
+    public static float getCellCenterY(int row) {
+        return getFirstCellY() + row * getCellHeight();
+    }
+
     public static String getArmoredZombieName(String id) {
         if (id == null) {
             return "Regular Zombie";

@@ -27,8 +27,8 @@ public class Sun implements Resettable {
         if (game == null) {
             game = App.getCurrentGame();
         }
-        this.finalX = App.getFirstCellX() + col * App.getCellWidth() + App.getCellWidth() / 2f;
-        this.finalY = App.getFirstCellY() + row * App.getCellHeight() + App.getCellHeight() / 2f;
+        this.finalX = App.getCellCenterX(col);
+        this.finalY = App.getCellCenterY(row);
 
         this.x = finalX;
         this.y = 1050f;

@@ -25,7 +25,7 @@ public class CheckStraightStrike implements CheckStrike {
             .sorted(Comparator.comparingDouble(Obstacle::getX))
             .toList();
         for (Obstacle obstacle : sortedObstacle) {
-            if (isCollidingWithCircle(oldX, oldY, x, y, obstacle.getX(), obstacle.getY(), 62)) {
+            if (isCollidingWithCircle(oldX, oldY, x, y, obstacle.getX(), obstacle.getY(), 40)) {
                 return obstacle;
             }
         }

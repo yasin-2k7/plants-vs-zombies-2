@@ -30,7 +30,7 @@ public class ZombiePreviewManager {
 
             float x = App.getFirstCellX() + (cols + extraCols) * App.getCellWidth();
             int row = random.nextInt(rows);
-            float y = App.getFirstCellY() + row * App.getCellHeight() + App.getCellHeight() / 2 + jitterY;
+            float y = App.getCellCenterY(row) + jitterY;
 
             zombie.setX(x);
             zombie.setY(y);

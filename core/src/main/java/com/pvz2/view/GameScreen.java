@@ -474,9 +474,7 @@ public class GameScreen extends MenuScreen {
             }
         }
 
-        if (App.isDebugMode()) {
-            lawnGridDebugRenderer.draw(worldCamera);
-        }
+
 
         applyWorldViewport();
         game.batch.begin();
@@ -532,6 +530,9 @@ public class GameScreen extends MenuScreen {
         game.batch.end();
 
 
+        if (App.isDebugMode()) {
+            lawnGridDebugRenderer.draw(worldCamera);
+        }
 
         if (hud != null) {
             hud.update(world, delta);
@@ -794,8 +795,8 @@ public class GameScreen extends MenuScreen {
 
                     if (success){
                         Plant newPlant = GameMenuController.plantSelectedPlant(
-                            App.getFirstCellX()+col*App.getCellWidth()+App.getCellWidth()/2,
-                            App.getFirstCellY()+row*App.getCellHeight()+App.getCellHeight()/2);
+                            App.getCellCenterX(col),
+                            App.getCellCenterY(row));
                         if (newPlant != null){
                             PlantGraphic pg = new PlantGraphic(newPlant, pamPlayer);
                             plantGraphics.add(pg);
@@ -850,10 +851,8 @@ public class GameScreen extends MenuScreen {
             boolean reused = pool.getGeneration(entry.getKey()) != pg.getGeneration();
             boolean noLongerActive = !active.contains(entry.getKey());
             if (reused || noLongerActive) {
-                if (entry.getKey().getPierce() < 1) {
-                    projectileImpacts.add(new ProjectileImpactGraphic(pg.getType(), pg.getLastX(), pg.getLastY()));
-                    it.remove();
-                }
+                projectileImpacts.add(new ProjectileImpactGraphic(pg.getType(), pg.getLastX(), pg.getLastY()));
+                it.remove();
             }
         }
 

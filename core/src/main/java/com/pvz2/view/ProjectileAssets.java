@@ -67,12 +67,12 @@ public class ProjectileAssets {
             "768/INITIAL/EFFECTS/T_CABBAGEPULT_PROJECTILE/T_CABBAGEPULT_PROJECTILE.PAM",
             "animation", "768/INITIAL/EFFECTS/SPLAT_CABBAGEPULT/SPLAT_CABBAGEPULT.PAM", "animation"));
         VISUALS.put(ProjectileType.CACTUS, VisualInfo.pam("768/INITIAL/EFFECTS/CACTUS_PROJECTILE/CACTUS_PROJECTILE.PAM",
-            "idle", null, null));
+            "idle", "768/INITIAL/EFFECTS/CACTUS_PROJECTILE_HIT/CACTUS_PROJECTILE_HIT.PAM", "animation"));
         VISUALS.put(ProjectileType.CACTUS_SPECIAL,
             VisualInfo.pam("768/INITIAL/EFFECTS/CACTUS_PROJECTILE_PLANTFOOD/CACTUS_PROJECTILE_PLANTFOOD.PAM",
             "idle", "768/INITIAL/EFFECTS/CACTUS_PROJECTILE_HIT/CACTUS_PROJECTILE_HIT.PAM", "idle"));
         VISUALS.put(ProjectileType.CITRON, VisualInfo.pam("768/FULL/EFFECTS/CITRON_CITRUS_ORB/CITRON_CITRUS_ORB.PAM",
-            "Citron_Citrus_Orb", null, null));
+            "Citron_Citrus_Orb", "768/FULL/EFFECTS/CITRON_CITRUS_ORB_HIT/CITRON_CITRUS_ORB_HIT.PAM", "animation"));
         VISUALS.put(ProjectileType.FIRE_PEA, VisualInfo.pam("768/INITIAL/EFFECTS/T_FIRE_PEA/T_FIRE_PEA.PAM",
             "animation", "768/INITIAL/EFFECTS/T_SPLAT_FIRE_PEA/T_SPLAT_FIRE_PEA.PAM", "animation"));
         VISUALS.put(ProjectileType.FUME,VisualInfo.pam("768/INITIAL/EFFECTS/FUMESHROOM_BUBBLES/FUMESHROOM_BUBBLES.PAM",
@@ -120,7 +120,8 @@ public class ProjectileAssets {
                 "animation"));
         VISUALS.put(ProjectileType.PLASMA,
             VisualInfo.pam("768/FULL/EFFECTS/CITRON_PLANTFOOD_ORB/CITRON_PLANTFOOD_ORB.PAM",
-                "Plantfood_Citron_Plasma_Orb", null, null));
+                "Plantfood_Citron_Plasma_Orb", "768/FULL/EFFECTS/CITRON_PLANTFOOD_HIT/CITRON_PLANTFOOD_HIT.PAM",
+                "animation"));
         VISUALS.put(ProjectileType.SEA_SHROOM,
             VisualInfo.pam("768/FULL/EFFECTS/SEASHROOM_PROJECTILE/SEASHROOM_PROJECTILE.PAM",
                 "animation", "768/FULL/EFFECTS/SEASHOOTER_FX/SEASHOOTER_FX.PAM",
@@ -135,8 +136,8 @@ public class ProjectileAssets {
                 "explosion"));
         VISUALS.put(ProjectileType.STAR,
             VisualInfo.pam("768/INITIAL/EFFECTS/T_STARFRUIT_PROJECTILE/T_STARFRUIT_PROJECTILE.PAM",
-                "animation", null,
-                null));
+                "animation", "768/INITIAL/EFFECTS/T_STARFRUIT_PROJECTILE_HIT/T_STARFRUIT_PROJECTILE_HIT.PAM",
+                "idle"));
         VISUALS.put(ProjectileType.SPECIAL_CABBAGE,
             VisualInfo.pam("768/INITIAL/EFFECTS/CABBAGEPULT_PLANTFOOD_PROJECTILE/CABBAGEPULT_PLANTFOOD_PROJECTILE.PAM",
                 "plantfood_cabbage",

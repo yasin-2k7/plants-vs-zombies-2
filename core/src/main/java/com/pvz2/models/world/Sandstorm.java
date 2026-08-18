@@ -26,7 +26,7 @@ public class Sandstorm {
 
         // شروع از سمت راست بیرون صفحه
         this.x = App.getFirstCellX() + totalCols * App.getCellWidth() + 100f;
-        this.y = App.getFirstCellY() + lane * App.getCellHeight() + App.getCellHeight() / 2f;
+        this.y = App.getCellCenterY(lane);
 
         // مقصد زامبی روی چمن
         this.targetX = App.getFirstCellX() + targetCol * App.getCellWidth();

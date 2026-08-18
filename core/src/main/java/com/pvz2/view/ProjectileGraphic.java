@@ -33,8 +33,19 @@ public class ProjectileGraphic {
         ProjectileAssets.VisualInfo info = ProjectileAssets.get(type);
         if (info == null) return;
 
-        float drawY = type.movement.equals("STRAIGHT") ? lastY - 35 : lastY + 10;
-        float drawX = type.movement.equals("STRAIGHT") ? lastX - 20 : lastX - 25;
+        float drawX, drawY;
+
+        if (type == ProjectileType.STAR || type == ProjectileType.ROTOBAGA_PROJECTILE){
+            drawX = lastX;
+            drawY = lastY;
+        }
+        else{
+            drawY = type.movement.equals("STRAIGHT") ? lastY + 20 : lastY + 15;
+            drawX = type.movement.equals("STRAIGHT") ? lastX : lastX - 30;
+        }
+        if (type == ProjectileType.CACTUS || type == ProjectileType.CACTUS_SPECIAL) drawY += 15;
+        if (type == ProjectileType.SMALL_SHROOM) drawY -= 15;
+
 
         if (info.kind == ProjectileAssets.Kind.PAM) {
             pamPlayer.draw(batch, info.flightPamPath, info.flightClip, animTime, drawX, drawY, true);

@@ -61,10 +61,9 @@ public class LevelFactory {
         int rows = 5;
         int cols = 9;
         List<WaveSpawnEntry> availableZombies = List.of(
-            new WaveSpawnEntry("ZombieDefault", 100),
-            new WaveSpawnEntry("ZombieArmor2", 200)
+            new WaveSpawnEntry("ZombieDefault", 100)
         );
-        List<Wave> waves = Wave.generateWaves(3, 150, availableZombies, 5);
+        List<Wave> waves = Wave.generateWaves(10, 150, availableZombies, 5);
         LevelSetup levelSetup = new NormalLevelSetup(rows, cols, waves);
         LoseCondition loseCondition = new NormalLose();
         WinCondition winCondition = new NormalWin();

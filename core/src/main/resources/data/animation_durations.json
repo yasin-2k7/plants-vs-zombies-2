@@ -24,7 +24,7 @@
     "attack": { "duration": 1.1, "releaseTime": 0.5 }
   },
   "SNOW_PEA": {
-    "attack": { "duration": 1.5, "releaseTime": 0.5 }
+    "attack": { "duration": 1.4, "releaseTime": 0.5 }
   },
   "ROTOBAGA": {
     "attack": { "duration": 1.8, "releaseTime": 1 }

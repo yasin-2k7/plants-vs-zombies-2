@@ -190,8 +190,7 @@ public class Projectile implements Resettable {
     public void setTarget(Damageable target) {
         this.target = target;
         if (target != null) {
-            float changeX = target instanceof Obstacle ? -10 : 30f;
-            targetX = target.getX() - changeX;
+            targetX = target.getX();
             targetY = target.getY();
         }
     }
