@@ -47,6 +47,22 @@ public class PlantAnimationClips {
         return null;
     }
 
+    public static String getPlantFoodClip(PlantType type) {
+        return "plantfood";
+    }
+    public static String getPlantFood2Clip(PlantType type) {
+        if (type == PlantType.PEA_POD) return "plantfood";
+        return "plantfood2";
+    }
+
+    public static String getPlantFoodBackgroundPamPath() {
+        return "768/INITIAL/EFFECTS/PLANTFOOD_FX/PLANTFOOD_FX.PAM";
+    }
+
+    public static String getPlantFoodBackgroundClip() {
+        return "plantfood";
+    }
+
     public static String getDamagedClip(PlantType type, Plant.State state) {
         String num = switch (state){
             case DAMAGE2 -> "2";

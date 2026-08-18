@@ -26,6 +26,10 @@ public class PlantGraphic {
     private float animTime = 0f;
     private boolean isLoop = true;
 
+    private final String plantFoodBgPamPath;
+    private float plantFoodBgAnimTime = 0f;
+    private boolean inPlantFoodBg = false;
+
     private static final Map<String, TextureRegion> FROST_REGION_CACHE = new HashMap<>();
 
 
@@ -62,6 +66,11 @@ public class PlantGraphic {
 
         if (normalPamPath != null && pamPlayer != null) pamPlayer.loadAsync(normalPamPath, null);
         if (imitatorPamPath != null && pamPlayer != null) pamPlayer.loadAsync(imitatorPamPath, null);
+
+        this.plantFoodBgPamPath = PlantAnimationClips.getPlantFoodBackgroundPamPath();
+        if (plantFoodBgPamPath != null && pamPlayer != null) {
+            pamPlayer.loadAsync(plantFoodBgPamPath, null);
+        }
     }
 
     public void update(float delta) {
@@ -80,6 +89,18 @@ public class PlantGraphic {
         boolean stateJustEntered = state != lastState;
         lastState = state;
 
+        boolean isPlantFoodState = (state == Plant.State.PLANT_FOOD || state == Plant.State.PLANT_FOOD2);
+        if (isPlantFoodState) {
+            if (!inPlantFoodBg) {
+                inPlantFoodBg = true;
+                plantFoodBgAnimTime = 0f;
+            } else {
+                plantFoodBgAnimTime += delta;
+            }
+        } else {
+            inPlantFoodBg = false;
+        }
+
         if (state != Plant.State.IDLE) {
             if (stateJustEntered) {
                 ClipInfo info = resolveClipFor(state);
@@ -95,9 +116,6 @@ public class PlantGraphic {
             return; // already on the idle clip
         }
 
-        // Looping clips (e.g. "unarmed") have no natural finish point, so cut
-        // over immediately once the model returns to IDLE. One-shot clips
-        // (e.g. "attack") still wait to visually finish first.
         float duration = AnimationDurations.getDuration(plant.getType(), currentClip, 0.5f);
         boolean readyToReturnToIdle = isLoop || animTime >= duration;
         if (readyToReturnToIdle) {
@@ -158,6 +176,12 @@ public class PlantGraphic {
         if (state == Plant.State.DAMAGE || state == Plant.State.DAMAGE2 || state == Plant.State.DAMAGE3){
             return new ClipInfo(PlantAnimationClips.getDamagedClip(plant.getType(), state), true);
         }
+        if (state == Plant.State.PLANT_FOOD) {
+            return new ClipInfo(PlantAnimationClips.getPlantFoodClip(plant.getType()), true);
+        }
+        if (state == Plant.State.PLANT_FOOD2) {
+            return new ClipInfo(PlantAnimationClips.getPlantFood2Clip(plant.getType()), true);
+        }
         if (state == Plant.State.BUSY){
             return new ClipInfo("busy", true);
         }
@@ -175,6 +199,13 @@ public class PlantGraphic {
 
     public void draw(SpriteBatch batch, PamPlayer pamPlayer) {
         if (plant == null || plant.isDead() || pamPath == null || pamPlayer == null) return;
+
+        if (inPlantFoodBg && plantFoodBgPamPath != null) {
+            String bgClip = PlantAnimationClips.getPlantFoodBackgroundClip();
+            pamPlayer.draw(batch, plantFoodBgPamPath, bgClip, plantFoodBgAnimTime, worldX+10, worldY+80, 0.8f, 0.8f,
+                true);
+        }
+
         pamPlayer.draw(batch, pamPath, currentClip, animTime, worldX, worldY, 0.8f, 0.8f,
             isLoop);
 

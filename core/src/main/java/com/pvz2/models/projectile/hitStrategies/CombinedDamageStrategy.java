@@ -98,6 +98,7 @@ public class CombinedDamageStrategy implements HitStrategy {
     }
 
     private void applySpecialDamage(Damageable target) {
+        if (element == null) return;
         switch (element) {
             case "POISON":
                 if (target instanceof Zombie zombie) {

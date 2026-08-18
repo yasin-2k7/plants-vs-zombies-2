@@ -33,6 +33,7 @@ public class ShooterComponent implements GameComponent {
     private int burstProjectileNumber;
     private int burstProjectileNumberOnPlantFood;
     private float burstDelayMax = BURST_DELAY_MAX;
+    private float giantBurstDelayTime = 1f;
     private int projectilesLeftForShoot;
     private float shootingTimer = 0f;
     private float burstDelayTimer;
@@ -84,6 +85,7 @@ public class ShooterComponent implements GameComponent {
     @Override
     public void activatePlantFood(Plant owner) {
         if (plantFoodBehavior != null) {
+            owner.setState(Plant.State.PLANT_FOOD);
             this.defaultMovementStrategies = new ArrayList<>(this.movementStrategies);
             plantFoodBehavior.activate(owner, this);
         }
@@ -130,6 +132,12 @@ public class ShooterComponent implements GameComponent {
     }
 
     private void burstHandler(Plant owner, float delta) {
+        if (activePlantFood && projectilesLeftForShoot == giantCount &&
+            hasGiant && owner.getState() != Plant.State.PLANT_FOOD2){
+            owner.setState(Plant.State.PLANT_FOOD2);
+            burstDelayMax = giantBurstDelayTime;
+            burstDelayTimer = burstDelayMax;
+        }
         if (burstDelayTimer > 0) {
             burstDelayTimer -= delta;
         } else {
@@ -151,8 +159,6 @@ public class ShooterComponent implements GameComponent {
                 }
                 p.setPlantType(owner.getType());
                 p.setTarget(target);
-                System.out.println("p x: " + p.getX());
-                System.out.println("p y: " + p.getY());
                 App.getCurrentGame().getActiveProjectiles().add(p);
             }
 
@@ -168,6 +174,8 @@ public class ShooterComponent implements GameComponent {
                         this.defaultMovementStrategies.clear();
                     }
                 }
+                burstDelayMax = BURST_DELAY_MAX;
+                burstDelayTimer = burstDelayMax;
                 owner.setState(Plant.State.IDLE);
             }
         }
@@ -251,5 +259,9 @@ public class ShooterComponent implements GameComponent {
 
     public interface AttackCallback {
         void onAttack(Plant owner);
+    }
+
+    public void setGiantBurstDelayTime(float giantBurstDelayTime) {
+        this.giantBurstDelayTime = giantBurstDelayTime;
     }
 }

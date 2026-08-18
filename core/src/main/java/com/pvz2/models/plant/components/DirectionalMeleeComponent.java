@@ -1,9 +1,11 @@
 package com.pvz2.models.plant.components;
 
 import com.pvz2.controller.LevelMenuController;
+import com.pvz2.models.Damageable;
 import com.pvz2.models.plant.GameComponent;
 import com.pvz2.models.plant.Plant;
 import com.pvz2.models.world.Cell;
+import com.pvz2.models.world.obstacles.Obstacle;
 import com.pvz2.models.zombie.Zombie;
 
 import java.util.ArrayList;
@@ -28,8 +30,8 @@ public class DirectionalMeleeComponent implements GameComponent {
 
 
         if (lastAttackTick >= attackIntervalTicks) {
-            List<Zombie> rightTargets;
-            List<Zombie> leftTargets;
+            List<Damageable> rightTargets;
+            List<Damageable> leftTargets;
             if ((rightTargets = checkRight(owner)) != null) {
                 if (!rightTargets.isEmpty()) {
                     attack(rightTargets);
@@ -54,40 +56,49 @@ public class DirectionalMeleeComponent implements GameComponent {
         }
     }
 
-    public List<Zombie> checkRight(Plant owner) {
+    public List<Damageable> checkRight(Plant owner) {
         Cell cell = owner.getCell();
         if (cell == null) return null;
 
         List<Cell> cells = Cell.getCellsInRow(cell, LevelMenuController.getGameCells());
         List<Zombie> rowZombies = Cell.getZombiesInCells(cells);
-        List<Zombie> targets = new ArrayList<>();
+        List<Damageable> targets = new ArrayList<>();
         for (Zombie zombie : rowZombies) {
             if (zombie.getX() >= owner.getX() && zombie.getX() - owner.getX() <= rangeX) {
                 targets.add(zombie);
             }
         }
+        Cell rightCell = Cell.nextCell(cell, LevelMenuController.getGameCells());
+        if (rightCell != null){
+            Obstacle obstacle = rightCell.getObstacle();
+            if (obstacle != null) targets.add(obstacle);
+        }
         return targets;
     }
 
-    public List<Zombie> checkLeft(Plant owner) {
+    public List<Damageable> checkLeft(Plant owner) {
         Cell cell = owner.getCell();
         if (cell == null) return null;
 
         List<Cell> cells = Cell.getCellsInRow(cell, LevelMenuController.getGameCells());
         List<Zombie> rowZombies = Cell.getZombiesInCells(cells);
-        List<Zombie> targets = new ArrayList<>();
+        List<Damageable> targets = new ArrayList<>();
         for (Zombie zombie : rowZombies) {
             if (zombie.getX() <= owner.getX() && owner.getX() - zombie.getX() <= rangeX) {
                 targets.add(zombie);
             }
         }
+        Cell rightCell = Cell.previousCell(cell, LevelMenuController.getGameCells());
+        if (rightCell != null){
+            Obstacle obstacle = rightCell.getObstacle();
+            if (obstacle != null) targets.add(obstacle);
+        }
         return targets;
     }
 
-    private void attack(List<Zombie> targets) {
-        for (Zombie zombie : targets) {
-            zombie.takeDamage(damage, "NORMAL");
-            System.out.println(damage);
+    private void attack(List<Damageable> targets) {
+        for (Damageable damageable : targets) {
+            damageable.takeDamage(damage, "NORMAL");
         }
     }
 

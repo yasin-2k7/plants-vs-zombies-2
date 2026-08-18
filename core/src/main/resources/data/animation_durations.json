@@ -1,15 +1,19 @@
 {
   "SUNFLOWER": {
-    "special": { "duration": 2.4, "releaseTime": 1 }
+    "special": { "duration": 2.4, "releaseTime": 1 },
+    "plantfood": {"duration": 10.5}
   },
   "TWIN_SUNFLOWER": {
-    "special": { "duration": 1.7, "releaseTime": 0.5 }
+    "special": { "duration": 1.7, "releaseTime": 0.5 },
+    "plantfood": {"duration": 2.5}
   },
   "SUN_SHROOM": {
-    "special_stage3": { "duration": 2.1, "releaseTime": 0.6 }
+    "special_stage3": { "duration": 2.1, "releaseTime": 0.6 },
+    "plantfood": {"duration": 1.5}
   },
   "PRIMAL_SUNFLOWER": {
-    "special": { "duration": 1.9, "releaseTime": 0.7 }
+    "special": { "duration": 1.9, "releaseTime": 0.7 },
+    "plantfood": {"duration": 1.5}
   },
   "GOLD_BLOOM": {
     "attack": { "duration": 2.9, "releaseTime": 0.5 }
