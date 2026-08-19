@@ -18,6 +18,8 @@ import java.util.Map;
 public class TorchwoodComponent implements GameComponent {
     private int factor = 2;
     private boolean explodeOnDeath;
+    private final float PLANTFOOD_TIME = 2f;
+    private float plantfoodTimer = 0f;
 
     private final Map<Projectile, Integer> convertedProjectiles = new IdentityHashMap<>();
 
@@ -28,6 +30,13 @@ public class TorchwoodComponent implements GameComponent {
 
     @Override
     public void update(Plant owner, float delta) {
+        if (plantfoodTimer > 0){
+            plantfoodTimer -= delta;
+            if (plantfoodTimer <= 0){
+                plantfoodTimer = 0;
+                owner.setState(Plant.State.PLANT_FOOD_IDLE);
+            }
+        }
         GenericObjectPool<Projectile> pool = App.getCurrentGame().getProjectilesPool();
 
         for (Projectile projectile : App.getCurrentGame().getActiveProjectiles()) {
@@ -64,6 +73,8 @@ public class TorchwoodComponent implements GameComponent {
     @Override
     public void activatePlantFood(Plant owner) {
         factor = 3;
+        owner.setState(Plant.State.PLANT_FOOD);
+        plantfoodTimer = PLANTFOOD_TIME;
     }
 
     @Override

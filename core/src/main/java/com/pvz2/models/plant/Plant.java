@@ -44,7 +44,8 @@ public class Plant implements Damageable {
         INTRO,
         BUSY,
         IMITATE_IDLE, IMITATE_ATTACK,
-        PLANT_FOOD, PLANT_FOOD2
+        PLANT_FOOD_INTRO, PLANT_FOOD, PLANT_FOOD2, PLANT_FOOD_OUTRO,
+        PLANT_FOOD_IDLE
     }
 
     public Plant(PlantType type, int health, int damage) {

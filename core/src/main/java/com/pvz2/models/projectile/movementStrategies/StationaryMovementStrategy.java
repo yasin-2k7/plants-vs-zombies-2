@@ -1,5 +1,6 @@
 package com.pvz2.models.projectile.movementStrategies;
 
+import com.pvz2.models.enums.ProjectileType;
 import com.pvz2.models.projectile.Projectile;
 
 public class StationaryMovementStrategy implements MovementStrategy {
@@ -22,6 +23,7 @@ public class StationaryMovementStrategy implements MovementStrategy {
 
     @Override
     public boolean isDead(Projectile projectile) {
+        if (projectile.getType() == ProjectileType.FUME_SPECIAL) return elapsed >= 4;
         return elapsed >= lifespan;
     }
 }

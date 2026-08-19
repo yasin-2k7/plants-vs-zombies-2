@@ -1,4 +1,10 @@
 {
+  "PHAT_BEET": {
+    "plantfood": {"duration": 1.5, "releaseTime": 1.3}
+  },
+  "KIWIBEAST": {
+    "plantfood": {"duration": 2.9, "releaseTime": 0.75}
+  },
   "SUNFLOWER": {
     "special": { "duration": 2.4, "releaseTime": 1 },
     "plantfood": {"duration": 10.5}
@@ -22,7 +28,8 @@
     "attack": { "duration": 1, "releaseTime": 0.5 }
   },
   "REPEATER": {
-    "attack": { "duration": 1.1, "releaseTime": 0.5 }
+    "attack": { "duration": 1.1, "releaseTime": 0.5 },
+    "plantfood2": {"releaseTime": 1.85}
   },
   "THREEPEATER": {
     "attack": { "duration": 1.1, "releaseTime": 0.5 }
@@ -34,28 +41,36 @@
     "attack": { "duration": 1.8, "releaseTime": 1 }
   },
   "PEA_POD": {
-    "attack": { "duration": 1.1, "releaseTime": 0.7 }
+    "attack": { "duration": 1.1, "releaseTime": 0.7 },
+    "plantfood_on": {"duration": 1.45},
+    "plantfood_off": {"duration": 0.75},
+    "plantfood2": {"releaseTime": 0.55}
   },
   "SPLIT_PEA": {
     "attack": { "duration": 1, "releaseTime": 0.5 }
   },
   "CITRON": {
-    "attack": { "duration": 1.4, "releaseTime": 0.4 }
+    "attack": { "duration": 1.4, "releaseTime": 0.4 },
+    "plantfood2": {"releaseTime": 0.8}
   },
   "BOWLING_BULB": {
     "special": { "duration": 2.7, "releaseTime": 0.6 }
   },
   "CACTUS": {
-    "attack": { "duration": 1.1, "releaseTime": 0.5 }
+    "attack": { "duration": 1.1, "releaseTime": 0.5 },
+    "plantfood2": {"releaseTime": 0.5}
   },
   "FIRE_PEASHOOTER": {
     "attack": { "duration": 1.1, "releaseTime": 0.5 }
   },
   "STARFRUIT": {
-    "attack": { "duration": 1.1, "releaseTime": 0.6 }
+    "attack": { "duration": 1.1, "releaseTime": 0.6 },
+    "plantfood_on": {"duration": 0.35},
+    "plantfood_off": {"duration": 0.3}
   },
   "POISON_PEASHOOTER": {
-    "attack": { "duration": 1.7, "releaseTime": 0.4 }
+    "attack": { "duration": 1.7, "releaseTime": 0.4 },
+    "plantfood2": {"releaseTime": 1.15}
   },
   "MEGA_GATLING": {
     "attack": { "duration": 1.1, "releaseTime": 0.5 }
@@ -67,7 +82,8 @@
     "special": { "duration": 0.9, "releaseTime": 0.4 }
   },
   "FUME_SHROOM": {
-    "special": { "duration": 1.9, "releaseTime": 0.5 }
+    "special": { "duration": 1.9, "releaseTime": 0.5 },
+    "plantfood2": {"releaseTime": 1.35}
   },
   "CABBAGE_PULT": {
     "attack": { "duration": 1.7, "releaseTime": 0.55 }

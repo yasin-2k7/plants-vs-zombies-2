@@ -7,6 +7,7 @@ import com.pvz2.models.enums.PlantType;
 import com.pvz2.models.plant.AnimationDurations;
 import com.pvz2.models.plant.Plant;
 import com.pvz2.models.plant.PlantAnimationClips;
+import com.pvz2.models.plant.components.ArmorComponent;
 import pvz.libpvz.pam.PamPlayer;
 
 import java.util.HashMap;
@@ -32,6 +33,8 @@ public class PlantGraphic {
 
     private static final Map<String, TextureRegion> FROST_REGION_CACHE = new HashMap<>();
 
+    private static final Map<PlantType, String[]> ARMOR_KEYS_MAP = new HashMap<>();
+    private static final Map<PlantType, float[]> ARMORS_SCALE = new HashMap<>();
 
 
     private static final String FROST_33_KEY = "IMAGE_EFFECTS_FROSTBITE_CHILL_PLANT_FROSTBITE_CHILL_PLANT_153X62";
@@ -45,6 +48,45 @@ public class PlantGraphic {
         "IMAGE_EFFECTS_FROSTBITE_ICE_BLOCK_PLANT_FROSTBITE_ICE_BLOCK_PLANT_167X172_2",
         "IMAGE_EFFECTS_FROSTBITE_ICE_BLOCK_PLANT_FROSTBITE_ICE_BLOCK_PLANT_167X172_1"
     };
+
+    static {
+        ARMOR_KEYS_MAP.put(PlantType.WALL_NUT, new String[]{
+            "IMAGE_PLANT_WALLNUT_WALLNUT_120X139",
+            "IMAGE_PLANT_WALLNUT_WALLNUT_120X100",
+            "IMAGE_PLANT_WALLNUT_WALLNUT_110X51"
+        });
+        ARMOR_KEYS_MAP.put(PlantType.TALL_NUT, new String[]{
+            "IMAGE_PLANT_TALLNUT_TALLNUT_138X157",
+            "IMAGE_PLANT_TALLNUT_TALLNUT_137X141",
+            "IMAGE_PLANT_TALLNUT_TALLNUT_138X123"
+        });
+        ARMOR_KEYS_MAP.put(PlantType.ENDURIAN, new String[]{
+            "IMAGE_PLANT_ENDURIAN_ENDURIAN_172X182",
+            "IMAGE_PLANT_ENDURIAN_ENDURIAN_172X129",
+            "IMAGE_PLANT_ENDURIAN_ENDURIAN_164X76"
+        });
+        ARMOR_KEYS_MAP.put(PlantType.EXPLODE_O_NUT, new String[]{
+            "IMAGE_PLANT_EXPLODEONUT_EXPLODEONUT_131X166",
+            "IMAGE_PLANT_EXPLODEONUT_EXPLODEONUT_131X100",
+            "IMAGE_PLANT_EXPLODEONUT_EXPLODEONUT_124X48"
+        });
+        ARMOR_KEYS_MAP.put(PlantType.SUN_BEAN, new String[]{
+            "IMAGE_PLANT_SUNBEAN_SUNBEAN_109X66"
+        });
+        ARMOR_KEYS_MAP.put(PlantType.PUMPKIN, new String[]{
+            "IMAGE_PLANT_PUMPKIN_PUMPKIN_187X79",
+            "IMAGE_PLANT_PUMPKIN_PUMPKIN_187X78",
+            "IMAGE_PLANT_PUMPKIN_PUMPKIN_165X77",
+            "IMAGE_PLANT_PUMPKIN_PUMPKIN_165X39"
+        });
+
+        ARMORS_SCALE.put(PlantType.WALL_NUT, new float[]{0.75f, 0.93f, 15});
+        ARMORS_SCALE.put(PlantType.TALL_NUT, new float[]{0.8f, 0.8f, 70});
+        ARMORS_SCALE.put(PlantType.ENDURIAN, new float[]{0.95f, 0.95f, 23});
+        ARMORS_SCALE.put(PlantType.EXPLODE_O_NUT, new float[]{0.85f, 1.05f, 27});
+        ARMORS_SCALE.put(PlantType.PUMPKIN, new float[]{1.1f, 0.6f, -20});
+        ARMORS_SCALE.put(PlantType.SUN_BEAN, new float[]{0.5f, 0.5f, 70});
+    }
 
     private Plant.State lastState = Plant.State.IDLE;
 
@@ -129,6 +171,24 @@ public class PlantGraphic {
             k -> App.getGameApp().textureBank.region(k));
     }
 
+    private TextureRegion resolveArmorOverlay() {
+        ArmorComponent armorComp = plant.getComponent(ArmorComponent.class);
+        if (armorComp == null || armorComp.getArmorHp() <= 0) {
+            return null;
+        }
+
+        String[] keys = ARMOR_KEYS_MAP.get(plant.getType());
+        if (keys == null || keys.length == 0) {
+            return null;
+        }
+
+        float remainingFraction = armorComp.getArmorHp() / (float) armorComp.getInitHp();
+        int stageCount = keys.length;
+        int stageIndex = Math.min(stageCount - 1, (int) ((1f - remainingFraction) * stageCount));
+
+        return cachedRegion(keys[stageIndex]);
+    }
+
     private TextureRegion resolveFrostOverlay() {
         if (plant.isFreeze()) {
             int stageCount = ICE_HEALTH_KEYS.length;
@@ -150,8 +210,7 @@ public class PlantGraphic {
         if (state == Plant.State.IMITATE_ATTACK) {
             return new ClipInfo("attack", true);
         }
-        if (state == Plant.State.SPECIAL || plant.getType() == PlantType.PUFF_SHROOM ||
-            plant.getType() == PlantType.FUME_SHROOM) {
+        if (state == Plant.State.SPECIAL || plant.getType() == PlantType.PUFF_SHROOM) {
             return new ClipInfo(PlantsCollectionMenuScreen.getSpecialClip(plant.getType()), false);
         }
         if (state == Plant.State.ATTACK) {
@@ -185,6 +244,15 @@ public class PlantGraphic {
         if (state == Plant.State.BUSY){
             return new ClipInfo("busy", true);
         }
+        if (state == Plant.State.PLANT_FOOD_IDLE){
+            return new ClipInfo(PlantAnimationClips.getPlantFoodIdleClip(), true);
+        }
+        if (state == Plant.State.PLANT_FOOD_INTRO) {
+            return new ClipInfo(PlantAnimationClips.getPlantFoodIntroClip(plant.getType()), false);
+        }
+        if (state == Plant.State.PLANT_FOOD_OUTRO) {
+            return new ClipInfo(PlantAnimationClips.getPlantFoodOutroClip(plant.getType()), false);
+        }
         return null;
     }
 
@@ -208,6 +276,13 @@ public class PlantGraphic {
 
         pamPlayer.draw(batch, pamPath, currentClip, animTime, worldX, worldY, 0.8f, 0.8f,
             isLoop);
+
+        TextureRegion armorOverlay = resolveArmorOverlay();
+        if (armorOverlay != null) {
+            float w = LawnGrid.CELL_WIDTH * ARMORS_SCALE.get(plant.getType())[0];
+            float h = LawnGrid.CELL_HEIGHT * ARMORS_SCALE.get(plant.getType())[1];
+            batch.draw(armorOverlay, worldX - w / 2f, worldY - h / 2f + ARMORS_SCALE.get(plant.getType())[2], w, h);
+        }
 
         TextureRegion overlay = resolveFrostOverlay();
         if (overlay != null) {

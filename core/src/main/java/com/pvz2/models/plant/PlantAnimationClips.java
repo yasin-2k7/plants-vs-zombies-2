@@ -1,5 +1,6 @@
 package com.pvz2.models.plant;
 
+import com.pvz2.models.enums.PlantFamily;
 import com.pvz2.models.enums.PlantType;
 
 public class PlantAnimationClips {
@@ -7,7 +8,7 @@ public class PlantAnimationClips {
         if (type.hasTag("Wramp-up") || type == PlantType.PUFF_SHROOM) {
             return type == PlantType.KIWIBEAST ? "attack_stage3" : "special_stage3";
         }
-        if (type == PlantType.GOLD_BLOOM) return "attack";
+        if (type == PlantType.GOLD_BLOOM || type == PlantType.FUME_SHROOM) return "attack";
         return "special";
     }
 
@@ -48,18 +49,32 @@ public class PlantAnimationClips {
     }
 
     public static String getPlantFoodClip(PlantType type) {
+        if (type.family == PlantFamily.WALL_NUTS) return "idle";
+        if (type == PlantType.KIWIBEAST) return "plantfood_stage3";
+        if (type == PlantType.XSHOT) return "plantfood_on";
+        if (type == PlantType.BOWLING_BULB) return "plantfood_idle";
         return "plantfood";
     }
     public static String getPlantFood2Clip(PlantType type) {
-        if (type == PlantType.PEA_POD) return "plantfood";
+        if (type == PlantType.PEA_POD || type == PlantType.CITRON ||
+            type == PlantType.POISON_PEASHOOTER || type == PlantType.MEGA_GATLING
+        ||  type == PlantType.FUME_SHROOM) return "plantfood";
+        if (type == PlantType.CACTUS) return "attack_plantfood";
         return "plantfood2";
     }
+
+    public static String getPlantFoodIntroClip(PlantType type) { return "plantfood_on"; }
+    public static String getPlantFoodOutroClip(PlantType type) { return "plantfood_off"; }
 
     public static String getPlantFoodBackgroundPamPath() {
         return "768/INITIAL/EFFECTS/PLANTFOOD_FX/PLANTFOOD_FX.PAM";
     }
 
     public static String getPlantFoodBackgroundClip() {
+        return "plantfood";
+    }
+
+    public static String getPlantFoodIdleClip() {
         return "plantfood";
     }
 

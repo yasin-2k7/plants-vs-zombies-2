@@ -86,7 +86,7 @@ public class ChomperMeleeComponent implements GameComponent {
 
     private void swallowZombie(Plant owner, Zombie zombie) {
         if (zombie.isBoss()) return;
-        zombie.takeDamage(zombie.getHealth(), "NORMAL");
+        zombie.takeDamage((int) zombie.getHealth(), "NORMAL");
         this.isDigesting = true;
         this.digestProgressTime = 0f;
         this.biteAnimTimer = 0f;
@@ -111,7 +111,7 @@ public class ChomperMeleeComponent implements GameComponent {
         boolean swallowedAny = false;
         for (Zombie target : targets) {
             if (target.isBoss()) continue;
-            target.takeDamage(target.getHealth(), "NORMAL");
+            target.takeDamage((int) target.getHealth(), "NORMAL");
             swallowedAny = true;
         }
 

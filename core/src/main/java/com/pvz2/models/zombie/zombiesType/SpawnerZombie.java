@@ -71,7 +71,7 @@ public class SpawnerZombie extends Zombie {
 
             if (isBasic) {
                 ArmoredZombie knight = new ArmoredZombie(
-                        z.getHealth(),
+                    (int) z.getHealth(),
                         z.getSpeed(),
                         z.getDamage(),
                         1600, // armorHealth

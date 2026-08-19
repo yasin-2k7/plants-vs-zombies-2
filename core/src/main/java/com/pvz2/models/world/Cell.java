@@ -225,7 +225,7 @@ public class Cell {
                     shooterComp.setBurstProjectileNumber(existingBehavior.getCurrentStack());
                     shooterComp.setBurstProjectileNumberOnPlantFood(existingBehavior.getCurrentStack());
                     shooterComp.setGiantCount(existingBehavior.getCurrentStack());
-                    return null;
+                    return newPlant;
                 }
             }
         }
