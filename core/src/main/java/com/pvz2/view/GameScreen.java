@@ -378,8 +378,14 @@ public class GameScreen extends MenuScreen {
             panStartX = step.targetCenterX();
 
             if (currentStepIndex == STREET_ARRIVAL_STEP_INDEX) {
-                pauseCameraAtStreet();
-                return;
+                if (world.isConveyorMode()) {
+                    currentStepIndex++;
+                    stepElapsed = 0f;
+                    return;
+                } else {
+                    pauseCameraAtStreet();
+                    return;
+                }
             }
 
             currentStepIndex++;
@@ -572,6 +578,7 @@ public class GameScreen extends MenuScreen {
                 }
             }
         }
+        syncGraveGraphics();
         for (int i = graveGraphics.size() - 1; i >= 0; i--) {
             GraveGraphic graphic = graveGraphics.get(i);
             Grave grave = graphic.getGrave(); // گرفتن مدل از گرافیک
@@ -611,7 +618,7 @@ public class GameScreen extends MenuScreen {
     public void resize(int width, int height) {
         super.resize(width, height);
         worldViewport.update(width, height, false);
-        if (hud != null) {
+        if (hud != null && stage != null) {
             hud.resize(stage.getWidth(), stage.getHeight());
         }
     }
@@ -791,18 +798,17 @@ public class GameScreen extends MenuScreen {
                 int col = LawnGrid.getColFromX(touchPoint.x);
 
                 if (row >= 0 && col >= 0) {
-                    boolean success = plantPlacementManager.tryPlace(row, col);
+                    Plant newPlant = GameMenuController.plantPlant(
+                        plantPlacementManager.getSelectedPlant(),
+                        App.getCellCenterX(col),
+                        App.getCellCenterY(row)
+                    );
+                    if (newPlant != null) {
+                        PlantGraphic pg = new PlantGraphic(newPlant, pamPlayer);
+                        plantGraphics.add(pg);
+                        checkExplosion(newPlant, pg);
 
-                    if (success){
-                        Plant newPlant = GameMenuController.plantSelectedPlant(
-                            App.getCellCenterX(col),
-                            App.getCellCenterY(row));
-                        if (newPlant != null){
-                            PlantGraphic pg = new PlantGraphic(newPlant, pamPlayer);
-                            plantGraphics.add(pg);
-                            checkExplosion(newPlant, pg);
-
-                        }
+                        plantPlacementManager.tryPlace(row, col);
                     }
                 }
                 plantPlacementManager.cancelSelection();
@@ -933,6 +939,25 @@ public class GameScreen extends MenuScreen {
         plantGraphics.clear();
         for (Plant plant : world.getActivePlants()) {
             plantGraphics.add(new PlantGraphic(plant, pamPlayer));
+        }
+    }
+
+    private void syncGraveGraphics() {
+        if (world == null) return;
+        List<Grave> activeGraves = world.getGraves();
+
+        for (Grave grave : activeGraves) {
+            boolean exists = false;
+            for (GraveGraphic gg : graveGraphics) {
+                if (gg.getGrave() == grave) {
+                    exists = true;
+                    break;
+                }
+            }
+
+            if (!exists) {
+                graveGraphics.add(new GraveGraphic(grave, world));
+            }
         }
     }
 }

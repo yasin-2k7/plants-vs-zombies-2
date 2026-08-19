@@ -45,6 +45,7 @@ public class GameHUD extends Group {
     private final PlantFoodBank plantFoodBank;
     private final SelectedPlantsList selectedPlantsList;
     private final GameScreen screen;
+    private final ConveyorBeltView conveyorBeltView;
 
     private PauseMenuOverlay activeOverlay;
 
@@ -58,6 +59,8 @@ public class GameHUD extends Group {
         plantFoodBank = new PlantFoodBank(game, skin);
         selectedPlantsList = new SelectedPlantsList(1, 1, false,
             150, 100, createSelectingMethod(), game);
+
+        conveyorBeltView = new ConveyorBeltView(screen);
 
         ImageButton pauseBtn = new ImageButton(skin, "ingame_pause");
 
@@ -96,6 +99,7 @@ public class GameHUD extends Group {
 
         addActor(topBar);
         addActor(plantFoodBank);
+        addActor(conveyorBeltView);
     }
 
    private Consumer<PlantCardView> createSelectingMethod(){
@@ -126,10 +130,19 @@ public class GameHUD extends Group {
         topBar.validate();
         topBar.setPosition(0, stageHeight - topBar.getHeight());
 
+        if (conveyorBeltView != null) {
+            float x = (stageWidth - conveyorBeltView.getWidth()) / 2f;
+            float y = stageHeight - conveyorBeltView.getHeight() - 5f;
+            conveyorBeltView.setPosition(x, y);
+        }
+
         plantFoodBank.setPosition(10*MARGIN, MARGIN);
     }
 
     public void update(GameWorld world, float delta) {
+        if (conveyorBeltView != null) {
+            conveyorBeltView.update(world);
+        }
         sunCounter.update(world);
         plantFoodBank.update(world);
         resourcesTable.update();
