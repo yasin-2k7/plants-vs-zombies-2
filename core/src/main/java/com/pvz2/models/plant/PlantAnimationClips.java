@@ -22,6 +22,10 @@ public class PlantAnimationClips {
         return "attack";
     }
 
+    public static boolean isPlantFoodLooping(PlantType type) {
+        return type.family != PlantFamily.LOBBER;
+    }
+
     public static String getExplosionPamPath(PlantType type) {
         if (type == PlantType.POTATO_MINE) return "768/INITIAL/EFFECTS/POTATOMINE_EXPLOSION/POTATOMINE_EXPLOSION.PAM";
         if (type == PlantType.PRIMAL_POTATO_MINE) return

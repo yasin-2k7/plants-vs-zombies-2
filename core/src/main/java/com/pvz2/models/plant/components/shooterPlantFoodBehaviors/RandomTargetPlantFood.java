@@ -12,35 +12,62 @@ import java.util.List;
 
 public class RandomTargetPlantFood implements PlantFoodBehavior {
     private final int targetCount;
+    private final float intervalBetweenShots;
 
-    public RandomTargetPlantFood(int targetCount) {
+    private final List<Zombie> pendingTargets = new ArrayList<>();
+    private float timer = 0f;
+    private boolean started = false;
+
+    public RandomTargetPlantFood(int targetCount, float intervalBetweenShots) {
         this.targetCount = targetCount;
+        this.intervalBetweenShots = intervalBetweenShots;
     }
 
-    public RandomTargetPlantFood() {
-        this.targetCount = Integer.MAX_VALUE;
+    public RandomTargetPlantFood(int targetCount){
+        this(targetCount, 0.1f);
+    }
+
+    public RandomTargetPlantFood(){
+        this(Integer.MAX_VALUE);
     }
 
     @Override
     public void activate(Plant owner, ShooterComponent shooterComponent) {
-        List<Zombie> allZombies = App.getCurrentGame().getActiveZombies();
+        pendingTargets.clear();
+        timer = 0f;
+        started = true;
 
-        if (allZombies.isEmpty()) {
-            return;
-        }
+        List<Zombie> allZombies = App.getCurrentGame().getActiveZombies();
+        if (allZombies.isEmpty()) return;
 
         List<Zombie> zombieCopy = new ArrayList<>(allZombies);
         Collections.shuffle(zombieCopy);
         int finalCount = Math.min(targetCount, zombieCopy.size());
-        List<Zombie> selectedZombies = zombieCopy.subList(0, finalCount);
+        pendingTargets.addAll(zombieCopy.subList(0, finalCount));
+    }
 
-        for (Zombie zombie : selectedZombies) {
-            Projectile p = App.getCurrentGame().getProjectilesPool().acquire();
-            p.reset(owner.getX(), owner.getY(), shooterComponent.getPlantFoodStrategy(),
-                    shooterComponent.getMovementStrategies().getFirst().get(),
-                    shooterComponent.getStrikeStrategy(), shooterComponent.getGiantType());
-            p.setTarget(zombie);
-            App.getCurrentGame().getActiveProjectiles().add(p);
+    @Override
+    public void update(Plant owner, ShooterComponent shooterComponent, float delta) {
+        if (!started || pendingTargets.isEmpty()) return;
+
+        timer += delta;
+        if (timer >= intervalBetweenShots) {
+            timer -= intervalBetweenShots;
+            fireAt(owner, shooterComponent, pendingTargets.remove(0));
         }
+    }
+
+    @Override
+    public boolean isFinished() {
+        return started && pendingTargets.isEmpty();
+    }
+
+    private void fireAt(Plant owner, ShooterComponent shooterComponent, Zombie zombie) {
+        Projectile p = App.getCurrentGame().getProjectilesPool().acquire();
+        p.reset(owner.getX(), owner.getY(), shooterComponent.getPlantFoodStrategy(),
+            shooterComponent.getMovementStrategies().getFirst().get(),
+            shooterComponent.getStrikeStrategy(), shooterComponent.getGiantType());
+        p.setTarget(zombie);
+        App.getCurrentGame().getActiveProjectiles().add(p);
     }
 }

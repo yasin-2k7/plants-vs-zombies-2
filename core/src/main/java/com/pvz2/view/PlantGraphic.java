@@ -236,10 +236,12 @@ public class PlantGraphic {
             return new ClipInfo(PlantAnimationClips.getDamagedClip(plant.getType(), state), true);
         }
         if (state == Plant.State.PLANT_FOOD) {
-            return new ClipInfo(PlantAnimationClips.getPlantFoodClip(plant.getType()), true);
+            boolean loop = PlantAnimationClips.isPlantFoodLooping(plant.getType());
+            return new ClipInfo(PlantAnimationClips.getPlantFoodClip(plant.getType()), loop);
         }
         if (state == Plant.State.PLANT_FOOD2) {
-            return new ClipInfo(PlantAnimationClips.getPlantFood2Clip(plant.getType()), true);
+            boolean loop = PlantAnimationClips.isPlantFoodLooping(plant.getType());
+            return new ClipInfo(PlantAnimationClips.getPlantFood2Clip(plant.getType()), loop);
         }
         if (state == Plant.State.BUSY){
             return new ClipInfo("busy", true);

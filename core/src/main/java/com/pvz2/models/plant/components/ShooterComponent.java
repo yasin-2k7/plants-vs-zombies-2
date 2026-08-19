@@ -111,6 +111,8 @@ public class ShooterComponent implements GameComponent {
         if (plantFoodBehavior == null) return;
         ensurePlantFoodIntroOutroLoaded(owner);
         this.defaultMovementStrategies = new ArrayList<>(this.movementStrategies);
+        projectilesLeftForShoot = 0;
+        burstDelayTimer = 0f;
 
         if (plantFoodIntroDuration > 0f) {
             owner.setState(Plant.State.PLANT_FOOD_INTRO);
@@ -149,6 +151,14 @@ public class ShooterComponent implements GameComponent {
         }
         if (projectilesLeftForShoot > 0) {
             burstHandler(owner, delta);
+            return;
+        }
+        boolean isPlantFoodState = (owner.getState() == Plant.State.PLANT_FOOD || owner.getState() == Plant.State.PLANT_FOOD2);
+        if (isPlantFoodState) {
+            plantFoodBehavior.update(owner, this, delta);
+            if (plantFoodBehavior.isFinished()) {
+                enterPlantFoodFinish(owner);
+            }
             return;
         }
         for (VisionStrategy visionStrategy : visions) {
@@ -225,16 +235,20 @@ public class ShooterComponent implements GameComponent {
                 burstDelayMax = BURST_DELAY_MAX;
                 burstDelayTimer = burstDelayMax;
                 if (isPlantFoodState) {
-                    if (plantFoodOutroDuration > 0f) {
-                        owner.setState(Plant.State.PLANT_FOOD_OUTRO);
-                        introOutroTimer = plantFoodOutroDuration;
-                    } else {
-                        plantFoodFinishTimer = plantFoodFinishDelay;
-                    }
+                    enterPlantFoodFinish(owner);
                 } else {
                     owner.setState(Plant.State.IDLE);
                 }
             }
+        }
+    }
+
+    private void enterPlantFoodFinish(Plant owner) {
+        if (plantFoodOutroDuration > 0f) {
+            owner.setState(Plant.State.PLANT_FOOD_OUTRO);
+            introOutroTimer = plantFoodOutroDuration;
+        } else {
+            plantFoodFinishTimer = plantFoodFinishDelay;
         }
     }
 
