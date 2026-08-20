@@ -20,7 +20,7 @@ public class WaveManager {
     private int totalZombiesInCurrentWave;
     private int killedZombiesInCurrentWave;
     private boolean levelCompleted;
-    private final int totalZombiesOverall;   // <<< جدید
+    private final int totalZombiesOverall;
 
     private boolean repeatForever = false;
     private boolean wavesStarted = true;
@@ -80,7 +80,9 @@ public class WaveManager {
     public boolean update() {
         if (!wavesStarted || levelCompleted || currentWave == null) return false;
         if (currentWave.isFinishedSpawning()) {
-            if (killedZombiesInCurrentWave >= totalZombiesInCurrentWave * 0.75) {
+            boolean noZombiesInWave = totalZombiesInCurrentWave <= 0;
+            boolean killedEnough = killedZombiesInCurrentWave >= totalZombiesInCurrentWave * 0.75;
+            if (noZombiesInWave || killedEnough) {
                 goToNextWave();
                 return true;
             }

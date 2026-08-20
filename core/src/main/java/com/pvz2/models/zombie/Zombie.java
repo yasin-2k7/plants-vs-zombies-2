@@ -43,6 +43,9 @@ public abstract class Zombie implements Damageable {
     private boolean hasEatenPlant = false;
     private GameWorld world;
 
+    public static final long DAMAGE_FLASH_DURATION_MS = 150L;
+    private long lastDamageTimestamp = -1L;
+
 
     public Zombie(Zombies name, int health, double speed, int damage) {
         this.name = name;
@@ -105,12 +108,13 @@ public abstract class Zombie implements Damageable {
     }
 
     public void move(float delta) {
-        this.x -= (float) (this.speed * delta); // حرکت به چپ
+        this.x -= (float) (this.speed * delta);
     }
 
     @Override
     public void takeDamage(int amount, String damageType) {
         if (isDead) return;
+        triggerDamageFlash();
         if (iceHealth > 0) {
             iceHealth -= amount;
             if (iceHealth <= 0) {
@@ -122,6 +126,21 @@ public abstract class Zombie implements Damageable {
         if (this.health <= 0) {
             die();
         }
+    }
+
+    protected void triggerDamageFlash() {
+        this.lastDamageTimestamp = System.currentTimeMillis();
+    }
+
+    public boolean isFlashingRed() {
+        if (lastDamageTimestamp < 0) return false;
+        return (System.currentTimeMillis() - lastDamageTimestamp) < DAMAGE_FLASH_DURATION_MS;
+    }
+
+    public float getDamageFlashProgress() {
+        if (!isFlashingRed()) return 0f;
+        long elapsed = System.currentTimeMillis() - lastDamageTimestamp;
+        return 1f - ((float) elapsed / (float) DAMAGE_FLASH_DURATION_MS);
     }
 
     public void unfreeze() {
@@ -142,7 +161,7 @@ public abstract class Zombie implements Damageable {
             Collectable plantFood = new Collectable(this.x, this.y, CollectableType.PLANT_FOOD);
             world.getActiveCollectables().add(plantFood);
             GameMenuController.updateState(
-                    "\uD83C\uDFC6The glowing zombie dropped a plant food at (" + (int) x + ", " + (int) y + ")");
+                "\uD83C\uDFC6The glowing zombie dropped a plant food at (" + (int) x + ", " + (int) y + ")");
         }
 
         if (Math.random() < 0.10) {
@@ -157,12 +176,12 @@ public abstract class Zombie implements Damageable {
             Collectable drop = new Collectable(this.x, this.y, type);
             world.getActiveCollectables().add(drop);
             GameMenuController.updateState("\uD83C\uDFC6A zombie dropped a " + type.name().toLowerCase() +
-                            " at (" + (int) x + ", " + (int) y + ")");
+                " at (" + (int) x + ", " + (int) y + ")");
         }
 
         String displayName = (specificName != null) ? specificName : name.name();
         GameMenuController.updateState("\uD83D\uDC80Zombie of type " + displayName +
-                " is dead at (" + (int) x + ", " + (int) y + ")");
+            " is dead at (" + (int) x + ", " + (int) y + ")");
     }
 
     public void applySlow(float delta, double factor, boolean canWorkInFrostbite) {

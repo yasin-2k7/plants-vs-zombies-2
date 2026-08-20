@@ -42,6 +42,7 @@ public class Grave extends Obstacle {
     public void takeDamage(int amount, String type) {
         if (isDestroyed || isDying) return;
 
+        triggerDamageFlash();
         this.health -= amount;
         GameMenuController.updateState("grave in (" + x + ", " + y + ") health: " + health);
 

@@ -1,6 +1,7 @@
 package com.pvz2.view;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.pvz2.Main;
 import com.pvz2.models.core.App;
 import com.pvz2.models.world.ChapterWorld.DarkAgesWorld;
@@ -20,15 +21,26 @@ public class GraveGraphic {
     private static final String DARK_SUN_PAM_PATH = "768/FULL/GRAVESTONES/DARK_SUN/DARK_SUN.PAM";
     private static final String DARK_PLANT_FOOD_PAM_PATH = "768/FULL/GRAVESTONES/DARK_PLANTFOOD/DARK_PLANTFOOD.PAM";
 
+    private static final String DIRT_SPAWN_FUTURE_PAM_PATH = "768/FULL/EFFECTS/DIRT_SPAWN_FUTURE/DIRT_SPAWN_FUTURE.PAM";
+    private static final String DIRT_SPAWN_ANIM_STATE = "default";
+    private static final float SPAWN_ANIM_DURATION = 0.6f;
+
     private final String pamPath;
+    private boolean spawning;
+    private float spawnAnimTime = 0f;
 
     public GraveGraphic(Grave grave) {
-        this(grave, App.getCurrentGame());
+        this(grave, App.getCurrentGame(), false);
     }
 
     public GraveGraphic(Grave grave, GameWorld world) {
+        this(grave, world, false);
+    }
+
+    public GraveGraphic(Grave grave, GameWorld world, boolean playSpawnAnimation) {
         this.grave = grave;
         this.pamPath = resolvePamPath(grave, world);
+        this.spawning = playSpawnAnimation;
     }
 
     private String resolvePamPath(Grave grave, GameWorld world) {
@@ -48,6 +60,15 @@ public class GraveGraphic {
     }
 
     public void  update(float delta) {
+        if (spawning) {
+            spawnAnimTime += delta;
+            if (spawnAnimTime >= SPAWN_ANIM_DURATION) {
+                spawning = false;
+                animTime = 0f;
+            }
+            return;
+        }
+
         animTime += delta;
 
         if (grave.isDying() && !breakStarted) {
@@ -64,6 +85,25 @@ public class GraveGraphic {
     public void draw(SpriteBatch batch, PamPlayer pamPlayer, Main game){
         if (breakFinished) return;
 
+        if (spawning) {
+            try {
+                pamPlayer.draw(
+                    batch,
+                    DIRT_SPAWN_FUTURE_PAM_PATH,
+                    DIRT_SPAWN_ANIM_STATE,
+                    spawnAnimTime,
+                    grave.getX(),
+                    grave.getY(),
+                    1.0f,
+                    1.0f,
+                    true
+                );
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return;
+        }
+
         String animState;
         if (breakStarted) {
             animState = "damage1";
@@ -75,7 +115,13 @@ public class GraveGraphic {
             }
         }
 
-        boolean drawn = false;
+        float flashAmount = grave.getDamageFlashProgress();
+        if (flashAmount > 0f) {
+            ShaderProgram shader = DamageFlashShader.get();
+            batch.setShader(shader);
+            shader.setUniformf("u_flashColor", 1f, 1f, 1f);
+            shader.setUniformf("u_flashAmount", flashAmount);
+        }
 
         try {
             pamPlayer.draw(
@@ -89,11 +135,13 @@ public class GraveGraphic {
                 1.0f,
                 true
             );
-            drawn = true;
         } catch (Exception e) {
             e.printStackTrace();
+        } finally {
+            if (flashAmount > 0f) {
+                batch.setShader(null);
+            }
         }
-
     }
 
     public boolean isBreakFinished() { return breakFinished; }

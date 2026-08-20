@@ -47,11 +47,10 @@ public class DarkAgesMechanic implements Mechanic {
                 if (cell.isNecromancyTriggered()) {
                     Zombie zombie = new ZombieFactory().createZombie("ZombieDefault");
                     if (zombie != null) {
-                        float x = c * 100f + 50f;
-                        float y = r * 100f + 50f;
-                        zombie.setX(x);
-                        zombie.setY(y);
+                        zombie.setX(cell.getX());
+                        zombie.setY(cell.getY());
                         world.addZombie(zombie);
+                        world.registerNecromancyZombie(zombie);
 //                        GameMenuController.updateState("A zombie emerged from a grave at (" + c + ", " + r + ")");
                     }
                     cell.setNecromancyTriggered(false);

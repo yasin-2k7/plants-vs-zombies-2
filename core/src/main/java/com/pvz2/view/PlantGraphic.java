@@ -2,6 +2,7 @@ package com.pvz2.view;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.pvz2.models.core.App;
 import com.pvz2.models.enums.PlantType;
 import com.pvz2.models.plant.AnimationDurations;
@@ -11,6 +12,7 @@ import pvz.libpvz.pam.PamPlayer;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 
 public class PlantGraphic {
 
@@ -20,15 +22,21 @@ public class PlantGraphic {
 
     private String normalPamPath;
     private String imitatorPamPath;
+    private String sheepPamPath;
+    private String burnPamPath = "768/INITIAL/EFFECTS/PLANT_BURNT/PLANT_BURNT.PAM";
+    private float burnAnimTime = 0f;
+
     private String pamPath;
     private String initialClip;
     private String currentClip;
     private float animTime = 0f;
     private boolean isLoop = true;
 
+    private boolean isSheepState = false;
+    private boolean isRevertingSheep = false;
+    private final Random random = new Random();
+
     private static final Map<String, TextureRegion> FROST_REGION_CACHE = new HashMap<>();
-
-
 
     private static final String FROST_33_KEY = "IMAGE_EFFECTS_FROSTBITE_CHILL_PLANT_FROSTBITE_CHILL_PLANT_153X62";
     private static final String FROST_66_KEY = "IMAGE_EFFECTS_FROSTBITE_CHILL_PLANT_FROSTBITE_CHILL_PLANT_153X79";
@@ -55,20 +63,63 @@ public class PlantGraphic {
 
         this.normalPamPath = PlantsCollectionMenuScreen.getPlantAnimAddress(plant.getType());
         this.imitatorPamPath = PlantsCollectionMenuScreen.getPlantAnimAddress(PlantType.IMITATER);
-        this.pamPath = plant.isImitate() ? imitatorPamPath : normalPamPath;
+        this.sheepPamPath = ZombiesTable.getZombiesAnimAddress().getOrDefault("Sheep", "768/FULL/ZOMBIE/SHEEP/SHEEP.PAM");
 
+        this.pamPath = plant.isImitate() ? imitatorPamPath : normalPamPath;
         this.currentClip = plant.isImitate() ? "idle" : PlantsCollectionMenuScreen.getPlantInitialClip(plant.getType());
         this.initialClip = currentClip;
 
         if (normalPamPath != null && pamPlayer != null) pamPlayer.loadAsync(normalPamPath, null);
         if (imitatorPamPath != null && pamPlayer != null) pamPlayer.loadAsync(imitatorPamPath, null);
+        if (sheepPamPath != null && pamPlayer != null) pamPlayer.loadAsync(sheepPamPath, null);
+        if (burnPamPath != null && pamPlayer != null) pamPlayer.loadAsync(burnPamPath, null);
     }
 
     public void update(float delta) {
+        if (plant.isBurnt()) {
+            burnAnimTime += delta;
+            return;
+        }
+
         if (!plant.isFreeze()){
             animTime += delta;
         }
 
+        if (plant.isSheep() && !isSheepState) {
+            isSheepState = true;
+            isRevertingSheep = false;
+            pamPath = sheepPamPath;
+            playClip("animation", false);
+            return;
+        }
+        else if (!plant.isSheep() && isSheepState && !isRevertingSheep) {
+            isRevertingSheep = true;
+            pamPath = sheepPamPath;
+            playClip("animation2", false);
+            return;
+        }
+
+        if (isSheepState && !isRevertingSheep) {
+            if (currentClip.equals("animation") && animTime >= 1.5f) {
+                playClip("idle", true);
+            }
+            else if (currentClip.startsWith("idle") && animTime >= 2.0f) {
+                String[] idles = {"idle", "idle2", "idle3"};
+                playClip(idles[random.nextInt(idles.length)], true);
+            }
+            return;
+        }
+
+        if (isRevertingSheep) {
+            if (animTime >= 1.5f) {
+                isSheepState = false;
+                isRevertingSheep = false;
+                pamPath = plant.isImitate() ? imitatorPamPath : normalPamPath;
+                playClip(initialClip, true);
+                lastState = Plant.State.IDLE;
+            }
+            return;
+        }
 
         String activePamPath = plant.isImitate() ? imitatorPamPath : normalPamPath;
         if (!activePamPath.equals(pamPath)) {
@@ -87,17 +138,13 @@ public class PlantGraphic {
                     playClip(info.clipName, info.loop);
                 }
             }
-            return; // keep playing whatever clip is active for this state
+            return;
         }
 
-        // state == IDLE
         if (currentClip.equals(initialClip)) {
-            return; // already on the idle clip
+            return;
         }
 
-        // Looping clips (e.g. "unarmed") have no natural finish point, so cut
-        // over immediately once the model returns to IDLE. One-shot clips
-        // (e.g. "attack") still wait to visually finish first.
         float duration = AnimationDurations.getDuration(plant.getType(), currentClip, 0.5f);
         boolean readyToReturnToIdle = isLoop || animTime >= duration;
         if (readyToReturnToIdle) {
@@ -126,12 +173,8 @@ public class PlantGraphic {
     }
 
     private ClipInfo resolveClipFor(Plant.State state) {
-        if (state == Plant.State.IMITATE_IDLE) {
-            return new ClipInfo("idle", true);
-        }
-        if (state == Plant.State.IMITATE_ATTACK) {
-            return new ClipInfo("attack", true);
-        }
+        if (state == Plant.State.IMITATE_IDLE) return new ClipInfo("idle", true);
+        if (state == Plant.State.IMITATE_ATTACK) return new ClipInfo("attack", true);
         if (state == Plant.State.SPECIAL || plant.getType() == PlantType.PUFF_SHROOM ||
             plant.getType() == PlantType.FUME_SHROOM) {
             return new ClipInfo(PlantsCollectionMenuScreen.getSpecialClip(plant.getType()), false);
@@ -140,27 +183,17 @@ public class PlantGraphic {
             if (plant.getType() == PlantType.KIWIBEAST) return new ClipInfo("attack_stage3", false);
             return new ClipInfo("attack", false);
         }
-        if (state == Plant.State.TRIGGERED) {
-            return new ClipInfo(PlantAnimationClips.getTriggerClip(plant.getType()), false);
-        }
-        if (state == Plant.State.UNARMED) {
-            return new ClipInfo(PlantAnimationClips.getUnarmedClip(plant.getType()), true);
-        }
+        if (state == Plant.State.TRIGGERED) return new ClipInfo(PlantAnimationClips.getTriggerClip(plant.getType()), false);
+        if (state == Plant.State.UNARMED) return new ClipInfo(PlantAnimationClips.getUnarmedClip(plant.getType()), true);
         if(state == Plant.State.HIT_LEFT || state == Plant.State.HIT_RIGHT || state == Plant.State.HIT_RIGHT_AND_LEFT){
             return new ClipInfo(PlantAnimationClips.getHitClip(state), false);
         }
-        if (state == Plant.State.SPECIAL_IDLE){
-            return new ClipInfo("special_idle", true);
-        }
-        if (state == Plant.State.INTRO){
-            return new ClipInfo("intro", false);
-        }
+        if (state == Plant.State.SPECIAL_IDLE) return new ClipInfo("special_idle", true);
+        if (state == Plant.State.INTRO) return new ClipInfo("intro", false);
         if (state == Plant.State.DAMAGE || state == Plant.State.DAMAGE2 || state == Plant.State.DAMAGE3){
             return new ClipInfo(PlantAnimationClips.getDamagedClip(plant.getType(), state), true);
         }
-        if (state == Plant.State.BUSY){
-            return new ClipInfo("busy", true);
-        }
+        if (state == Plant.State.BUSY) return new ClipInfo("busy", true);
         return null;
     }
 
@@ -175,8 +208,18 @@ public class PlantGraphic {
 
     public void draw(SpriteBatch batch, PamPlayer pamPlayer) {
         if (plant == null || plant.isDead() || pamPath == null || pamPlayer == null) return;
-        pamPlayer.draw(batch, pamPath, currentClip, animTime, worldX, worldY, 0.8f, 0.8f,
-            isLoop);
+
+        float flashAmount = plant.getDamageFlashProgress();
+        if (flashAmount > 0f) {
+            ShaderProgram shader = DamageFlashShader.get();
+            batch.setShader(shader);
+            shader.setUniformf("u_flashColor", 1f, 1f, 1f);
+            shader.setUniformf("u_flashAmount", flashAmount);
+        }
+        pamPlayer.draw(batch, pamPath, currentClip, animTime, worldX, worldY, 0.8f, 0.8f, isLoop);
+        if (flashAmount > 0f) {
+            batch.setShader(null);
+        }
 
         TextureRegion overlay = resolveFrostOverlay();
         if (overlay != null) {
@@ -196,7 +239,13 @@ public class PlantGraphic {
     public int getRow() { return (int) plant.getY(); }
     public int getCol() { return (int) plant.getX(); }
     public PlantType getPlantType() { return plant.getType(); }
-    public boolean isDead() { return plant.isDead(); }
+
+    public boolean isDead() {
+        if (plant.isBurnt()) {
+            return burnAnimTime >= 1.5f;
+        }
+        return plant.isDead();
+    }
 
     public float getWorldX() { return worldX; }
     public float getWorldY() { return worldY; }

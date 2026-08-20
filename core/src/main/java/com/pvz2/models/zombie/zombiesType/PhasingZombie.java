@@ -10,6 +10,7 @@ public class PhasingZombie extends Zombie {
     private boolean isNewspaper;
     private int shieldHealth;
     private boolean hasKilledPlant;
+    private float defeatAnimationTimeRemaining = 0f;
 
     public PhasingZombie(int health, double speed, int damage, int shieldHealth, boolean isNewspaper) {
         super(Zombies.PHASING, health, speed, damage);
@@ -19,12 +20,11 @@ public class PhasingZombie extends Zombie {
         this.hasKilledPlant = false;
 
         if (!isNewspaper) {
-            this.originalSpeed = speed * 3;
+            this.originalSpeed = this.speed * 2.0;
             this.speed = this.originalSpeed;
             this.damage = 9999;
         } else {
-            this.originalSpeed = speed;
-            this.speed = this.originalSpeed;
+            this.originalSpeed = this.speed;
         }
     }
 
@@ -32,41 +32,85 @@ public class PhasingZombie extends Zombie {
     public void takeDamage(int amount, String damageType) {
         if (isDead) return;
 
-        if (!isPhaseChanged && shieldHealth > 0) {
+        if (isNewspaper && !isPhaseChanged && shieldHealth > 0) {
             shieldHealth -= amount;
             if (shieldHealth <= 0) {
                 triggerPhaseChange();
             }
         } else {
             super.takeDamage(amount, damageType);
+
+            if (!isNewspaper && !hasKilledPlant && this.health <= this.maxHealth / 3) {
+                triggerAllStarPhaseChange("All-Star zombie lost its gear due to low health and slowed down!");
+            }
         }
     }
 
     private void triggerPhaseChange() {
         this.isPhaseChanged = true;
         if (isNewspaper) {
-            this.speed = this.originalSpeed * 10.0;
-            this.damage = (int) (this.damage * 3);
-            GameMenuController.updateState("Newspaper is angry! Speed and damage increased.");
+            this.defeatAnimationTimeRemaining = 1.0f;
+            this.speed = this.originalSpeed * 2.0;
+            this.damage = this.damage * 3;
+            GameMenuController.updateState("Newspaper is destroyed! Speed and damage increased.");
         }
+    }
+
+    private void triggerAllStarPhaseChange(String message) {
+        this.hasKilledPlant = true;
+        this.speed = this.originalSpeed * 0.25;
+        this.damage = 20;
+        GameMenuController.updateState(message);
     }
 
     @Override
     public void update(float delta) {
         if (isDead) return;
 
+        if (defeatAnimationTimeRemaining > 0) {
+            defeatAnimationTimeRemaining -= delta;
+            return;
+        }
+
         boolean wasEating = (this.currentState instanceof EatingState);
 
         super.update(delta);
 
         if (!isNewspaper && !hasKilledPlant) {
-            if (wasEating && !(this.currentState instanceof EatingState)) {
-                hasKilledPlant = true;
-                this.speed = this.originalSpeed * 0.3;
-                this.damage = 20;
-                GameMenuController.updateState("All-Star killed a plant and slowed down.");
+            if (wasEating) {
+                triggerAllStarPhaseChange("All-Star tackled a plant and slowed down.");
             }
         }
     }
 
+    @Override
+    public String getAnimationClip() {
+        if (isDead) return "die";
+
+        if (isNewspaper) {
+            if (!isPhaseChanged) {
+                if (getFreezedTicksRemaining() > 0 || getIceHealth() > 0 || getDisabledTicksRemaining() > 0) return "idle_newspaper";
+                String base = currentState != null ? currentState.getAnimationClip() : "idle";
+                if (base.equals("walk")) return "walk_newspaper";
+                if (base.equals("eat")) return "eat_newspaper";
+                return "idle_newspaper";
+            } else {
+                if (defeatAnimationTimeRemaining > 0) return "newspaper_defeat";
+                if (getFreezedTicksRemaining() > 0 || getIceHealth() > 0 || getDisabledTicksRemaining() > 0) return "idle";
+                return currentState != null ? currentState.getAnimationClip() : "idle";
+            }
+        } else {
+            if (getFreezedTicksRemaining() > 0 || getIceHealth() > 0 || getDisabledTicksRemaining() > 0) return "idle";
+            String base = currentState != null ? currentState.getAnimationClip() : "idle";
+
+            if (!hasKilledPlant) {
+                if (base.equals("walk")) return "run";
+                if (base.equals("eat")) return "tackle";
+            } else {
+                if (base.equals("walk")) return "walk";
+                if (base.equals("eat")) return "eat";
+            }
+            return base;
+        }
+    }
 }

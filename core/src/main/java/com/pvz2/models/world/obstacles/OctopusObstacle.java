@@ -25,6 +25,7 @@ public class OctopusObstacle extends Obstacle {
     @Override
     public void takeDamage(int amount, String type) {
         if (isDestroyed) return;
+        triggerDamageFlash();
         this.health -= amount;
         if (this.health <= 0) {
             this.health = 0;

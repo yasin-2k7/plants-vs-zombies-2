@@ -4,39 +4,47 @@ import com.pvz2.controller.GameMenuController;
 import com.pvz2.models.core.App;
 import com.pvz2.models.enums.Zombies;
 import com.pvz2.models.plant.Plant;
-import com.pvz2.models.world.Cell;
 import com.pvz2.models.world.GameWorld;
 import com.pvz2.models.zombie.Zombie;
+import com.pvz2.models.zombie.state.EatingState;
+import com.pvz2.models.zombie.state.WalkingState;
+import com.pvz2.models.zombie.state.ZombieState;
+import com.pvz2.view.GameScreen;
 
+import java.util.ArrayList;
 import java.util.Set;
 
 public class ElementalZombie extends Zombie {
     private static final Set<String> FIRE_TYPES = Set.of(
-            "FIRE_PEA",
-            "PEPPER",
-            "SPECIAL_PEPPER",
-            "FIRE_PEASHOOTER",
-            "FIRE"
+        "FIRE_PEA", "PEPPER", "SPECIAL_PEPPER", "FIRE_PEASHOOTER", "FIRE"
     );
     private static final Set<String> ICE_TYPES = Set.of(
-            "ICE_PEA",
-            "SNOW_PEA",
-            "ICE_MELON",
-            "SPECIAL_ICE_MELON",
-            "ICE_SHROOM",
-            "ICE"
+        "ICE_PEA", "SNOW_PEA", "ICE_MELON", "SPECIAL_ICE_MELON", "ICE_SHROOM", "ICE", "FROST"
     );
+
     private boolean isExplorer;
     private boolean isIgnited;
-    private int fuseTimer;
+    private float fuseTimer;
     private boolean hasExploded;
+
+    public enum FlightState { NONE, BLASTOFF, FLY, LAND }
+    private FlightState flightState = FlightState.NONE;
+    private float stateTime = 0f;
 
     public ElementalZombie(int health, double speed, int damage, boolean isExplorer) {
         super(Zombies.ELEMENTAL, health, speed, damage);
         this.isExplorer = isExplorer;
         this.isIgnited = true;
-        this.fuseTimer = 150;
+        this.fuseTimer = 10.0f;
         this.hasExploded = false;
+    }
+
+    @Override
+    public void setState(ZombieState state) {
+        if (isExplorer && isIgnited && state instanceof EatingState) {
+            return;
+        }
+        super.setState(state);
     }
 
     @Override
@@ -44,29 +52,58 @@ public class ElementalZombie extends Zombie {
         if (isDead) return;
 
         if (!isExplorer && isIgnited && !hasExploded) {
-            fuseTimer--;
+            fuseTimer -= delta;
             if (fuseTimer <= 0) {
-                explode();
+                startBlastoff();
             }
         }
+
+        if (flightState != FlightState.NONE) {
+            handleFlight(delta);
+            return;
+        }
+
         super.update(delta);
 
-        if (isExplorer && isIgnited) {
+        if (isExplorer) {
             GameWorld game = App.getCurrentGame();
             if (game != null) {
-                Cell currentCell = Cell.findZombieCell(game.getGrid(), this);
-                if (currentCell != null) {
-                    Cell frontCell = (this.speed > 0) ?
-                            Cell.previousCell(currentCell, game.getGrid()) :
-                            Cell.nextCell(currentCell, game.getGrid());
-                    if (frontCell != null) {
-                        Plant plant = frontCell.getPlant();
-                        if (plant != null && !plant.isDead()) {
-                            plant.die();
-                            System.out.println("🔥Explorer burned plant at (" + plant.getX() +
-                                    ", " + plant.getY() + ")");
-                            GameMenuController.updateState("Explorer burned plant at (" + plant.getX() +
-                                    ", " + plant.getY() + ")");
+                for (Plant plant : new ArrayList<>(game.getActivePlants())) {
+                    if (plant == null || plant.isDead()) continue;
+
+                    float plantCenterY = (plant.getCell() != null)
+                        ? App.getCellCenterY(plant.getCell().getRow())
+                        : plant.getY();
+
+                    boolean sameRow = Math.abs(this.y - plantCenterY) < App.getCellHeight() * 0.5f;
+
+                    if (sameRow) {
+                        int plantRow = (plant.getCell() != null) ? plant.getCell().getRow() : 0;
+
+                        float plantWorldX = (plant.getCell() != null)
+                            ? App.getFirstCellX() + plant.getCell().getCol() * App.getCellWidth()
+                            : plant.getX();
+
+                        float dist = (this.speed <= 0) ? (this.x - plantWorldX) : (plantWorldX - this.x);
+
+                        if (dist >= 0 && dist < App.getCellWidth()) {
+                            String typeName = plant.getType().name().toUpperCase();
+                            boolean isIcePlant = typeName.contains("ICE") || typeName.contains("SNOW") || ICE_TYPES.contains(typeName);
+                            boolean isFirePlant = typeName.contains("FIRE") || typeName.contains("PEPPER") || FIRE_TYPES.contains(typeName);
+
+                            if (isIcePlant) {
+                                extinguish();
+                            } else if (isFirePlant) {
+                                ignite();
+                            }
+
+                            if (isIgnited) {
+                                plant.setBurnt(true);
+                                GameScreen.spawnPlantBurnEffect(plantWorldX, plantCenterY);
+                                plant.die();
+                                System.out.println("🔥 Explorer burned plant at row " + plantRow);
+                                GameMenuController.updateState("Explorer burned plant");
+                            }
                         }
                     }
                 }
@@ -74,70 +111,78 @@ public class ElementalZombie extends Zombie {
         }
     }
 
-    private void explode() {
+    private void startBlastoff() {
         this.hasExploded = true;
         this.isIgnited = false;
-        GameWorld game = App.getCurrentGame();
-        if (game == null) return;
+        this.flightState = FlightState.BLASTOFF;
+        this.stateTime = 0f;
+        this.speed = 0;
+    }
 
-        Cell currentCell = Cell.findZombieCell(game.getGrid(), this);
-        if (currentCell != null) {
-            this.y = currentCell.getY();
-            Cell leftmostCell = game.getGrid()[currentCell.getRow()][0];
-            this.x = leftmostCell.getX();
-        } else {
-            this.x = App.getCellWidth() / 2.0f;
+    private void handleFlight(float delta) {
+        stateTime += delta;
+        float targetX = App.getFirstCellX() + 50f;
+
+        switch (flightState) {
+            case BLASTOFF:
+                if (stateTime >= 1.0f) flightState = FlightState.FLY;
+                break;
+            case FLY:
+                this.x -= 400 * delta;
+                if (this.x <= targetX) {
+                    this.x = targetX;
+                    flightState = FlightState.LAND;
+                    stateTime = 0f;
+                }
+                break;
+            case LAND:
+                if (stateTime >= 1.0f) {
+                    flightState = FlightState.NONE;
+                    this.speed = -Math.abs(this.originalSpeed);
+                }
+                break;
         }
+    }
 
-        this.speed = -Math.abs(this.speed);
-
-        this.originalSpeed = -Math.abs(this.originalSpeed);
-
-        System.out.println("🧨Prospector exploded and teleported to the left end of the row.");
-//        int cols = game.getCols();
-//        float newX = cols * App.getCellWidth() - App.getCellWidth() / 2;
-//        this.x = newX;
-//        this.speed = Math.abs(this.speed);
-//        GameMenuController.updateState("Prospector exploded and teleported to the right end of the row.");
+    @Override
+    public String getAnimationClip() {
+        if (flightState != FlightState.NONE) {
+            return switch (flightState) {
+                case BLASTOFF -> "blastoff";
+                case FLY -> "fly";
+                case LAND -> "land";
+                default -> super.getAnimationClip();
+            };
+        }
+        return super.getAnimationClip();
     }
 
     public void extinguish() {
         if (!isIgnited) return;
         this.isIgnited = false;
-        System.out.println(isExplorer ? "Explorer's torch extinguished." : "Prospector's dynamite extinguished.");
-        if (!isExplorer) {
-            GameMenuController.updateState("Prospector's dynamite extinguished.");
-        } else {
-            GameMenuController.updateState("Explorer's torch extinguished.");
-        }
+        GameMenuController.updateState(isExplorer ? "Explorer's torch extinguished." : "Prospector's dynamite extinguished.");
     }
 
     public void ignite() {
-        if (!isExplorer) return;
-        if (isIgnited) return;
+        if (!isExplorer || isIgnited) return;
         this.isIgnited = true;
-        System.out.println("🔥Explorer's torch ignited.");
-        if (isExplorer) {
-            this.isIgnited = true;
-            GameMenuController.updateState("Explorer's torch ignited.");
-        }
+        setState(new WalkingState());
+        GameMenuController.updateState("Explorer's torch ignited.");
     }
 
     @Override
     public void takeDamage(int amount, String damageType) {
         if (isDead) return;
-
         if (damageType != null) {
             String upper = damageType.toUpperCase();
-            if (ICE_TYPES.contains(upper) || upper.contains("ICE")) {
+            if (ICE_TYPES.contains(upper) || upper.contains("ICE") || upper.contains("SNOW") || upper.contains("FROST")) {
                 extinguish();
-            } else if (FIRE_TYPES.contains(upper) || upper.contains("FIRE")) {
+            } else if (FIRE_TYPES.contains(upper) || upper.contains("FIRE") || upper.contains("PEPPER")) {
                 if (isExplorer) {
                     ignite();
                 }
             }
         }
-
         super.takeDamage(amount, damageType);
     }
 
@@ -146,23 +191,6 @@ public class ElementalZombie extends Zombie {
         super.applySlow(delta, factor, canWorkInFrostbite);
         if (isExplorer && isIgnited) {
             extinguish();
-        }
-    }
-
-    @Override
-    public void move(float delta) {
-        if (!isExplorer && hasExploded) {
-            float newX = (float) (this.x - this.speed);
-
-            GameWorld game = App.getCurrentGame();
-            if (game != null) {
-                float maxX = game.getCols() * App.getCellWidth();
-                if (newX < 0) newX = 0;
-                if (newX > maxX) newX = maxX;
-            }
-            this.x = newX;
-        } else {
-            super.move(delta);
         }
     }
 }

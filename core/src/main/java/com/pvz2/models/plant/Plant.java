@@ -1,6 +1,5 @@
 package com.pvz2.models.plant;
 
-import com.pvz2.controller.GameMenuController;
 import com.pvz2.models.Damageable;
 import com.pvz2.models.core.App;
 import com.pvz2.models.core.User;
@@ -12,8 +11,6 @@ import com.pvz2.models.zombie.Zombie;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.pvz2.models.enums.PlantType.SUN_SHROOM;
-
 public class Plant implements Damageable {
     private PlantType type;
     private int health;
@@ -22,7 +19,7 @@ public class Plant implements Damageable {
     private int damage;
     private transient ArrayList<GameComponent> components = new ArrayList<>();
     private boolean dead = false;
-    private boolean cat = false;
+    private boolean sheep = false;
     private boolean disabled = false;
     private transient Cell cell = null;
     private int frozenAmount = 0;
@@ -34,6 +31,10 @@ public class Plant implements Damageable {
     private State state = State.IDLE;
     private boolean isImitate;
     public static final int MAX_ICE_HEALTH = 600;
+
+    public static final long DAMAGE_FLASH_DURATION_MS = 150L;
+    private long lastDamageTimestamp = -1L;
+    private boolean burnt = false;
 
     public enum State {
         IDLE,
@@ -74,7 +75,7 @@ public class Plant implements Damageable {
     }
 
     public void update(float delta) {
-        if (disabled || freeze || cat) return;
+        if (disabled || freeze || sheep) return;
         if (!isImitate) {
             if (plantFoodInStart) {
                 activatePlantFood();
@@ -118,6 +119,7 @@ public class Plant implements Damageable {
 
     @Override
     public void takeDamage(int damage, Zombie zombie) {
+        triggerDamageFlash();
         if (iceHealth > 0) {
             iceHealth -= damage;
             if (iceHealth <= 0) {
@@ -145,6 +147,21 @@ public class Plant implements Damageable {
             die();
         }
 
+    }
+
+    protected void triggerDamageFlash() {
+        this.lastDamageTimestamp = System.currentTimeMillis();
+    }
+
+    public boolean isFlashingRed() {
+        if (lastDamageTimestamp < 0) return false;
+        return (System.currentTimeMillis() - lastDamageTimestamp) < DAMAGE_FLASH_DURATION_MS;
+    }
+
+    public float getDamageFlashProgress() {
+        if (!isFlashingRed()) return 0f;
+        long elapsed = System.currentTimeMillis() - lastDamageTimestamp;
+        return 1f - ((float) elapsed / (float) DAMAGE_FLASH_DURATION_MS);
     }
 
     public void die() {
@@ -267,12 +284,12 @@ public class Plant implements Damageable {
         this.warmRadius = warmRadius;
     }
 
-    public boolean isCat() {
-        return cat;
+    public boolean isSheep() {
+        return sheep;
     }
 
-    public void setCat(boolean cat) {
-        this.cat = cat;
+    public void setSheep(boolean sheep) {
+        this.sheep = sheep;
     }
 
     public State getState() {
@@ -293,5 +310,18 @@ public class Plant implements Damageable {
 
     public int getFrozenAmount() {
         return frozenAmount;
+    }
+
+    public int getRow() {return cell != null ? cell.getRow() : -1;}
+
+    public boolean isBurnt() {
+        return burnt;
+    }
+
+    public void setBurnt(boolean burnt) {
+        this.burnt = burnt;
+        if (burnt) {
+            die();
+        }
     }
 }

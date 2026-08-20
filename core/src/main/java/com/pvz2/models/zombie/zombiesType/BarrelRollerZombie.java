@@ -112,13 +112,18 @@ public class BarrelRollerZombie extends Zombie {
     public void die() {
         if (barrelIntact && barrelHealth > 0 && currentCell != null) {
             BarrelObstacle barrelObstacle = new BarrelObstacle(
-                    currentCell.getX(), currentCell.getY(), barrelHealth
+                currentCell.getX(), currentCell.getY(), barrelHealth
             );
             currentCell.setObstacle(barrelObstacle);
+            App.getCurrentGame().getActiveObstacles().add(barrelObstacle);
             System.out.println("🛢️ Barrel left behind as obstacle at (" +
-                    currentCell.getX() + ", " + currentCell.getY() + ")");
+                currentCell.getX() + ", " + currentCell.getY() + ")");
         }
         super.die();
+    }
+
+    public boolean isBarrelIntact() {
+        return barrelIntact;
     }
 
 }
