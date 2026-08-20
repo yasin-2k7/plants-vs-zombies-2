@@ -28,6 +28,10 @@ public class MainMenuController implements MenuController {
     public void changeMenu() {
     }
 
+    public void resetResourcesTable(){
+        mainMenuScreen.getResourcesTable().build();
+    }
+
     public void enterMenu(String menuName) {
         switch (menuName.toLowerCase()) {
             case "play":

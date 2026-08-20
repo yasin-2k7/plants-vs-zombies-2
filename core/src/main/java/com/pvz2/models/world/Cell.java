@@ -119,7 +119,7 @@ public class Cell {
     public static Cell findZombieCell(Cell[][] grid, Zombie zombie) {
         for (Cell[] cellRows : grid) {
             for (Cell cell : cellRows) {
-                if (cell.containsX(zombie.getX()) && cell.getY() == zombie.getY()) {
+                if (cell.containsX(zombie.getX()) && Math.abs(cell.getY() - zombie.getY()) < 5) {
                     return cell;
                 }
             }
@@ -225,7 +225,7 @@ public class Cell {
                     shooterComp.setBurstProjectileNumber(existingBehavior.getCurrentStack());
                     shooterComp.setBurstProjectileNumberOnPlantFood(existingBehavior.getCurrentStack());
                     shooterComp.setGiantCount(existingBehavior.getCurrentStack());
-                    return null;
+                    return newPlant;
                 }
             }
         }

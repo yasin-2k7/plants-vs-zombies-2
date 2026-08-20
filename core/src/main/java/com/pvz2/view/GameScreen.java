@@ -101,6 +101,7 @@ public class GameScreen extends MenuScreen {
     private PlantMenuController plantMenuController = new PlantMenuController();
 
     private final PlantPlacementManager plantPlacementManager = new PlantPlacementManager();
+    private final PlantfoodPlacementManager plantfoodPlacementManager = new PlantfoodPlacementManager();
 
     private ZombiePreviewManager zombiePreviewManager;
     private boolean zombiePreviewVisible = true;
@@ -391,8 +392,14 @@ public class GameScreen extends MenuScreen {
             panStartX = step.targetCenterX();
 
             if (currentStepIndex == STREET_ARRIVAL_STEP_INDEX) {
-                pauseCameraAtStreet();
-                return;
+                if (world.isConveyorMode()) {
+                    currentStepIndex++;
+                    stepElapsed = 0f;
+                    return;
+                } else {
+                    pauseCameraAtStreet();
+                    return;
+                }
             }
 
             currentStepIndex++;
@@ -493,6 +500,7 @@ public class GameScreen extends MenuScreen {
         renderWorldContent(delta);
         worldViewport.unproject(cursorWorldPos);
         plantPlacementManager.drawPreview(game.batch, cursorWorldPos);
+        plantfoodPlacementManager.drawPreview(game.batch, cursorWorldPos);
 
         if (zombiePreviewManager != null && zombiePreviewVisible) {
             zombiePreviewManager.update(delta, pamPlayer);
@@ -503,16 +511,15 @@ public class GameScreen extends MenuScreen {
         syncZombieGraphics();
         List<ZombieGraphic> sortedZombies = new ArrayList<>(zombieGraphics.values());
         sortedZombies.sort((z1, z2) -> Float.compare(z2.getZombie().getY(), z1.getZombie().getY()));
-
+        for (PlantGraphic pg : plantGraphics){
+            pg.update(delta);
+            pg.draw(game.batch, pamPlayer);
+        }
         for (ZombieGraphic zg : sortedZombies) {
             zg.update(delta, pamPlayer);
             zg.draw(game.batch, pamPlayer);
         }
 
-        for (PlantGraphic pg : plantGraphics){
-            pg.update(delta);
-            pg.draw(game.batch, pamPlayer);
-        }
         for (ExplosionEffectGraphic eg : explosionGraphics) {
             eg.update(delta);
             eg.draw(game.batch, pamPlayer);
@@ -542,7 +549,7 @@ public class GameScreen extends MenuScreen {
         game.batch.end();
 
 
-        if (App.isDebugMode()) {
+        if (App.getCurrentUser().isShowGrid()) {
             lawnGridDebugRenderer.draw(worldCamera);
         }
 
@@ -606,6 +613,7 @@ public class GameScreen extends MenuScreen {
                 }
             }
         }
+        syncGraveGraphics();
         for (int i = graveGraphics.size() - 1; i >= 0; i--) {
             GraveGraphic graphic = graveGraphics.get(i);
             Grave grave = graphic.getGrave();
@@ -656,7 +664,7 @@ public class GameScreen extends MenuScreen {
     public void resize(int width, int height) {
         super.resize(width, height);
         worldViewport.update(width, height, false);
-        if (hud != null) {
+        if (hud != null && stage != null) {
             hud.resize(stage.getWidth(), stage.getHeight());
         }
     }
@@ -836,26 +844,34 @@ public class GameScreen extends MenuScreen {
                 int col = LawnGrid.getColFromX(touchPoint.x);
 
                 if (row >= 0 && col >= 0) {
-                    boolean success = plantPlacementManager.tryPlace(row, col);
+                    Plant newPlant = GameMenuController.plantPlant(
+                        plantPlacementManager.getSelectedPlant(),
+                        App.getCellCenterX(col),
+                        App.getCellCenterY(row)
+                    );
+                    if (newPlant != null) {
+                        PlantGraphic pg = new PlantGraphic(newPlant, pamPlayer);
+                        plantGraphics.add(pg);
+                        checkExplosion(newPlant, pg);
 
-                    if (success){
-                        Plant newPlant = GameMenuController.plantSelectedPlant(
-                            App.getCellCenterX(col),
-                            App.getCellCenterY(row));
-                        if (newPlant != null){
-                            PlantGraphic pg = new PlantGraphic(newPlant, pamPlayer);
-                            plantGraphics.add(pg);
-                            checkExplosion(newPlant, pg);
-
-                        }
+                        plantPlacementManager.tryPlace(row, col);
                     }
                 }
-                plantPlacementManager.cancelSelection();
-            } else {
+            } else if (plantfoodPlacementManager.isSelected()){
+                int row = LawnGrid.getRowFromY(touchPoint.y);
+                int col = LawnGrid.getColFromX(touchPoint.x);
+
+                if (row >= 0 && col >= 0) {
+                    GameMenuController.feedPlant(App.getCellCenterX(col), App.getCellCenterY(row));
+                }
+            }
+            else {
                 GameMenuController.collectSun(touchPoint.x, touchPoint.y);
             }
             hud.getSelectedPlantsList().unselectPlants();
+            hud.getPlantFoodBank().setSelected(false);
             plantPlacementManager.cancelSelection();
+            plantfoodPlacementManager.setSelected(false);
         }
 
     }
@@ -1029,6 +1045,29 @@ public class GameScreen extends MenuScreen {
                     1f, 1f
                 )
             );
+        }
+    }
+
+    public PlantfoodPlacementManager getPlantfoodPlacementManager() {
+        return plantfoodPlacementManager;
+    }
+
+    private void syncGraveGraphics() {
+        if (world == null) return;
+        List<Grave> activeGraves = world.getGraves();
+
+        for (Grave grave : activeGraves) {
+            boolean exists = false;
+            for (GraveGraphic gg : graveGraphics) {
+                if (gg.getGrave() == grave) {
+                    exists = true;
+                    break;
+                }
+            }
+
+            if (!exists) {
+                graveGraphics.add(new GraveGraphic(grave, world));
+            }
         }
     }
 }

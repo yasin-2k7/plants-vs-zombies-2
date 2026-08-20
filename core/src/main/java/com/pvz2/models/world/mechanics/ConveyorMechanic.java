@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Random;
 
 public class ConveyorMechanic implements Mechanic {
+    private static final int MAX_CONVEYOR_CAPACITY = 8;
     private float lastSpawnTime = 0f;
     private float spawnInterval = 5.0f;
     private Random random = new Random();
@@ -16,18 +17,17 @@ public class ConveyorMechanic implements Mechanic {
         this.availablePlants = availablePlants;
     }
 
-    private PlantCard getRandomUnlokedPlant() {
+    private PlantCard getRandomUnlockedPlant() {
         return availablePlants.get(random.nextInt(availablePlants.size()));
     }
 
     @Override
     public void applyMechanic(GameWorld world) {
         float now = world.getElapsedTime();
-        now = now + 50;
-        if (now - lastSpawnTime >= spawnInterval) {
-            List<PlantCard> conveyor = world.getConveyorBelt();
-            if (conveyor != null) {
-                PlantCard newCard = getRandomUnlokedPlant();
+        List<PlantCard> conveyor = world.getConveyorBelt();
+        if (conveyor != null && conveyor.size() < MAX_CONVEYOR_CAPACITY) {
+            if (now - lastSpawnTime >= spawnInterval) {
+                PlantCard newCard = getRandomUnlockedPlant();
                 conveyor.add(newCard);
                 lastSpawnTime = now;
 

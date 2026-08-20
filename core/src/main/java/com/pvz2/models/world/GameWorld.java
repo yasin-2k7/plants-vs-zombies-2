@@ -29,6 +29,7 @@ import com.pvz2.models.zombie.Zombie;
 import com.pvz2.models.zombie.wave.WaveManager;
 
 import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public abstract class GameWorld {
     private final List<LifespanComponent> smallShrooms = new ArrayList<>();
@@ -71,6 +72,7 @@ public abstract class GameWorld {
     private List<String> winningDialogs = new ArrayList<>();
     private List<String> losingDialogs = new ArrayList<>();
     private boolean isEndGameHandled = false;
+    private boolean selectedPlantfood = false;
 
     public MupointManager getMupointManager() {
         return mupointManager;
@@ -85,7 +87,7 @@ public abstract class GameWorld {
         this.winCondition = winCondition;
         this.mechanics = mechanics;
         this.activeZombies = new ArrayList<>();
-        this.activePlants = new ArrayList<>();
+        this.activePlants = new CopyOnWriteArrayList<>();
         this.activeSuns = new ArrayList<>();
         this.activeProjectiles = new ArrayList<>();
         this.activeCollectables = new ArrayList<>();
@@ -347,6 +349,7 @@ public abstract class GameWorld {
     public void tick(float delta) {
         if (state != GameState.PLAYING || isDialogActive) return;   // <<< انتقال به بالا
         elapsedTime += delta;
+        delta *= App.getCurrentUser().getGameSpeed();
         updateAll(delta);
         cleanupDeadZombies();
         removeIfDead();
@@ -608,6 +611,14 @@ public abstract class GameWorld {
             }
         }
         return graves;
+    }
+
+    public boolean isSelectedPlantfood() {
+        return selectedPlantfood;
+    }
+
+    public void setSelectedPlantfood(boolean selectedPlantfood) {
+        this.selectedPlantfood = selectedPlantfood;
     }
 
     public void removeObstacle(Obstacle obstacle) {

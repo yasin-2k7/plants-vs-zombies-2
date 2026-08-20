@@ -70,16 +70,16 @@ public class ProjectileAssets {
             "idle", "768/INITIAL/EFFECTS/CACTUS_PROJECTILE_HIT/CACTUS_PROJECTILE_HIT.PAM", "animation"));
         VISUALS.put(ProjectileType.CACTUS_SPECIAL,
             VisualInfo.pam("768/INITIAL/EFFECTS/CACTUS_PROJECTILE_PLANTFOOD/CACTUS_PROJECTILE_PLANTFOOD.PAM",
-            "idle", "768/INITIAL/EFFECTS/CACTUS_PROJECTILE_HIT/CACTUS_PROJECTILE_HIT.PAM", "idle"));
+            "idle", "768/INITIAL/EFFECTS/CACTUS_PROJECTILE_HIT/CACTUS_PROJECTILE_HIT.PAM", "animation"));
         VISUALS.put(ProjectileType.CITRON, VisualInfo.pam("768/FULL/EFFECTS/CITRON_CITRUS_ORB/CITRON_CITRUS_ORB.PAM",
             "Citron_Citrus_Orb", "768/FULL/EFFECTS/CITRON_CITRUS_ORB_HIT/CITRON_CITRUS_ORB_HIT.PAM", "animation"));
         VISUALS.put(ProjectileType.FIRE_PEA, VisualInfo.pam("768/INITIAL/EFFECTS/T_FIRE_PEA/T_FIRE_PEA.PAM",
             "animation", "768/INITIAL/EFFECTS/T_SPLAT_FIRE_PEA/T_SPLAT_FIRE_PEA.PAM", "animation"));
         VISUALS.put(ProjectileType.FUME,VisualInfo.pam("768/INITIAL/EFFECTS/FUMESHROOM_BUBBLES/FUMESHROOM_BUBBLES.PAM",
-            "special", "768/INITIAL/EFFECTS/FUMESHROOM_BUBBLES_HIT/FUMESHROOM_BUBBLES_HIT.PAM", "animation"));
+            "special", null, null));
         VISUALS.put(ProjectileType.FUME_SPECIAL,
             VisualInfo.pam("768/INITIAL/EFFECTS/FUMESHROOM_BUBBLES/FUMESHROOM_BUBBLES.PAM",
-            "plantfood", "768/INITIAL/EFFECTS/FUMESHROOM_BUBBLES_HIT/FUMESHROOM_BUBBLES_HIT.PAM", "animation"));
+            "plantfood", null, null));
         VISUALS.put(ProjectileType.GIANT_PEA,
             VisualInfo.pam("768/INITIAL/EFFECTS/REPEATER_PLANTFOOD_GIANTPEA/REPEATER_PLANTFOOD_GIANTPEA.PAM",
             "animation", "768/INITIAL/EFFECTS/SPLAT_GIANTPEA/SPLAT_GIANTPEA.PAM", "animation"));

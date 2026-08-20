@@ -13,7 +13,6 @@ public class App {
     private static final float FIRST_CELL_X = 532f;
     private static User currentUser;
     private static GameWorld currentGame;
-    private static boolean debugMode = true;
     private static Main gameApp;
 
     public static User getCurrentUser() {
@@ -112,11 +111,4 @@ public class App {
         return gameApp;
     }
 
-    public static boolean isDebugMode() {
-        return debugMode;
-    }
-
-    public static void setDebugMode(boolean debugMode) {
-        App.debugMode = debugMode;
-    }
 }

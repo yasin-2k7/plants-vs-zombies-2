@@ -15,7 +15,7 @@ public class CombinedDamageStrategy implements HitStrategy {
     private float radius = 0;
     private String element = "NORMAL";
     private float chillTime = 5f;
-    private int poisonDamageOnTick = 5;
+    private int poisonDamageOnTick = 20;
     private ProjectileType projectileType;
 
     private CombinedDamageStrategy(int damage, int neighborDamage, float radius,
@@ -98,13 +98,14 @@ public class CombinedDamageStrategy implements HitStrategy {
     }
 
     private void applySpecialDamage(Damageable target) {
+        if (element == null) return;
         switch (element) {
             case "POISON":
                 if (target instanceof Zombie zombie) {
                     if (projectileType == ProjectileType.GOO) {
                         zombie.makePoisoned(poisonDamageOnTick);
                     } else {
-                        zombie.makePoisoned(poisonDamageOnTick * 100);
+                        zombie.makePoisoned(poisonDamageOnTick);
                     }
                 }
                 break;

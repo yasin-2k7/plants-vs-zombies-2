@@ -38,6 +38,7 @@ public class WallNutFactory {
         p.addComponent(new WallNutsComponent() {
             @Override
             public void activatePlantFood(Plant owner) {
+                super.activatePlantFood(owner);
                 ArmorComponent armor = p.getComponent(ArmorComponent.class);
                 if (armor == null) {
                     p.addComponent(new ArmorComponent(4000));
@@ -47,6 +48,7 @@ public class WallNutFactory {
             }
             @Override
             public void update(Plant owner, float delta) {
+                super.update(owner, delta);
                 if (owner.getHealth() < finalHealth / 4) owner.setState(Plant.State.DAMAGE3);
                 else if (owner.getHealth() < finalHealth / 2) owner.setState(Plant.State.DAMAGE2);
                 else if (owner.getHealth() < finalHealth * 3 / 4f) owner.setState(Plant.State.DAMAGE);
@@ -65,6 +67,7 @@ public class WallNutFactory {
         p.addComponent(new WallNutsComponent() {
             @Override
             public void activatePlantFood(Plant owner) {
+                super.activatePlantFood(owner);
                 ArmorComponent armor = p.getComponent(ArmorComponent.class);
                 if (armor == null) {
                     p.addComponent(new ArmorComponent(8000));
@@ -74,6 +77,7 @@ public class WallNutFactory {
             }
             @Override
             public void update(Plant owner, float delta) {
+                super.update(owner, delta);
                 if (owner.getHealth() < finalHealth / 3) owner.setState(Plant.State.DAMAGE2);
                 else if (owner.getHealth() < finalHealth * 2 / 3f) owner.setState(Plant.State.DAMAGE);
             }
@@ -89,11 +93,13 @@ public class WallNutFactory {
         p.addComponent(new WallNutsComponent() {
             @Override
             public int onTakeDamage(Plant owner, int damageAmount, Zombie attacker) {
+                if (attacker == null) return 0;
                 attacker.takeDamage(owner.getDamage(), "NORMAL");
                 return damageAmount;
             }
             @Override
             public void activatePlantFood(Plant owner) {
+                super.activatePlantFood(owner);
                 ArmorComponent armor = p.getComponent(ArmorComponent.class);
                 if (armor == null) {
                     p.addComponent(new ArmorComponent(4000));
@@ -105,6 +111,7 @@ public class WallNutFactory {
             }
             @Override
             public void update(Plant owner, float delta) {
+                super.update(owner, delta);
                 if (owner.getHealth() < health / 4) owner.setState(Plant.State.DAMAGE3);
                 else if (owner.getHealth() < health / 2) owner.setState(Plant.State.DAMAGE2);
                 else if (owner.getHealth() < health * 3 / 4f) owner.setState(Plant.State.DAMAGE);
@@ -123,9 +130,12 @@ public class WallNutFactory {
         p.addComponent(new MoveZombieComponent(new EjectStrategy()));
         p.addComponent(new WallNutsComponent() {
             @Override
-            public void activatePlantFood(Plant owner) {}
+            public void activatePlantFood(Plant owner) {
+                super.activatePlantFood(owner);
+            }
             @Override
             public void update(Plant owner, float delta) {
+                super.update(owner, delta);
                 if (owner.getHealth() < finalHealth / 3) owner.setState(Plant.State.DAMAGE2);
                 else if (owner.getHealth() < finalHealth * 2 / 3f) owner.setState(Plant.State.DAMAGE);
             }
@@ -143,9 +153,12 @@ public class WallNutFactory {
         p.addComponent(new MoveZombieComponent(new AttractStrategy()));
         p.addComponent(new WallNutsComponent() {
             @Override
-            public void activatePlantFood(Plant owner) {}
+            public void activatePlantFood(Plant owner) {
+                super.activatePlantFood(owner);
+            }
             @Override
             public void update(Plant owner, float delta) {
+                super.update(owner, delta);
                 if (owner.getHealth() < finalHealth / 4) owner.setState(Plant.State.DAMAGE3);
                 else if (owner.getHealth() < finalHealth / 2) owner.setState(Plant.State.DAMAGE2);
                 else if (owner.getHealth() < finalHealth * 3 / 4f) owner.setState(Plant.State.DAMAGE);
@@ -162,6 +175,7 @@ public class WallNutFactory {
         p.addComponent(new WallNutsComponent() {
             @Override
             public void activatePlantFood(Plant owner) {
+                super.activatePlantFood(owner);
                 ArmorComponent armor = p.getComponent(ArmorComponent.class);
                 if (armor == null) {
                     p.addComponent(new ArmorComponent(4000) {
@@ -175,6 +189,7 @@ public class WallNutFactory {
                         }
                         @Override
                         public void update(Plant owner, float delta) {
+                            super.update(owner, delta);
                             if (owner.getHealth() < health / 4) owner.setState(Plant.State.DAMAGE3);
                             else if (owner.getHealth() < health / 2) owner.setState(Plant.State.DAMAGE2);
                             else if (owner.getHealth() < health * 3 / 4f) owner.setState(Plant.State.DAMAGE);
@@ -206,6 +221,7 @@ public class WallNutFactory {
         p.addComponent(new WallNutsComponent() {
             @Override
             public void activatePlantFood(Plant owner) {
+                super.activatePlantFood(owner);
                 ArmorComponent armor = p.getComponent(ArmorComponent.class);
                 if (armor == null) {
                     p.addComponent(new ArmorComponent(4000));
@@ -215,6 +231,7 @@ public class WallNutFactory {
             }
             @Override
             public void update(Plant owner, float delta) {
+                super.update(owner, delta);
                 if (owner.getHealth() < finalHealth / 3) owner.setState(Plant.State.DAMAGE2);
                 else if (owner.getHealth() < finalHealth * 2 / 3f) owner.setState(Plant.State.DAMAGE);
             }
@@ -231,6 +248,7 @@ public class WallNutFactory {
         p.addComponent(new WallNutsComponent() {
             @Override
             public void activatePlantFood(Plant owner) {
+                super.activatePlantFood(owner);
                 ArmorComponent armor = p.getComponent(ArmorComponent.class);
                 if (armor == null) {
                     p.addComponent(new ArmorComponent(1000));

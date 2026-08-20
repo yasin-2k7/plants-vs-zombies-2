@@ -10,6 +10,7 @@ import com.pvz2.models.zombie.Zombie;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class Plant implements Damageable {
     private PlantType type;
@@ -17,7 +18,7 @@ public class Plant implements Damageable {
     private int initHealth;
     private int x, y;
     private int damage;
-    private transient ArrayList<GameComponent> components = new ArrayList<>();
+    private transient List<GameComponent> components = new CopyOnWriteArrayList<>();
     private boolean dead = false;
     private boolean sheep = false;
     private boolean disabled = false;
@@ -37,22 +38,16 @@ public class Plant implements Damageable {
     private boolean burnt = false;
 
     public enum State {
-        IDLE,
-        SPECIAL,
-        ATTACK,
-        UNARMED,
-        TRIGGERED,
-        HIT_RIGHT,
-        HIT_LEFT,
-        HIT_RIGHT_AND_LEFT,
+        IDLE, SPECIAL, ATTACK, UNARMED, TRIGGERED,
+        HIT_RIGHT, HIT_LEFT, HIT_RIGHT_AND_LEFT,
         SPECIAL_IDLE,
-        DAMAGE,
-        DAMAGE2,
-        DAMAGE3,
+        DAMAGE, DAMAGE2, DAMAGE3,
         INTRO,
         BUSY,
-        IMITATE_IDLE,
-        IMITATE_ATTACK
+        IMITATE_IDLE, IMITATE_ATTACK,
+        PLANT_FOOD_INTRO, PLANT_FOOD, PLANT_FOOD2, PLANT_FOOD_OUTRO,
+        JUMP_UP_LEFT, JUMP_UP_RIGHT, JUMP_DOWN_LEFT, JUMP_DOWN_RIGHT,
+        PLANT_FOOD_IDLE
     }
 
     public Plant(PlantType type, int health, int damage) {

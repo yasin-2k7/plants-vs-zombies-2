@@ -44,6 +44,10 @@ public class AnimationDurations {
         return (clips != null) ? clips.get(clip) : null;
     }
 
+    public static boolean hasClip(PlantType type, String clip) {
+        return lookup(type, clip) != null;
+    }
+
     public static float getDuration(PlantType type, String clip, float fallback) {
         ClipTiming t = lookup(type, clip);
         return (t != null) ? t.duration : fallback;

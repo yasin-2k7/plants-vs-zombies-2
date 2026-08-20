@@ -35,7 +35,13 @@ public class MintComponent implements GameComponent {
 
     @Override
     public void update(Plant owner, float delta) {
-        if (executed) return;
+        currentTimer += delta;
+        if (executed){
+            if (currentTimer >= totalTime) {
+                owner.die();
+            }
+            return;
+        }
         ensureIntroDurationLoaded(owner);
 
         if (!introStarted) {
@@ -43,19 +49,15 @@ public class MintComponent implements GameComponent {
             owner.setState(Plant.State.INTRO);
         }
 
-        currentTimer += delta;
-
         if (owner.getState() == Plant.State.INTRO && currentTimer >= introDuration) {
             owner.setState(Plant.State.IDLE);
-        }
-
-        if (currentTimer >= totalTime) {
             executed = true;
             if (mintAction != null) {
                 mintAction.accept(owner);
             }
-            owner.die();
         }
+
+
     }
 
     @Override

@@ -2,13 +2,14 @@ package com.pvz2.view;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.pvz2.models.core.App;
 import com.pvz2.models.enums.ProjectileType;
 import com.pvz2.models.projectile.Projectile;
 import pvz.libpvz.pam.PamPlayer;
 
 public class ProjectileGraphic {
     private final Projectile projectile;
-    private final ProjectileType type;
+    private ProjectileType type;
     private float animTime = 0f;
     private final int generation;
 
@@ -30,6 +31,7 @@ public class ProjectileGraphic {
     }
 
     public void draw(SpriteBatch batch, PamPlayer pamPlayer) {
+        if (projectile.getType() != type) type = projectile.getType();
         ProjectileAssets.VisualInfo info = ProjectileAssets.get(type);
         if (info == null) return;
 
@@ -45,10 +47,12 @@ public class ProjectileGraphic {
         }
         if (type == ProjectileType.CACTUS || type == ProjectileType.CACTUS_SPECIAL) drawY += 15;
         if (type == ProjectileType.SMALL_SHROOM) drawY -= 15;
-
-
+        if (type == ProjectileType.FUME || type == ProjectileType.FUME_SPECIAL){
+            drawX += 60;
+            drawY -= 20;
+        }
         if (info.kind == ProjectileAssets.Kind.PAM) {
-            pamPlayer.draw(batch, info.flightPamPath, info.flightClip, animTime, drawX, drawY, true);
+            pamPlayer.draw(batch, info.flightPamPath, info.flightClip, animTime* App.getCurrentUser().getGameSpeed(), drawX, drawY, true);
         } else {
             TextureRegion region = ProjectileAssets.region(info.textureRegionKey);
             if (region == null) return;

@@ -2,6 +2,7 @@ package com.pvz2.view;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.pvz2.Main;
+import com.pvz2.models.core.App;
 import com.pvz2.models.world.Sun;
 import com.pvz2.models.world.SunType;
 import pvz.libpvz.pam.PamPlayer;
@@ -44,7 +45,7 @@ public class SunGraphic {
                 batch,
                 pamPath,
                 animState,
-                animTime,
+                animTime* App.getCurrentUser().getGameSpeed(),
                 sun.getX(),
                 sun.getY(),
                 scale,

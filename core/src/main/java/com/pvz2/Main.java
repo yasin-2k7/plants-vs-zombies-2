@@ -5,6 +5,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.pvz2.controller.GameMenuController;
 import com.pvz2.models.core.App;
 import com.pvz2.models.core.GameInitializer;
 import com.pvz2.models.core.User;
@@ -45,7 +46,9 @@ public class Main extends Game {
             for (String zombieName : App.getCurrentUser().getShowedZombies().keySet()){
                 App.getCurrentUser().getShowedZombies().put(zombieName, true);
             }
-            setScreen(new MainMenuScreen(this));
+            MainMenuScreen mainMenuScreen = new MainMenuScreen(this);
+            setScreen(mainMenuScreen);
+            GameMenuController.setScreen(mainMenuScreen);
         } else {
             setScreen(new LoginMenuScreen(this));
         }

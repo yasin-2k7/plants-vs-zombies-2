@@ -29,6 +29,13 @@ public class SunProducerComponent implements GameComponent {
     private float growTimeToReduce;
     private boolean isInstant;
     private boolean instantProductDone = false;
+    private boolean inPlantFood = false;
+    private int plantFoodSunsRemaining = 0;
+    private float plantFoodTimer = 0f;
+    private float plantFoodInterval = 0f;
+    private float plantFoodTotalDuration = -1f;
+    private static final String PLANT_FOOD_CLIP = "plantfood";
+    private static final float DEFAULT_PLANT_FOOD_DURATION = 1.5f;
 
     // resolved lazily from AnimationDurations once the owner's PlantType is known
     private float actionTime = -1f;
@@ -63,11 +70,55 @@ public class SunProducerComponent implements GameComponent {
         actionTimeInterval = AnimationDurations.getDuration(owner.getType(), clip, DEFAULT_ACTION_TIME_INTERVAL);
     }
 
+    private void ensurePlantFoodDurationLoaded(Plant owner) {
+        if (plantFoodTotalDuration >= 0f) return;
+        plantFoodTotalDuration = AnimationDurations.getDuration(owner.getType(), PLANT_FOOD_CLIP, DEFAULT_PLANT_FOOD_DURATION);
+    }
+
+    private void tickPlantFood(Plant owner, float delta) {
+        plantFoodTimer += delta;
+        while (plantFoodSunsRemaining > 0 && plantFoodTimer >= plantFoodInterval) {
+            plantFoodTimer -= plantFoodInterval;
+            plantFoodSunsRemaining--;
+            componentSuns.add(produceSun(owner));
+        }
+        if (plantFoodSunsRemaining <= 0) {
+            inPlantFood = false;
+            owner.setState(Plant.State.IDLE);
+        }
+    }
+
+    @Override
+    public void activatePlantFood(Plant owner) {
+        plantFoodEffect(owner);
+    }
+
+    public void plantFoodEffect(Plant owner) {
+        if (sunNumberWithPlantFood <= 0) return;
+
+        ensurePlantFoodDurationLoaded(owner);
+        if (shroom) {
+            setSunSize(75);
+        }
+
+        inPlantFood = true;
+        plantFoodSunsRemaining = sunNumberWithPlantFood;
+        plantFoodTimer = 0f;
+        plantFoodInterval = plantFoodTotalDuration / sunNumberWithPlantFood;
+        owner.setState(Plant.State.PLANT_FOOD);
+    }
+
     @Override
     public void update(Plant owner, float delta) {
         ensureTimingLoaded(owner);
 
         if (App.getCurrentGame() instanceof IZombieLevel) return;
+
+        if (inPlantFood) {
+            tickPlantFood(owner, delta);
+            return;
+        }
+
         tick(owner, delta);
 
 
@@ -102,27 +153,12 @@ public class SunProducerComponent implements GameComponent {
         }
     }
 
-    @Override
-    public void activatePlantFood(Plant owner) {
-        plantFoodEffect(owner);
-    }
-
     private Sun produceSun(Plant owner) {
         Sun newSun = App.getCurrentGame().getSunsPool().acquire();
         newSun.reset(owner.getX(), owner.getY(), sunSize, this);
         App.getCurrentGame().getActiveSuns().add(newSun);
         return newSun;
     }
-
-    public void plantFoodEffect(Plant owner) {
-        if (shroom) {
-            setSunSize(75);
-        }
-        for (int i = 0; i < sunNumberWithPlantFood; i++) {
-            componentSuns.add(produceSun(owner));
-        }
-    }
-
     private void setSunSize(int newSize) {
         this.sunSize = newSize;
     }

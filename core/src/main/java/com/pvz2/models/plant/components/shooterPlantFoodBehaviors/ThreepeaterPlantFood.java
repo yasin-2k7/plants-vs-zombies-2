@@ -30,10 +30,10 @@ public class ThreepeaterPlantFood implements PlantFoodBehavior {
                 int currentShot = TOTAL_PLANT_FOOD_SHOTS - remaining;
                 float progress = (float) currentShot / (TOTAL_PLANT_FOOD_SHOTS - 1);
 
-                float spreadFactor = 0.5f + (progress * 1.5f);
+                float spreadFactor = 200f + (progress * 600f);
                 float currentSpeedY = directionFactor * spreadFactor;
 
-                return new StraightMovementStrategy(6f, currentSpeedY, 0);
+                return new StraightMovementStrategy(700f, currentSpeedY, 0);
             });
         }
     }

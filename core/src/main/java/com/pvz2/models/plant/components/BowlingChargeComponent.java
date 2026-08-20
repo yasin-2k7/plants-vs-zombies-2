@@ -17,7 +17,7 @@ import java.util.function.Supplier;
 public class BowlingChargeComponent implements GameComponent {
 
     private final Bulb[] bulbs = new Bulb[3];
-    private final float shootingTime;
+    private float shootingTime;
     private final VisionStrategy visionStrategy = new StraightVisionStrategy(1000, App.getCellHeight(), false);
     private final CombinedDamageStrategy[] damageStrategies = new CombinedDamageStrategy[3];
     private final CheckStrike strikeStrategy = new CheckStraightStrike();
@@ -54,6 +54,8 @@ public class BowlingChargeComponent implements GameComponent {
     public void activatePlantFood(Plant owner) {
         activePlantFood = true;
         shootingTimer = 0;
+        shootingTime = 0.5f;
+        owner.setState(Plant.State.PLANT_FOOD);
         plantFoodProjectileCount = 3;
         for (Bulb bulb : bulbs) {
             bulb.isReady = true;
@@ -119,6 +121,8 @@ public class BowlingChargeComponent implements GameComponent {
             App.getCurrentGame().getActiveProjectiles().add(p);
             if (plantFoodProjectileCount == 0) {
                 activePlantFood = false;
+                owner.setState(Plant.State.IDLE);
+                shootingTime = 2;
             }
         }
     }

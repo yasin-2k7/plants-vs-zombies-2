@@ -2,6 +2,7 @@ package com.pvz2.view;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
+import com.pvz2.models.core.App;
 import com.pvz2.models.zombie.Zombie;
 import com.pvz2.models.zombie.zombiesType.BarrelRollerZombie;
 import pvz.libpvz.pam.PamPlayer;
@@ -80,7 +81,6 @@ public class ZombieGraphic {
             shader.setUniformf("u_flashAmount", flashAmount);
         }
 
-        // اگر سرعت کوچکتر از ۰ باشد یعنی در حال حرکت به راست است؛ پس Scale را برای محور X منفی می‌کنیم
         float scaleX = zombie.getSpeed() < 0 ? -0.8f : 0.8f;
 
         if (visibilities != null) {

@@ -19,7 +19,7 @@ import java.util.List;
 public abstract class Zombie implements Damageable {
     protected Zombies name;
     protected String specificName;
-    protected int health;
+    protected float health;
     protected int maxHealth;
     protected double speed;
     protected double originalSpeed = speed;
@@ -79,7 +79,7 @@ public abstract class Zombie implements Damageable {
         }
         if (onPoisonTimeRemaining > 0) {
             onPoisonTimeRemaining-= delta;
-            health -= poisonDamage;
+            health -= poisonDamage * delta;
             if (health <= 0) die();
         }
         if (slowTimeRemaining > 0) {
@@ -291,7 +291,7 @@ public abstract class Zombie implements Damageable {
         return freezedTimeRemaining;
     }
 
-    public int getHealth() {
+    public float getHealth() {
         return health;
     }
 

@@ -1,6 +1,7 @@
 package com.pvz2.view;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.pvz2.models.core.App;
 import com.pvz2.models.world.Sandstorm;
 import pvz.libpvz.pam.PamPlayer;
 
@@ -34,7 +35,7 @@ public class SandstormGraphic {
                 batch,
                 SANDSTORM_PAM_PATH,
                 animName,
-                sandstorm.getStateTime(),
+                sandstorm.getStateTime()* App.getCurrentUser().getGameSpeed(),
                 sandstorm.getX(),
                 sandstorm.getY(),
                 1.0f,

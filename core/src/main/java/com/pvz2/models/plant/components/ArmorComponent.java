@@ -34,6 +34,14 @@ public class ArmorComponent implements GameComponent {
         }
     }
 
+    public int getArmorHp() {
+        return armorHp;
+    }
+
+    public int getInitHp() {
+        return initHp;
+    }
+
     @Override
     public void activatePlantFood(Plant owner) {
         armorHp = initHp;

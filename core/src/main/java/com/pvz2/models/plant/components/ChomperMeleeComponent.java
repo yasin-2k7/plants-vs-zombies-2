@@ -16,13 +16,23 @@ public class ChomperMeleeComponent implements GameComponent {
     private static final String BITE_CLIP = "special";
     private static final float DEFAULT_BITE_DURATION = 0.6f;
 
+    private static final String PLANT_FOOD_INTRO_CLIP = "plantfood_on";
+    private static final String PLANT_FOOD_CLIP = "plantfood";
+    private static final String PLANT_FOOD_OUTRO_CLIP = "plantfood_off";
+    private static final float DEFAULT_PLANT_FOOD_DURATION = 1.0f;
+
     private final float digestTime;
     private boolean isDigesting = false;
     private float digestProgressTime = 0f;
     private float biteAnimTimer = 0f;
 
-    // resolved lazily once the owner's PlantType is known
+    private float plantFoodTimer = 0f;
+    private float introOutroTimer = 0f;
+
     private float biteDuration = -1f;
+    private float plantFoodIntroDuration = -1f; // 0 means "no intro configured"
+    private float plantFoodDuration = -1f;
+    private float plantFoodOutroDuration = -1f; // 0 means "no outro configured"
 
     public ChomperMeleeComponent(float digestTime) {
         this.digestTime = digestTime;
@@ -33,9 +43,50 @@ public class ChomperMeleeComponent implements GameComponent {
         biteDuration = AnimationDurations.getDuration(owner.getType(), BITE_CLIP, DEFAULT_BITE_DURATION);
     }
 
+    private void ensurePlantFoodDurationsLoaded(Plant owner) {
+        if (plantFoodDuration >= 0f) return;
+        plantFoodIntroDuration = AnimationDurations.hasClip(owner.getType(), PLANT_FOOD_INTRO_CLIP)
+            ? AnimationDurations.getDuration(owner.getType(), PLANT_FOOD_INTRO_CLIP, 0f) : 0f;
+        plantFoodDuration = AnimationDurations.getDuration(owner.getType(), PLANT_FOOD_CLIP, DEFAULT_PLANT_FOOD_DURATION);
+        plantFoodOutroDuration = AnimationDurations.hasClip(owner.getType(), PLANT_FOOD_OUTRO_CLIP)
+            ? AnimationDurations.getDuration(owner.getType(), PLANT_FOOD_OUTRO_CLIP, 0f) : 0f;
+    }
+
     @Override
     public void update(Plant owner, float delta) {
         ensureBiteDurationLoaded(owner);
+        ensurePlantFoodDurationsLoaded(owner);
+
+        if (owner.getState() == Plant.State.PLANT_FOOD_INTRO) {
+            introOutroTimer -= delta;
+            if (introOutroTimer <= 0f) {
+                dealPlantFoodDamage(owner);
+                plantFoodTimer = 0f;
+                owner.setState(Plant.State.PLANT_FOOD);
+            }
+            return;
+        }
+
+        if (owner.getState() == Plant.State.PLANT_FOOD) {
+            plantFoodTimer += delta;
+            if (plantFoodTimer >= plantFoodDuration) {
+                if (plantFoodOutroDuration > 0f) {
+                    owner.setState(Plant.State.PLANT_FOOD_OUTRO);
+                    introOutroTimer = plantFoodOutroDuration;
+                } else {
+                    owner.setState(Plant.State.IDLE);
+                }
+            }
+            return;
+        }
+
+        if (owner.getState() == Plant.State.PLANT_FOOD_OUTRO) {
+            introOutroTimer -= delta;
+            if (introOutroTimer <= 0f) {
+                owner.setState(Plant.State.IDLE);
+            }
+            return;
+        }
 
         if (isDigesting) {
             digestProgressTime += delta;
@@ -86,21 +137,19 @@ public class ChomperMeleeComponent implements GameComponent {
 
     private void swallowZombie(Plant owner, Zombie zombie) {
         if (zombie.isBoss()) return;
-        zombie.takeDamage(zombie.getHealth(), "NORMAL");
+        zombie.takeDamage((int) zombie.getHealth(), "NORMAL");
         this.isDigesting = true;
         this.digestProgressTime = 0f;
         this.biteAnimTimer = 0f;
         owner.setState(Plant.State.SPECIAL);
     }
 
-    @Override
-    public void activatePlantFood(Plant owner) {
+    private void dealPlantFoodDamage(Plant owner) {
         Cell cell = owner.getCell();
         if (cell == null) return;
 
         List<Cell> cells = Cell.getCellsInRow(cell, LevelMenuController.getGameCells());
         List<Zombie> rowZombies = Cell.getZombiesInCells(cells);
-        if (rowZombies.isEmpty()) return;
 
         List<Zombie> targets = rowZombies.stream()
             .filter(zombie -> zombie.getX() >= owner.getX())
@@ -108,18 +157,24 @@ public class ChomperMeleeComponent implements GameComponent {
             .limit(3)
             .toList();
 
-        boolean swallowedAny = false;
         for (Zombie target : targets) {
             if (target.isBoss()) continue;
-            target.takeDamage(target.getHealth(), "NORMAL");
-            swallowedAny = true;
+            target.takeDamage((int) target.getHealth(), "NORMAL");
         }
+    }
 
-        if (swallowedAny) {
-            this.isDigesting = true;
-            this.digestProgressTime = 0f;
-            this.biteAnimTimer = 0f;
-            owner.setState(Plant.State.SPECIAL);
+    @Override
+    public void activatePlantFood(Plant owner) {
+        ensureBiteDurationLoaded(owner);
+        ensurePlantFoodDurationsLoaded(owner);
+
+        if (plantFoodIntroDuration > 0f) {
+            owner.setState(Plant.State.PLANT_FOOD_INTRO);
+            introOutroTimer = plantFoodIntroDuration;
+        } else {
+            dealPlantFoodDamage(owner);
+            plantFoodTimer = 0f;
+            owner.setState(Plant.State.PLANT_FOOD);
         }
     }
 }
