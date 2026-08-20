@@ -5,6 +5,7 @@ import com.badlogic.gdx.Screen;
 import com.pvz2.models.core.App;
 import com.pvz2.models.core.User;
 import com.pvz2.models.core.UserDataManager;
+import com.pvz2.models.enums.Chapter;
 import com.pvz2.models.enums.CollectableType;
 import com.pvz2.models.enums.PlantLayer;
 import com.pvz2.models.enums.PlantType;
@@ -129,6 +130,23 @@ public class GameMenuController implements MenuController {
                 game.tick(App.getCurrentGame().getElapsedTime());
 //            } else return;
         }
+    }
+
+    public static void restart(){
+        User user = App.getCurrentUser();
+        if (user == null) return;
+        Chapter currentChapter = user.getCurrentChapter();
+        int level = user.getCurrentLevel();
+        if (currentChapter == null) {
+            return;
+        }
+        GameWorld world = LevelFactory.createLevel(currentChapter, level);
+        App.setCurrentGame(world);
+        user.setCurrentLevel(level);
+        world.initialize();
+
+        screen.fadeAndSwitchScreen(
+            new GameScreen(screen.getGame(), world, currentChapter));
     }
 
     public static void collectSun(float touchX, float touchY) {

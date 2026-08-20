@@ -205,33 +205,7 @@ public class GameScreen extends MenuScreen {
     }
 
     public void restartLevel() {
-        world.reset();
-        world.setEndGameHandled(false);
-        for (int i = 0; i < 8; i++){
-            hud.getSelectedPlantsList().getSlots()[i] = null;
-        }
-        hud.getSelectedPlantsList().build();
-
-        plantGraphics.clear();
-        zombieGraphics.clear();
-        zombiePreviewManager = new ZombiePreviewManager(world.getWaveManager(), world.getRows(), world.getCols());  // <<< اضافه شد
-
-        if (endGameOverlay != null) {
-            endGameOverlay.remove();
-            endGameOverlay = null;
-        }
-
-        buildIntroPanSequence();
-
-        if (daveOverlay != null) {
-            daveOverlay.remove();
-        }
-        List<String> starting = world.getStartingDialogs();
-        if (starting == null) {
-            starting = new ArrayList<>();
-        }
-        daveOverlay = new CrazyDaveOverlay(game, starting, world);
-        modalStack.addActor(daveOverlay);
+        GameMenuController.restart();
     }
 
     private void showEndGameOverlay() {
@@ -489,7 +463,7 @@ public class GameScreen extends MenuScreen {
         drawLawnBackground();
         renderWorldContent(delta);
         worldViewport.unproject(cursorWorldPos);
-        plantPlacementManager.drawPreview(game.batch, cursorWorldPos);
+        plantPlacementManager.drawPreview(pamPlayer, game.batch, cursorWorldPos, delta);
         plantfoodPlacementManager.drawPreview(game.batch, cursorWorldPos);
         shovelPlacementManager.drawPreview(game.batch, cursorWorldPos);
 

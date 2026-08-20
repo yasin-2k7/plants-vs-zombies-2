@@ -118,7 +118,7 @@ public class VaseBreakerScreen extends MenuScreen {
         Vector3 cursorWorldPos = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
         worldViewport.unproject(cursorWorldPos);
 
-        plantPlacementManager.drawPreview(game.batch, cursorWorldPos);
+        plantPlacementManager.drawPreview(pamPlayer, game.batch, cursorWorldPos, delta);
 
         game.batch.end();
     }

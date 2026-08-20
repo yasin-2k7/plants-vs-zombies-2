@@ -524,6 +524,10 @@ public class User {
         return debugMode;
     }
 
+    public int getCurrentLevel() {
+        return currentLevel;
+    }
+
     public void setDebugMode(boolean debugMode) {
         this.debugMode = debugMode;
     }
