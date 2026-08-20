@@ -2,6 +2,8 @@ package com.pvz2.view;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.pvz2.models.core.App;
+import com.pvz2.models.world.GameState;
+import com.pvz2.models.world.GameWorld;
 import com.pvz2.models.zombie.Zombie;
 import pvz.libpvz.pam.PamPlayer;
 
@@ -33,6 +35,8 @@ public class ZombieGraphic {
         }
         if (zombie.isDead()) return;
 
+        GameWorld world = App.getCurrentGame();
+        if (world != null && world.getState() == GameState.PAUSED) delta = 0;
         animTime += delta;
 
         String targetClip = resolveClip(zombie.getAnimationClip());

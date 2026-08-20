@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.ui.WidgetGroup;
 import com.pvz2.models.core.App;
 import com.pvz2.models.plant.card.PlantCard;
+import com.pvz2.models.world.GameState;
 import com.pvz2.models.world.GameWorld;
 
 import java.util.ArrayList;
@@ -50,6 +51,7 @@ public class ConveyorBeltView extends WidgetGroup {
     public void act(float delta) {
         super.act(delta);
         GameWorld world = App.getCurrentGame();
+        if (world != null && world.getState() == GameState.PAUSED) delta = 0;
         if (world == null || !world.isConveyorMode()) {
             setVisible(false);
             return;

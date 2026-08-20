@@ -100,6 +100,7 @@ public class GameScreen extends MenuScreen {
 
     private final PlantPlacementManager plantPlacementManager = new PlantPlacementManager();
     private final PlantfoodPlacementManager plantfoodPlacementManager = new PlantfoodPlacementManager();
+    private final ShovelPlacementManager shovelPlacementManager = new ShovelPlacementManager();
 
     private ZombiePreviewManager zombiePreviewManager;
     private boolean zombiePreviewVisible = true;
@@ -490,6 +491,7 @@ public class GameScreen extends MenuScreen {
         worldViewport.unproject(cursorWorldPos);
         plantPlacementManager.drawPreview(game.batch, cursorWorldPos);
         plantfoodPlacementManager.drawPreview(game.batch, cursorWorldPos);
+        shovelPlacementManager.drawPreview(game.batch, cursorWorldPos);
 
         if (zombiePreviewManager != null && zombiePreviewVisible) {
             zombiePreviewManager.update(delta, pamPlayer);
@@ -819,14 +821,23 @@ public class GameScreen extends MenuScreen {
                 if (row >= 0 && col >= 0) {
                     GameMenuController.feedPlant(App.getCellCenterX(col), App.getCellCenterY(row));
                 }
+            } else if (shovelPlacementManager.isSelected()){
+                int row = LawnGrid.getRowFromY(touchPoint.y);
+                int col = LawnGrid.getColFromX(touchPoint.x);
+
+                if (row >= 0 && col >= 0) {
+                    GameMenuController.pluckPlant(App.getCellCenterX(col), App.getCellCenterY(row));
+                }
             }
             else {
                 GameMenuController.collectSun(touchPoint.x, touchPoint.y);
             }
             hud.getSelectedPlantsList().unselectPlants();
             hud.getPlantFoodBank().setSelected(false);
+            hud.getShovelBtn().setChecked(false);
             plantPlacementManager.cancelSelection();
             plantfoodPlacementManager.setSelected(false);
+            shovelPlacementManager.setSelected(false);
         }
 
     }
@@ -954,6 +965,10 @@ public class GameScreen extends MenuScreen {
 
     public PlantfoodPlacementManager getPlantfoodPlacementManager() {
         return plantfoodPlacementManager;
+    }
+
+    public ShovelPlacementManager getShovelPlacementManager() {
+        return shovelPlacementManager;
     }
 
     private void syncGraveGraphics() {

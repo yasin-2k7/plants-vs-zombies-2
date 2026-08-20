@@ -201,12 +201,27 @@ public class GameMenuController implements MenuController {
     public static boolean selectAndUnselectPlantfood(){
         GameWorld world = App.getCurrentGame();
         if (world == null) return false;
+        unselectPlant();
+        unselectShovel();
         if (world.getPlantFoods() == 0) return false;
         if (world.isSelectedPlantfood()){
             world.setSelectedPlantfood(false);
             return true;
         }
         world.setSelectedPlantfood(true);
+        return true;
+    }
+
+    public static boolean selectAndUnselectShovel(){
+        GameWorld world = App.getCurrentGame();
+        if (world == null) return false;
+        unselectPlant();
+        unselectPlantfood();
+        if (world.isSelectedShovel()){
+            world.setSelectedShovel(false);
+            return true;
+        }
+        world.setSelectedShovel(true);
         return true;
     }
 
@@ -225,6 +240,8 @@ public class GameMenuController implements MenuController {
 
     public static boolean selectAndUnselectPlant(PlantType type, MenuScreen screen) {
         if (App.getCurrentGame().isPlantSelected()){
+            unselectPlantfood();
+            unselectShovel();
             if (App.getCurrentGame().getSelectedPlant() == type){
                 unselectPlant();
                 return false;
@@ -258,6 +275,14 @@ public class GameMenuController implements MenuController {
         App.getCurrentGame().setSelectedPlant(null);
         App.getCurrentGame().setPlantSelected(false);
     }
+    public static void unselectPlantfood(){
+        App.getCurrentGame().setSelectedPlantfood(false);
+    }
+    public static void unselectShovel(){
+        App.getCurrentGame().setSelectedShovel(false);
+    }
+
+
     public static Plant plantSelectedPlant(float x, float y) {
         if (App.getCurrentGame().getSelectedPlant() == null) {
             return null;
@@ -321,10 +346,11 @@ public class GameMenuController implements MenuController {
         }
     }
 
-    public void pluckPlant(float x, float y) {
+    public static void pluckPlant(float x, float y) {
+        if (!App.getCurrentGame().isSelectedShovel()) return;
         Cell selectedCell = findCellAt(App.getCurrentGame(), x, y);
         if (selectedCell == null || !selectedCell.findAndRemovePlant()) {
-//            GameMenuView.getInstance().showResult("there is no plant in that place!");
+            return;
         }
     }
 

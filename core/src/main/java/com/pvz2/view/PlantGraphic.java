@@ -8,6 +8,8 @@ import com.pvz2.models.plant.AnimationDurations;
 import com.pvz2.models.plant.Plant;
 import com.pvz2.models.plant.PlantAnimationClips;
 import com.pvz2.models.plant.components.ArmorComponent;
+import com.pvz2.models.world.GameState;
+import com.pvz2.models.world.GameWorld;
 import pvz.libpvz.pam.PamPlayer;
 
 import java.util.HashMap;
@@ -116,6 +118,8 @@ public class PlantGraphic {
     }
 
     public void update(float delta) {
+        GameWorld world = App.getCurrentGame();
+        if (world != null && world.getState() == GameState.PAUSED) delta = 0;
         if (!plant.isFreeze()){
             animTime += delta;
         }

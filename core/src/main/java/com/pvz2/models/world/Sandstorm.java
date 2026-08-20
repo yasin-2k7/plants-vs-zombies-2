@@ -38,6 +38,8 @@ public class Sandstorm {
     }
 
     public void update(float delta) {
+        GameWorld world = App.getCurrentGame();
+        if (world != null && world.getState() == GameState.PAUSED) delta = 0;
         stateTime += delta;
 
         switch (state) {

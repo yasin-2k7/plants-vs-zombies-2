@@ -42,6 +42,7 @@ public class GameHUD extends Group {
 
     private final Table topBar;
     private final SunCounter sunCounter;
+    private final ImageButton shovelBtn;
     private final WaveProgressBar waveProgressBar;
     private final ResourcesTable resourcesTable;
     private final PlantFoodBank plantFoodBank;
@@ -91,8 +92,11 @@ public class GameHUD extends Group {
             }
         });
 
+        shovelBtn = createShovelBtn(game);
+
         topBar = new Table();
         topBar.add(sunCounter).left().pad(MARGIN);
+        topBar.add(shovelBtn).pad(5);
 
         topBar.add(waveProgressBar).expandX().center().padTop(MARGIN);
         topBar.add(resourcesTable).right().pad(MARGIN);
@@ -103,6 +107,31 @@ public class GameHUD extends Group {
         addActor(plantFoodBank);
         addActor(conveyorBeltView);
     }
+
+    private ImageButton createShovelBtn(Main game) {
+        TextureRegion shovelIcon;
+        TextureRegion shovelIconSelected;
+        shovelIcon = game.textureBank.region("IMAGE_UI_HUD_INGAME_SHOVEL_BUTTON");
+        shovelIconSelected = game.textureBank.region("IMAGE_UI_HUD_INGAME_SHOVEL_BUTTON_DOWN");
+        Drawable shovel = new TextureRegionDrawable(shovelIcon);
+        Drawable shovelSelected = new TextureRegionDrawable(shovelIconSelected);
+        ImageButton imageButton = new ImageButton(shovel, shovel, shovelSelected);
+        imageButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                if (imageButton.isChecked()) {
+                    if (GameMenuController.selectAndUnselectShovel()) {
+                        screen.getShovelPlacementManager().setSelected(true);
+                    }
+                } else {
+                    GameMenuController.selectAndUnselectShovel();
+                    screen.getShovelPlacementManager().setSelected(false);
+                }
+            }
+        });
+        return imageButton;
+    }
+
 
    private Consumer<PlantCardView> createSelectingMethod(){
 
@@ -608,10 +637,12 @@ public class GameHUD extends Group {
             waveProgressBar.setVisible(false);
             plantFoodBank.setVisible(false);
             selectedPlantsList.setVisible(false);
+            shovelBtn.setVisible(false);
             return;
         }
 
         moveAndSetVisible(sunCounter, 0, -200);
+        moveAndSetVisible(shovelBtn, 0, -200);
         moveAndSetVisible(waveProgressBar, 0, -200);
         moveAndSetVisible(plantFoodBank,0, 200);
     }
@@ -634,6 +665,10 @@ public class GameHUD extends Group {
 
     public ResourcesTable getResourcesTable() {
         return resourcesTable;
+    }
+
+    public ImageButton getShovelBtn() {
+        return shovelBtn;
     }
 
     public SelectedPlantsList getSelectedPlantsList() {
