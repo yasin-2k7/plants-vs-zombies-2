@@ -45,6 +45,7 @@ public class Plant implements Damageable {
         BUSY,
         IMITATE_IDLE, IMITATE_ATTACK,
         PLANT_FOOD_INTRO, PLANT_FOOD, PLANT_FOOD2, PLANT_FOOD_OUTRO,
+        JUMP_UP_LEFT, JUMP_UP_RIGHT, JUMP_DOWN_LEFT, JUMP_DOWN_RIGHT,
         PLANT_FOOD_IDLE
     }
 

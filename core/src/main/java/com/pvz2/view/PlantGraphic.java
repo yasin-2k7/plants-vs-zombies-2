@@ -16,8 +16,8 @@ import java.util.Map;
 public class PlantGraphic {
 
     private final Plant plant;
-    private final float worldX;
-    private final float worldY;
+    private float worldX;
+    private float worldY;
 
     private String normalPamPath;
     private String imitatorPamPath;
@@ -118,6 +118,11 @@ public class PlantGraphic {
     public void update(float delta) {
         if (!plant.isFreeze()){
             animTime += delta;
+        }
+
+        if (plant.getType() == PlantType.SQUASH){
+            worldX = plant.getX();
+            worldY = plant.getY();
         }
 
 
@@ -246,6 +251,10 @@ public class PlantGraphic {
         if (state == Plant.State.BUSY){
             return new ClipInfo("busy", true);
         }
+        if (state == Plant.State.JUMP_UP_LEFT) return new ClipInfo(PlantAnimationClips.getJumpUpLeftClip(plant.getType()), false);
+        if (state == Plant.State.JUMP_UP_RIGHT) return new ClipInfo(PlantAnimationClips.getJumpUpRightClip(plant.getType()), false);
+        if (state == Plant.State.JUMP_DOWN_LEFT) return new ClipInfo(PlantAnimationClips.getJumpDownLeftClip(plant.getType()), false);
+        if (state == Plant.State.JUMP_DOWN_RIGHT) return new ClipInfo(PlantAnimationClips.getJumpDownRightClip(plant.getType()), false);
         if (state == Plant.State.PLANT_FOOD_IDLE){
             return new ClipInfo(PlantAnimationClips.getPlantFoodIdleClip(), true);
         }

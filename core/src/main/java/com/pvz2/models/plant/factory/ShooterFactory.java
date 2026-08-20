@@ -362,6 +362,7 @@ public class ShooterFactory {
             }
         };
         newComponent.getMovementStrategies().add(() -> movementStrategy);
+        newComponent.setPlantFoodFinishDelay(1f);
         p.addComponent(newComponent);
         LifespanComponent lifespanComponent = new LifespanComponent(PlantType.SEA_SHROOM, lifespan);
         if (App.getCurrentGame() != null) App.getCurrentGame().registerShroom(lifespanComponent);
@@ -390,6 +391,7 @@ public class ShooterFactory {
             }
         };
         newComponent.getMovementStrategies().add(() -> movementStrategy);
+        newComponent.setPlantFoodFinishDelay(1f);
         p.addComponent(newComponent);
         LifespanComponent lifespanComponent = new LifespanComponent(PlantType.PUFF_SHROOM, lifespan);
         if (App.getCurrentGame() != null) App.getCurrentGame().registerShroom(lifespanComponent);

@@ -115,7 +115,7 @@ public class PlantCardView extends Stack {
         }
     }
 
-    private TextureRegion createSolidColor(Color color) {
+    public static TextureRegion createSolidColor(Color color) {
         Pixmap pixmap = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
         pixmap.setColor(color);
         pixmap.fill();

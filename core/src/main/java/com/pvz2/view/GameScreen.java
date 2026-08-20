@@ -99,6 +99,7 @@ public class GameScreen extends MenuScreen {
     private PlantMenuController plantMenuController = new PlantMenuController();
 
     private final PlantPlacementManager plantPlacementManager = new PlantPlacementManager();
+    private final PlantfoodPlacementManager plantfoodPlacementManager = new PlantfoodPlacementManager();
 
     private ZombiePreviewManager zombiePreviewManager;
     private boolean zombiePreviewVisible = true;
@@ -482,6 +483,7 @@ public class GameScreen extends MenuScreen {
         renderWorldContent(delta);
         worldViewport.unproject(cursorWorldPos);
         plantPlacementManager.drawPreview(game.batch, cursorWorldPos);
+        plantfoodPlacementManager.drawPreview(game.batch, cursorWorldPos);
 
         if (zombiePreviewManager != null && zombiePreviewVisible) {
             zombiePreviewManager.update(delta, pamPlayer);
@@ -805,12 +807,21 @@ public class GameScreen extends MenuScreen {
                         }
                     }
                 }
-                plantPlacementManager.cancelSelection();
-            } else {
+            } else if (plantfoodPlacementManager.isSelected()){
+                int row = LawnGrid.getRowFromY(touchPoint.y);
+                int col = LawnGrid.getColFromX(touchPoint.x);
+
+                if (row >= 0 && col >= 0) {
+                    GameMenuController.feedPlant(App.getCellCenterX(col), App.getCellCenterY(row));
+                }
+            }
+            else {
                 GameMenuController.collectSun(touchPoint.x, touchPoint.y);
             }
             hud.getSelectedPlantsList().unselectPlants();
+            hud.getPlantFoodBank().setSelected(false);
             plantPlacementManager.cancelSelection();
+            plantfoodPlacementManager.setSelected(false);
         }
 
     }
@@ -934,5 +945,9 @@ public class GameScreen extends MenuScreen {
         for (Plant plant : world.getActivePlants()) {
             plantGraphics.add(new PlantGraphic(plant, pamPlayer));
         }
+    }
+
+    public PlantfoodPlacementManager getPlantfoodPlacementManager() {
+        return plantfoodPlacementManager;
     }
 }

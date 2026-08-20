@@ -28,6 +28,7 @@ import com.pvz2.models.zombie.ZombieFactory;
 import com.pvz2.models.zombie.wave.WaveManager;
 import com.pvz2.view.GameScreen;
 import com.pvz2.view.MenuScreen;
+import com.pvz2.view.PlantGraphic;
 
 import java.util.List;
 
@@ -89,6 +90,12 @@ public class GameMenuController implements MenuController {
 //        AppView.setCurrentScreen(MainMenuView.getInstance());
         App.setCurrentGame(null);
         App.getCurrentUser().getPlantBoosts().clear();
+    }
+
+    public static void updateScreenPlants(Plant plant){
+        if (screen instanceof GameScreen gameScreen){
+            gameScreen.getPlantGraphics().add(new PlantGraphic(plant, gameScreen.getGame().pamPlayer));
+        }
     }
 
     public static void updateState(String state) {
@@ -189,6 +196,18 @@ public class GameMenuController implements MenuController {
     public void cheatAddSun(int count) {
         App.getCurrentGame().setSun(25 * count + App.getCurrentGame().getSun());
 //        GameMenuView.getInstance().showResult("Cheat activated! Added " + count + " suns. ☀️");
+    }
+
+    public static boolean selectAndUnselectPlantfood(){
+        GameWorld world = App.getCurrentGame();
+        if (world == null) return false;
+        if (world.getPlantFoods() == 0) return false;
+        if (world.isSelectedPlantfood()){
+            world.setSelectedPlantfood(false);
+            return true;
+        }
+        world.setSelectedPlantfood(true);
+        return true;
     }
 
     public void releaseTheNuke() {
@@ -309,9 +328,9 @@ public class GameMenuController implements MenuController {
         }
     }
 
-    public void feedPlant(float x, float y) {
+    public static void feedPlant(float x, float y) {
+        if (!App.getCurrentGame().isSelectedPlantfood()) return;
         if (App.getCurrentGame().getPlantFoods() <= 0) {
-//            GameMenuView.getInstance().showResult("you have not any plant foods!");
             return;
         }
         Cell selectedCell = null;
@@ -326,10 +345,10 @@ public class GameMenuController implements MenuController {
             }
         }
         if (selectedCell == null || selectedCell.findPlant() == null) {
-//            GameMenuView.getInstance().showResult("there is no plant in that place!");
             return;
         }
         selectedCell.findPlant().activatePlantFood();
+        selectAndUnselectPlantfood();
         App.getCurrentGame().setPlantFoods(App.getCurrentGame().getPlantFoods() - 1);
     }
 

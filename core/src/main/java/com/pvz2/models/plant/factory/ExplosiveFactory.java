@@ -1,5 +1,6 @@
 package com.pvz2.models.plant.factory;
 
+import com.pvz2.controller.GameMenuController;
 import com.pvz2.controller.LevelMenuController;
 import com.pvz2.models.core.App;
 
@@ -55,9 +56,10 @@ public class ExplosiveFactory {
             List<Cell> emptyCells = App.getCurrentGame().findTwoEmptyCell(false);
 
             for (Cell cell : emptyCells) {
-                cell.handlePlanting(PlantType.POTATO_MINE);
+                Plant clone = cell.handlePlanting(PlantType.POTATO_MINE);
                 cell.getPlant().getComponent(ExplosivesComponent.class).instantArm();
                 cell.getPlant().getComponent(ExplosivesComponent.class).setPlantFoodBehavior(null);
+                GameMenuController.updateScreenPlants(clone);
             }
         });
         p.addComponent(component);
@@ -78,9 +80,10 @@ public class ExplosiveFactory {
             List<Cell> emptyCells = App.getCurrentGame().findTwoEmptyCell(false);
 
             for (Cell cell : emptyCells) {
-                cell.handlePlanting(PlantType.PRIMAL_POTATO_MINE);
+                Plant clone = cell.handlePlanting(PlantType.PRIMAL_POTATO_MINE);
                 cell.getPlant().getComponent(ExplosivesComponent.class).instantArm();
                 cell.getPlant().getComponent(ExplosivesComponent.class).setPlantFoodBehavior(null);
+                GameMenuController.updateScreenPlants(clone);
             }
         });
         p.addComponent(component);
@@ -102,17 +105,12 @@ public class ExplosiveFactory {
         int damage = level >= 3 ? 2400 : 1800;
         Plant p = new Plant(PlantType.SQUASH, 1000, damage);
         ExplosivesComponent component = new ExplosivesComponent(
-                new ProximityTrigger(App.getCellWidth() * 2.9f),
-                new AreaDamageBehavior(damage, new CircularRange(0)), 0, 0.8f);
+            new ProximityTrigger(App.getCellWidth() * 2.9f),
+            new AreaDamageBehavior(damage, new CircularRange(0)), 0, 0.8f);
+        component.setJumpsToTarget(true);
         if (level >= 4) component.setLives(2);
+        component.setPlantFoodBehavior((_, _) -> {});
         p.addComponent(component);
-        component.setPlantFoodBehavior((_, _) -> {
-            List<Zombie> allZombies = new ArrayList<>(App.getCurrentGame().getActiveZombies());
-            Collections.shuffle(allZombies);
-            allZombies.stream()
-                    .limit(2)
-                    .forEach(zombie -> zombie.takeDamage(damage, "NORMAL"));
-        });
         return p;
     }
 

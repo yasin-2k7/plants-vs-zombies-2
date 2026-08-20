@@ -45,6 +45,11 @@ public class PlantAnimationClips {
         };
     }
 
+    public static String getJumpUpLeftClip(PlantType type) { return "jump_up_left"; }
+    public static String getJumpUpRightClip(PlantType type) { return "jump_up_right"; }
+    public static String getJumpDownLeftClip(PlantType type) { return "jump_down_left"; }
+    public static String getJumpDownRightClip(PlantType type) { return "jump_down_right"; }
+
     public static String getExplosionClip(PlantType type) {
         if (type == PlantType.POTATO_MINE || type == PlantType.PRIMAL_POTATO_MINE) return "animation";
         if (type == PlantType.CHERRY_BOMB) return "explosion";
@@ -57,6 +62,7 @@ public class PlantAnimationClips {
         if (type == PlantType.KIWIBEAST) return "plantfood_stage3";
         if (type == PlantType.XSHOT) return "plantfood_on";
         if (type == PlantType.BOWLING_BULB) return "plantfood_idle";
+        if (type == PlantType.SEA_SHROOM) return "pf";
         return "plantfood";
     }
     public static String getPlantFood2Clip(PlantType type) {
