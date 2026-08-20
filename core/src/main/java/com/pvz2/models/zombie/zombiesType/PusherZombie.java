@@ -8,8 +8,6 @@ import com.pvz2.models.world.Cell;
 import com.pvz2.models.world.GameWorld;
 import com.pvz2.models.zombie.Zombie;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
 
 public class PusherZombie extends Zombie {
@@ -62,23 +60,10 @@ public class PusherZombie extends Zombie {
                 GameMenuController.updateState(
                         objectName + " crushed plant at (" + plantHere.getX() + ", " + plantHere.getY() + ")");
             }
-            Cell frontCell = Cell.nextCell(zombieCell, game.getGrid());
-            if (frontCell != null) {
-                Plant plantFront = frontCell.getPlant();
-                if (plantFront != null && !plantFront.isDead()) {
-                    plantFront.die();
-                    crushed = true;
-                    if ("ICEBLOCK".equals(objectName)) {
-                        objectHealth = 0;
-                    }
-                    GameMenuController.updateState(
-                            objectName + " crushed plant at (" + plantFront.getX() + ", " + plantFront.getY() + ")");
-                }
-            }
         }
         if ("PIANO".equals(objectName) && objectHealth > 0) {
             if (rowSwitchCooldown <= 0) {
-                switchNearbyZombies(game);
+                switchOwnRow(game);
                 rowSwitchCooldown = ROW_SWITCH_INTERVAL;
             } else {
                 rowSwitchCooldown-= delta;
@@ -91,30 +76,35 @@ public class PusherZombie extends Zombie {
         }
     }
 
-    private void switchNearbyZombies(GameWorld game) {
-        Cell zombieCell = Cell.findZombieCell(game.getGrid(), this);
-        if (zombieCell == null) return;
+    @Override
+    public String getAnimationClip() {
+        if (isDead) return "die";
+        if ("PIANO".equals(objectName) && objectHealth > 0) {
+            return "play";
+        }
+        return "idle";
+    }
 
-        int currentRow = zombieCell.getRow();
+    private void switchOwnRow(GameWorld game) {
+        Cell currentCell = Cell.findZombieCell(game.getGrid(), this);
+        if (currentCell == null) return;
+
+        int currentRow = currentCell.getRow();
         int targetRow = currentRow + (random.nextBoolean() ? 1 : -1);
         if (targetRow < 0 || targetRow >= game.getRows()) {
             targetRow = currentRow + (random.nextBoolean() ? -1 : 1);
             if (targetRow < 0 || targetRow >= game.getRows()) return;
         }
 
-        List<Zombie> sameRowZombies = new ArrayList<>();
-        for (Zombie z : game.getActiveZombies()) {
-            if (z != this && Math.abs(z.getY() - this.y) < 10) {
-                sameRowZombies.add(z);
-            }
-        }
-        if (sameRowZombies.isEmpty()) return;
-
-        Zombie targetZombie = sameRowZombies.get(random.nextInt(sameRowZombies.size()));
-
-        float newY = targetRow * App.getCellHeight() + App.getCellHeight() / 2;
-        targetZombie.setY(newY);
-        GameMenuController.updateState("Pianist switched a zombie to row " + (targetRow + 1));
+        this.setY(App.getCellCenterY(targetRow));
+        GameMenuController.updateState("Pianist switched to row " + (targetRow + 1));
     }
 
+    public String getObjectName() {
+        return objectName;
+    }
+
+    public int getObjectHealth() {
+        return objectHealth;
+    }
 }

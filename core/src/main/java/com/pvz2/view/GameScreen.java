@@ -46,7 +46,7 @@ import pvz.libpvz.pam.PamPlayer;
 import com.badlogic.gdx.utils.Align;
 import pvz.skin.BorderedTable;
 import com.pvz2.models.world.obstacles.BarrelObstacle;
-
+import com.pvz2.models.zombie.zombiesType.PusherZombie;
 import java.util.*;
 import java.util.function.Consumer;
 
@@ -113,11 +113,15 @@ public class GameScreen extends MenuScreen {
     private final Map<Sandstorm, SandstormGraphic> sandstormGraphics = new HashMap<>();
 
     private final Map<Zombie, ExplosionEffectGraphic> pendingNecromancyEffects = new HashMap<>();
-    private static final String DIRT_SPAWN_DIRT_PAM_PATH =
-        "768/INITIAL/EFFECTS/DIRT_SPAWN_DIRT/DIRT_SPAWN_DIRT.PAM";
+    private static final String DIRT_SPAWN_DIRT_PAM_PATH = "768/INITIAL/EFFECTS/DIRT_SPAWN_DIRT/DIRT_SPAWN_DIRT.PAM";
     private static final String DIRT_SPAWN_DIRT_ANIM_STATE = "default";
     private record PanStep(float targetCenterX, float duration, boolean isTravel) {
     }
+
+    private float shakeTimeRemaining = 0f;
+    private float shakeMagnitude = 0f;
+
+    private final Map<PusherZombie, PianoGraphic> pianoGraphics = new HashMap<>();
 
     public GameScreen(Main game, GameWorld world, Chapter chapter) {
         super(game);
@@ -456,6 +460,12 @@ public class GameScreen extends MenuScreen {
     @Override
     protected void drawBackground(float delta) {
         world.tick(delta);
+
+        for (Zombie z : world.getActiveZombies()) {
+            if (z.consumeScreenShakeRequest()) {
+                triggerCameraShake(0.3f, 15f);
+            }
+        }
         if (world.getState() != GameState.PAUSED) {
             if (objectivesDismissed) {
                 if (!introFinished) {
@@ -494,7 +504,7 @@ public class GameScreen extends MenuScreen {
             }
         }
 
-        applyWorldViewport();
+        applyWorldViewportWithShake(delta);
         game.batch.begin();
         drawLawnBackground();
         renderWorldContent(delta);
@@ -509,15 +519,23 @@ public class GameScreen extends MenuScreen {
 
         syncNecromancyZombieEffects(delta);
         syncZombieGraphics();
+        syncPianoGraphics();
         List<ZombieGraphic> sortedZombies = new ArrayList<>(zombieGraphics.values());
         sortedZombies.sort((z1, z2) -> Float.compare(z2.getZombie().getY(), z1.getZombie().getY()));
-        for (PlantGraphic pg : plantGraphics){
-            pg.update(delta);
-            pg.draw(game.batch, pamPlayer);
-        }
+
         for (ZombieGraphic zg : sortedZombies) {
             zg.update(delta, pamPlayer);
             zg.draw(game.batch, pamPlayer);
+        }
+
+        for (PianoGraphic pg : pianoGraphics.values()) {
+            pg.update(delta, pamPlayer);
+            pg.draw(game.batch, pamPlayer);
+        }
+
+        for (PlantGraphic pg : plantGraphics){
+            pg.update(delta);
+            pg.draw(game.batch, pamPlayer);
         }
 
         for (ExplosionEffectGraphic eg : explosionGraphics) {
@@ -589,6 +607,23 @@ public class GameScreen extends MenuScreen {
                 barrelObstacleGraphics.add(new BarrelObstacleGraphic(barrel));
             }
         }
+    }
+
+    private void syncPianoGraphics() {
+        for (Zombie z : world.getActiveZombies()) {
+            if (z instanceof PusherZombie pusher && "PIANO".equals(pusher.getObjectName())) {
+                pianoGraphics.computeIfAbsent(pusher, PianoGraphic::new);
+            }
+        }
+
+        pianoGraphics.entrySet().removeIf(entry -> {
+            PusherZombie pusher = entry.getKey();
+            PianoGraphic pg = entry.getValue();
+            if (!world.getActiveZombies().contains(pusher)) {
+                return pg.isDeathAnimationFinished();
+            }
+            return false;
+        });
     }
 
     private void renderWorldContent(float delta) {
@@ -1052,22 +1087,27 @@ public class GameScreen extends MenuScreen {
         return plantfoodPlacementManager;
     }
 
-    private void syncGraveGraphics() {
-        if (world == null) return;
-        List<Grave> activeGraves = world.getGraves();
+    private void triggerCameraShake(float duration, float magnitude) {
+        this.shakeTimeRemaining = duration;
+        this.shakeMagnitude = magnitude;
+    }
 
-        for (Grave grave : activeGraves) {
-            boolean exists = false;
-            for (GraveGraphic gg : graveGraphics) {
-                if (gg.getGrave() == grave) {
-                    exists = true;
-                    break;
-                }
-            }
+    private void applyWorldViewportWithShake(float delta) {
+        float baseX = worldCamera.position.x;
+        float baseY = worldCamera.position.y;
 
-            if (!exists) {
-                graveGraphics.add(new GraveGraphic(grave, world));
-            }
+        if (shakeTimeRemaining > 0f) {
+            shakeTimeRemaining -= delta;
+            float offsetX = MathUtils.random(-shakeMagnitude, shakeMagnitude);
+            float offsetY = MathUtils.random(-shakeMagnitude, shakeMagnitude) * 0.5f;
+            worldCamera.position.x = baseX + offsetX;
+            worldCamera.position.y = baseY + offsetY;
+            worldCamera.update();
         }
+
+        applyWorldViewport();
+
+        worldCamera.position.set(baseX, baseY, 0);
+        worldCamera.update();
     }
 }

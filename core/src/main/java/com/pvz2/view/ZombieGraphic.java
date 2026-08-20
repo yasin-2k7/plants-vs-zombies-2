@@ -12,7 +12,7 @@ import java.util.Set;
 
 public class ZombieGraphic {
     private static final Set<String> NON_LOOPING_CLIPS = Set.of(
-        "spinup", "spindown", "fly_start", "fly_end"
+        "spinup", "spindown", "fly_start", "fly_end", "fire", "cannon_fire", "sheep"
     );
 
     private final Zombie zombie;
@@ -74,10 +74,21 @@ public class ZombieGraphic {
         float renderY = zombie.getY();
 
         float flashAmount = zombie.getDamageFlashProgress();
+        float[] flashColor = {1f, 1f, 1f};
+
+        if (flashAmount <= 0f && zombie.isNearEndLine() && !zombie.isDead()) {
+            long t = System.currentTimeMillis();
+            boolean blinkOn = (t / 200) % 2 == 0;
+            if (blinkOn) {
+                flashAmount = 0.3f;
+                flashColor = new float[]{1f, 0f, 0f};
+            }
+        }
+
         if (flashAmount > 0f) {
             ShaderProgram shader = DamageFlashShader.get();
             batch.setShader(shader);
-            shader.setUniformf("u_flashColor", 1f, 1f, 1f);
+            shader.setUniformf("u_flashColor", flashColor[0], flashColor[1], flashColor[2]);
             shader.setUniformf("u_flashAmount", flashAmount);
         }
 

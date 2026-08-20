@@ -46,6 +46,9 @@ public abstract class Zombie implements Damageable {
     public static final long DAMAGE_FLASH_DURATION_MS = 150L;
     private long lastDamageTimestamp = -1L;
 
+    private long shakeRequestTimestamp = -1L;
+    private static final long SHAKE_REQUEST_TTL_MS = 300L;
+
 
     public Zombie(Zombies name, int health, double speed, int damage) {
         this.name = name;
@@ -264,6 +267,11 @@ public abstract class Zombie implements Damageable {
         return y;
     }
 
+    public boolean isNearEndLine() {
+        float endLineX = App.getFirstCellX() + App.getCellWidth() / 2f + 2 * App.getCellWidth();
+        return this.x <= endLineX;
+    }
+
     public void setY(float y) {
         this.y = y;
     }
@@ -278,6 +286,8 @@ public abstract class Zombie implements Damageable {
             this.originalSpeed = speed;
         }
     }
+
+    public void setDamage(int damage) {this.damage = damage;}
 
     public float getSlowTicksRemaining() {
         return slowTimeRemaining;
@@ -371,5 +381,16 @@ public abstract class Zombie implements Damageable {
 
     public void setGlowing(boolean glowing) {
         this.glowing = glowing;
+    }
+
+    public void requestScreenShake() {
+        shakeRequestTimestamp = System.currentTimeMillis();
+    }
+
+    public boolean consumeScreenShakeRequest() {
+        if (shakeRequestTimestamp < 0) return false;
+        boolean valid = (System.currentTimeMillis() - shakeRequestTimestamp) < SHAKE_REQUEST_TTL_MS;
+        shakeRequestTimestamp = -1L;
+        return valid;
     }
 }
