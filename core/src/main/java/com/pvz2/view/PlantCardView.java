@@ -164,4 +164,8 @@ public class PlantCardView extends Stack {
     public void setCard(PlantCard card) {
         this.card = card;
     }
+
+    public PlantCard getCard() {
+        return card;
+    }
 }

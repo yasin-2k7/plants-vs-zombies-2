@@ -67,7 +67,7 @@ public class LevelMenuScreen extends MenuScreen {
         int unlockedLevel = currentUser.getUnlockedLevel();
         int unlockedChapterOrdinal = currentUser.getUnlockedChapter();
 
-        boolean isChapterLocked = (currentChapter != null) && (currentChapter.ordinal() >= unlockedChapterOrdinal);
+        boolean isChapterLocked = (currentChapter != null) && (currentChapter.ordinal() > unlockedChapterOrdinal);
 
         float nodeSize = 350f;
         float spacingX = 300f;
