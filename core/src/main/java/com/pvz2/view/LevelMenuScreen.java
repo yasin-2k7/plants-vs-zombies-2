@@ -154,7 +154,7 @@ public class LevelMenuScreen extends MenuScreen {
             final int levelStatus;
             if (isChapterLocked) {
                 levelStatus = 0;
-            } else if (levelIndex < unlockedLevel) {
+            } else if (levelIndex < unlockedLevel || currentChapter.ordinal()+1 < unlockedChapterOrdinal) {
                 levelStatus = 2;
             } else if (levelIndex == unlockedLevel) {
                 levelStatus = 1;
