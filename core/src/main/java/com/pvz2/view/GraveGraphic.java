@@ -82,7 +82,7 @@ public class GraveGraphic {
                 batch,
                 pamPath,
                 animState,
-                animTime,
+                animTime*App.getCurrentUser().getGameSpeed(),
                 grave.getX(),
                 grave.getY(),
                 1.0f,

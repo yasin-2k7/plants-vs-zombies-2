@@ -281,11 +281,11 @@ public class PlantGraphic {
 
         if (inPlantFoodBg && plantFoodBgPamPath != null) {
             String bgClip = PlantAnimationClips.getPlantFoodBackgroundClip();
-            pamPlayer.draw(batch, plantFoodBgPamPath, bgClip, plantFoodBgAnimTime, worldX+10, worldY+80, 0.8f, 0.8f,
+            pamPlayer.draw(batch, plantFoodBgPamPath, bgClip, plantFoodBgAnimTime*App.getCurrentUser().getGameSpeed(), worldX+10, worldY+80, 0.8f, 0.8f,
                 true);
         }
 
-        pamPlayer.draw(batch, pamPath, currentClip, animTime, worldX, worldY, 0.8f, 0.8f,
+        pamPlayer.draw(batch, pamPath, currentClip, animTime*App.getCurrentUser().getGameSpeed(), worldX, worldY, 0.8f, 0.8f,
             isLoop);
 
         TextureRegion armorOverlay = resolveArmorOverlay();

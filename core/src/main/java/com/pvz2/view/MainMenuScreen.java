@@ -15,6 +15,7 @@ import com.pvz2.Main;
 import com.pvz2.controller.MainMenuController;
 import com.pvz2.models.core.App;
 import com.pvz2.models.core.News;
+import com.pvz2.models.core.UserDataManager;
 import com.pvz2.models.enums.NewsType;
 import pvz.libpvz.textures.TextureBank;
 import pvz.skin.BorderedTable;
@@ -111,9 +112,6 @@ public class MainMenuScreen extends MenuScreen {
     @Override
     protected void buildUI() {
         initFields();
-        News myNews = new News("Welcome", "welcome to your game. play this game for free!",
-            NewsType.PLANT_UNLOCKED);
-        App.getCurrentUser().getAllNews().add(myNews);
 
         mainTable.clear();
         mainTable.setFillParent(true);
@@ -285,6 +283,7 @@ public class MainMenuScreen extends MenuScreen {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 overlay.remove();
+                UserDataManager.saveUser(App.getCurrentUser());
             }
         });
         topBar.add(backBtn).size(45, 45).left().expandX();
@@ -317,5 +316,9 @@ public class MainMenuScreen extends MenuScreen {
         if (unreadBadge != null) {
             unreadBadge.setVisible(hasUnread);
         }
+    }
+
+    public ResourcesTable getResourcesTable() {
+        return resourcesTable;
     }
 }

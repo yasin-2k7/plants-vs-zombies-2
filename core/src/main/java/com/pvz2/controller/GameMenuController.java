@@ -515,4 +515,8 @@ public class GameMenuController implements MenuController {
     public static void setScreen(MenuScreen screen) {
         GameMenuController.screen = screen;
     }
+
+    public static MenuScreen getScreen() {
+        return screen;
+    }
 }

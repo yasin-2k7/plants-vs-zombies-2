@@ -24,6 +24,11 @@ public class ResourcesTable extends Table {
     public ResourcesTable(User user, Main game) {
         this.user = user;
         this.game = game;
+        build();
+    }
+
+    public void build(){
+        this.clear();
         coinLabel = new Label("0", game.skin);
         diamondLabel = new Label("0", game.skin);
         coinTable = buildResourceTbl("IMAGE_UI_HUD_INGAME_COIN", coinLabel);
@@ -43,7 +48,7 @@ public class ResourcesTable extends Table {
         tbl.add().expandX();
         tbl.add(label);
         tbl.add().expandX();
-        if (App.isDebugMode()){
+        if (App.getCurrentUser().isDebugMode()){
             ImageButton buyBtn = MainMenuScreen.createImageButton("IMAGE_UI_HUD_INGAME_COIN_BUY",
                 "IMAGE_UI_HUD_INGAME_COIN_BUY_DOWN",
                 game.textureBank);

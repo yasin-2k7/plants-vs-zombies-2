@@ -1,6 +1,7 @@
 package com.pvz2.view;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.pvz2.models.core.App;
 import pvz.libpvz.pam.PamPlayer;
 
 public class ExplosionEffectGraphic {
@@ -30,6 +31,6 @@ public class ExplosionEffectGraphic {
 
     public void draw(SpriteBatch batch, PamPlayer pamPlayer) {
         if (pamPlayer == null) return;
-        pamPlayer.draw(batch, pamPath, clip, animTime, x, y, scaleX, scaleY, false);
+        pamPlayer.draw(batch, pamPath, clip, animTime* App.getCurrentUser().getGameSpeed(), x, y, scaleX, scaleY, false);
     }
 }

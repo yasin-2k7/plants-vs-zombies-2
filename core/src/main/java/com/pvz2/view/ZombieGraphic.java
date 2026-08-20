@@ -1,6 +1,7 @@
 package com.pvz2.view;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.pvz2.models.core.App;
 import com.pvz2.models.zombie.Zombie;
 import pvz.libpvz.pam.PamPlayer;
 
@@ -59,10 +60,10 @@ public class ZombieGraphic {
         float renderY = zombie.getY();
 
         if (visibilities != null) {
-            pamPlayer.draw(batch, pamPath, currentClip, animTime, renderX,
+            pamPlayer.draw(batch, pamPath, currentClip, animTime* App.getCurrentUser().getGameSpeed(), renderX,
                 renderY, 0.8f, 0.8f, isLoop, visibilities);
         } else {
-            pamPlayer.draw(batch, pamPath, currentClip, animTime, renderX,
+            pamPlayer.draw(batch, pamPath, currentClip, animTime*App.getCurrentUser().getGameSpeed(), renderX,
                 renderY, 0.8f, 0.8f, isLoop);
         }
     }

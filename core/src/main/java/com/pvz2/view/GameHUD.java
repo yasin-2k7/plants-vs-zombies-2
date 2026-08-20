@@ -266,6 +266,20 @@ public class GameHUD extends Group {
 
             add(sunIcon).size(60f).padRight(8f);
             add(sunLabel).left();
+            if (App.getCurrentUser().isDebugMode()){
+                ImageButton buyBtn = MainMenuScreen.createImageButton("IMAGE_UI_HUD_INGAME_COIN_BUY",
+                    "IMAGE_UI_HUD_INGAME_COIN_BUY_DOWN",
+                    game.textureBank);
+                buyBtn.addListener(new ClickListener(){
+                    @Override
+                    public void clicked(InputEvent event, float x, float y) {
+                        GameWorld world = App.getCurrentGame();
+                        world.addSunToPlayer(100);
+                        update(world);
+                    }
+                });
+                add(buyBtn).size(40,40).pad(5);
+            }
         }
 
         void update(GameWorld world) {
@@ -394,7 +408,7 @@ public class GameHUD extends Group {
             }
             positionPips();
 
-            if (App.isDebugMode()) {
+            if (App.getCurrentUser().isDebugMode()) {
                 ImageButton buyBtn = MainMenuScreen.createImageButton("IMAGE_UI_HUD_INGAME_COIN_BUY",
                     "IMAGE_UI_HUD_INGAME_COIN_BUY_DOWN", game.textureBank);
                 float btnSize = 38f;

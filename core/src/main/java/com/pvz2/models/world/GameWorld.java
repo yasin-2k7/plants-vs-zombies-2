@@ -349,6 +349,7 @@ public abstract class GameWorld {
     public void tick(float delta) {
         if (state != GameState.PLAYING || isDialogActive) return;   // <<< انتقال به بالا
         elapsedTime += delta;
+        delta *= App.getCurrentUser().getGameSpeed();
         updateAll(delta);
         cleanupDeadZombies();
         removeIfDead();

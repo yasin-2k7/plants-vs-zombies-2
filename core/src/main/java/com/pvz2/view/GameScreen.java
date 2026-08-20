@@ -499,16 +499,15 @@ public class GameScreen extends MenuScreen {
         syncZombieGraphics();
         List<ZombieGraphic> sortedZombies = new ArrayList<>(zombieGraphics.values());
         sortedZombies.sort((z1, z2) -> Float.compare(z2.getZombie().getY(), z1.getZombie().getY()));
-
+        for (PlantGraphic pg : plantGraphics){
+            pg.update(delta);
+            pg.draw(game.batch, pamPlayer);
+        }
         for (ZombieGraphic zg : sortedZombies) {
             zg.update(delta, pamPlayer);
             zg.draw(game.batch, pamPlayer);
         }
 
-        for (PlantGraphic pg : plantGraphics){
-            pg.update(delta);
-            pg.draw(game.batch, pamPlayer);
-        }
         for (ExplosionEffectGraphic eg : explosionGraphics) {
             eg.update(delta);
             eg.draw(game.batch, pamPlayer);
@@ -538,7 +537,7 @@ public class GameScreen extends MenuScreen {
         game.batch.end();
 
 
-        if (App.isDebugMode()) {
+        if (App.getCurrentUser().isShowGrid()) {
             lawnGridDebugRenderer.draw(worldCamera);
         }
 

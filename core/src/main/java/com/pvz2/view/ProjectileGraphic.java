@@ -2,6 +2,7 @@ package com.pvz2.view;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.pvz2.models.core.App;
 import com.pvz2.models.enums.ProjectileType;
 import com.pvz2.models.projectile.Projectile;
 import pvz.libpvz.pam.PamPlayer;
@@ -51,7 +52,7 @@ public class ProjectileGraphic {
             drawY -= 20;
         }
         if (info.kind == ProjectileAssets.Kind.PAM) {
-            pamPlayer.draw(batch, info.flightPamPath, info.flightClip, animTime, drawX, drawY, true);
+            pamPlayer.draw(batch, info.flightPamPath, info.flightClip, animTime* App.getCurrentUser().getGameSpeed(), drawX, drawY, true);
         } else {
             TextureRegion region = ProjectileAssets.region(info.textureRegionKey);
             if (region == null) return;

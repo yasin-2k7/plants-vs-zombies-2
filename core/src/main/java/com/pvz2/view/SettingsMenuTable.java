@@ -9,6 +9,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Slider;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.pvz2.Main;
+import com.pvz2.controller.GameMenuController;
 import com.pvz2.models.core.App;
 import com.pvz2.models.core.User;
 
@@ -20,14 +21,11 @@ public class SettingsMenuTable extends Table {
 
         User user = App.getCurrentUser();
 
-        Label difficultyLabel = new Label("Difficulty Level:", skin);
+        Label difficultyLabel = new Label("Difficulty Level:", skin, "medium");
         difficultyLabel.setColor(Color.BLACK);
-        difficultyLabel.setFontScale(1.5f);
         int currentDiff = (user != null) ? user.getGameDifficulty() : 1;
-        final Label difficultyValLabel = new Label(String.valueOf(currentDiff), skin);
+        final Label difficultyValLabel = new Label(String.valueOf(currentDiff), skin, "medium");
         difficultyValLabel.setColor(Color.BLACK);
-        difficultyValLabel.setFontScale(1.5f);
-
 
         final Slider difficultySlider = new Slider(1f, 5f, 1f, false, skin);
         difficultySlider.setValue(currentDiff);
@@ -42,13 +40,11 @@ public class SettingsMenuTable extends Table {
             }
         });
 
-        Label speedLabel = new Label("Game Speed:", skin);
-        speedLabel.setFontScale(1.5f);
+        Label speedLabel = new Label("Game Speed:", skin, "medium");
         speedLabel.setColor(Color.BLACK);
         int currentSpeed = (user != null) ? user.getGameSpeed() : 1;
-        final Label speedValLabel = new Label(currentSpeed + "x", skin);
+        final Label speedValLabel = new Label(currentSpeed + "x", skin, "medium");
         speedValLabel.setColor(Color.BLACK);
-        speedValLabel.setFontScale(1.5f);
 
         final Slider speedSlider = new Slider(1f, 3f, 1f, false, skin);
         speedSlider.setValue(currentSpeed);
@@ -64,7 +60,6 @@ public class SettingsMenuTable extends Table {
         });
 
         final CheckBox showGridCheckBox = new CheckBox(" Show Lawn Grid Lines (Red)", skin);
-        showGridCheckBox.getLabel().setFontScale(1.3f);
         showGridCheckBox.getLabel().setColor(Color.BLACK);
         if (user != null) {
             showGridCheckBox.setChecked(user.isShowGrid());
@@ -79,7 +74,6 @@ public class SettingsMenuTable extends Table {
         });
 
         final CheckBox debugCheckBox = new CheckBox(" Enable Debug Mode (Add Sun, Food, Coins, Gems)", skin);
-        debugCheckBox.getLabel().setFontScale(1.3f);
         debugCheckBox.getLabel().setColor(Color.BLACK);
         if (user != null) {
             debugCheckBox.setChecked(user.isDebugMode());
@@ -89,6 +83,9 @@ public class SettingsMenuTable extends Table {
             public void changed(ChangeEvent event, Actor actor) {
                 if (user != null) {
                     user.setDebugMode(debugCheckBox.isChecked());
+                    if (GameMenuController.getScreen() instanceof MainMenuScreen mainMenuScreen){
+                        mainMenuScreen.getResourcesTable().build();
+                    }
                 }
             }
         });
