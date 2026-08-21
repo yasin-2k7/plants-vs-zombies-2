@@ -6,11 +6,8 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.pvz2.Main;
 import com.pvz2.controller.GameMenuController;
 import com.pvz2.models.enums.Chapter;
@@ -18,7 +15,6 @@ import com.pvz2.models.enums.PlantType;
 import com.pvz2.models.miniGame.beghouled.BeghouledMechanics;
 import com.pvz2.models.miniGame.beghouled.GridPosition;
 import com.pvz2.models.miniGame.beghouled.PlantUpgrade;
-import com.pvz2.models.miniGame.vaseBreaker.SeedPacket;
 import com.pvz2.models.plant.Plant;
 import com.pvz2.models.world.Cell;
 import com.pvz2.models.world.GameWorld;
@@ -50,7 +46,45 @@ public class BeghouledScreen extends GameScreen {
             buildTopUIBar();
             initHUDUpgrades();
         }
+
+        if (mechanics != null && isGridEmpty()) {
+            mechanics.fillRandomPlants(world);
+        }
+
         initIcyPlantGraphics();
+    }
+
+    private boolean isGridEmpty() {
+        for (int r = 0; r < world.getRows(); r++) {
+            for (int c = 0; c < world.getCols(); c++) {
+                if (world.getGrid()[r][c].getPlant() != null) return false;
+            }
+        }
+        return true;
+    }
+
+    @Override
+    public void initIcyPlantGraphics() {
+        if (world != null && world.getGrid() != null) {
+            world.getActivePlants().clear();
+            world.getActivePlants().clear();
+            for (int r = 0; r < world.getRows(); r++) {
+                for (int c = 0; c < world.getCols(); c++) {
+                    Cell cell = world.getGrid()[r][c];
+                    if (cell != null && cell.getPlant() != null) {
+                        Plant plant = cell.getPlant();
+                        if (!plant.isCombining()) {
+                            plant.setX(c);
+                            plant.setY(r);
+                        }
+                        if (!world.getActivePlants().contains(plant)) {
+                            world.getActivePlants().add(plant);
+                        }
+                    }
+                }
+            }
+        }
+        super.initIcyPlantGraphics();
     }
 
     private void buildTopUIBar() {
@@ -65,6 +99,7 @@ public class BeghouledScreen extends GameScreen {
 
         mainStack.addActor(topUIBar);
     }
+
     private void initHUDUpgrades() {
         if (mechanics == null || getHud() == null) return;
 
@@ -113,6 +148,7 @@ public class BeghouledScreen extends GameScreen {
         if (mechanics != null && mechanics.consumeNeedsViewUpdate()) {
             initIcyPlantGraphics();
         }
+
         resumeCameraToMain();
 
         if (progressLabel != null && mechanics != null) {
@@ -134,52 +170,34 @@ public class BeghouledScreen extends GameScreen {
         int row = LawnGrid.getRowFromY(touchPoint.y);
 
         if (Gdx.input.justTouched()) {
-            if (row != -1 && col != -1) {
-                dragStartPos = new GridPosition(row, col);
+            if (row >= 0 && row < world.getRows() && col >= 0 && col < world.getCols()) {
                 Cell cell = world.getGrid()[row][col];
-                draggedPlant = cell.getPlant();
-                initialTouchPoint.set(touchPoint);
-                isDragging = true;
+                if (cell != null && cell.getPlant() != null) {
+                    dragStartPos = new GridPosition(row, col);
+                    draggedPlant = cell.getPlant();
+                    initialTouchPoint.set(touchPoint);
+                    isDragging = true;
+                }
             } else {
                 GameMenuController.collectSun(touchPoint.x, touchPoint.y);
                 resetDragState();
             }
         }
-        else if (Gdx.input.isTouched() && isDragging && draggedPlant != null && dragStartPos != null) {
-            float dx = touchPoint.x - initialTouchPoint.x;
-            float dy = touchPoint.y - initialTouchPoint.y;
-
-            if (Math.abs(dx) < 12 && Math.abs(dy) < 12) {
-                return;
-            }
-
-            if (Math.abs(dx) > Math.abs(dy)) {
-                dy = 0;
-                dx = Math.max(-LawnGrid.CELL_WIDTH, Math.min(LawnGrid.CELL_WIDTH, dx));
-            } else {
-                dx = 0;
-                dy = Math.max(-LawnGrid.CELL_HEIGHT, Math.min(LawnGrid.CELL_HEIGHT, dy));
-            }
-
-            float startX = LawnGrid.getCellX(dragStartPos.col());
-            float startY = LawnGrid.getCellY(dragStartPos.row());
-
-            draggedPlant.setX((int) (startX + dx));
-            draggedPlant.setY((int) (startY + dy));
-            draggedPlant.setTargetPosition(startX + dx, startY + dy);
-        }
         else if (!Gdx.input.isTouched() && isDragging) {
             if (dragStartPos != null && draggedPlant != null) {
-                float startX = LawnGrid.getCellX(dragStartPos.col());
-                float startY = LawnGrid.getCellY(dragStartPos.row());
+                float dx = touchPoint.x - initialTouchPoint.x;
+                float dy = touchPoint.y - initialTouchPoint.y;
 
                 int targetCol = dragStartPos.col();
                 int targetRow = dragStartPos.row();
 
-                if (draggedPlant.getX() > startX + LawnGrid.CELL_WIDTH / 3f) targetCol++;
-                else if (draggedPlant.getX() < startX - LawnGrid.CELL_WIDTH / 3f) targetCol--;
-                else if (draggedPlant.getY() > startY + LawnGrid.CELL_HEIGHT / 3f) targetRow++;
-                else if (draggedPlant.getY() < startY - LawnGrid.CELL_HEIGHT / 3f) targetRow--;
+                if (Math.abs(dx) > Math.abs(dy)) {
+                    if (dx > LawnGrid.CELL_WIDTH / 3f) targetCol++;
+                    else if (dx < -LawnGrid.CELL_WIDTH / 3f) targetCol--;
+                } else {
+                    if (dy > LawnGrid.CELL_HEIGHT / 3f) targetRow++;
+                    else if (dy < -LawnGrid.CELL_HEIGHT / 3f) targetRow--;
+                }
 
                 GridPosition targetPos = new GridPosition(targetRow, targetCol);
 
@@ -190,21 +208,12 @@ public class BeghouledScreen extends GameScreen {
                     String error = mechanics.trySwap(world, dragStartPos, targetPos);
                     if (error != null) {
                         announce(error);
-                        resetDraggedPlantPos();
+                    } else {
+                        initIcyPlantGraphics();
                     }
-                } else {
-                    resetDraggedPlantPos();
                 }
             }
             resetDragState();
-        }
-    }
-
-    private void resetDraggedPlantPos() {
-        if (draggedPlant != null && dragStartPos != null) {
-            float originalX = LawnGrid.getCellX(dragStartPos.col());
-            float originalY = LawnGrid.getCellY(dragStartPos.row());
-            draggedPlant.setTargetPosition(originalX, originalY);
         }
     }
 
@@ -217,6 +226,9 @@ public class BeghouledScreen extends GameScreen {
     @Override
     public void restartLevel() {
         super.restartLevel();
+        if (mechanics != null) {
+            mechanics.resetBoard(world);
+        }
         initIcyPlantGraphics();
     }
 

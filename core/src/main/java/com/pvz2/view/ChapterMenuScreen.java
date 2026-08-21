@@ -129,19 +129,42 @@ public class ChapterMenuScreen extends MenuScreen {
             });
 
             contentGroup.addActor(nodeActor);
+            int totalLevels = 4;
+            int completedLevels = 0;
+
+            if (App.getCurrentUser() != null) {
+                int userUnlockedChapter = App.getCurrentUser().getUnlockedChapter();
+                if (userUnlockedChapter > i + 1) {
+                    completedLevels = totalLevels;
+                } else if (userUnlockedChapter == i + 1) {
+                    completedLevels = MathUtils.clamp(App.getCurrentUser().getCompletedLevels() - 1, 0, totalLevels);
+                }
+            }
+
+            Table infoTable = new Table();
+            infoTable.setSize(nodeSize, 80f);
+            infoTable.setPosition(startX + i * (nodeSize + spacing), startY - 85f);
+
+            Label nameLabel = new Label(chapter.name().replace("_", " "), game.skin, "big_outline");
+            nameLabel.setFontScale(0.85f);
+
+            Label progressLabel = new Label(completedLevels + "/" + totalLevels, game.skin, "medium_outline");
+            progressLabel.setColor(Color.GOLD);
+
+            infoTable.add(nameLabel).row();
+            infoTable.add(progressLabel).padTop(4f);
+
+            contentGroup.addActor(infoTable);
         }
 
         float totalWidth = startX * 2 + count * nodeSize + (count - 1) * spacing;
         minScrollX = Math.min(0, stageWidth - totalWidth);
 
-        // ۱. اضافه کردن لایه محتوای اسکرول‌شونده
         mainStack.add(contentGroup);
 
-        // ۲. ساخت و اضافه کردن نوار ثابت بالای صفحه (Top Bar)
         Table topBar = new Table();
         topBar.top().setFillParent(true);
 
-        // دکمه‌های سمت چپ (نام تکسچر دکمه‌های خودت را جایگزین کن)
         Table buttonsTable = new Table();
 
         ImageButton backBtn = createIconButton("IMAGE_UI_ALMANAC_BUTTONS_HUD_BACK_NORMAL",
@@ -178,21 +201,17 @@ public class ChapterMenuScreen extends MenuScreen {
         buttonsTable.add(collectionBtn).size(55, 55);
 
         topBar.add(buttonsTable).left().pad(15);
-        topBar.add().expandX(); // ایجاد فاصله بین دکمه‌ها و بخش منابع
+        topBar.add().expandX();
 
-        // نمایش سکه و الماس سمت راست
         if (App.getCurrentUser() != null) {
             ResourcesTable resourcesTable = new ResourcesTable(App.getCurrentUser(), game);
             topBar.add(resourcesTable).right().pad(15);
         }
 
-        // اضافه کردن نوار روی لایه اصلی
         mainStack.add(topBar);
     }
 
-    /**
-     * ساخت دکمه تصویری با تکسچر
-     */
+
     private ImageButton createIconButton(String upRegionName, String downRegionName) {
         TextureRegion upRegion = game.textureBank.region(upRegionName);
         TextureRegion downRegion = game.textureBank.region(downRegionName);

@@ -118,10 +118,8 @@ public class PlantGraphic {
             animTime += delta;
         }
 
-        if (plant.getType() == PlantType.SQUASH){
-            worldX = plant.getX();
-            worldY = plant.getY();
-        }
+        worldX = plant.getX();
+        worldY = plant.getY();
 
 
         String activePamPath = plant.isImitate() ? imitatorPamPath : normalPamPath;
@@ -285,10 +283,10 @@ public class PlantGraphic {
         pamPlayer.draw(batch, pamPath, currentClip, animTime*App.getCurrentUser().getGameSpeed(), worldX, worldY, 0.8f, 0.8f,
             isLoop);
 
-        float currentX = plant.getX();
-        float currentY = plant.getY();
+        //float currentX = plant.getX();
+        //float currentY = plant.getY();
 
-        pamPlayer.draw(batch, pamPath, currentClip, animTime, currentX, currentY, 0.8f, 0.8f, isLoop);
+        //pamPlayer.draw(batch, pamPath, currentClip, animTime, currentX, currentY, 0.8f, 0.8f, isLoop);
 
         TextureRegion armorOverlay = resolveArmorOverlay();
         if (armorOverlay != null) {
@@ -301,7 +299,7 @@ public class PlantGraphic {
         if (overlay != null) {
             float w = LawnGrid.CELL_WIDTH * 0.8f;
             float h = LawnGrid.CELL_HEIGHT * 0.8f;
-            batch.draw(overlay, currentX - w / 2f, currentY - h / 2f, w, h);
+            batch.draw(overlay, worldX - w / 2f, worldY - h / 2f, w, h);
         }
     }
 
