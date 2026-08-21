@@ -10,6 +10,7 @@ import com.pvz2.models.miniGame.vaseBreaker.VaseBreakerLevel;
 import com.pvz2.models.quest.Quest;
 import com.pvz2.models.quest.reward.Reward;
 import com.pvz2.models.world.GameWorld;
+import com.pvz2.view.BeghouledScreen;
 import com.pvz2.view.GameScreen;
 import com.pvz2.view.VaseBreakerScreen;
 
@@ -184,6 +185,9 @@ public class TravelLogMenuController implements MenuController {
                 case VASE_BREAKER -> {
                     // اگر مستقیم وارد بازی می‌شود
                     App.getGameApp().setScreen(new VaseBreakerScreen(App.getGameApp(), (VaseBreakerLevel) world));
+                }
+                case BEGHOULED -> {
+                    App.getGameApp().setScreen(new BeghouledScreen(App.getGameApp(), App.getCurrentGame(), Chapter.EGYPT));
                 }
                 default -> {
                     // مینی‌گیم‌هایی که نیاز به انتخاب کارت گیاهان دارند (مثل Bowling یا Beghouled)

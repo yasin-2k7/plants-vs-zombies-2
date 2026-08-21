@@ -65,19 +65,19 @@ public class MainMenuController implements MenuController {
     public Table getNews(Skin skin) {
         User user = App.getCurrentUser();
         List<News> allNews = user.getAllNews();
-        News myNews = new News("Welcome", "welcome to your game. play this game for free!",
-            NewsType.PLANT_UNLOCKED);
-        App.getCurrentUser().getAllNews().add(myNews);
         Table table = new Table();
         for (News news : allNews) {
             Label titleLabel = new Label(news.getTitle(), skin, "medium_outline");
             titleLabel.setColor(Color.CYAN);
+            Label dateLabel = new Label(news.getDate(), skin, "medium_outline");
+            dateLabel.setColor(Color.ORANGE);
             String content = "\n" + news.getMessage() +
                 "\n------------------------------------------------\n";
             Label contentLabel = new Label(content, skin);
             contentLabel.setColor(Color.BLACK);
             table.left();
             table.add(titleLabel).left().expandX().row();
+            table.add(dateLabel).left().expandX().row();
             table.add(contentLabel).left().expandX().row();
             news.markAsRead();
         }

@@ -5,6 +5,7 @@ import com.badlogic.gdx.Screen;
 import com.pvz2.models.core.App;
 import com.pvz2.models.core.User;
 import com.pvz2.models.core.UserDataManager;
+import com.pvz2.models.enums.Chapter;
 import com.pvz2.models.enums.CollectableType;
 import com.pvz2.models.enums.PlantLayer;
 import com.pvz2.models.enums.PlantType;
@@ -131,6 +132,23 @@ public class GameMenuController implements MenuController {
         }
     }
 
+    public static void restart(){
+        User user = App.getCurrentUser();
+        if (user == null) return;
+        Chapter currentChapter = user.getCurrentChapter();
+        int level = user.getCurrentLevel();
+        if (currentChapter == null) {
+            return;
+        }
+        GameWorld world = LevelFactory.createLevel(currentChapter, level);
+        App.setCurrentGame(world);
+        user.setCurrentLevel(level);
+        world.initialize();
+
+        screen.fadeAndSwitchScreen(
+            new GameScreen(screen.getGame(), world, currentChapter));
+    }
+
     public static void collectSun(float touchX, float touchY) {
         for (Sun sun : App.getCurrentGame().getActiveSuns()) {
             if (sun.getBounds().contains(touchX, touchY) && !sun.isCollected() && !sun.isExploded()) {
@@ -201,12 +219,27 @@ public class GameMenuController implements MenuController {
     public static boolean selectAndUnselectPlantfood(){
         GameWorld world = App.getCurrentGame();
         if (world == null) return false;
+        unselectPlant();
+        unselectShovel();
         if (world.getPlantFoods() == 0) return false;
         if (world.isSelectedPlantfood()){
             world.setSelectedPlantfood(false);
             return true;
         }
         world.setSelectedPlantfood(true);
+        return true;
+    }
+
+    public static boolean selectAndUnselectShovel(){
+        GameWorld world = App.getCurrentGame();
+        if (world == null) return false;
+        unselectPlant();
+        unselectPlantfood();
+        if (world.isSelectedShovel()){
+            world.setSelectedShovel(false);
+            return true;
+        }
+        world.setSelectedShovel(true);
         return true;
     }
 
@@ -225,6 +258,8 @@ public class GameMenuController implements MenuController {
 
     public static boolean selectAndUnselectPlant(PlantType type, MenuScreen screen) {
         if (App.getCurrentGame().isPlantSelected()){
+            unselectPlantfood();
+            unselectShovel();
             if (App.getCurrentGame().getSelectedPlant() == type){
                 unselectPlant();
                 return false;
@@ -258,6 +293,14 @@ public class GameMenuController implements MenuController {
         App.getCurrentGame().setSelectedPlant(null);
         App.getCurrentGame().setPlantSelected(false);
     }
+    public static void unselectPlantfood(){
+        App.getCurrentGame().setSelectedPlantfood(false);
+    }
+    public static void unselectShovel(){
+        App.getCurrentGame().setSelectedShovel(false);
+    }
+
+
     public static Plant plantSelectedPlant(float x, float y) {
         if (App.getCurrentGame().getSelectedPlant() == null) {
             return null;
@@ -303,6 +346,9 @@ public class GameMenuController implements MenuController {
             plant = selectedCell.handlePlanting(type, App.getCurrentUser().hasBoost(type));
         }
         if (plant != null){
+            plant.setX(selectedCell.getCol());
+            plant.setY(selectedCell.getRow());
+            plant.setCell(selectedCell);
             if (isImitator) {
                 plant.setImitate(true);
                 plant.addComponent(new ImitatorIntroComponent());
@@ -321,10 +367,11 @@ public class GameMenuController implements MenuController {
         }
     }
 
-    public void pluckPlant(float x, float y) {
+    public static void pluckPlant(float x, float y) {
+        if (!App.getCurrentGame().isSelectedShovel()) return;
         Cell selectedCell = findCellAt(App.getCurrentGame(), x, y);
         if (selectedCell == null || !selectedCell.findAndRemovePlant()) {
-//            GameMenuView.getInstance().showResult("there is no plant in that place!");
+            return;
         }
     }
 

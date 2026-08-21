@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.pvz2.Main;
 import com.pvz2.models.core.App;
 import com.pvz2.models.world.ChapterWorld.DarkAgesWorld;
+import com.pvz2.models.world.GameState;
 import com.pvz2.models.world.GameWorld;
 import com.pvz2.models.world.obstacles.Grave;
 import pvz.libpvz.pam.PamPlayer;
@@ -69,6 +70,8 @@ public class GraveGraphic {
             return;
         }
 
+        GameWorld world = App.getCurrentGame();
+        if (world != null && world.getState() == GameState.PAUSED) delta = 0;
         animTime += delta;
 
         if (grave.isDying() && !breakStarted) {

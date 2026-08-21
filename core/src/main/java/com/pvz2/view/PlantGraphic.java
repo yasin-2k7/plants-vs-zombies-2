@@ -9,6 +9,8 @@ import com.pvz2.models.plant.AnimationDurations;
 import com.pvz2.models.plant.Plant;
 import com.pvz2.models.plant.PlantAnimationClips;
 import com.pvz2.models.plant.components.ArmorComponent;
+import com.pvz2.models.world.GameState;
+import com.pvz2.models.world.GameWorld;
 import pvz.libpvz.pam.PamPlayer;
 
 import java.util.HashMap;
@@ -103,12 +105,6 @@ public class PlantGraphic {
     public PlantGraphic(Plant plant, PamPlayer pamPlayer) {
         this.plant = plant;
 
-        int col = plant.getCell().getCol();
-        int row = plant.getCell().getRow();
-
-        this.worldX = LawnGrid.getCellX(col);
-        this.worldY = LawnGrid.getCellY(row);
-
         this.normalPamPath = PlantsCollectionMenuScreen.getPlantAnimAddress(plant.getType());
         this.imitatorPamPath = PlantsCollectionMenuScreen.getPlantAnimAddress(PlantType.IMITATER);
         this.sheepPamPath = ZombiesTable.getZombiesAnimAddress().getOrDefault("Sheep", "768/FULL/ZOMBIE/SHEEP/SHEEP.PAM");
@@ -134,14 +130,14 @@ public class PlantGraphic {
             return;
         }
 
+        GameWorld world = App.getCurrentGame();
+        if (world != null && world.getState() == GameState.PAUSED) delta = 0;
         if (!plant.isFreeze()){
             animTime += delta;
         }
 
-        if (plant.getType() == PlantType.SQUASH){
-            worldX = plant.getX();
-            worldY = plant.getY();
-        }
+        worldX = plant.getX();
+        worldY = plant.getY();
 
         if (plant.isSheep() && !isSheepState) {
             isSheepState = true;
@@ -333,6 +329,11 @@ public class PlantGraphic {
             batch.setShader(null);
         }
 
+        //float currentX = plant.getX();
+        //float currentY = plant.getY();
+
+        //pamPlayer.draw(batch, pamPath, currentClip, animTime, currentX, currentY, 0.8f, 0.8f, isLoop);
+
         TextureRegion armorOverlay = resolveArmorOverlay();
         if (armorOverlay != null) {
             float w = LawnGrid.CELL_WIDTH * ARMORS_SCALE.get(plant.getType())[0];
@@ -366,8 +367,8 @@ public class PlantGraphic {
         return plant.isDead();
     }
 
-    public float getWorldX() { return worldX; }
-    public float getWorldY() { return worldY; }
+    public float getWorldX() { return plant.getX(); }
+    public float getWorldY() { return plant.getY(); }
 
     public String getCurrentClip() { return currentClip; }
     public String getInitialClip() { return initialClip; }

@@ -29,7 +29,7 @@ public class EatingState implements ZombieState {
             targetPlant.takeDamage(zombie.getDamage(), zombie);
             zombie.setHasEatenPlant(true);
 
-            if (targetPlant.isDead()) {
+            if (targetPlant == null || targetPlant.isDead() || targetPlant.getCell() == null) {
                 zombie.setState(new WalkingState());
                 GameWorld world = App.getCurrentGame();
                 BeghouledMechanics beghouled = world.getMechanic(BeghouledMechanics.class);

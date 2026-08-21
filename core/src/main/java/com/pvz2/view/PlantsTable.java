@@ -54,6 +54,7 @@ public class PlantsTable extends Table {
         if (lockFilter == LockFilter.LOCKED_ONLY && isUnlocked) return false;
 
         if (upgradeableOnly) {
+            if (user.getUnlockedPlantsLevels().getOrDefault(plantType, 1) == 4) return false;
             int seedPacketAmount = user.getSeedPacketsCount(plantType);
             int requiredSeeds = Math.max(1, cardLevel) * 10;
             if (seedPacketAmount < requiredSeeds) return false;

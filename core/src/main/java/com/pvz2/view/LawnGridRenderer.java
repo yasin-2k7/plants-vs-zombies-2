@@ -4,7 +4,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
-public class LawnGridDebugRenderer {
+public class LawnGridRenderer {
 
     private final ShapeRenderer shapeRenderer = new ShapeRenderer();
 
@@ -46,6 +46,18 @@ public class LawnGridDebugRenderer {
                 shapeRenderer.line(cx, cy - s, cx, cy + s);
             }
         }
+        shapeRenderer.end();
+    }
+
+    public void drawLine(Color color, float x, OrthographicCamera camera){
+        shapeRenderer.setProjectionMatrix(camera.combined);
+        float gridHeight = LawnGrid.ROWS * LawnGrid.CELL_HEIGHT;
+        float down = LawnGrid.ORIGIN_Y-LawnGrid.CELL_HEIGHT/2;
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
+        shapeRenderer.setColor(color);
+
+        shapeRenderer.line(x, down,
+            x, down+gridHeight);
         shapeRenderer.end();
     }
 

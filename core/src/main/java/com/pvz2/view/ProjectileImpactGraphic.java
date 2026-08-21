@@ -4,6 +4,8 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.pvz2.models.core.App;
 import com.pvz2.models.enums.ProjectileType;
+import com.pvz2.models.world.GameState;
+import com.pvz2.models.world.GameWorld;
 import pvz.libpvz.pam.PamPlayer;
 
 public class ProjectileImpactGraphic {
@@ -18,6 +20,8 @@ public class ProjectileImpactGraphic {
     }
 
     public void update(float delta) {
+        GameWorld world = App.getCurrentGame();
+        if (world != null && world.getState() == GameState.PAUSED) delta = 0;
         animTime += delta;
     }
 

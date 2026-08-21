@@ -73,6 +73,7 @@ public abstract class GameWorld {
     private List<String> losingDialogs = new ArrayList<>();
     private boolean isEndGameHandled = false;
     private boolean selectedPlantfood = false;
+    private boolean selectedShovel = false;
 
     public MupointManager getMupointManager() {
         return mupointManager;
@@ -619,6 +620,14 @@ public abstract class GameWorld {
 
     public void setSelectedPlantfood(boolean selectedPlantfood) {
         this.selectedPlantfood = selectedPlantfood;
+    }
+
+    public void setSelectedShovel(boolean selectedShovel) {
+        this.selectedShovel = selectedShovel;
+    }
+
+    public boolean isSelectedShovel() {
+        return selectedShovel;
     }
 
     public void removeObstacle(Obstacle obstacle) {

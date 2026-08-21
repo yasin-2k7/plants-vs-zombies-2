@@ -2,6 +2,8 @@ package com.pvz2.view;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.pvz2.models.core.App;
+import com.pvz2.models.world.GameState;
+import com.pvz2.models.world.GameWorld;
 import pvz.libpvz.pam.PamPlayer;
 
 public class ExplosionEffectGraphic {
@@ -22,6 +24,8 @@ public class ExplosionEffectGraphic {
     }
 
     public void update(float delta) {
+        GameWorld world = App.getCurrentGame();
+        if (world != null && world.getState() == GameState.PAUSED) delta = 0;
         animTime += delta;
     }
 

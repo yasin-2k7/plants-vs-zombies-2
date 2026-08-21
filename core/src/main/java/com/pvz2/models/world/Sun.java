@@ -67,7 +67,8 @@ public class Sun implements Resettable {
     private void onLand() {
         GameMenuController.updateState("Sun landed at (" + finalX + ", " + finalY + ")");
         if (type == SunType.RADIOACTIVE) {
-            explode();
+            this.type = SunType.NORMAL;
+            this.size = SunType.NORMAL.amount;
         }
     }
 

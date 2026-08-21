@@ -16,7 +16,7 @@ public class Plant implements Damageable {
     private PlantType type;
     private int health;
     private int initHealth;
-    private int x, y;
+    private float x, y;
     private int damage;
     private transient List<GameComponent> components = new CopyOnWriteArrayList<>();
     private boolean dead = false;
@@ -36,6 +36,10 @@ public class Plant implements Damageable {
     public static final long DAMAGE_FLASH_DURATION_MS = 150L;
     private long lastDamageTimestamp = -1L;
     private boolean burnt = false;
+
+    private boolean isCombining = false;
+    private float combineTargetX;
+    private float combineTargetY;
 
     public enum State {
         IDLE, SPECIAL, ATTACK, UNARMED, TRIGGERED,
@@ -57,6 +61,16 @@ public class Plant implements Damageable {
         initHealth = health;
     }
 
+    public void startCombineAnimation(float targetX, float targetY) {
+        slideTo(targetX, targetY);
+    }
+
+    public void slideTo(float targetX, float targetY) {
+        this.combineTargetX = targetX;
+        this.combineTargetY = targetY;
+        this.isCombining = true;
+    }
+
     public static boolean isMushroom(PlantType type) {
         return switch (type) {
             case SUN_SHROOM, PUFF_SHROOM, FUME_SHROOM, SEA_SHROOM,
@@ -71,6 +85,31 @@ public class Plant implements Damageable {
 
     public void update(float delta) {
         if (disabled || freeze || sheep) return;
+        if (isCombining) {
+            float speed = 12f;
+            boolean reachedX = false;
+            boolean reachedY = false;
+
+            if (Math.abs(x - combineTargetX) > 0.02f) {
+                x += Math.signum(combineTargetX - x) * speed * delta;
+            } else {
+                x = combineTargetX;
+                reachedX = true;
+            }
+
+            if (Math.abs(y - combineTargetY) > 0.02f) {
+                y += Math.signum(combineTargetY - y) * speed * delta;
+            } else {
+                y = combineTargetY;
+                reachedY = true;
+            }
+
+            if (reachedX && reachedY) {
+                isCombining = false;
+            }
+        }
+
+        if (disabled || freeze || cat) return;
         if (!isImitate) {
             if (plantFoodInStart) {
                 activatePlantFood();
@@ -141,7 +180,6 @@ public class Plant implements Damageable {
             App.getCurrentGame().notifyPlantEaten();
             die();
         }
-
     }
 
     protected void triggerDamageFlash() {
@@ -182,18 +220,25 @@ public class Plant implements Damageable {
     }
 
     public float getX() {
-        return x;
-    }
-
-    public void setX(int x) {
-        this.x = x;
+        int c1 = (int) Math.floor(this.x);
+        int c2 = c1 + 1;
+        float frac = this.x - c1;
+        return App.getCellCenterX(c1) + frac * (App.getCellCenterX(c2) - App.getCellCenterX(c1));
     }
 
     public float getY() {
-        return y;
+        int r1 = (int) Math.floor(this.y);
+        int r2 = r1 + 1;
+        float frac = this.y - r1;
+        return App.getCellCenterY(r1) + frac * (App.getCellCenterY(r2) - App.getCellCenterY(r1));
     }
 
-    public void setY(int y) {
+    public void setX(float x) {
+        this.x = x;
+    }
+
+
+    public void setY(float y) {
         this.y = y;
     }
 
@@ -227,7 +272,7 @@ public class Plant implements Damageable {
     }
 
     public void increaseFrozenAmount() {
-        if (frozenAmount == 99 || isFire) return;
+        if (frozenAmount == 99 || isFire || freeze) return;
         frozenAmount += 33;
         if (frozenAmount >= 99) {
             frozenAmount = 0;
@@ -318,5 +363,13 @@ public class Plant implements Damageable {
         if (burnt) {
             die();
         }
+    }
+
+    public void setTargetPosition(float targetX, float targetY) {
+        slideTo(targetX, targetY);
+    }
+
+    public boolean isCombining() {
+        return isCombining;
     }
 }

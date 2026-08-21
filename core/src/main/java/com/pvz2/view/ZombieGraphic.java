@@ -3,6 +3,8 @@ package com.pvz2.view;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.pvz2.models.core.App;
+import com.pvz2.models.world.GameState;
+import com.pvz2.models.world.GameWorld;
 import com.pvz2.models.zombie.Zombie;
 import com.pvz2.models.zombie.zombiesType.BarrelRollerZombie;
 import com.pvz2.models.zombie.zombiesType.RangedZombie;
@@ -51,6 +53,8 @@ public class ZombieGraphic {
             playClip(dieClip, false);
         }
 
+        GameWorld world = App.getCurrentGame();
+        if (world != null && world.getState() == GameState.PAUSED) delta = 0;
         animTime += delta;
 
         if (!zombie.isDead()) {

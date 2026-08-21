@@ -15,6 +15,8 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.pvz2.models.core.App;
 import com.pvz2.models.enums.PlantType;
 import com.pvz2.models.plant.card.PlantCard;
+import com.pvz2.models.world.GameState;
+import com.pvz2.models.world.GameWorld;
 
 import java.util.function.Consumer;
 
@@ -103,6 +105,8 @@ public class PlantCardView extends Stack {
 
     public void update(){
         if (card == null) return;
+        GameWorld world = App.getCurrentGame();
+        if (world != null && world.getState() == GameState.PAUSED) return;
         if (card.isReady()){
             this.active = true;
             overlay.setProgress(0);

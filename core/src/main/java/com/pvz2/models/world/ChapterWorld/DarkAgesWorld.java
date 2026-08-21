@@ -13,6 +13,7 @@ import com.pvz2.models.world.winCondition.WinCondition;
 import com.pvz2.view.LawnGrid;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 public class DarkAgesWorld extends GameWorld {
@@ -20,6 +21,7 @@ public class DarkAgesWorld extends GameWorld {
     private static final int MIN_GRAVES = 3;
     private static final int MAX_GRAVES = 6;
     private Random random;
+    private List<Cell> necromancyCells = new ArrayList<>();
 
     public DarkAgesWorld(LevelSetup levelSetup,
                          ArrayList<LoseCondition> loseConditions,
@@ -93,6 +95,7 @@ public class DarkAgesWorld extends GameWorld {
             for (int c = 0; c < getCols(); c++) {
                 if (random.nextDouble() < 0.2) {
                     grid[r][c].setNecromancyPotential(true);
+                    necromancyCells.add(grid[r][c]);
                 }
             }
         }
@@ -128,6 +131,10 @@ public class DarkAgesWorld extends GameWorld {
                 }
             }
         }
+    }
+
+    public List<Cell> getNecromancyCells() {
+        return necromancyCells;
     }
 
     private final java.util.Set<com.pvz2.models.zombie.Zombie> necromancyZombies = new java.util.HashSet<>();
