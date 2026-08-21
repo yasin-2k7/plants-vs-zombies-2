@@ -23,7 +23,7 @@ public class GraveGraphic {
     private static final String DARK_PLANT_FOOD_PAM_PATH = "768/FULL/GRAVESTONES/DARK_PLANTFOOD/DARK_PLANTFOOD.PAM";
 
     private static final String DIRT_SPAWN_FUTURE_PAM_PATH = "768/FULL/EFFECTS/DIRT_SPAWN_FUTURE/DIRT_SPAWN_FUTURE.PAM";
-    private static final String DIRT_SPAWN_ANIM_STATE = "default";
+    private static final String DIRT_SPAWN_ANIM_STATE = "tomb_dirt_anim";
     private static final float SPAWN_ANIM_DURATION = 0.6f;
 
     private final String pamPath;

@@ -130,7 +130,7 @@ public class GameScreen extends MenuScreen {
 
     private final Map<Zombie, ExplosionEffectGraphic> pendingNecromancyEffects = new HashMap<>();
     private static final String DIRT_SPAWN_DIRT_PAM_PATH = "768/INITIAL/EFFECTS/DIRT_SPAWN_DIRT/DIRT_SPAWN_DIRT.PAM";
-    private static final String DIRT_SPAWN_DIRT_ANIM_STATE = "default";
+    private static final String DIRT_SPAWN_DIRT_ANIM_STATE = "tomb_dirt_anim";
     private record PanStep(float targetCenterX, float duration, boolean isTravel) {
     }
 
