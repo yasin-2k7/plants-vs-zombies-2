@@ -158,4 +158,12 @@ public class Sun implements Resettable {
         float size = 80f * SunGraphic.getScale(type);
         return new Rectangle(x - size / 2f, y - size / 2f, size, size);
     }
+
+    public void setX(float x) {
+        this.x = x;
+    }
+
+    public void setY(float y) {
+        this.y = y;
+    }
 }

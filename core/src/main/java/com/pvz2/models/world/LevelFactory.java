@@ -244,8 +244,9 @@ public class LevelFactory {
             new WaveSpawnEntry("ZombieArmor2", 300),
             new WaveSpawnEntry("ZombieLostCityJane", 200),
             new WaveSpawnEntry("ZombieBeachSnorkel", 200),
-            new WaveSpawnEntry("ZombieBeachOctopus", 800)
-        );
+            new WaveSpawnEntry("ZombieBeachOctopus", 800),
+            new WaveSpawnEntry("ZombieBeachFisherman", 400)
+            );
         List<Wave> waves = Wave.generateWaves(3, 500, availableZombies, 10);
         LevelSetup levelSetup = new BigWaveBeachLevelSetup(6, rows, cols, waves);
         LoseCondition loseCondition = new NormalLose();
@@ -558,13 +559,13 @@ public class LevelFactory {
         int rows = 5;
         int cols = 9;
         List<WaveSpawnEntry> availableZombies = List.of(
-            new WaveSpawnEntry("ZombieDefault", 100),
-            new WaveSpawnEntry("ZombieArmor1", 200),
-            new WaveSpawnEntry("ZombieArmor2", 300),
-            new WaveSpawnEntry("ZombieArmor4", 400),
-            new WaveSpawnEntry("ZombieIceAgeDodo", 400),
-            new WaveSpawnEntry("ZombieIceAgeHunter", 300),
-            new WaveSpawnEntry("ZombieIceAgeTroglobite", 400)
+//            new WaveSpawnEntry("ZombieDefault", 100),
+//            new WaveSpawnEntry("ZombieArmor1", 200),
+//            new WaveSpawnEntry("ZombieArmor2", 300),
+//            new WaveSpawnEntry("ZombieArmor4", 400),
+            new WaveSpawnEntry("ZombieIceAgeDodo", 400)
+//            new WaveSpawnEntry("ZombieIceAgeHunter", 300),
+//            new WaveSpawnEntry("ZombieIceAgeTroglobite", 400)
 
         );
         List<Wave> waves = Wave.generateWaves(3, 500, availableZombies, 20);

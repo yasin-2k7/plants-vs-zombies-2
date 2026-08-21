@@ -421,7 +421,6 @@ public class GameScreen extends MenuScreen {
         }
         introPausedAtStreet = false;
         zombiePreviewVisible = false;
-        // moving effect
         hideStreetTable();
         hud.setInGameDetailsVisibility(true);
 
@@ -551,11 +550,6 @@ public class GameScreen extends MenuScreen {
         for (ZombieGraphic zg : sortedZombies) {
             zg.update(delta, pamPlayer);
             zg.draw(game.batch, pamPlayer);
-        }
-
-        for (PlantGraphic pg : plantGraphics){
-            pg.update(delta);
-            pg.draw(game.batch, pamPlayer);
         }
 
         for (int i = octopusObstacleGraphics.size() - 1; i >= 0; i--) {
@@ -911,8 +905,6 @@ public class GameScreen extends MenuScreen {
                         if (App.getCurrentUser().getUnlockedPlantsLevels().getOrDefault(PlantType.IMITATER, 0) > 0){
                             showImitatorTable();
                         }
-                        // create overlay and table
-
                         return;
                     }
                     if (plantMenuController.addPlant(plantType.name(), GameScreen.this)){
@@ -934,8 +926,6 @@ public class GameScreen extends MenuScreen {
                     hud.getSelectedPlantsList().setImitatorCardType(plantCardView.getType());
                     hud.getSelectedPlantsList().build();
                     hideImitatorTable();
-                    //remove overlay
-
                 }
             }
         };
@@ -1167,13 +1157,18 @@ public class GameScreen extends MenuScreen {
             return false;
         });
     }
+
     private void syncSunGraphics() {
         for (Sun sun : world.getActiveSuns()) {
             sunGraphics.computeIfAbsent(sun, SunGraphic::new);
         }
-        sunGraphics.entrySet().removeIf(entry ->
-            !world.getActiveSuns().contains(entry.getKey()) && entry.getValue().isPopFinished()
-        );
+
+        sunGraphics.entrySet().removeIf(entry -> {
+            Sun sun = entry.getKey();
+            SunGraphic sg = entry.getValue();
+            boolean notActive = !world.getActiveSuns().contains(sun);
+            return notActive || sg.isPopFinished();
+        });
     }
 
     public List<PlantGraphic> getPlantGraphics() {
