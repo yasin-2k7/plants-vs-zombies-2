@@ -36,6 +36,7 @@ import com.pvz2.models.projectile.Projectile;
 import com.pvz2.models.world.*;
 import com.pvz2.models.world.ChapterWorld.AncientEgyptWorld;
 import com.pvz2.models.world.ChapterWorld.BigWaveBeachWorld;
+import com.pvz2.models.world.ChapterWorld.DarkAgesWorld;
 import com.pvz2.models.world.ChapterWorld.FrostbiteCavesWorld;
 import com.pvz2.models.world.obstacles.Grave;
 import com.pvz2.models.zombie.Zombie;
@@ -114,6 +115,8 @@ public class GameScreen extends MenuScreen {
     private final String WAVE_CLIP = "water";
     private final String LOW_LYING_PAM_PATH = "768/FULL/WORLDMAP/BEACH/ANIM20/ANIM20.PAM";
     private final String LOW_LYING_CLIP = "idle";
+    private final String NECROMANCY_PAM_PATH = "768/FULL/WORLDMAP/DARK/ANIM5/ANIM5.PAM";
+    private final String NECROMANCY_CLIP = "idle";
 
     private final Map<Sandstorm, SandstormGraphic> sandstormGraphics = new HashMap<>();
     private record PanStep(float targetCenterX, float duration, boolean isTravel) {
@@ -574,6 +577,9 @@ public class GameScreen extends MenuScreen {
         else if (world instanceof BigWaveBeachWorld bigWaveBeachWorld){
             drawBeachContent(bigWaveBeachWorld);
         }
+        else if (world instanceof DarkAgesWorld darkAgesWorld){
+            drawDarkContent(darkAgesWorld);
+        }
         for (int i = graveGraphics.size() - 1; i >= 0; i--) {
             GraveGraphic graphic = graveGraphics.get(i);
             Grave grave = graphic.getGrave(); // گرفتن مدل از گرافیک
@@ -587,6 +593,16 @@ public class GameScreen extends MenuScreen {
                 graveGraphics.remove(i);       // ۱. حذف از لیست گرافیکی
                 world.removeObstacle(grave);   // ۲. حذف واقعی و نهایی از دنیای بازی (activeObstacles)
             }
+        }
+    }
+
+    private void drawDarkContent(DarkAgesWorld darkAgesWorld) {
+        float time = stateTime;
+        GameWorld world = App.getCurrentGame();
+        if (world != null && world.getState() == GameState.PAUSED) time = 0;
+        for (Cell cell : darkAgesWorld.getNecromancyCells()){
+            pamPlayer.draw(game.batch, NECROMANCY_PAM_PATH, NECROMANCY_CLIP, time, cell.getX(), cell.getY(), 0.5f, 0.5f,
+                true);
         }
     }
 
