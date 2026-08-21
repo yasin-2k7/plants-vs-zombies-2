@@ -346,6 +346,9 @@ public class GameMenuController implements MenuController {
             plant = selectedCell.handlePlanting(type, App.getCurrentUser().hasBoost(type));
         }
         if (plant != null){
+            plant.setX(selectedCell.getCol());
+            plant.setY(selectedCell.getRow());
+            plant.setCell(selectedCell);
             if (isImitator) {
                 plant.setImitate(true);
                 plant.addComponent(new ImitatorIntroComponent());

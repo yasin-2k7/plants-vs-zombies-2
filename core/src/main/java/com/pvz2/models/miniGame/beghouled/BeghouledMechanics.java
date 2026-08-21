@@ -8,7 +8,6 @@ import com.pvz2.models.plant.factory.PlantFactory;
 import com.pvz2.models.world.Cell;
 import com.pvz2.models.world.GameWorld;
 import com.pvz2.models.world.mechanics.Mechanic;
-import com.pvz2.view.LawnGrid;
 
 import java.util.*;
 
@@ -33,7 +32,7 @@ public class BeghouledMechanics implements Mechanic {
     @Override
     public void applyMechanic(GameWorld world) {
         if (pendingMatches != null) {
-            matchDelayTimer -= com.badlogic.gdx.Gdx.graphics.getDeltaTime();
+            matchDelayTimer -= Gdx.graphics.getDeltaTime();
             if (matchDelayTimer <= 0) {
                 List<List<GridPosition>> matchesToProcess = pendingMatches;
                 pendingMatches = null;
@@ -42,6 +41,7 @@ public class BeghouledMechanics implements Mechanic {
             }
         }
     }
+
     public boolean consumeNeedsViewUpdate() {
         if (needsViewUpdate) {
             needsViewUpdate = false;
@@ -54,10 +54,11 @@ public class BeghouledMechanics implements Mechanic {
         for (int r = 0; r < world.getRows(); r++) {
             for (int c = 0; c < world.getCols(); c++) {
                 if (craters.contains(new GridPosition(r, c))) continue;
-                PlantType randomType = randomPlantType();
+                PlantType randomType = randomPlantTypeAvoidingMatch(world, r, c);
                 placePlant(world, r, c, randomType);
             }
         }
+        needsViewUpdate = true;
     }
 
     private PlantType randomPlantType() {
@@ -66,13 +67,25 @@ public class BeghouledMechanics implements Mechanic {
 
     private void placePlant(GameWorld world, int row, int col, PlantType type) {
         Cell cell = world.getGrid()[row][col];
-        float x = LawnGrid.getCellX(col);
-        float y = LawnGrid.getCellY(row);
-
-        Plant plant = PlantFactory.createPlant(type, (int) x, (int) y, cell);
-        plant.setTargetPosition(x, y);
+        Plant plant = PlantFactory.createPlant(type, col, row, cell);
         cell.setPlant(plant, PlantLayer.MAIN);
-        world.getActivePlants().add(plant);
+
+        if (!world.getActivePlants().contains(plant)) {
+            world.getActivePlants().add(plant);
+        }
+    }
+
+    private void placePlantWithFall(GameWorld world, int row, int col, PlantType type) {
+        Cell cell = world.getGrid()[row][col];
+        Plant plant = PlantFactory.createPlant(type, col, row, cell);
+        plant.setX(col);
+        plant.setY(row - 1.5f);
+        plant.slideTo(col, row);
+        cell.setPlant(plant, PlantLayer.MAIN);
+
+        if (!world.getActivePlants().contains(plant)) {
+            world.getActivePlants().add(plant);
+        }
     }
 
     public String trySwap(GameWorld world, GridPosition a, GridPosition b) {
@@ -113,12 +126,14 @@ public class BeghouledMechanics implements Mechanic {
         if (plantB != null) {
             cellA.setPlant(plantB, PlantLayer.MAIN);
             plantB.setCell(cellA);
-            plantB.setTargetPosition(LawnGrid.getCellX(a.col()), LawnGrid.getCellY(a.row()));
+            // شروع انیمیشن نرم به خانه جديد
+            plantB.startCombineAnimation(a.col(), a.row());
         }
         if (plantA != null) {
             cellB.setPlant(plantA, PlantLayer.MAIN);
             plantA.setCell(cellB);
-            plantA.setTargetPosition(LawnGrid.getCellX(b.col()), LawnGrid.getCellY(b.row()));
+            // شروع انیمیشن نرم به خانه جديد
+            plantA.startCombineAnimation(b.col(), b.row());
         }
     }
 
@@ -165,7 +180,9 @@ public class BeghouledMechanics implements Mechanic {
     }
 
     private PlantType typeAt(GameWorld world, int row, int col) {
-        Plant plant = world.getGrid()[row][col].getPlant();
+        Cell cell = world.getGrid()[row][col];
+        if (cell == null) return null;
+        Plant plant = cell.getPlant();
         return (plant == null) ? null : plant.getType();
     }
 
@@ -182,7 +199,12 @@ public class BeghouledMechanics implements Mechanic {
         }
 
         for (GridPosition pos : toRemove) {
-            world.getGrid()[pos.row()][pos.col()].findAndRemovePlant();
+            Cell cell = world.getGrid()[pos.row()][pos.col()];
+            Plant plant = cell.getPlant();
+            if (plant != null) {
+                world.getActivePlants().remove(plant);
+                cell.findAndRemovePlant();
+            }
         }
 
         world.setSun(world.getSun() + sunUnits * 50);
@@ -213,20 +235,14 @@ public class BeghouledMechanics implements Mechanic {
                 Cell cell = world.getGrid()[r][c];
                 cell.removePlant();
 
-                float destX = LawnGrid.getCellX(c);
-                float destY = LawnGrid.getCellY(r);
-
                 if (idx < column.size()) {
                     Plant p = column.get(idx++);
                     cell.setPlant(p, PlantLayer.MAIN);
                     p.setCell(cell);
-                    p.setTargetPosition(destX, destY);
+                    p.startCombineAnimation(c, r);
                 } else {
                     PlantType safeType = randomPlantTypeAvoidingMatch(world, r, c);
-                    Plant plant = PlantFactory.createPlant(safeType, (int) destX, (int) (destY + 150), cell);
-                    plant.setTargetPosition(destX, destY);
-                    cell.setPlant(plant, PlantLayer.MAIN);
-                    world.getActivePlants().add(plant);
+                    placePlantWithFall(world, r, c, safeType);
                 }
             }
         }
@@ -262,7 +278,12 @@ public class BeghouledMechanics implements Mechanic {
         for (int r = 0; r < world.getRows(); r++) {
             for (int c = 0; c < world.getCols(); c++) {
                 if (craters.contains(new GridPosition(r, c))) continue;
-                world.getGrid()[r][c].findAndRemovePlant();
+                Cell cell = world.getGrid()[r][c];
+                Plant p = cell.getPlant();
+                if (p != null) {
+                    world.getActivePlants().remove(p);
+                    cell.findAndRemovePlant();
+                }
             }
         }
         fillRandomPlants(world);
@@ -308,12 +329,13 @@ public class BeghouledMechanics implements Mechanic {
             for (Cell cell : row) {
                 Plant plant = cell.getPlant();
                 if (plant != null && plant.getType() == from) {
-                    float x = LawnGrid.getCellX(cell.getCol());
-                    float y = LawnGrid.getCellY(cell.getRow());
-                    Plant upgraded = PlantFactory.createPlant(upgrade.getTo(), (int) x, (int) y, cell);
-                    upgraded.setTargetPosition(x, y);
+                    int c = cell.getCol();
+                    int r = cell.getRow();
+                    Plant upgraded = PlantFactory.createPlant(upgrade.getTo(), c, r, cell);
+
                     world.getActivePlants().remove(plant);
                     cell.removePlant();
+
                     cell.setPlant(upgraded, PlantLayer.MAIN);
                     world.getActivePlants().add(upgraded);
                     count++;
@@ -324,6 +346,7 @@ public class BeghouledMechanics implements Mechanic {
         if (count == 0) return "you dont have this type of plant";
 
         world.setSun(world.getSun() - upgrade.getCost());
+        needsViewUpdate = true;
         return null;
     }
 
@@ -331,8 +354,13 @@ public class BeghouledMechanics implements Mechanic {
         GridPosition pos = new GridPosition(row, col);
         craters.add(pos);
         Cell cell = world.getGrid()[row][col];
-        cell.findAndRemovePlant();
+        Plant plant = cell.getPlant();
+        if (plant != null) {
+            world.getActivePlants().remove(plant);
+            cell.findAndRemovePlant();
+        }
         cell.setPlantable(false);
+        needsViewUpdate = true;
     }
 
     public int getScore() { return score; }

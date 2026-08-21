@@ -36,7 +36,9 @@ public class Plant implements Damageable {
     private boolean isImitate;
     public static final int MAX_ICE_HEALTH = 600;
 
-    private float targetX, targetY;
+    private boolean isCombining = false;
+    private float combineTargetX;
+    private float combineTargetY;
 
     public enum State {
         IDLE, SPECIAL, ATTACK, UNARMED, TRIGGERED,
@@ -58,6 +60,16 @@ public class Plant implements Damageable {
         initHealth = health;
     }
 
+    public void startCombineAnimation(float targetX, float targetY) {
+        slideTo(targetX, targetY);
+    }
+
+    public void slideTo(float targetX, float targetY) {
+        this.combineTargetX = targetX;
+        this.combineTargetY = targetY;
+        this.isCombining = true;
+    }
+
     public static boolean isMushroom(PlantType type) {
         return switch (type) {
             case SUN_SHROOM, PUFF_SHROOM, FUME_SHROOM, SEA_SHROOM,
@@ -71,19 +83,30 @@ public class Plant implements Damageable {
     }
 
     public void update(float delta) {
-        float moveSpeed = 1000f * delta;
+        if (isCombining) {
+            float speed = 12f;
+            boolean reachedX = false;
+            boolean reachedY = false;
 
-        if (Math.abs(x - targetX) > 2f) {
-            x += Math.signum(targetX - x) * Math.min(moveSpeed, Math.abs(targetX - x));
-        } else {
-            x = targetX;
+            if (Math.abs(x - combineTargetX) > 0.02f) {
+                x += Math.signum(combineTargetX - x) * speed * delta;
+            } else {
+                x = combineTargetX;
+                reachedX = true;
+            }
+
+            if (Math.abs(y - combineTargetY) > 0.02f) {
+                y += Math.signum(combineTargetY - y) * speed * delta;
+            } else {
+                y = combineTargetY;
+                reachedY = true;
+            }
+
+            if (reachedX && reachedY) {
+                isCombining = false;
+            }
         }
 
-        if (Math.abs(y - targetY) > 2f) {
-            y += Math.signum(targetY - y) * Math.min(moveSpeed, Math.abs(targetY - y));
-        } else {
-            y = targetY;
-        }
         if (disabled || freeze || cat) return;
         if (!isImitate) {
             if (plantFoodInStart) {
@@ -154,7 +177,6 @@ public class Plant implements Damageable {
             App.getCurrentGame().notifyPlantEaten();
             die();
         }
-
     }
 
     public void die() {
@@ -180,18 +202,25 @@ public class Plant implements Damageable {
     }
 
     public float getX() {
-        return x;
-    }
-
-    public void setX(int x) {
-        this.x = x;
+        int c1 = (int) Math.floor(this.x);
+        int c2 = c1 + 1;
+        float frac = this.x - c1;
+        return App.getCellCenterX(c1) + frac * (App.getCellCenterX(c2) - App.getCellCenterX(c1));
     }
 
     public float getY() {
-        return y;
+        int r1 = (int) Math.floor(this.y);
+        int r2 = r1 + 1;
+        float frac = this.y - r1;
+        return App.getCellCenterY(r1) + frac * (App.getCellCenterY(r2) - App.getCellCenterY(r1));
     }
 
-    public void setY(int y) {
+    public void setX(float x) {
+        this.x = x;
+    }
+
+
+    public void setY(float y) {
         this.y = y;
     }
 
@@ -306,7 +335,10 @@ public class Plant implements Damageable {
     }
 
     public void setTargetPosition(float targetX, float targetY) {
-        this.targetX = targetX;
-        this.targetY = targetY;
+        slideTo(targetX, targetY);
+    }
+
+    public boolean isCombining() {
+        return isCombining;
     }
 }

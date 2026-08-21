@@ -849,6 +849,8 @@ public class GameScreen extends MenuScreen {
                         App.getCellCenterY(row)
                     );
                     if (newPlant != null) {
+                        newPlant.setX(col);
+                        newPlant.setY(row);
                         PlantGraphic pg = new PlantGraphic(newPlant, pamPlayer);
                         plantGraphics.add(pg);
                         checkExplosion(newPlant, pg);
