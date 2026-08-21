@@ -109,7 +109,7 @@ public class Plant implements Damageable {
             }
         }
 
-        if (disabled || freeze || cat) return;
+        if (disabled || freeze || sheep) return;
         if (!isImitate) {
             if (plantFoodInStart) {
                 activatePlantFood();

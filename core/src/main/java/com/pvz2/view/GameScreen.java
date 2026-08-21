@@ -41,7 +41,6 @@ import com.pvz2.models.world.GameWorld;
 import com.pvz2.models.world.Sandstorm;
 import com.pvz2.models.world.Sun;
 import com.pvz2.models.world.ChapterWorld.BigWaveBeachWorld;
-import com.pvz2.models.world.ChapterWorld.DarkAgesWorld;
 import com.pvz2.models.world.ChapterWorld.FrostbiteCavesWorld;
 import com.pvz2.models.world.obstacles.Grave;
 import com.pvz2.models.zombie.Zombie;
@@ -522,6 +521,8 @@ public class GameScreen extends MenuScreen {
 
         for (PianoGraphic pg : pianoGraphics.values()) {
             pg.update(delta, pamPlayer);
+            pg.draw(game.batch, pamPlayer);
+        }
         game.batch.end();
         if (App.getCurrentUser().isShowGrid()) {
             lawnGridDebugRenderer.draw(worldCamera);
@@ -1229,9 +1230,6 @@ public class GameScreen extends MenuScreen {
         return shovelPlacementManager;
     }
 
-    private void syncGraveGraphics() {
-        if (world == null) return;
-        List<Grave> activeGraves = world.getGraves();
     private void triggerCameraShake(float duration, float magnitude) {
         this.shakeTimeRemaining = duration;
         this.shakeMagnitude = magnitude;
