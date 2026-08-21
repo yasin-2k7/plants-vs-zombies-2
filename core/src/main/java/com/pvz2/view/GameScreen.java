@@ -46,6 +46,7 @@ import pvz.libpvz.pam.PamPlayer;
 import com.badlogic.gdx.utils.Align;
 import pvz.skin.BorderedTable;
 import com.pvz2.models.world.obstacles.BarrelObstacle;
+import com.pvz2.models.world.obstacles.OctopusObstacle;
 import com.pvz2.models.zombie.zombiesType.PusherZombie;
 import java.util.*;
 import java.util.function.Consumer;
@@ -109,6 +110,7 @@ public class GameScreen extends MenuScreen {
     private final Map<Sun, SunGraphic> sunGraphics = new HashMap<>();
     private final List<GraveGraphic> graveGraphics = new ArrayList<>();
     private final List<BarrelObstacleGraphic> barrelObstacleGraphics = new ArrayList<>();
+    private final List<OctopusObstacleGraphic> octopusObstacleGraphics = new ArrayList<>();
 
     private final Map<Sandstorm, SandstormGraphic> sandstormGraphics = new HashMap<>();
 
@@ -122,6 +124,8 @@ public class GameScreen extends MenuScreen {
     private float shakeMagnitude = 0f;
 
     private final Map<PusherZombie, PianoGraphic> pianoGraphics = new HashMap<>();
+    private final Map<PusherZombie, IceBlockGraphic> iceBlockGraphics = new HashMap<>();
+    private final Map<PusherZombie, ArcadeCabinetGraphic> arcadeCabinetGraphics = new HashMap<>();
 
     public GameScreen(Main game, GameWorld world, Chapter chapter) {
         super(game);
@@ -155,6 +159,7 @@ public class GameScreen extends MenuScreen {
             pamPlayer.loadAsync("768/FULL/EFFECTS/DIRT_SPAWN_FUTURE/DIRT_SPAWN_FUTURE.PAM", null);
             pamPlayer.loadAsync("768/INITIAL/EFFECTS/DIRT_SPAWN_DIRT/DIRT_SPAWN_DIRT.PAM", null);
         }
+        pamPlayer.loadAsync("768/FULL/EFFECTS/ZOMBIE_HUNTER_SNOWBALL_SPLAT/ZOMBIE_HUNTER_SNOWBALL_SPLAT.PAM", null);
 
         computeSideWidths();
         buildIntroPanSequence();
@@ -520,22 +525,47 @@ public class GameScreen extends MenuScreen {
         syncNecromancyZombieEffects(delta);
         syncZombieGraphics();
         syncPianoGraphics();
+        syncIceBlockGraphics();
+        syncArcadeCabinetGraphics();
         List<ZombieGraphic> sortedZombies = new ArrayList<>(zombieGraphics.values());
         sortedZombies.sort((z1, z2) -> Float.compare(z2.getZombie().getY(), z1.getZombie().getY()));
-
-        for (ZombieGraphic zg : sortedZombies) {
-            zg.update(delta, pamPlayer);
-            zg.draw(game.batch, pamPlayer);
-        }
 
         for (PianoGraphic pg : pianoGraphics.values()) {
             pg.update(delta, pamPlayer);
             pg.draw(game.batch, pamPlayer);
         }
 
+        for (IceBlockGraphic ig : iceBlockGraphics.values()) {
+            ig.update(delta, pamPlayer);
+            ig.draw(game.batch, pamPlayer);
+        }
+
+        for (ArcadeCabinetGraphic ag : arcadeCabinetGraphics.values()) {
+            ag.update(delta, pamPlayer);
+            ag.draw(game.batch, pamPlayer);
+        }
+
+        for (ZombieGraphic zg : sortedZombies) {
+            zg.update(delta, pamPlayer);
+            zg.draw(game.batch, pamPlayer);
+        }
+
         for (PlantGraphic pg : plantGraphics){
             pg.update(delta);
             pg.draw(game.batch, pamPlayer);
+        }
+
+        for (int i = octopusObstacleGraphics.size() - 1; i >= 0; i--) {
+            OctopusObstacleGraphic graphic = octopusObstacleGraphics.get(i);
+            OctopusObstacle octopus = graphic.getObstacle();
+
+            graphic.update(delta, pamPlayer);
+            graphic.draw(game.batch, pamPlayer);
+
+            if (octopus.isDestroyed() && graphic.isDeathAnimationFinished()) {
+                octopusObstacleGraphics.remove(i);
+                world.removeObstacle(octopus);
+            }
         }
 
         for (ExplosionEffectGraphic eg : explosionGraphics) {
@@ -609,9 +639,20 @@ public class GameScreen extends MenuScreen {
         }
     }
 
+    private void syncOctopusObstacleGraphics() {
+        for (var obstacle : world.getActiveObstacles()) {
+            if (!(obstacle instanceof OctopusObstacle octopus)) continue;
+            boolean tracked = octopusObstacleGraphics.stream()
+                .anyMatch(g -> g.getObstacle() == octopus);
+            if (!tracked) {
+                octopusObstacleGraphics.add(new OctopusObstacleGraphic(octopus));
+            }
+        }
+    }
+
     private void syncPianoGraphics() {
         for (Zombie z : world.getActiveZombies()) {
-            if (z instanceof PusherZombie pusher && "PIANO".equals(pusher.getObjectName())) {
+            if (z instanceof PusherZombie pusher && PusherZombie.OBJECT_PIANO.equals(pusher.getObjectName())) {
                 pianoGraphics.computeIfAbsent(pusher, PianoGraphic::new);
             }
         }
@@ -626,9 +667,43 @@ public class GameScreen extends MenuScreen {
         });
     }
 
+    private void syncIceBlockGraphics() {
+        for (Zombie z : world.getActiveZombies()) {
+            if (z instanceof PusherZombie pusher && PusherZombie.OBJECT_ICEBLOCK.equals(pusher.getObjectName())) {
+                iceBlockGraphics.computeIfAbsent(pusher, IceBlockGraphic::new);
+            }
+        }
+
+        iceBlockGraphics.entrySet().removeIf(entry -> {
+            PusherZombie pusher = entry.getKey();
+            if (!world.getActiveZombies().contains(pusher)) {
+                return true;
+            }
+            return pusher.getObjectHealth() <= 0;
+        });
+    }
+
+    private void syncArcadeCabinetGraphics() {
+        for (Zombie z : world.getActiveZombies()) {
+            if (z instanceof PusherZombie pusher && PusherZombie.OBJECT_ARCADE.equals(pusher.getObjectName())) {
+                arcadeCabinetGraphics.computeIfAbsent(pusher, ArcadeCabinetGraphic::new);
+            }
+        }
+
+        arcadeCabinetGraphics.entrySet().removeIf(entry -> {
+            PusherZombie pusher = entry.getKey();
+            ArcadeCabinetGraphic ag = entry.getValue();
+            if (!world.getActiveZombies().contains(pusher)) {
+                return ag.isDeathAnimationFinished();
+            }
+            return false;
+        });
+    }
+
     private void renderWorldContent(float delta) {
         syncGraveGraphics();
         syncBarrelObstacleGraphics();
+        syncOctopusObstacleGraphics();
         if (world.getLawnMowerManager() != null) {
             for (LawnMower mower : world.getLawnMowerManager().getMowers()) {
                 if (!mower.isSpent()) {
@@ -1109,5 +1184,19 @@ public class GameScreen extends MenuScreen {
 
         worldCamera.position.set(baseX, baseY, 0);
         worldCamera.update();
+    }
+
+    public static void spawnSnowballSplat(float x, float y) {
+        if (activeInstance != null) {
+            activeInstance.explosionGraphics.add(
+                new ExplosionEffectGraphic(
+                    "768/FULL/EFFECTS/ZOMBIE_HUNTER_SNOWBALL_SPLAT/ZOMBIE_HUNTER_SNOWBALL_SPLAT.PAM",
+                    "animation",
+                    x, y,
+                    activeInstance.pamPlayer,
+                    1f, 1f
+                )
+            );
+        }
     }
 }

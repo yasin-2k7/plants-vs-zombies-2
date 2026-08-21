@@ -5,9 +5,9 @@ import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.pvz2.models.zombie.zombiesType.PusherZombie;
 import pvz.libpvz.pam.PamPlayer;
 
-public class PianoGraphic {
-    private static final String PAM_PATH = "768/FULL/ZOMBIE/PIANO/PIANO.PAM";
-    private static final float OFFSET_X = -60f; // پیانو کمی جلوتر از زامبی
+public class ArcadeCabinetGraphic {
+    private static final String PAM_PATH = "768/FULL/EFFECTS/80S_ARCADE_CABINET/80S_ARCADE_CABINET.PAM";
+    private static final float OFFSET_X = -120f;
 
     private final PusherZombie pusherZombie;
 
@@ -15,44 +15,27 @@ public class PianoGraphic {
     private String currentClip = "idle";
     private boolean isLoop = true;
 
-    private int lastObjectHealth;
-    private boolean inDamageClip = false;
-    private float damageClipTimer = 0f;
-    private static final float DAMAGE_CLIP_DURATION = 0.5f;
-
-    public PianoGraphic(PusherZombie pusherZombie) {
+    public ArcadeCabinetGraphic(PusherZombie pusherZombie) {
         this.pusherZombie = pusherZombie;
-        this.lastObjectHealth = pusherZombie.getObjectHealth();
     }
 
     public void update(float delta, PamPlayer pamPlayer) {
         animTime += delta;
 
-        int currentHealth = pusherZombie.getObjectHealth();
-        boolean destroyed = currentHealth <= 0;
-
+        boolean destroyed = pusherZombie.getObjectHealth() <= 0;
         if (destroyed) {
-            if (!currentClip.equals("die")) {
-                playClip("die", false);
+            if (!currentClip.equals("death")) {
+                playClip("death", false);
+            }
+        } else if (pusherZombie.isPushing()) {
+            if (!currentClip.equals("active")) {
+                playClip("active", true);
             }
         } else {
-            if (inDamageClip) {
-                damageClipTimer += delta;
-                if (damageClipTimer >= DAMAGE_CLIP_DURATION) {
-                    inDamageClip = false;
-                }
-            }
-
-            if (currentHealth < lastObjectHealth && !inDamageClip) {
-                inDamageClip = true;
-                damageClipTimer = 0f;
-                playClip("damage", false);
-            } else if (!inDamageClip && !currentClip.equals("play")) {
-                playClip("play", true);
+            if (!currentClip.equals("idle")) {
+                playClip("idle", true);
             }
         }
-
-        lastObjectHealth = currentHealth;
 
         if (pamPlayer != null) {
             pamPlayer.loadAsync(PAM_PATH, null);
@@ -88,7 +71,7 @@ public class PianoGraphic {
     }
 
     public boolean isDeathAnimationFinished() {
-        return "die".equals(currentClip) && animTime >= 1.2f;
+        return "death".equals(currentClip) && animTime >= 1.2f;
     }
 
     public PusherZombie getPusherZombie() {

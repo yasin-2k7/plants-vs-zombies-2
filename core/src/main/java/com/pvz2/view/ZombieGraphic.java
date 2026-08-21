@@ -5,15 +5,22 @@ import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.pvz2.models.core.App;
 import com.pvz2.models.zombie.Zombie;
 import com.pvz2.models.zombie.zombiesType.BarrelRollerZombie;
+import com.pvz2.models.zombie.zombiesType.RangedZombie;
 import pvz.libpvz.pam.PamPlayer;
 
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Random;
 import java.util.Set;
 
 public class ZombieGraphic {
     private static final Set<String> NON_LOOPING_CLIPS = Set.of(
-        "spinup", "spindown", "fly_start", "fly_end", "fire", "cannon_fire", "sheep"
+        "spinup", "spindown", "fly_start", "fly_end", "fire", "cannon_fire", "sheep",
+        "power", "toss"
     );
+
+    private static final String[] OCTOPUS_IDLE_VARIANTS = {"idle", "idle2", "idle3", "idle4", "idle5"};
+    private static final Random RANDOM = new Random();
 
     private final Zombie zombie;
     private final String pamPath;
@@ -22,6 +29,9 @@ public class ZombieGraphic {
     private float animTime = 0f;
     private String currentClip = "walk";
     private boolean isLoop = true;
+
+    private float idleVariantTimer = 0f;
+    private float nextIdleSwitchTime = randomIdleInterval();
 
     public ZombieGraphic(Zombie zombie) {
         this.zombie = zombie;
@@ -44,16 +54,57 @@ public class ZombieGraphic {
         animTime += delta;
 
         if (!zombie.isDead()) {
-            String targetClip = resolveClip(zombie.getAnimationClip());
-            if (!targetClip.equals(currentClip)) {
-                boolean loop = !NON_LOOPING_CLIPS.contains(targetClip);
-                playClip(targetClip, loop);
+            if (zombie instanceof RangedZombie rangedZombie && rangedZombie.isThrowing()) {
+                String throwClip = resolveClip(rangedZombie.getThrowClipName());
+                if (!throwClip.equals(currentClip)) {
+                    playClip(throwClip, false);
+                }
+            } else {
+                String targetClip = resolveClip(zombie.getAnimationClip());
+
+                if (isOctopusThrower() && "idle".equals(targetClip)) {
+                    updateOctopusIdle(delta);
+                } else {
+                    if (!targetClip.equals(currentClip)) {
+                        boolean loop = !NON_LOOPING_CLIPS.contains(targetClip);
+                        playClip(targetClip, loop);
+                    }
+                }
             }
         }
 
         if (pamPath != null) {
             pamPlayer.loadAsync(pamPath, null);
         }
+    }
+
+    private void updateOctopusIdle(float delta) {
+        boolean alreadyInIdleFamily = Arrays.asList(OCTOPUS_IDLE_VARIANTS).contains(currentClip);
+
+        if (!alreadyInIdleFamily) {
+            switchToRandomIdleVariant();
+            return;
+        }
+
+        idleVariantTimer += delta;
+        if (idleVariantTimer >= nextIdleSwitchTime) {
+            switchToRandomIdleVariant();
+        }
+    }
+
+    private void switchToRandomIdleVariant() {
+        String variant = OCTOPUS_IDLE_VARIANTS[RANDOM.nextInt(OCTOPUS_IDLE_VARIANTS.length)];
+        playClip(variant, true);
+        idleVariantTimer = 0f;
+        nextIdleSwitchTime = randomIdleInterval();
+    }
+
+    private static float randomIdleInterval() {
+        return 2f + RANDOM.nextFloat() * 2f;
+    }
+
+    private boolean isOctopusThrower() {
+        return zombie instanceof RangedZombie rangedZombie && "OCTOPUS".equals(rangedZombie.getProjectileType());
     }
 
     private String resolveClip(String baseClip) {
