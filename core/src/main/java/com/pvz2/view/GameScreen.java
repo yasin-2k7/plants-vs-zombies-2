@@ -4,7 +4,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -34,11 +33,10 @@ import com.pvz2.models.plant.PlantAnimationClips;
 import com.pvz2.models.plant.components.ExplosivesComponent;
 import com.pvz2.models.pool.GenericObjectPool;
 import com.pvz2.models.projectile.Projectile;
+import com.pvz2.models.world.*;
 import com.pvz2.models.world.ChapterWorld.AncientEgyptWorld;
-import com.pvz2.models.world.GameState;
-import com.pvz2.models.world.GameWorld;
-import com.pvz2.models.world.Sandstorm;
-import com.pvz2.models.world.Sun;
+import com.pvz2.models.world.ChapterWorld.BigWaveBeachWorld;
+import com.pvz2.models.world.ChapterWorld.FrostbiteCavesWorld;
 import com.pvz2.models.world.obstacles.Grave;
 import com.pvz2.models.zombie.Zombie;
 import pvz.libpvz.pam.PamPlayer;
@@ -68,13 +66,14 @@ public class GameScreen extends MenuScreen {
     private float leftWidthScaled;
     private float rightWidthScaled;
 
-    private LawnGridDebugRenderer lawnGridDebugRenderer;
+    private LawnGridRenderer lawnGridDebugRenderer;
 
     private Vector3 cursorWorldPos = new Vector3(0, 0, 0);
     private final List<PlantGraphic> plantGraphics = new ArrayList<>();
     private final List<ExplosionEffectGraphic> explosionGraphics = new ArrayList<>();
     private final Map<Projectile, ProjectileGraphic> projectileGraphics = new HashMap<>();
     private final List<ProjectileImpactGraphic> projectileImpacts = new ArrayList<>();
+    private final Map<FrostbiteCavesWorld.Wind, WindGraphic> windGraphics = new HashMap<>();
 
     private final List<PanStep> introSteps = new ArrayList<>();
     private int currentStepIndex = 0;
@@ -108,6 +107,14 @@ public class GameScreen extends MenuScreen {
     private final Map<Sun, SunGraphic> sunGraphics = new HashMap<>();
     private final List<GraveGraphic> graveGraphics = new ArrayList<>();
 
+    private final String SLIDING_UP_PAM_PATH = "768/FULL/EFFECTS/TILESLIDER_ICEAGE_UP/TILESLIDER_ICEAGE_UP.PAM";
+    private final String SLIDING_DOWN_PAM_PATH = "768/FULL/EFFECTS/TILESLIDER_ICEAGE_DOWN/TILESLIDER_ICEAGE_DOWN.PAM";
+    private final String SLIDING_CLIP = "idle";
+    private final String WAVE_PAM_PATH = "768/FULL/BACKGROUNDS/WAVE_UPPERLAYER/WAVE_UPPERLAYER.PAM";
+    private final String WAVE_CLIP = "water";
+    private final String LOW_LYING_PAM_PATH = "768/FULL/WORLDMAP/BEACH/ANIM20/ANIM20.PAM";
+    private final String LOW_LYING_CLIP = "idle";
+
     private final Map<Sandstorm, SandstormGraphic> sandstormGraphics = new HashMap<>();
     private record PanStep(float targetCenterX, float duration, boolean isTravel) {
     }
@@ -128,7 +135,7 @@ public class GameScreen extends MenuScreen {
         mainLawnHeight = 1000;
 
         initWorldCamera(mainLawnWidth, mainLawnHeight);
-        lawnGridDebugRenderer = new LawnGridDebugRenderer();
+        lawnGridDebugRenderer = new LawnGridRenderer();
 
         FileHandle assetsFolder = Gdx.files.internal("");
         pamPlayer = new PamPlayer(game.textureBank, assetsFolder);
@@ -475,6 +482,16 @@ public class GameScreen extends MenuScreen {
         syncZombieGraphics();
         List<ZombieGraphic> sortedZombies = new ArrayList<>(zombieGraphics.values());
         sortedZombies.sort((z1, z2) -> Float.compare(z2.getZombie().getY(), z1.getZombie().getY()));
+        game.batch.end();
+        if (App.getCurrentUser().isShowGrid()) {
+            lawnGridDebugRenderer.draw(worldCamera);
+        }
+        if (world instanceof BigWaveBeachWorld bigWaveBeachWorld){
+            lawnGridDebugRenderer.drawLine(Color.BLUE,
+                App.getCellCenterX(bigWaveBeachWorld.getTideLineCol())-App.getCellWidth()/2,
+                worldCamera);
+        }
+        game.batch.begin();
         for (PlantGraphic pg : plantGraphics){
             pg.update(delta);
             pg.draw(game.batch, pamPlayer);
@@ -511,11 +528,6 @@ public class GameScreen extends MenuScreen {
         }
         renderProjectiles(delta, game.batch, pamPlayer);
         game.batch.end();
-
-
-        if (App.getCurrentUser().isShowGrid()) {
-            lawnGridDebugRenderer.draw(worldCamera);
-        }
 
         if (hud != null) {
             hud.update(world, delta);
@@ -556,6 +568,12 @@ public class GameScreen extends MenuScreen {
             }
         }
         syncGraveGraphics();
+        if (world instanceof FrostbiteCavesWorld frostbiteCavesWorld){
+            drawFrostbiteContent(frostbiteCavesWorld, delta);
+        }
+        else if (world instanceof BigWaveBeachWorld bigWaveBeachWorld){
+            drawBeachContent(bigWaveBeachWorld);
+        }
         for (int i = graveGraphics.size() - 1; i >= 0; i--) {
             GraveGraphic graphic = graveGraphics.get(i);
             Grave grave = graphic.getGrave(); // گرفتن مدل از گرافیک
@@ -571,6 +589,40 @@ public class GameScreen extends MenuScreen {
             }
         }
     }
+
+    private void drawBeachContent(BigWaveBeachWorld bigWaveBeachWorld) {
+        float time = stateTime;
+        GameWorld world = App.getCurrentGame();
+        if (world != null && world.getState() == GameState.PAUSED) time = 0;
+        float waveX = App.getCellCenterX(bigWaveBeachWorld.getCurrentTideCol())+App.getCellWidth()*2;
+        pamPlayer.draw(game.batch, WAVE_PAM_PATH, WAVE_CLIP, stateTime, waveX, App.getCellCenterY(3)-125f, 0.8f,
+            0.45f, true);
+        for (Cell cell : bigWaveBeachWorld.getLowLyingCells()){
+            pamPlayer.draw(game.batch, LOW_LYING_PAM_PATH, LOW_LYING_CLIP, time, cell.getX(), cell.getY(), 0.5f, 0.5f,
+                true);
+        }
+    }
+
+    private void drawFrostbiteContent(FrostbiteCavesWorld frostbiteCavesWorld, float delta) {
+        float time = stateTime;
+        GameWorld world = App.getCurrentGame();
+        if (world != null && world.getState() == GameState.PAUSED){
+            delta = 0;
+            time = 0;
+        }
+        for (FrostbiteCavesWorld.Wind wind : frostbiteCavesWorld.getWinds()) {
+            windGraphics.computeIfAbsent(wind, WindGraphic::new);
+        }
+        windGraphics.keySet().removeIf(w -> !frostbiteCavesWorld.getWinds().contains(w));
+        for (WindGraphic windGraphic : windGraphics.values()){
+            windGraphic.updateAndDraw(delta, pamPlayer, game.batch);
+        }
+        for (Cell cell : frostbiteCavesWorld.getSlidingCells()){
+            String pamPath = cell.getSlippingDir() == 1 ? SLIDING_UP_PAM_PATH : SLIDING_DOWN_PAM_PATH;
+            pamPlayer.draw(game.batch, pamPath, SLIDING_CLIP, time, cell.getX(), cell.getY(), 0.8f, 0.8f, true);
+        }
+    }
+
 
     private String getMowerPamPath(Chapter chapter) {
         switch (chapter) {

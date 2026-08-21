@@ -1,0 +1,24 @@
+package com.pvz2.view;
+
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.pvz2.models.world.ChapterWorld.FrostbiteCavesWorld;
+import pvz.libpvz.pam.PamPlayer;
+
+public class WindGraphic {
+    private FrostbiteCavesWorld.Wind wind;
+    private float stateTime = 0;
+    private final String PAM_PATH = "768/FULL/EFFECTS/FROSTBITE_CHILL_WIND/FROSTBITE_CHILL_WIND.PAM";
+    private final String PAM_CLIP = "animation";
+    private final float WORLD_X = LawnGrid.getCellX(4);
+    private final float worldY;
+
+    public WindGraphic(FrostbiteCavesWorld.Wind wind) {
+        this.wind = wind;
+        worldY = LawnGrid.getCellY(wind.getRow())+20;
+    }
+
+    public void updateAndDraw(float delta, PamPlayer pamPlayer, SpriteBatch batch){
+        stateTime += delta;
+        pamPlayer.draw(batch, PAM_PATH, PAM_CLIP, stateTime, WORLD_X, worldY,0.8f, 0.5f, false);
+    }
+}

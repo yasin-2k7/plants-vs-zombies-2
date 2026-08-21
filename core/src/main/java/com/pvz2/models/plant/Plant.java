@@ -210,7 +210,7 @@ public class Plant implements Damageable {
     }
 
     public void increaseFrozenAmount() {
-        if (frozenAmount == 99 || isFire) return;
+        if (frozenAmount == 99 || isFire || freeze) return;
         frozenAmount += 33;
         if (frozenAmount >= 99) {
             frozenAmount = 0;

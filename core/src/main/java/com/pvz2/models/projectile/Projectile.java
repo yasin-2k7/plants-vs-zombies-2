@@ -71,7 +71,7 @@ public class Projectile implements Resettable {
                     Cell currentCell = game.getCellAt(this.x, this.y);
                     if (currentCell != null && currentCell.getPlant() != null) {
                         Plant p = currentCell.getPlant();
-                        if (p.isFreeze() && p.getX() > this.originX + 20) {
+                        if (p.isFreeze() && (p.getX() > this.originX + 20) || (p.getX() < this.originX - 20) ) {
                             p.takeDamage(hitStrategy.getDamage(), (Zombie) null);
                             pierce--;
                             if (pierce <= 0) {
