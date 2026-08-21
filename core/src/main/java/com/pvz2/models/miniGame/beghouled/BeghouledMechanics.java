@@ -1,6 +1,6 @@
 package com.pvz2.models.miniGame.beghouled;
 
-import com.pvz2.models.core.App;
+import com.badlogic.gdx.Gdx;
 import com.pvz2.models.enums.PlantLayer;
 import com.pvz2.models.enums.PlantType;
 import com.pvz2.models.plant.Plant;
@@ -8,6 +8,7 @@ import com.pvz2.models.plant.factory.PlantFactory;
 import com.pvz2.models.world.Cell;
 import com.pvz2.models.world.GameWorld;
 import com.pvz2.models.world.mechanics.Mechanic;
+import com.pvz2.view.LawnGrid;
 
 import java.util.*;
 
@@ -18,6 +19,10 @@ public class BeghouledMechanics implements Mechanic {
     private final Random random = new Random();
     private final int targetScore;
     private int score = 0;
+    private boolean needsViewUpdate = false;
+
+    private float matchDelayTimer = 0f;
+    private List<List<GridPosition>> pendingMatches = null;
 
     public BeghouledMechanics(List<PlantType> availablePlantTypes, List<PlantUpgrade> upgrades, int targetScore) {
         this.availablePlantTypes = availablePlantTypes;
@@ -27,8 +32,23 @@ public class BeghouledMechanics implements Mechanic {
 
     @Override
     public void applyMechanic(GameWorld world) {
+        if (pendingMatches != null) {
+            matchDelayTimer -= com.badlogic.gdx.Gdx.graphics.getDeltaTime();
+            if (matchDelayTimer <= 0) {
+                List<List<GridPosition>> matchesToProcess = pendingMatches;
+                pendingMatches = null;
+                processMatches(world, matchesToProcess, false);
+                needsViewUpdate = true;
+            }
+        }
     }
-
+    public boolean consumeNeedsViewUpdate() {
+        if (needsViewUpdate) {
+            needsViewUpdate = false;
+            return true;
+        }
+        return false;
+    }
 
     public void fillRandomPlants(GameWorld world) {
         for (int r = 0; r < world.getRows(); r++) {
@@ -46,15 +66,17 @@ public class BeghouledMechanics implements Mechanic {
 
     private void placePlant(GameWorld world, int row, int col, PlantType type) {
         Cell cell = world.getGrid()[row][col];
-        Plant plant = PlantFactory.createPlant(
-                type, (int) (50 + App.getCellWidth() * cell.getCol()),
-                (int) (50 + App.getCellHeight() * cell.getRow()), cell);
+        float x = LawnGrid.getCellX(col);
+        float y = LawnGrid.getCellY(row);
+
+        Plant plant = PlantFactory.createPlant(type, (int) x, (int) y, cell);
+        plant.setTargetPosition(x, y);
         cell.setPlant(plant, PlantLayer.MAIN);
         world.getActivePlants().add(plant);
     }
 
-
     public String trySwap(GameWorld world, GridPosition a, GridPosition b) {
+        if (pendingMatches != null) return "busy";
         if (!areAdjacent(a, b)) return "only neighbors";
         if (craters.contains(a) || craters.contains(b)) return "you cant swap craters";
 
@@ -66,7 +88,9 @@ public class BeghouledMechanics implements Mechanic {
             return "no combination";
         }
 
-        processMatches(world, matches, false);
+        this.pendingMatches = matches;
+        this.matchDelayTimer = 0.2f;
+
         return null;
     }
 
@@ -88,16 +112,15 @@ public class BeghouledMechanics implements Mechanic {
 
         if (plantB != null) {
             cellA.setPlant(plantB, PlantLayer.MAIN);
-            plantB.setX(a.row());
-            plantB.setY(a.col());
+            plantB.setCell(cellA);
+            plantB.setTargetPosition(LawnGrid.getCellX(a.col()), LawnGrid.getCellY(a.row()));
         }
         if (plantA != null) {
             cellB.setPlant(plantA, PlantLayer.MAIN);
-            plantA.setX(b.row());
-            plantA.setY(b.col());
+            plantA.setCell(cellB);
+            plantA.setTargetPosition(LawnGrid.getCellX(b.col()), LawnGrid.getCellY(b.row()));
         }
     }
-
 
     private List<List<GridPosition>> findAllMatches(GameWorld world) {
         List<List<GridPosition>> matches = new ArrayList<>();
@@ -146,7 +169,6 @@ public class BeghouledMechanics implements Mechanic {
         return (plant == null) ? null : plant.getType();
     }
 
-
     private void processMatches(GameWorld world, List<List<GridPosition>> matches, boolean isCascade) {
         Set<GridPosition> toRemove = new HashSet<>();
         int sunUnits = 0;
@@ -172,7 +194,6 @@ public class BeghouledMechanics implements Mechanic {
         if (!cascadeMatches.isEmpty()) {
             processMatches(world, cascadeMatches, true);
         } else if (!hasAnyPossibleMove(world)) {
-            System.out.println("No more moves possible — board reset!");
             resetBoard(world);
         }
     }
@@ -191,14 +212,21 @@ public class BeghouledMechanics implements Mechanic {
                 if (craters.contains(new GridPosition(r, c))) continue;
                 Cell cell = world.getGrid()[r][c];
                 cell.removePlant();
+
+                float destX = LawnGrid.getCellX(c);
+                float destY = LawnGrid.getCellY(r);
+
                 if (idx < column.size()) {
                     Plant p = column.get(idx++);
                     cell.setPlant(p, PlantLayer.MAIN);
-                    p.setX(r);
-                    p.setY(c);
+                    p.setCell(cell);
+                    p.setTargetPosition(destX, destY);
                 } else {
                     PlantType safeType = randomPlantTypeAvoidingMatch(world, r, c);
-                    placePlant(world, r, c, safeType);
+                    Plant plant = PlantFactory.createPlant(safeType, (int) destX, (int) (destY + 150), cell);
+                    plant.setTargetPosition(destX, destY);
+                    cell.setPlant(plant, PlantLayer.MAIN);
+                    world.getActivePlants().add(plant);
                 }
             }
         }
@@ -247,11 +275,11 @@ public class BeghouledMechanics implements Mechanic {
                 if (craters.contains(current)) continue;
 
                 if (c + 1 < world.getCols() && !craters.contains(new GridPosition(r, c + 1))
-                        && wouldCreateMatch(world, current, new GridPosition(r, c + 1))) {
+                    && wouldCreateMatch(world, current, new GridPosition(r, c + 1))) {
                     return true;
                 }
                 if (r + 1 < world.getRows() && !craters.contains(new GridPosition(r + 1, c))
-                        && wouldCreateMatch(world, current, new GridPosition(r + 1, c))) {
+                    && wouldCreateMatch(world, current, new GridPosition(r + 1, c))) {
                     return true;
                 }
             }
@@ -266,12 +294,11 @@ public class BeghouledMechanics implements Mechanic {
         return result;
     }
 
-
     public String upgradePlant(GameWorld world, PlantType from) {
         PlantUpgrade upgrade = upgrades.stream()
-                .filter(u -> u.getFrom() == from)
-                .findFirst()
-                .orElse(null);
+            .filter(u -> u.getFrom() == from)
+            .findFirst()
+            .orElse(null);
 
         if (upgrade == null) return "no upgrade for this plant";
         if (world.getSun() < upgrade.getCost()) return "not enough sun";
@@ -281,7 +308,10 @@ public class BeghouledMechanics implements Mechanic {
             for (Cell cell : row) {
                 Plant plant = cell.getPlant();
                 if (plant != null && plant.getType() == from) {
-                    Plant upgraded = PlantFactory.createPlant(upgrade.getTo(), cell.getRow(), cell.getCol(), cell);
+                    float x = LawnGrid.getCellX(cell.getCol());
+                    float y = LawnGrid.getCellY(cell.getRow());
+                    Plant upgraded = PlantFactory.createPlant(upgrade.getTo(), (int) x, (int) y, cell);
+                    upgraded.setTargetPosition(x, y);
                     world.getActivePlants().remove(plant);
                     cell.removePlant();
                     cell.setPlant(upgraded, PlantLayer.MAIN);
@@ -297,23 +327,17 @@ public class BeghouledMechanics implements Mechanic {
         return null;
     }
 
-
     public void createCrater(GameWorld world, int row, int col) {
         GridPosition pos = new GridPosition(row, col);
         craters.add(pos);
         Cell cell = world.getGrid()[row][col];
         cell.findAndRemovePlant();
         cell.setPlantable(false);
-        System.out.println("zombie made a crater");
     }
 
-
-    public int getScore() {
-        return score;
-    }
-
-    public int getTargetScore() {
-        return targetScore;
-    }
-
+    public int getScore() { return score; }
+    public int getTargetScore() { return targetScore; }
+    public List<PlantUpgrade> getUpgrades() { return upgrades; }
+    public int getMatchCount() { return score; }
+    public int getTargetMatches() { return targetScore; }
 }

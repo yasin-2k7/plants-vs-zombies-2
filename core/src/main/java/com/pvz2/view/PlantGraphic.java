@@ -95,12 +95,6 @@ public class PlantGraphic {
     public PlantGraphic(Plant plant, PamPlayer pamPlayer) {
         this.plant = plant;
 
-        int col = plant.getCell().getCol();
-        int row = plant.getCell().getRow();
-
-        this.worldX = LawnGrid.getCellX(col);
-        this.worldY = LawnGrid.getCellY(row);
-
         this.normalPamPath = PlantsCollectionMenuScreen.getPlantAnimAddress(plant.getType());
         this.imitatorPamPath = PlantsCollectionMenuScreen.getPlantAnimAddress(PlantType.IMITATER);
         this.pamPath = plant.isImitate() ? imitatorPamPath : normalPamPath;
@@ -159,12 +153,11 @@ public class PlantGraphic {
                     playClip(info.clipName, info.loop);
                 }
             }
-            return; // keep playing whatever clip is active for this state
+            return;
         }
 
-        // state == IDLE
         if (currentClip.equals(initialClip)) {
-            return; // already on the idle clip
+            return;
         }
 
         float duration = AnimationDurations.getDuration(plant.getType(), currentClip, 0.5f);
@@ -292,6 +285,11 @@ public class PlantGraphic {
         pamPlayer.draw(batch, pamPath, currentClip, animTime*App.getCurrentUser().getGameSpeed(), worldX, worldY, 0.8f, 0.8f,
             isLoop);
 
+        float currentX = plant.getX();
+        float currentY = plant.getY();
+
+        pamPlayer.draw(batch, pamPath, currentClip, animTime, currentX, currentY, 0.8f, 0.8f, isLoop);
+
         TextureRegion armorOverlay = resolveArmorOverlay();
         if (armorOverlay != null) {
             float w = LawnGrid.CELL_WIDTH * ARMORS_SCALE.get(plant.getType())[0];
@@ -303,7 +301,7 @@ public class PlantGraphic {
         if (overlay != null) {
             float w = LawnGrid.CELL_WIDTH * 0.8f;
             float h = LawnGrid.CELL_HEIGHT * 0.8f;
-            batch.draw(overlay, worldX - w / 2f, worldY - h / 2f, w, h);
+            batch.draw(overlay, currentX - w / 2f, currentY - h / 2f, w, h);
         }
     }
 
@@ -319,8 +317,8 @@ public class PlantGraphic {
     public PlantType getPlantType() { return plant.getType(); }
     public boolean isDead() { return plant.isDead(); }
 
-    public float getWorldX() { return worldX; }
-    public float getWorldY() { return worldY; }
+    public float getWorldX() { return plant.getX(); }
+    public float getWorldY() { return plant.getY(); }
 
     public String getCurrentClip() { return currentClip; }
     public String getInitialClip() { return initialClip; }

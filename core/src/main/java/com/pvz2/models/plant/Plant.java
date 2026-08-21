@@ -19,7 +19,7 @@ public class Plant implements Damageable {
     private PlantType type;
     private int health;
     private int initHealth;
-    private int x, y;
+    private float x, y;
     private int damage;
     private transient List<GameComponent> components = new CopyOnWriteArrayList<>();
     private boolean dead = false;
@@ -35,6 +35,8 @@ public class Plant implements Damageable {
     private State state = State.IDLE;
     private boolean isImitate;
     public static final int MAX_ICE_HEALTH = 600;
+
+    private float targetX, targetY;
 
     public enum State {
         IDLE, SPECIAL, ATTACK, UNARMED, TRIGGERED,
@@ -69,6 +71,19 @@ public class Plant implements Damageable {
     }
 
     public void update(float delta) {
+        float moveSpeed = 1000f * delta;
+
+        if (Math.abs(x - targetX) > 2f) {
+            x += Math.signum(targetX - x) * Math.min(moveSpeed, Math.abs(targetX - x));
+        } else {
+            x = targetX;
+        }
+
+        if (Math.abs(y - targetY) > 2f) {
+            y += Math.signum(targetY - y) * Math.min(moveSpeed, Math.abs(targetY - y));
+        } else {
+            y = targetY;
+        }
         if (disabled || freeze || cat) return;
         if (!isImitate) {
             if (plantFoodInStart) {
@@ -288,5 +303,10 @@ public class Plant implements Damageable {
 
     public int getFrozenAmount() {
         return frozenAmount;
+    }
+
+    public void setTargetPosition(float targetX, float targetY) {
+        this.targetX = targetX;
+        this.targetY = targetY;
     }
 }
