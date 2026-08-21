@@ -268,7 +268,7 @@ public class MiniGameFactory {
 
     private static GameWorld createBeghouledLevel1() {
         List<PlantType> plants = List.of(
-                PlantType.PEASHOOTER, PlantType.SUNFLOWER, PlantType.WALL_NUT,
+                PlantType.PEASHOOTER, PlantType.STARFRUIT, PlantType.WALL_NUT,
                 PlantType.CABBAGE_PULT, PlantType.MELON_PULT
         );
 
@@ -302,8 +302,8 @@ public class MiniGameFactory {
 
     private static GameWorld createBeghouledLevel2() {
         List<PlantType> plants = List.of(
-                PlantType.PEASHOOTER, PlantType.SUNFLOWER, PlantType.WALL_NUT,
-                PlantType.CABBAGE_PULT, PlantType.MELON_PULT
+                PlantType.PEASHOOTER, PlantType.CHOMPER, PlantType.WALL_NUT,
+                PlantType.CABBAGE_PULT, PlantType.GARLIC
         );
         List<PlantUpgrade> upgrades = List.of(
                 new PlantUpgrade(PlantType.PEASHOOTER, PlantType.REPEATER, 500),
@@ -333,7 +333,7 @@ public class MiniGameFactory {
 
     private static GameWorld createBeghouledLevel3() {
         List<PlantType> plants = List.of(
-                PlantType.PEASHOOTER, PlantType.SUNFLOWER, PlantType.WALL_NUT,
+                PlantType.PEASHOOTER, PlantType.CITRON, PlantType.WALL_NUT,
                 PlantType.CABBAGE_PULT, PlantType.MELON_PULT
         );
         List<PlantUpgrade> upgrades = List.of(

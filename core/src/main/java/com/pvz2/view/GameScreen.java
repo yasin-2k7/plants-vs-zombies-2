@@ -49,7 +49,7 @@ import java.util.function.Consumer;
 public class GameScreen extends MenuScreen {
 
     private PamPlayer pamPlayer;
-    private final GameWorld world;
+    protected final GameWorld world;
     private final Chapter chapter;
 
     private GameHUD hud;
@@ -814,7 +814,7 @@ public class GameScreen extends MenuScreen {
         handleInput();
     }
 
-    private void handleInput() {
+    public void handleInput() {
         if (Gdx.input.isKeyJustPressed(Input.Keys.SHIFT_LEFT)){
             GameMenuController.cheatSpawnZombie("ZombieDefault", 6, 1);
         }
@@ -985,7 +985,9 @@ public class GameScreen extends MenuScreen {
     public void initIcyPlantGraphics() {
         plantGraphics.clear();
         for (Plant plant : world.getActivePlants()) {
-            plantGraphics.add(new PlantGraphic(plant, pamPlayer));
+            if (plant != null && plant.getCell() != null) {
+                plantGraphics.add(new PlantGraphic(plant, pamPlayer));
+            }
         }
     }
 
