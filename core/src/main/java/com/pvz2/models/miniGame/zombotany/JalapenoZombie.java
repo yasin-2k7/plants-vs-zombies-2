@@ -6,6 +6,7 @@ import com.pvz2.models.enums.Zombies;
 import com.pvz2.models.plant.Plant;
 import com.pvz2.models.world.GameWorld;
 import com.pvz2.models.zombie.Zombie;
+import com.pvz2.view.LawnGrid;
 
 public class JalapenoZombie extends Zombie {
     private static final float EXPLODE_AFTER_TIME = 10f;
@@ -33,7 +34,7 @@ public class JalapenoZombie extends Zombie {
         GameWorld game = App.getCurrentGame();
         if (game == null) return;
 
-        int row = (int) (this.y / App.getCellHeight());
+        int row = LawnGrid.getRowFromY(this.y);
         for (int col = 0; col < game.getCols(); col++) {
             Plant plant = game.getGrid()[row][col].getPlant();
             if (plant != null && !plant.isDead()) {

@@ -29,7 +29,7 @@ public class Sandstorm {
         this.y = App.getCellCenterY(lane);
 
         // مقصد زامبی روی چمن
-        this.targetX = App.getFirstCellX() + targetCol * App.getCellWidth();
+        this.targetX = App.getCellCenterX(targetCol);
 
         if (zombie != null) {
             zombie.setX(this.x);
@@ -38,8 +38,9 @@ public class Sandstorm {
     }
 
     public void update(float delta) {
+        if (state == State.FINISHED) return;
         GameWorld world = App.getCurrentGame();
-        if (world != null && world.getState() == GameState.PAUSED) delta = 0;
+        if (world != null && world.getState() != GameState.PLAYING) delta = 0;
         stateTime += delta;
 
         switch (state) {

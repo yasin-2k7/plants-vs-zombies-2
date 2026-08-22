@@ -8,6 +8,7 @@ import com.pvz2.models.plant.Plant;
 import com.pvz2.models.world.Cell;
 import com.pvz2.models.world.GameWorld;
 import com.pvz2.models.zombie.Zombie;
+import com.pvz2.view.LawnGrid;
 
 public class FishermanZombie extends Zombie {
     private static final float HOOK_INTERVAL = 4.5f;
@@ -33,7 +34,7 @@ public class FishermanZombie extends Zombie {
     private void tryHook() {
         GameWorld game = App.getCurrentGame();
         if (game == null) return;
-        int row = (int) (this.y / App.getCellHeight());
+        int row = LawnGrid.getRowFromY(this.y);
         if (row < 0 || row >= game.getRows()) return;
         Plant target = game.getNearestPlantInRow(row, this.x + 10);
         if (target == null) return;

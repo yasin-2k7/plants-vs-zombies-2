@@ -9,6 +9,7 @@ import com.pvz2.models.world.GameWorld;
 import com.pvz2.models.world.obstacles.OctopusObstacle;
 import com.pvz2.models.zombie.Zombie;
 import com.pvz2.view.GameScreen;
+import com.pvz2.view.LawnGrid;
 
 import java.util.List;
 
@@ -42,7 +43,7 @@ public class RangedZombie extends Zombie {
         if (game == null) return;
         switch (projectileType) {
             case "SNOWBALL": {
-                int row = (int) ((this.y - App.getFirstCellY()) / App.getCellHeight());
+                int row = LawnGrid.getRowFromY(this.y);
                 Plant target = game.getNearestPlantInRow(row, this.x - 10);
                 if (target != null) {
                     target.increaseFrozenAmount();
@@ -57,7 +58,7 @@ public class RangedZombie extends Zombie {
                 break;
             }
             case "OCTOPUS": {
-                int row = (int) ((this.y - App.getFirstCellY()) / App.getCellHeight());
+                int row = LawnGrid.getRowFromY(this.y);
                 Plant target = game.getNearestPlantInRow(row, this.x - 10);
                 if (target != null && !target.isDead()) {
                     Cell cell = game.getCellAt(target.getX(), target.getY());

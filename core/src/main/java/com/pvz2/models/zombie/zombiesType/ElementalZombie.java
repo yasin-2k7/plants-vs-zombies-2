@@ -80,9 +80,7 @@ public class ElementalZombie extends Zombie {
                     if (sameRow) {
                         int plantRow = (plant.getCell() != null) ? plant.getCell().getRow() : 0;
 
-                        float plantWorldX = (plant.getCell() != null)
-                            ? App.getFirstCellX() + plant.getCell().getCol() * App.getCellWidth()
-                            : plant.getX();
+                        float plantWorldX = plant.getX();
 
                         float dist = (this.speed <= 0) ? (this.x - plantWorldX) : (plantWorldX - this.x);
 
@@ -121,7 +119,7 @@ public class ElementalZombie extends Zombie {
 
     private void handleFlight(float delta) {
         stateTime += delta;
-        float targetX = App.getFirstCellX() + 50f;
+        float targetX = App.getFirstCellX();
 
         switch (flightState) {
             case BLASTOFF:

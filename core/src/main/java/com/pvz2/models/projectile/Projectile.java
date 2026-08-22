@@ -62,9 +62,6 @@ public class Projectile implements Resettable {
         GameWorld game = App.getCurrentGame();
         if (hitStrategy instanceof PlantDamageStrategy) {
             checkProjectilesTowardPlants(oldX, oldY);
-            if (movementStrategy.isDead(this)) {
-                dead = true;
-            }
             return;
         }
         Damageable zombie = null;

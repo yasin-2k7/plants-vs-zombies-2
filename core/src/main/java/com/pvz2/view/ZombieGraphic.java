@@ -54,7 +54,7 @@ public class ZombieGraphic {
         }
 
         GameWorld world = App.getCurrentGame();
-        if (world != null && world.getState() == GameState.PAUSED) delta = 0;
+        if (world != null && world.getState() != GameState.PLAYING) delta = 0;
         animTime += delta;
 
         if (!zombie.isDead()) {

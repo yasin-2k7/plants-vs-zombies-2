@@ -5,7 +5,7 @@ import com.pvz2.models.enums.CollectableType;
 public class Collectable {
     private float x, y;
     private CollectableType type;
-    private int lifeTime = 70;
+    private int lifeTime = 10;
     private float currentTime = 0f;
     private boolean dead = false;
 

@@ -12,6 +12,7 @@ import com.pvz2.models.world.Collectable;
 import com.pvz2.models.world.GameWorld;
 import com.pvz2.models.zombie.state.WalkingState;
 import com.pvz2.models.zombie.state.ZombieState;
+import com.pvz2.view.LawnGrid;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -167,7 +168,7 @@ public abstract class Zombie implements Damageable {
                 "\uD83C\uDFC6The glowing zombie dropped a plant food at (" + (int) x + ", " + (int) y + ")");
         }
 
-        if (Math.random() < 0.10) {
+        if (Math.random() < 0.1) {
             CollectableType type;
             if (Math.random() < 0.33) {
                 type = CollectableType.COIN;
@@ -268,7 +269,7 @@ public abstract class Zombie implements Damageable {
     }
 
     public boolean isNearEndLine() {
-        float endLineX = App.getFirstCellX() + App.getCellWidth() / 2f + 2 * App.getCellWidth();
+        float endLineX = App.getCellWidth() / 2f + LawnGrid.getCellX(1);
         return this.x <= endLineX;
     }
 

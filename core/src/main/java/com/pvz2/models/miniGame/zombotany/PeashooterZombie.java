@@ -11,6 +11,7 @@ import com.pvz2.models.projectile.strikeStrategies.CheckPlantStrike;
 import com.pvz2.models.projectile.strikeStrategies.CheckStrike;
 import com.pvz2.models.world.GameWorld;
 import com.pvz2.models.zombie.Zombie;
+import com.pvz2.view.LawnGrid;
 
 public class PeashooterZombie extends Zombie {
     private static final float COOLDOWN_TICKS = 1.5f;
@@ -24,7 +25,7 @@ public class PeashooterZombie extends Zombie {
         GameWorld world = App.getCurrentGame();
         if (world == null) return;
 
-        int row = (int) (this.y / App.getCellHeight());
+        int row = LawnGrid.getRowFromY(this.y);
         Plant target = world.getNearestPlantInRow(row, this.x);
         if (target == null) return;
         System.out.println("🎯 PeashooterZombie saw " + target.getClass().getSimpleName() +

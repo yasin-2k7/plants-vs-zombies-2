@@ -8,6 +8,7 @@ import com.pvz2.models.world.Cell;
 import com.pvz2.models.world.GameWorld;
 import com.pvz2.models.world.Sun;
 import com.pvz2.models.zombie.Zombie;
+import com.pvz2.view.LawnGrid;
 
 import java.util.List;
 
@@ -76,8 +77,8 @@ public class SunStealerZombie extends Zombie {
     }
 
     private void fireLaser(GameWorld game) {
-        int row = (int) (this.y / App.getCellHeight());
-        int col = (int) (this.x / App.getCellWidth());
+        int row = LawnGrid.getRowFromY(this.y);
+        int col = LawnGrid.getColFromX(this.x);
         for (int i = 1; i <= 4; i++) {
             int targetCol = col - i;
             if (targetCol < 0) break;

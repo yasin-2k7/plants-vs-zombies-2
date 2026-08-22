@@ -152,7 +152,7 @@ public class ExplosiveFactory {
         int level = App.getCurrentUser().getUnlockedPlantsLevels().getOrDefault(PlantType.TANGLE_KELP, 1);
         Plant p = new Plant(PlantType.TANGLE_KELP, 1000, 20000);
         ExplosivesComponent component = new ExplosivesComponent(
-                new ProximityTrigger(App.getCellWidth()/3),
+                new ProximityTrigger(App.getCellWidth()/2),
                 new SingleTargetDamageBehavior(new CircularRange(0)), 0, 2.5f);
         if (level >= 3) component.setLives(2);
         component.setPlantFoodBehavior((_, _) -> {
@@ -177,7 +177,7 @@ public class ExplosiveFactory {
         int freezeTime = level >= 3 ? 6 : 4;
         Plant p = new Plant(PlantType.ICEBURG, 1000, 0);
         ExplosivesComponent component = new ExplosivesComponent(
-                new ProximityTrigger(App.getCellWidth()/3),
+                new ProximityTrigger(App.getCellWidth()/2),
                 new FreezeZombieBehavior(new CircularRange(0), freezeTime), 0, 1.5f);
         component.setPlantFoodBehavior((_, _) -> {
             App.getCurrentGame().getActiveZombies()

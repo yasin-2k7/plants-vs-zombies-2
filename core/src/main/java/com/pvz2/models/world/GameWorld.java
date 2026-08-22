@@ -27,6 +27,7 @@ import com.pvz2.models.world.obstacles.OctopusObstacle;
 import com.pvz2.models.world.winCondition.WinCondition;
 import com.pvz2.models.zombie.Zombie;
 import com.pvz2.models.zombie.wave.WaveManager;
+import com.pvz2.view.LawnGrid;
 
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -168,8 +169,8 @@ public abstract class GameWorld {
         }
     }
     public Plant getPlantAtPosition(float x, float y) {
-        int col = (int) ((x - App.getFirstCellX()) / App.getCellWidth());
-        int row = (int) ((y - App.getFirstCellY()) / App.getCellHeight());
+        int col = LawnGrid.getColFromX(x);
+        int row = LawnGrid.getRowFromY(y);
         if (row >= 0 && row < rows && col >= 0 && col < cols) {
             if (Math.abs(x - grid[row][col].getX()) < App.getCellWidth() / 4) {
                 return grid[row][col].getPlant();
@@ -194,8 +195,8 @@ public abstract class GameWorld {
         return nearest;
     }
     public void createGrave(int x, int y) {
-        int col = (int) ((x - App.getFirstCellX()) / App.getCellWidth());
-        int row = (int) ((y - App.getFirstCellY()) / App.getCellHeight());
+        int col = LawnGrid.getColFromX(x);
+        int row = LawnGrid.getRowFromY(y);
         if (row < 0 || row >= rows || col < 0 || col >= cols) return;
         Cell cell = grid[row][col];
         if (cell.hasObstacle() || !cell.isEmpty()) {
@@ -247,8 +248,8 @@ public abstract class GameWorld {
                 stats.incrementZombiesKilledInFirstWave();
             }
         }
-        int col = (int) ((zombie.getX() - App.getFirstCellX()) / App.getCellWidth());
-        int row = (int) ((zombie.getY() - App.getFirstCellY()) / App.getCellHeight());
+        int col = LawnGrid.getColFromX(zombie.getX());
+        int row = LawnGrid.getRowFromY(zombie.getY());
         if (col == 0) {
             LawnMower mower = null;
             if (lawnMowerManager != null && row < lawnMowerManager.getMowers().size()) {

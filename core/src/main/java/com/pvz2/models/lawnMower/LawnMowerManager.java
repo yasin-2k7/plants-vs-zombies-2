@@ -4,6 +4,7 @@ import com.pvz2.models.core.App;
 import com.pvz2.models.world.GameState;
 import com.pvz2.models.world.GameWorld;
 import com.pvz2.models.zombie.Zombie;
+import com.pvz2.view.LawnGrid;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,7 +47,7 @@ public class LawnMowerManager {
             List<Zombie> zombiesInRow = getZombiesInRow(allZombies, mower.getRow());
 
             for (Zombie z : zombiesInRow) {
-                if (!z.isDead() && z.getX() <= App.getFirstCellX()) {   // <<< فیکس شد
+                if (!z.isDead() && z.getX() <= App.getFirstCellX() - App.getCellWidth()/2) {   // <<< فیکس شد
                     if (!mower.isSpent() && !mower.isActive()) {
                         mower.activate();
                     } else if (mower.isSpent()) {
@@ -64,7 +65,7 @@ public class LawnMowerManager {
     }
 
     private int getRowFromY(float y) {
-        int row = (int) ((y - App.getFirstCellY()) / cellHeight);
+        int row = LawnGrid.getRowFromY(y);
         return Math.max(0, Math.min(row, totalRows - 1));
     }
 

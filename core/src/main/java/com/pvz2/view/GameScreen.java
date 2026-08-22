@@ -112,6 +112,7 @@ public class GameScreen extends MenuScreen {
     private boolean zombiePreviewVisible = true;
 
     private final Map<Sun, SunGraphic> sunGraphics = new HashMap<>();
+    private final Map<Collectable, CollectableGraphic> collectableGraphics = new HashMap<>();
     private final List<GraveGraphic> graveGraphics = new ArrayList<>();
     private final List<BarrelObstacleGraphic> barrelObstacleGraphics = new ArrayList<>();
     private final List<OctopusObstacleGraphic> octopusObstacleGraphics = new ArrayList<>();
@@ -553,11 +554,6 @@ public class GameScreen extends MenuScreen {
             zg.draw(game.batch, pamPlayer);
         }
 
-        for (PlantGraphic pg : plantGraphics){
-            pg.update(delta);
-            pg.draw(game.batch, pamPlayer);
-        }
-
         for (int i = octopusObstacleGraphics.size() - 1; i >= 0; i--) {
             OctopusObstacleGraphic graphic = octopusObstacleGraphics.get(i);
             OctopusObstacle octopus = graphic.getObstacle();
@@ -591,10 +587,15 @@ public class GameScreen extends MenuScreen {
         }
         explosionGraphics.removeIf(eg -> eg.isFinished(pamPlayer));
         syncSunGraphics();
+        syncCollectableGraphics();
 
         for (SunGraphic sg : new ArrayList<>(sunGraphics.values())) {
             sg.update(delta);
             sg.draw(game.batch, pamPlayer, game);
+        }
+        for (CollectableGraphic cg : new ArrayList<>(collectableGraphics.values())) {
+            cg.update(delta);
+            cg.draw(game.batch, pamPlayer);
         }
         renderProjectiles(delta, game.batch, pamPlayer);
         game.batch.end();
@@ -761,7 +762,7 @@ public class GameScreen extends MenuScreen {
     private void drawDarkContent(DarkAgesWorld darkAgesWorld) {
         float time = stateTime;
         GameWorld world = App.getCurrentGame();
-        if (world != null && world.getState() == GameState.PAUSED) time = 0;
+        if (world != null && world.getState() != GameState.PLAYING) time = 0;
         for (Cell cell : darkAgesWorld.getNecromancyCells()){
             pamPlayer.draw(game.batch, NECROMANCY_PAM_PATH, NECROMANCY_CLIP, time, cell.getX(), cell.getY(), 0.5f, 0.5f,
                 true);
@@ -771,7 +772,7 @@ public class GameScreen extends MenuScreen {
     private void drawBeachContent(BigWaveBeachWorld bigWaveBeachWorld) {
         float time = stateTime;
         GameWorld world = App.getCurrentGame();
-        if (world != null && world.getState() == GameState.PAUSED) time = 0;
+        if (world != null && world.getState() != GameState.PLAYING) time = 0;
         float waveX = App.getCellCenterX(bigWaveBeachWorld.getCurrentTideCol())+App.getCellWidth()*2;
         pamPlayer.draw(game.batch, WAVE_PAM_PATH, WAVE_CLIP, stateTime, waveX, App.getCellCenterY(3)-125f, 0.8f,
             0.45f, true);
@@ -784,7 +785,7 @@ public class GameScreen extends MenuScreen {
     private void drawFrostbiteContent(FrostbiteCavesWorld frostbiteCavesWorld, float delta) {
         float time = stateTime;
         GameWorld world = App.getCurrentGame();
-        if (world != null && world.getState() == GameState.PAUSED){
+        if (world != null && world.getState() != GameState.PLAYING){
             delta = 0;
             time = 0;
         }
@@ -993,6 +994,9 @@ public class GameScreen extends MenuScreen {
     }
 
     public void handleInput() {
+        if (world != null && (world.isDialogActive() || world.getState() != GameState.PLAYING)) {
+            return;
+        }
         if (Gdx.input.isKeyJustPressed(Input.Keys.SHIFT_LEFT)){
             GameMenuController.cheatSpawnZombie("ZombieDefault", 6, 1);
         }
@@ -1036,7 +1040,9 @@ public class GameScreen extends MenuScreen {
                 }
             }
             else {
-                GameMenuController.collectSun(touchPoint.x, touchPoint.y);
+                if (!GameMenuController.collectSun(touchPoint.x, touchPoint.y)){
+                    GameMenuController.collectCollectable(touchPoint.x, touchPoint.y);
+                }
             }
             hud.getSelectedPlantsList().unselectPlants();
             hud.getPlantFoodBank().setSelected(false);
@@ -1068,6 +1074,7 @@ public class GameScreen extends MenuScreen {
                         fxPath, fxClip, pg.getWorldX(), y, pamPlayer, scaleX,
                         scaleY
                     ));
+                    triggerCameraShake(0.3f, 10);
                 }
             });
         }
@@ -1174,6 +1181,13 @@ public class GameScreen extends MenuScreen {
         sunGraphics.entrySet().removeIf(entry ->
             !world.getActiveSuns().contains(entry.getKey()) && entry.getValue().isPopFinished()
         );
+    }
+    private void syncCollectableGraphics() {
+        for (Collectable collectable : world.getActiveCollectables()) {
+            collectableGraphics.computeIfAbsent(collectable, CollectableGraphic::new);
+        }
+        collectableGraphics.entrySet().removeIf(entry ->
+            !world.getActiveCollectables().contains(entry.getKey()));
     }
 
     public List<PlantGraphic> getPlantGraphics() {

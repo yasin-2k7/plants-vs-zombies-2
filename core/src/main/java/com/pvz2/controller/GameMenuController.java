@@ -59,7 +59,7 @@ public class GameMenuController implements MenuController {
             }
         }
 //        AppView.setCurrentScreen(MainMenuView.getInstance());
-        App.setCurrentGame(null);
+
         if (!gameWorld.isConveyorMode()){
             for (PlantCard plantCard : gameWorld.getPlantLists()){
                 App.getCurrentUser().getPlantBoosts().remove(plantCard.getType());
@@ -89,7 +89,7 @@ public class GameMenuController implements MenuController {
             }
         }
 //        AppView.setCurrentScreen(MainMenuView.getInstance());
-        App.setCurrentGame(null);
+
         App.getCurrentUser().getPlantBoosts().clear();
     }
 
@@ -149,7 +149,7 @@ public class GameMenuController implements MenuController {
             new GameScreen(screen.getGame(), world, currentChapter));
     }
 
-    public static void collectSun(float touchX, float touchY) {
+    public static boolean collectSun(float touchX, float touchY) {
         for (Sun sun : App.getCurrentGame().getActiveSuns()) {
             if (sun.getBounds().contains(touchX, touchY) && !sun.isCollected() && !sun.isExploded()) {
                 if (sun.getType() == SunType.RADIOACTIVE) {
@@ -158,56 +158,45 @@ public class GameMenuController implements MenuController {
                     sun.collect();
                     App.getCurrentGame().addSunToPlayer(sun.getSize());
                 }
-                break;
+                return true;
             }
         }
+        return false;
     }
-    public void collectCollectable(float x, float y, String type) {
-        CollectableType selectedType = null;
-        for (CollectableType collectableType : CollectableType.values()) {
-            if (collectableType.name().equalsIgnoreCase(type)) {
-                selectedType = collectableType;
-                break;
-            }
-        }
-        if (selectedType == null) {
-//            GameMenuView.getInstance().showResult("invalid collectable type");
-            return;
-        }
+    public static void collectCollectable(float x, float y) {
         for (Collectable collectable : App.getCurrentGame().getActiveCollectables()) {
             if (collectable.isDead()) continue;
-            if (Math.abs(collectable.getX() - x) < 2 && Math.abs(collectable.getY() - y) < 2) {
+            if (Math.abs(collectable.getX() - x) < 20 && Math.abs(collectable.getY() - y) < 20) {
                 switch (collectable.getType()) {
                     case POT:
                         GreenHouse greenhouse = App.getCurrentUser().getGreenhouse();
-                        String result = greenhouse.unlockFirstLockedPot();
-//                        GameMenuView.getInstance().showResult(result);
+                        greenhouse.unlockFirstLockedPot();
+                        collectable.collect();
                         break;
                     case COIN:
                         App.getCurrentUser().setCoins(App.getCurrentUser().getCoins() + 10);
-//                        GameMenuView.getInstance().showResult(
-//                                "coin collected. now you have " + App.getCurrentUser().getCoins() + " coins.");
+                        if (screen instanceof GameScreen gameScreen){
+                            gameScreen.getHud().getResourcesTable().update();
+                        }
+                        collectable.collect();
                         break;
                     case DIAMOND:
                         App.getCurrentUser().setGems(App.getCurrentUser().getGems() + 1);
-//                        GameMenuView.getInstance().showResult(
-//                                "gem collected. now you have " + App.getCurrentUser().getGems() + " gems.");
+                        if (screen instanceof GameScreen gameScreen){
+                            gameScreen.getHud().getResourcesTable().update();
+                        }
+                        collectable.collect();
                         break;
                     case PLANT_FOOD:
                         if (App.getCurrentGame().getPlantFoods() < 3) {
                             App.getCurrentGame().setPlantFoods(App.getCurrentGame().getPlantFoods() + 1);
-//                            GameMenuView.getInstance().showResult("plant food collected. now you have " +
-//                                    App.getCurrentGame().getPlantFoods() + " plant foods.");
-                        } else {
-//                            GameMenuView.getInstance().showResult("not enough space!");
+                            collectable.collect();
                         }
                         break;
                 }
-                collectable.collect();
                 return;
             }
         }
-//        GameMenuView.getInstance().showResult("there is no collectable in that place!");
     }
 
 
@@ -221,7 +210,10 @@ public class GameMenuController implements MenuController {
         if (world == null) return false;
         unselectPlant();
         unselectShovel();
-        if (world.getPlantFoods() == 0) return false;
+        if (world.getPlantFoods() == 0){
+            world.setSelectedPlantfood(false);
+            return false;
+        }
         if (world.isSelectedPlantfood()){
             world.setSelectedPlantfood(false);
             return true;
@@ -395,7 +387,6 @@ public class GameMenuController implements MenuController {
             return;
         }
         selectedCell.findPlant().activatePlantFood();
-        selectAndUnselectPlantfood();
         App.getCurrentGame().setPlantFoods(App.getCurrentGame().getPlantFoods() - 1);
     }
 

@@ -128,11 +128,11 @@ public class ShooterFactory {
         newComponent.setPlantFoodBehavior(new PlantFoodBehavior() {
             @Override
             public void activate(Plant owner, ShooterComponent shooterComponent) {
-                for (Zombie zombie : Cell.getZombiesInCells(Cell.getCellsInRow(p.getCell(),
-                    LevelMenuController.getGameCells()))){
+                for (Zombie zombie : Cell.getZombiesInCells(Cell.getCellsInRow(owner.getCell(),
+                    LevelMenuController.getGameCells()))) {
                     zombie.freeze(5.0f);
-                    BurstPlantFood.INSTANCE.activate(p, newComponent);
                 }
+                BurstPlantFood.INSTANCE.activate(owner, shooterComponent);
             }
         });
         p.addComponent(newComponent);

@@ -7,6 +7,7 @@ import com.pvz2.models.plant.Plant;
 import com.pvz2.models.world.GameWorld;
 import com.pvz2.models.zombie.Zombie;
 import com.pvz2.models.zombie.ZombieFactory;
+import com.pvz2.view.LawnGrid;
 
 public class SpawnerZombie extends Zombie {
     private boolean isGargantuar;
@@ -145,7 +146,7 @@ public class SpawnerZombie extends Zombie {
         GameWorld game = App.getCurrentGame();
         if (game == null) return;
 
-        int row = (int) ((this.y - App.getFirstCellY()) / App.getCellHeight());
+        int row = LawnGrid.getRowFromY(this.y);
         Plant target = game.getNearestPlantInRow(row, this.x - 10);
 
         if (target != null && !target.isDead()) {

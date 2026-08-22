@@ -7,6 +7,7 @@ import com.pvz2.models.plant.Plant;
 import com.pvz2.models.world.GameWorld;
 import com.pvz2.models.zombie.Zombie;
 import com.pvz2.models.zombie.state.WalkingState;
+import com.pvz2.view.LawnGrid;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -57,7 +58,7 @@ public class WizardZombie extends Zombie {
         if (!isDead() && getCurrentState() != null && !(getCurrentState() instanceof WalkingState)) {
             GameWorld game = App.getCurrentGame();
             if (game != null) {
-                int row = (int) ((this.y - App.getFirstCellY()) / App.getCellHeight());
+                int row = LawnGrid.getRowFromY(this.y);
                 Plant target = game.getNearestPlantInRow(row, this.x + 50);
 
                 if (target != null && target.isSheep()) {
@@ -75,7 +76,7 @@ public class WizardZombie extends Zombie {
         GameWorld game = App.getCurrentGame();
         if (game == null) return;
 
-        int row = (int) ((this.y - App.getFirstCellY()) / App.getCellHeight());
+        int row = LawnGrid.getRowFromY(this.y);
         Plant target = game.getNearestPlantInRow(row, this.x + 10);
 
         if (target != null && !target.isDead() && !target.isSheep()) {
