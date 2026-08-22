@@ -137,7 +137,7 @@ public class ChapterMenuScreen extends MenuScreen {
                 if (userUnlockedChapter > i + 1) {
                     completedLevels = totalLevels;
                 } else if (userUnlockedChapter == i + 1) {
-                    completedLevels = MathUtils.clamp(App.getCurrentUser().getCompletedLevels() - 1, 0, totalLevels);
+                    completedLevels = App.getCurrentUser().getUnlockedLevel()-1;
                 }
             }
 

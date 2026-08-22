@@ -6,6 +6,7 @@ import com.pvz2.models.world.Cell;
 import com.pvz2.models.world.GameWorld;
 import com.pvz2.models.zombie.Zombie;
 import com.pvz2.models.zombie.state.EatingState;
+import com.pvz2.view.LawnGrid;
 
 public class SnorkelZombie extends Zombie {
     private boolean underwater;
@@ -25,8 +26,8 @@ public class SnorkelZombie extends Zombie {
             return;
         }
 
-        int col = (int) (this.x / App.getCellWidth());
-        int row = (int) (this.y / App.getCellHeight());
+        int col = LawnGrid.getColFromX(this.x);
+        int row = LawnGrid.getRowFromY(this.y);
         boolean inWater = false;
         if (row >= 0 && row < game.getRows() && col >= 0 && col < game.getCols()) {
             Cell cell = game.getGrid()[row][col];

@@ -55,6 +55,17 @@ public class Wave {
                 if (!canAddAny) break;
             }
         }
+
+        if (generatedEntries.isEmpty() && !availableEntries.isEmpty()) {
+            WaveSpawnEntry cheapest = availableEntries.get(0);
+            for (WaveSpawnEntry entry : availableEntries) {
+                if (entry.getWavePointCost() < cheapest.getWavePointCost()) {
+                    cheapest = entry;
+                }
+            }
+            generatedEntries.add(new WaveSpawnEntry(cheapest.getZombieAlias(), cheapest.getWavePointCost()));
+        }
+
         return new Wave(waveNumber, totalCost, generatedEntries, spawnDelayTicks, isFinalWave);
     }
 

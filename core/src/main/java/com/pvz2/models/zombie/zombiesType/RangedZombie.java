@@ -8,13 +8,18 @@ import com.pvz2.models.world.Cell;
 import com.pvz2.models.world.GameWorld;
 import com.pvz2.models.world.obstacles.OctopusObstacle;
 import com.pvz2.models.zombie.Zombie;
+import com.pvz2.view.GameScreen;
+import com.pvz2.view.LawnGrid;
 
 import java.util.List;
 
 public class RangedZombie extends Zombie {
-    private final float cooldownMax = 12f;
+    private final float cooldownMax = 15f;
     private String projectileType;
     private float cooldown;
+
+    private boolean throwing = false;
+    private float throwAnimElapsed = 0f;
 
     public RangedZombie(int health, double speed, int damage, String projectileType) {
         super(Zombies.RANGED, health, speed, damage);
@@ -22,24 +27,39 @@ public class RangedZombie extends Zombie {
         this.cooldown = 0;
     }
 
+    private float getThrowAnimDuration() {
+        if ("OCTOPUS".equals(projectileType)) {
+            return 3.08f;
+        } else if ("BONE".equals(projectileType)) {
+            return 3.0f;
+        } else if ("SNOWBALL".equals(projectileType)) {
+            return 2.2f;
+        }
+        return 0.6f;
+    }
+
     public void throwProjectile() {
         GameWorld game = App.getCurrentGame();
         if (game == null) return;
         switch (projectileType) {
             case "SNOWBALL": {
-                int row = (int) (this.y / App.getCellHeight());
+                int row = LawnGrid.getRowFromY(this.y);
                 Plant target = game.getNearestPlantInRow(row, this.x - 10);
                 if (target != null) {
                     target.increaseFrozenAmount();
+
+                    GameScreen.spawnSnowballSplat(target.getX(), target.getY());
+
                     System.out.println("❄️ Hunter Zombie threw a snowball at " + target.getType() +
-                            " at (" + target.getX() + ", " + target.getY() + ")");
+                        " at (" + target.getX() + ", " + target.getY() + ")");
                 } else {
                     System.out.println("❄️ Hunter Zombie threw a snowball but no target found in row " + row);
                 }
                 break;
             }
             case "OCTOPUS": {
-                Plant target = game.getNearestPlantInRow((int) (this.y / App.getCellHeight()), this.x - 10);
+                int row = LawnGrid.getRowFromY(this.y);
+                Plant target = game.getNearestPlantInRow(row, this.x - 10);
                 if (target != null && !target.isDead()) {
                     Cell cell = game.getCellAt(target.getX(), target.getY());
                     if (cell != null && !cell.hasObstacle()) {
@@ -47,22 +67,19 @@ public class RangedZombie extends Zombie {
                         cell.setObstacle(octopus);
                         game.getActiveObstacles().add(octopus);
                         GameMenuController.updateState(
-                                "Octopus thrown at plant at (" + target.getX() + ", " + target.getY() + ")");
-                    } else {
-                        // System.out.println("Cell already has an obstacle or cannot place octopus.");
+                            "Octopus thrown at plant at (" + target.getX() + ", " + target.getY() + ")");
                     }
                 }
                 break;
             }
-
             case "BONE": {
                 List<Cell> targetCells = game.findTwoEmptyCell(false);
                 if (!targetCells.isEmpty()) {
                     for (Cell cell : targetCells) {
                         game.createGrave((int) cell.getX(), (int) cell.getY());
                         GameMenuController.updateState(
-                                "Tomb Raiser threw a bone at (" +
-                                        cell.getCol() + ", " + cell.getRow() + ")");
+                            "Tomb Raiser threw a bone at (" +
+                                cell.getCol() + ", " + cell.getRow() + ")");
                     }
                 } else {
                     GameMenuController.updateState("No empty cell on the board to place grave.");
@@ -76,11 +93,40 @@ public class RangedZombie extends Zombie {
     public void update(float delta) {
         if (isDead) return;
         super.update(delta);
-        if (cooldown <= 0) {
-            throwProjectile();
-            cooldown = cooldownMax;
-        } else {
-            cooldown-= delta;
+
+        if (throwing) {
+            throwAnimElapsed += delta;
+            if (throwAnimElapsed >= getThrowAnimDuration()) {
+                throwing = false;
+                throwAnimElapsed = 0f;
+                throwProjectile();
+                cooldown = cooldownMax;
+            }
+            return;
         }
+
+        if (cooldown <= 0) {
+            throwing = true;
+            throwAnimElapsed = 0f;
+        } else {
+            cooldown -= delta;
+        }
+    }
+
+    public boolean isThrowing() {
+        return throwing;
+    }
+
+    public String getProjectileType() {
+        return projectileType;
+    }
+
+    public String getThrowClipName() {
+        return switch (projectileType) {
+            case "OCTOPUS" -> "toss";
+            case "BONE" -> "power";
+            case "SNOWBALL" -> "throw";
+            default -> "power";
+        };
     }
 }

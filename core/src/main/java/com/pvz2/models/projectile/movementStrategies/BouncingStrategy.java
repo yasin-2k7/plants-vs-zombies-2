@@ -22,18 +22,18 @@ public class BouncingStrategy implements MovementStrategy {
 
     @Override
     public void move(Projectile projectile, float delta) {
-        if (projectile.getX() <= App.getFirstCellX() && speedX < 0) {
+        if (projectile.getX() <= App.getFirstCellX()-App.getCellWidth()/2 && speedX < 0) {
             speedX = -speedX;
             bounceCount++;
             projectile.getLastTarget().clear();
-        } else if (projectile.getX() >= App.getFirstCellX()+9*App.getCellWidth() && speedX > 0) {
+        } else if (projectile.getX() >= App.getFirstCellX()+8.5*App.getCellWidth() && speedX > 0) {
             speedX = -speedX;
             bounceCount++;
             projectile.getLastTarget().clear();
         }
 
-        float bottomLimit = App.getFirstCellY();
-        float topLimit = App.getFirstCellY() + App.getCellHeight() * 5;
+        float bottomLimit = App.getCellCenterY(0) - App.getCellHeight()/2;
+        float topLimit = App.getCellCenterY(4) + App.getCellHeight()/2;
 
         if (projectile.getY() <= bottomLimit && speedY < 0) {
             speedY = -speedY;

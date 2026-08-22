@@ -168,12 +168,25 @@ public class CrazyDaveOverlay extends WidgetGroup {
 
     public void startPresentation() {
         if (dialogs.isEmpty()) return;
+
         checkSpeakersInDialogs();
-        isStarted = true;
-        setVisible(true);
-        world.setDialogActive(true);
-        stateTime = 0f;
-        currentAnim = "anim_enter";
+
+        this.currentDialogIndex = 0;
+        this.isTyping = false;
+        this.typeTimer = 0f;
+        this.targetText = "";
+        this.textLabel.setText("");
+        this.bubbleImage.setVisible(false);
+        this.textLabel.setVisible(false);
+        this.tapToContinueLabel.setVisible(false);
+
+        this.isStarted = true;
+        this.finished = false;
+        this.isLeaving = false;
+        this.setVisible(true);
+        this.world.setDialogActive(true);
+        this.stateTime = 0f;
+        this.currentAnim = "anim_enter";
     }
 
     private void startTyping(String rawText) {
@@ -231,7 +244,6 @@ public class CrazyDaveOverlay extends WidgetGroup {
         if (onCompleteAction != null) {
             onCompleteAction.run();
         }
-        remove();
     }
 
     @Override
@@ -278,11 +290,22 @@ public class CrazyDaveOverlay extends WidgetGroup {
             if (onComplete != null) onComplete.run();
             return;
         }
+
         this.dialogs.clear();
         this.dialogs.addAll(newDialogs);
         this.onCompleteAction = onComplete;
-        this.currentDialogIndex = 0;
+
         checkSpeakersInDialogs();
+
+        this.currentDialogIndex = 0;
+        this.isTyping = false;
+        this.typeTimer = 0f;
+        this.targetText = "";
+        this.textLabel.setText("");
+        this.bubbleImage.setVisible(false);
+        this.textLabel.setVisible(false);
+        this.tapToContinueLabel.setVisible(false);
+
         this.isStarted = true;
         this.finished = false;
         this.isLeaving = false;

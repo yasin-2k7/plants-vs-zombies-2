@@ -23,9 +23,22 @@ public class FrostbiteCavesWorld extends GameWorld {
     private final float icyWindTime = 25.0f;
     private float lastIcyWindTime = 0f;
     private Random random = new Random();
+    private List<Cell> slidingCells = new ArrayList<>();
 
     private List<PlantType> lockedPlants;
+    private List<Wind> winds = new ArrayList<>();
 
+    public static class Wind{
+        public int getRow() {
+            return row;
+        }
+
+        int row;
+
+        public Wind(int row) {
+            this.row = row;
+        }
+    }
 
     public FrostbiteCavesWorld(LevelSetup levelSetup, ArrayList<LoseCondition> loseConditions,
                                WinCondition winCondition, ArrayList<Mechanic> mechanics) {
@@ -41,18 +54,19 @@ public class FrostbiteCavesWorld extends GameWorld {
 
     private void updateIcyWinds() {
         float currentTime = getElapsedTime();
+        if (currentTime - lastIcyWindTime >= 2.5f) winds.clear();
 
         if (currentTime - lastIcyWindTime >= icyWindTime) {
             lastIcyWindTime = currentTime;
-            int winds = random.nextInt(3) + 1;
+            int windsCount = random.nextInt(3) + 1;
 
             List<Integer> pool = new ArrayList<>(List.of(0, 1, 2, 3, 4));
 
             Collections.shuffle(pool);
 
-            for (int i = 0; i < winds; i++) {
+            for (int i = 0; i < windsCount; i++) {
                 int selectedRow = pool.get(i);
-                GameMenuController.updateState("Ice wind in row " + (selectedRow + 1));
+                winds.add(new Wind(selectedRow));
                 for (Cell cell : grid[selectedRow]) {
                     if (cell.getPlant() != null) {
                         cell.getPlant().increaseFrozenAmount();
@@ -74,6 +88,7 @@ public class FrostbiteCavesWorld extends GameWorld {
             else if (cellRow == getRows() - 1) dir = -1;
             else dir = random.nextBoolean() ? 1 : -1;
             grid[cellRow][cellCol].setSlippingDir(dir);
+            slidingCells.add(grid[cellRow][cellCol]);
         }
     }
 
@@ -144,5 +159,11 @@ public class FrostbiteCavesWorld extends GameWorld {
         this.lockedPlants = lockedPlants;
     }
 
+    public List<Wind> getWinds() {
+        return winds;
+    }
 
+    public List<Cell> getSlidingCells() {
+        return slidingCells;
+    }
 }

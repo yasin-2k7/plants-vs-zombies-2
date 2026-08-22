@@ -13,6 +13,7 @@ import com.pvz2.models.world.winCondition.WinCondition;
 import com.pvz2.view.LawnGrid;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 public class DarkAgesWorld extends GameWorld {
@@ -20,6 +21,7 @@ public class DarkAgesWorld extends GameWorld {
     private static final int MIN_GRAVES = 3;
     private static final int MAX_GRAVES = 6;
     private Random random;
+    private List<Cell> necromancyCells = new ArrayList<>();
 
     public DarkAgesWorld(LevelSetup levelSetup,
                          ArrayList<LoseCondition> loseConditions,
@@ -36,7 +38,6 @@ public class DarkAgesWorld extends GameWorld {
         spawnInitialGraves();
         markNecromancyCells();
 
-        // زمین معمولی
         Cell[][] grid = getGrid();
         for (Cell[] row : grid) {
             for (Cell cell : row) {
@@ -66,7 +67,6 @@ public class DarkAgesWorld extends GameWorld {
 
             if (cell.hasObstacle() || !cell.isEmpty()) continue;
 
-            // ایجاد قبر با محتوای احتمالی
             Grave grave = createRandomGrave(col, row);
             cell.setObstacle(grave);
             cell.setPlantable(false);
@@ -79,7 +79,6 @@ public class DarkAgesWorld extends GameWorld {
         float x = LawnGrid.getCellX(col);
         float y = LawnGrid.getCellY(row);
 
-        // احتمال ۲۰٪ قبر دارای خورشید، ۱۰٪ دارای غذای گیاه، بقیه معمولی
         int rand = random.nextInt(100);
         if (rand < 20) {
             return new Grave(x, y, row, col, Grave.GraveType.SUN);
@@ -91,28 +90,26 @@ public class DarkAgesWorld extends GameWorld {
     }
 
     private void markNecromancyCells() {
-        // ۲۰٪ از سلول‌ها پتانسیل نکرو‌منسی پیدا می‌کنند
         Cell[][] grid = getGrid();
         for (int r = 0; r < getRows(); r++) {
             for (int c = 0; c < getCols(); c++) {
                 if (random.nextDouble() < 0.2) {
                     grid[r][c].setNecromancyPotential(true);
+                    necromancyCells.add(grid[r][c]);
                 }
             }
         }
     }
 
-    // متد کمکی برای ایجاد قبر جدید در ابتدای موج
     public void spawnWaveGraves() {
         Cell[][] grid = getGrid();
-        int newGraves = 1 + random.nextInt(3); // ۱ تا ۳ قبر جدید
+        int newGraves = 1 + random.nextInt(3);
 
         for (int i = 0; i < newGraves; i++) {
             int row = random.nextInt(getRows());
             int col = random.nextInt(getCols());
             Cell cell = grid[row][col];
 
-            // فقط در خانه‌های خالی و بدون مانع
             if (!cell.hasObstacle() && cell.isEmpty()) {
                 Grave grave = createRandomGrave(col, row);
                 cell.setObstacle(grave);
@@ -123,17 +120,30 @@ public class DarkAgesWorld extends GameWorld {
         }
     }
 
-    // متد برای نکرو‌منسی: در ابتدای هر موج، از قبرهای روی سلول‌های دارای پتانسیل، زامبی خارج می‌شود
     public void triggerNecromancy() {
         Cell[][] grid = getGrid();
         for (int r = 0; r < getRows(); r++) {
             for (int c = 0; c < getCols(); c++) {
                 Cell cell = grid[r][c];
                 if (cell.isNecromancyPotential() && cell.hasObstacle() && cell.getObstacle() instanceof Grave) {
-
                     cell.setNecromancyTriggered(true);
+                    cell.setNecromancyPotential(false);
                 }
             }
         }
+    }
+
+    public List<Cell> getNecromancyCells() {
+        return necromancyCells;
+    }
+
+    private final java.util.Set<com.pvz2.models.zombie.Zombie> necromancyZombies = new java.util.HashSet<>();
+
+    public void registerNecromancyZombie(com.pvz2.models.zombie.Zombie zombie) {
+        necromancyZombies.add(zombie);
+    }
+
+    public java.util.Set<com.pvz2.models.zombie.Zombie> getNecromancyZombies() {
+        return necromancyZombies;
     }
 }

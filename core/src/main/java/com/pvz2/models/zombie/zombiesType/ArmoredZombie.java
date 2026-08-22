@@ -16,7 +16,10 @@ public class ArmoredZombie extends Zombie {
     @Override
     public void takeDamage(int amount, String damageType) {
         if (isDead) return;
+
         if (armorHealth > 0) {
+            triggerDamageFlash();
+
             int excess = amount - armorHealth;
             if (excess > 0) {
                 armorHealth = 0;
@@ -36,6 +39,4 @@ public class ArmoredZombie extends Zombie {
     public int getArmorHealth() {
         return armorHealth;
     }
-
-
 }

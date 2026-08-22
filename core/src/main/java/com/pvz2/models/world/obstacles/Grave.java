@@ -2,6 +2,8 @@ package com.pvz2.models.world.obstacles;
 
 import com.pvz2.controller.GameMenuController;
 import com.pvz2.models.core.App;
+import com.pvz2.models.enums.CollectableType;
+import com.pvz2.models.world.Collectable;
 import com.pvz2.models.world.GameWorld;
 
 public class Grave extends Obstacle {
@@ -42,6 +44,7 @@ public class Grave extends Obstacle {
     public void takeDamage(int amount, String type) {
         if (isDestroyed || isDying) return;
 
+        triggerDamageFlash();
         this.health -= amount;
         GameMenuController.updateState("grave in (" + x + ", " + y + ") health: " + health);
 
@@ -65,15 +68,9 @@ public class Grave extends Obstacle {
         if (game == null) return;
 
         if (type == GraveType.SUN) {
-            game.setSun(game.getSun() + 50);
-            GameMenuController.updateState("A grave released 50 suns!");
+            game.getActiveSuns().add(game.getSunsPool().acquire());
         } else if (type == GraveType.PLANT_FOOD) {
-            if (game.getPlantFoods() < 3) {
-                game.setPlantFoods(game.getPlantFoods() + 1);
-                GameMenuController.updateState("A grave released a plant food!");
-            } else {
-                GameMenuController.updateState("Plant food inventory is full, grave released nothing.");
-            }
+            game.getActiveCollectables().add(new Collectable(x, y, CollectableType.PLANT_FOOD));
         }
         isCollected = true;
     }

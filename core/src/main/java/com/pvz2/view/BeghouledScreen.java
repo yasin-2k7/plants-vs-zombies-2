@@ -235,8 +235,8 @@ public class BeghouledScreen extends GameScreen {
     private void drawSelectionHighlight() {
         if (dragStartPos == null) return;
 
-        float x = LawnGrid.getCellX(dragStartPos.col());
-        float y = LawnGrid.getCellY(dragStartPos.row());
+        float x = LawnGrid.getCellX(dragStartPos.col()) - LawnGrid.CELL_WIDTH/2;
+        float y = LawnGrid.getCellY(dragStartPos.row()) - LawnGrid.CELL_HEIGHT/2;
 
         Gdx.gl.glEnable(GL20.GL_BLEND);
         shapeRenderer.setProjectionMatrix(worldCamera.combined);

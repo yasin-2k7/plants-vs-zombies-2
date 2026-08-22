@@ -14,8 +14,16 @@ import com.pvz2.models.zombie.Zombie;
 
 public class DeflectorZombie extends Zombie {
     private static final double SPIN_SPEED_MULTIPLIER = 1.8;
+    private static final float SPIN_UP_DURATION = 0.3f;
+    private static final float SPIN_DOWN_DURATION = 0.3f;
+    private static final float SPIN_ACTIVE_DURATION = 3.0f;
+    private static final float DEFLECTED_PROJECTILE_SPEED = 500f;
+
+    private enum SpinPhase { NONE, SPIN_UP, SPINNING, SPIN_DOWN }
+
     private final boolean isJuggler;
-    private boolean isSpinning = false;
+    private SpinPhase spinPhase = SpinPhase.NONE;
+    private float spinPhaseTime = 0f;
     private float spinTime = 0f;
     private double originalSpeed;
 
@@ -30,42 +38,74 @@ public class DeflectorZombie extends Zombie {
         if (isDead) return;
 
         if (isJuggler) {
-            boolean approaching = false;
-            GameWorld game = App.getCurrentGame();
-
-            if (game != null) {
-                for (Projectile p : game.getActiveProjectiles()) {
-                    if (p.getType() != null &&
-                            "STRAIGHT".equals(p.getType().movement) &&
-                            !(p.getHitStrategy() instanceof PlantDamageStrategy)) {
-                        if (Math.abs(p.getY() - this.y) < 50 && p.getX() < this.x && p.getX() > this.x - 250) {
-                            approaching = true;
-                            break;
-                        }
-                    }
-                }
-            }
+            boolean approaching = isProjectileApproaching();
 
             if (approaching) {
-                if (!isSpinning) {
+                if (spinPhase == SpinPhase.NONE) {
                     startSpinning();
-                } else {
-                    spinTime = 3.0f;
+                } else if (spinPhase == SpinPhase.SPINNING) {
+                    spinTime = SPIN_ACTIVE_DURATION;
+                } else if (spinPhase == SpinPhase.SPIN_DOWN) {
+                    spinPhase = SpinPhase.SPINNING;
+                    spinTime = SPIN_ACTIVE_DURATION;
                 }
             }
 
-            if (isSpinning) {
-                spinTime-= delta;
-                if (spinTime <= 0) {
-                    stopSpinning();
-                }
-                this.speed = originalSpeed * SPIN_SPEED_MULTIPLIER;
-            } else {
-                this.speed = originalSpeed;
-            }
+            updateSpinPhase(delta);
+
+            this.speed = (spinPhase != SpinPhase.NONE)
+                ? originalSpeed * SPIN_SPEED_MULTIPLIER
+                : originalSpeed;
         }
 
         super.update(delta);
+    }
+
+    private boolean isProjectileApproaching() {
+        GameWorld game = App.getCurrentGame();
+        if (game == null) return false;
+
+        for (Projectile p : game.getActiveProjectiles()) {
+            if (p.getType() != null &&
+                    "STRAIGHT".equals(p.getType().movement) &&
+                    !(p.getHitStrategy() instanceof PlantDamageStrategy)) {
+                if (Math.abs(p.getY() - this.y) < 50 && p.getX() < this.x && p.getX() > this.x - 250) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private void updateSpinPhase(float delta) {
+        switch (spinPhase) {
+            case SPIN_UP -> {
+                spinPhaseTime -= delta;
+                if (spinPhaseTime <= 0) {
+                    spinPhase = SpinPhase.SPINNING;
+                    spinTime = SPIN_ACTIVE_DURATION;
+                }
+            }
+            case SPINNING -> {
+                spinTime -= delta;
+                if (spinTime <= 0) {
+                    spinPhase = SpinPhase.SPIN_DOWN;
+                    spinPhaseTime = SPIN_DOWN_DURATION;
+                    System.out.println("Juggler stops spinning.");
+                    GameMenuController.updateState("Juggler stops spinning.");
+                }
+            }
+            case SPIN_DOWN -> {
+                spinPhaseTime -= delta;
+                if (spinPhaseTime <= 0) {
+                    spinPhase = SpinPhase.NONE;
+                    if (!isSlowed()) {
+                        this.speed = originalSpeed;
+                    }
+                }
+            }
+            case NONE -> { }
+        }
     }
 
     public boolean tryDeflect(Projectile projectile) {
@@ -73,11 +113,11 @@ public class DeflectorZombie extends Zombie {
 
         if (isJuggler) {
             if ("STRAIGHT".equals(projectile.getType().movement)) {
-                if (!isSpinning) {
+                if (spinPhase == SpinPhase.NONE) {
                     startSpinning();
-                } else {
-                    spinTime = 3.0f;
                 }
+                spinPhase = SpinPhase.SPINNING;
+                spinTime = SPIN_ACTIVE_DURATION;
                 deflectProjectile(projectile);
                 return true;
             }
@@ -91,20 +131,10 @@ public class DeflectorZombie extends Zombie {
     }
 
     private void startSpinning() {
-        isSpinning = true;
-        spinTime = 3.0f;
+        spinPhase = SpinPhase.SPIN_UP;
+        spinPhaseTime = SPIN_UP_DURATION;
         System.out.println("Juggler starts spinning!");
         GameMenuController.updateState("Juggler starts spinning!");
-    }
-
-    private void stopSpinning() {
-        isSpinning = false;
-        if (!isSlowed()) {
-            this.speed = originalSpeed;
-        }
-        System.out.println("Juggler stops spinning.");
-        this.speed = originalSpeed;
-        GameMenuController.updateState("Juggler stops spinning.");
     }
 
     private void deflectProjectile(Projectile original) {
@@ -112,7 +142,7 @@ public class DeflectorZombie extends Zombie {
         if (game == null) return;
 
         Projectile deflected = game.getProjectilesPool().acquire();
-        StraightMovementStrategy movement = new StraightMovementStrategy(-1f * 5, 0, 0);
+        StraightMovementStrategy movement = new StraightMovementStrategy(-1f * DEFLECTED_PROJECTILE_SPEED, 0, 0);
 
         String element = "NORMAL";
         int dmg = 20;
@@ -129,5 +159,26 @@ public class DeflectorZombie extends Zombie {
 
         game.getActiveProjectiles().add(deflected);
         GameMenuController.updateState("Juggler deflected a projectile back to plants!");
+    }
+
+    @Override
+    public String getAnimationClip() {
+        if (isDead) return "die";
+
+        if (isJuggler) {
+            switch (spinPhase) {
+                case SPIN_UP:
+                    return "spinup";
+                case SPINNING:
+                    return "spin_walk";
+                case SPIN_DOWN:
+                    return "spindown";
+                case NONE:
+                default:
+                    break;
+            }
+        }
+
+        return super.getAnimationClip();
     }
 }

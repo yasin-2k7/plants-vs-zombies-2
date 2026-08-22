@@ -16,6 +16,7 @@ import com.pvz2.models.zombie.Zombie;
 import com.pvz2.models.zombie.ZombieFactory;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 public class BigWaveBeachWorld extends GameWorld {
@@ -26,6 +27,7 @@ public class BigWaveBeachWorld extends GameWorld {
     private float lastTideChangeTime = 0f;
     private float lastLowLyingCoastSpawnTime = 0f;
     private Random random = new Random();
+    private List<Cell> lowLyingCells = new ArrayList<>();
 
     public BigWaveBeachWorld(LevelSetup levelSetup, ArrayList<LoseCondition> loseConditions,
                              WinCondition winCondition, ArrayList<Mechanic> mechanics) {
@@ -53,6 +55,7 @@ public class BigWaveBeachWorld extends GameWorld {
             makeCellLowLyingCoast();
         } else {
             grid[cellRow][cellCol].setLowLyingCoast(true);
+            lowLyingCells.add(grid[cellRow][cellCol]);
         }
     }
 
@@ -71,7 +74,7 @@ public class BigWaveBeachWorld extends GameWorld {
 
             for (Cell[] cells : grid) {
                 for (Cell cell : cells) {
-                    if (cell.isLowLyingCoast()) {
+                    if (cell.isLowLyingCoast() && cell.getCol() >= currentTideCol) {
                         if (random.nextBoolean()) {
                             Zombie zombie = random.nextBoolean() ?
                                 new ZombieFactory().createZombie("ZombieDefault") :
@@ -119,6 +122,7 @@ public class BigWaveBeachWorld extends GameWorld {
 
     private void changeColumnTerrain(int col, boolean makeWater) {
         Cell[][] grid = getGrid();
+        col = col - 1;
         for (int r = 0; r < getRows(); r++) {
             Cell cell = grid[r][col];
             if (makeWater) {
@@ -132,5 +136,17 @@ public class BigWaveBeachWorld extends GameWorld {
 
             }
         }
+    }
+
+    public int getTideLineCol() {
+        return tideLineCol;
+    }
+
+    public int getCurrentTideCol() {
+        return currentTideCol;
+    }
+
+    public List<Cell> getLowLyingCells() {
+        return lowLyingCells;
     }
 }

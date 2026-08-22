@@ -16,6 +16,7 @@ import com.pvz2.Main;
 import com.pvz2.models.core.App;
 import com.pvz2.models.core.User;
 import com.pvz2.models.core.UserDataManager;
+import com.pvz2.models.miniGame.MiniGameWorld;
 import com.pvz2.models.world.GameState;
 import com.pvz2.models.world.GameWorld;
 import com.pvz2.models.world.levelSetup.DeadLineLevelSetup;
@@ -71,7 +72,13 @@ public class GameEndOverlay extends Table {
                     UserDataManager.saveUser(user);
                 }
                 remove();
-                game.setScreen(new LevelMenuScreen(game));
+                App.setCurrentGame(null);
+                if (world instanceof MiniGameWorld){
+                    game.setScreen(new MainMenuScreen(game));
+                }
+                else{
+                    game.setScreen(new LevelMenuScreen(game));
+                }
             }
         });
 

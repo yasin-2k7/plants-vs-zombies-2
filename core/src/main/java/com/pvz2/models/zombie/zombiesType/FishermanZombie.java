@@ -8,10 +8,29 @@ import com.pvz2.models.plant.Plant;
 import com.pvz2.models.world.Cell;
 import com.pvz2.models.world.GameWorld;
 import com.pvz2.models.zombie.Zombie;
+import com.pvz2.view.LawnGrid;
 
 public class FishermanZombie extends Zombie {
     private static final float HOOK_INTERVAL = 4.5f;
     private float hookCooldown;
+
+    public static final String HOOK_EFFECT_PAM = "768/FULL/EFFECTS/ZOMBIE_FISHERMAN_HOOK/ZOMBIE_FISHERMAN_HOOK.PAM";
+
+    public enum FishermanState {
+        INTRO("intro"),
+        IDLE("idle"),
+        CAST("cast"),
+        CAST_LOOP("cast_loop"),
+        REEL("reel"),
+        TOSS("toss"),
+        DIE("die");
+
+        private final String animName;
+        FishermanState(String animName) { this.animName = animName; }
+        public String getAnimName() { return animName; }
+    }
+
+    private FishermanState currentState = FishermanState.INTRO;
 
     public FishermanZombie(int health, int damage) {
         super(Zombies.FISHERMAN, health, 0, damage);
@@ -20,39 +39,84 @@ public class FishermanZombie extends Zombie {
 
     @Override
     public void update(float delta) {
-        if (isDead) return;
+        if (isDead) {
+            currentState = FishermanState.DIE;
+            return;
+        }
+
+        GameWorld game = App.getCurrentGame();
+        if (game != null) {
+            float targetX = App.getCellCenterX(game.getCols() - 1) + (App.getCellWidth() / 2f);
+
+            if (this.x > targetX + 5f) {
+                this.x -= 40 * delta;
+                currentState = FishermanState.INTRO;
+                return;
+            } else {
+                this.x = targetX;
+                if (currentState == FishermanState.INTRO) {
+                    currentState = FishermanState.IDLE;
+                }
+            }
+        }
 
         if (hookCooldown <= 0) {
-            tryHook();
-            hookCooldown = HOOK_INTERVAL;
+            if (currentState == FishermanState.IDLE) {
+                tryHook();
+                hookCooldown = HOOK_INTERVAL;
+            }
         } else {
-            hookCooldown-= delta;
+            hookCooldown -= delta;
+            if (hookCooldown < HOOK_INTERVAL - 0.5f && currentState == FishermanState.CAST) {
+                currentState = FishermanState.CAST_LOOP;
+            } else if (hookCooldown < HOOK_INTERVAL - 1.5f &&
+                (currentState == FishermanState.CAST_LOOP || currentState == FishermanState.REEL || currentState == FishermanState.TOSS)) {
+                currentState = FishermanState.IDLE;
+            }
         }
     }
 
     private void tryHook() {
         GameWorld game = App.getCurrentGame();
         if (game == null) return;
-        int row = (int) (this.y / App.getCellHeight());
-        if (row < 0 || row >= game.getRows()) return;
-        Plant target = game.getNearestPlantInRow(row, this.x + 10);
+
+        // اصلاح شماره ۱: پیدا کردن دقیق سلول و سطر زامبی با در نظر گرفتن آفست زمین
+        Cell zombieCell = Cell.findZombieCell(game.getGrid(), this);
+        if (zombieCell == null) return;
+        int row = zombieCell.getRow();
+
+        Plant target = game.getNearestPlantInRow(row, this.x);
         if (target == null) return;
-        float targetX = target.getX();
-        float targetY = target.getY();
-        float distance = Math.abs(targetX - this.x);
-        if (distance < App.getCellWidth()) {
-            target.die();
-            GameMenuController.updateState("Fisherman threw and destroyed plant at (" + targetX + ", " + targetY + ")");
-            return;
-        }
-        Cell currentCell = Cell.findCell(targetX, targetY, game.getGrid());
+
+        Cell currentCell = Cell.findCell(target.getX(), target.getY(), game.getGrid());
         if (currentCell == null) return;
-        int targetCol = currentCell.getCol() + 1;
-        if (targetCol >= game.getCols()) return;
-        Cell targetCell = game.getGrid()[row][targetCol];
-        if (targetCell == null || !targetCell.isEmpty()) {
+
+        int zombieCol = game.getCols() - 1;
+
+        currentState = FishermanState.CAST;
+
+        // اصلاح شماره ۲: اگر گیاه دقیقاً در خانه کنار زامبی (یک ستون قبل) باشد، آن را نابود می‌کند
+        if (currentCell.getCol() >= zombieCol - 1) {
+            target.die();
+            currentState = FishermanState.TOSS;
+            GameMenuController.updateState("Fisherman threw and destroyed plant at (" + target.getX() + ", " + target.getY() + ")");
             return;
         }
+
+        int targetCol = currentCell.getCol() + 1;
+        if (targetCol >= game.getCols()) {
+            currentState = FishermanState.IDLE;
+            return;
+        }
+        Cell targetCell = game.getGrid()[row][targetCol];
+
+        // بررسی خالی بودن خانه سمت راست
+        if (targetCell == null || !targetCell.isEmpty()) {
+            // اگر خانه مقصد پر باشد، انیمیشن باید به حالت عادی برگردد
+            currentState = FishermanState.IDLE;
+            return;
+        }
+
         PlantLayer layer = null;
         for (PlantLayer l : PlantLayer.values()) {
             if (currentCell.getPlant(l) == target) {
@@ -61,15 +125,21 @@ public class FishermanZombie extends Zombie {
             }
         }
         if (layer == null) return;
+
+        // انتقال گیاه به خانه جدید
         currentCell.setPlant(null, layer);
         targetCell.setPlant(target, layer);
         target.setX((int) targetCell.getX());
         target.setY((int) targetCell.getY());
         target.setCell(targetCell);
+
+        currentState = FishermanState.REEL;
+
         GameMenuController.updateState("Fisherman pulled plant from (" +
-                currentCell.getX() + ", " + currentCell.getY() +
-                ") to (" + targetCell.getX() + ", " + targetCell.getY() + ")");
+            currentCell.getX() + ", " + currentCell.getY() +
+            ") to (" + targetCell.getX() + ", " + targetCell.getY() + ")");
     }
-
-
+    public FishermanState getFishermanState() {
+        return currentState;
+    }
 }

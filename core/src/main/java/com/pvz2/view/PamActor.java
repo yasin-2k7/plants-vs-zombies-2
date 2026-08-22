@@ -35,8 +35,6 @@ public class PamActor extends Actor {
     @Override
     public void act(float delta) {
         super.act(delta);
-        GameWorld world = App.getCurrentGame();
-        if (world != null && world.getState() == GameState.PAUSED) delta = 0;
         stateTime += delta;
     }
 

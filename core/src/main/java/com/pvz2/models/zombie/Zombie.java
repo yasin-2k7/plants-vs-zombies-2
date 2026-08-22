@@ -12,6 +12,7 @@ import com.pvz2.models.world.Collectable;
 import com.pvz2.models.world.GameWorld;
 import com.pvz2.models.zombie.state.WalkingState;
 import com.pvz2.models.zombie.state.ZombieState;
+import com.pvz2.view.LawnGrid;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,6 +43,12 @@ public abstract class Zombie implements Damageable {
     private float spawnTime;
     private boolean hasEatenPlant = false;
     private GameWorld world;
+
+    public static final long DAMAGE_FLASH_DURATION_MS = 150L;
+    private long lastDamageTimestamp = -1L;
+
+    private long shakeRequestTimestamp = -1L;
+    private static final long SHAKE_REQUEST_TTL_MS = 300L;
 
 
     public Zombie(Zombies name, int health, double speed, int damage) {
@@ -105,12 +112,13 @@ public abstract class Zombie implements Damageable {
     }
 
     public void move(float delta) {
-        this.x -= (float) (this.speed * delta); // حرکت به چپ
+        this.x -= (float) (this.speed * delta);
     }
 
     @Override
     public void takeDamage(int amount, String damageType) {
         if (isDead) return;
+        triggerDamageFlash();
         if (iceHealth > 0) {
             iceHealth -= amount;
             if (iceHealth <= 0) {
@@ -122,6 +130,21 @@ public abstract class Zombie implements Damageable {
         if (this.health <= 0) {
             die();
         }
+    }
+
+    protected void triggerDamageFlash() {
+        this.lastDamageTimestamp = System.currentTimeMillis();
+    }
+
+    public boolean isFlashingRed() {
+        if (lastDamageTimestamp < 0) return false;
+        return (System.currentTimeMillis() - lastDamageTimestamp) < DAMAGE_FLASH_DURATION_MS;
+    }
+
+    public float getDamageFlashProgress() {
+        if (!isFlashingRed()) return 0f;
+        long elapsed = System.currentTimeMillis() - lastDamageTimestamp;
+        return 1f - ((float) elapsed / (float) DAMAGE_FLASH_DURATION_MS);
     }
 
     public void unfreeze() {
@@ -142,10 +165,10 @@ public abstract class Zombie implements Damageable {
             Collectable plantFood = new Collectable(this.x, this.y, CollectableType.PLANT_FOOD);
             world.getActiveCollectables().add(plantFood);
             GameMenuController.updateState(
-                    "\uD83C\uDFC6The glowing zombie dropped a plant food at (" + (int) x + ", " + (int) y + ")");
+                "\uD83C\uDFC6The glowing zombie dropped a plant food at (" + (int) x + ", " + (int) y + ")");
         }
 
-        if (Math.random() < 0.10) {
+        if (Math.random() < 0.1) {
             CollectableType type;
             if (Math.random() < 0.33) {
                 type = CollectableType.COIN;
@@ -157,12 +180,12 @@ public abstract class Zombie implements Damageable {
             Collectable drop = new Collectable(this.x, this.y, type);
             world.getActiveCollectables().add(drop);
             GameMenuController.updateState("\uD83C\uDFC6A zombie dropped a " + type.name().toLowerCase() +
-                            " at (" + (int) x + ", " + (int) y + ")");
+                " at (" + (int) x + ", " + (int) y + ")");
         }
 
         String displayName = (specificName != null) ? specificName : name.name();
         GameMenuController.updateState("\uD83D\uDC80Zombie of type " + displayName +
-                " is dead at (" + (int) x + ", " + (int) y + ")");
+            " is dead at (" + (int) x + ", " + (int) y + ")");
     }
 
     public void applySlow(float delta, double factor, boolean canWorkInFrostbite) {
@@ -245,6 +268,11 @@ public abstract class Zombie implements Damageable {
         return y;
     }
 
+    public boolean isNearEndLine() {
+        float endLineX = App.getCellWidth() / 2f + LawnGrid.getCellX(1);
+        return this.x <= endLineX;
+    }
+
     public void setY(float y) {
         this.y = y;
     }
@@ -259,6 +287,8 @@ public abstract class Zombie implements Damageable {
             this.originalSpeed = speed;
         }
     }
+
+    public void setDamage(int damage) {this.damage = damage;}
 
     public float getSlowTicksRemaining() {
         return slowTimeRemaining;
@@ -352,5 +382,16 @@ public abstract class Zombie implements Damageable {
 
     public void setGlowing(boolean glowing) {
         this.glowing = glowing;
+    }
+
+    public void requestScreenShake() {
+        shakeRequestTimestamp = System.currentTimeMillis();
+    }
+
+    public boolean consumeScreenShakeRequest() {
+        if (shakeRequestTimestamp < 0) return false;
+        boolean valid = (System.currentTimeMillis() - shakeRequestTimestamp) < SHAKE_REQUEST_TTL_MS;
+        shakeRequestTimestamp = -1L;
+        return valid;
     }
 }

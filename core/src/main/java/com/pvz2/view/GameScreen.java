@@ -4,7 +4,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -34,11 +33,15 @@ import com.pvz2.models.plant.PlantAnimationClips;
 import com.pvz2.models.plant.components.ExplosivesComponent;
 import com.pvz2.models.pool.GenericObjectPool;
 import com.pvz2.models.projectile.Projectile;
+import com.pvz2.models.world.*;
 import com.pvz2.models.world.ChapterWorld.AncientEgyptWorld;
+import com.pvz2.models.world.ChapterWorld.DarkAgesWorld;
 import com.pvz2.models.world.GameState;
 import com.pvz2.models.world.GameWorld;
 import com.pvz2.models.world.Sandstorm;
 import com.pvz2.models.world.Sun;
+import com.pvz2.models.world.ChapterWorld.BigWaveBeachWorld;
+import com.pvz2.models.world.ChapterWorld.FrostbiteCavesWorld;
 import com.pvz2.models.world.obstacles.Grave;
 import com.pvz2.models.zombie.Zombie;
 import com.pvz2.view.audios.GameSFX;
@@ -46,7 +49,9 @@ import com.pvz2.view.audios.SFXManager;
 import pvz.libpvz.pam.PamPlayer;
 import com.badlogic.gdx.utils.Align;
 import pvz.skin.BorderedTable;
-
+import com.pvz2.models.world.obstacles.BarrelObstacle;
+import com.pvz2.models.world.obstacles.OctopusObstacle;
+import com.pvz2.models.zombie.zombiesType.PusherZombie;
 import java.util.*;
 import java.util.function.Consumer;
 
@@ -70,13 +75,14 @@ public class GameScreen extends MenuScreen {
     private float leftWidthScaled;
     private float rightWidthScaled;
 
-    private LawnGridDebugRenderer lawnGridDebugRenderer;
+    private LawnGridRenderer lawnGridDebugRenderer;
 
     private Vector3 cursorWorldPos = new Vector3(0, 0, 0);
     private final List<PlantGraphic> plantGraphics = new ArrayList<>();
     private final List<ExplosionEffectGraphic> explosionGraphics = new ArrayList<>();
     private final Map<Projectile, ProjectileGraphic> projectileGraphics = new HashMap<>();
     private final List<ProjectileImpactGraphic> projectileImpacts = new ArrayList<>();
+    private final Map<FrostbiteCavesWorld.Wind, WindGraphic> windGraphics = new HashMap<>();
 
     private final List<PanStep> introSteps = new ArrayList<>();
     private int currentStepIndex = 0;
@@ -108,18 +114,42 @@ public class GameScreen extends MenuScreen {
     private boolean zombiePreviewVisible = true;
 
     private final Map<Sun, SunGraphic> sunGraphics = new HashMap<>();
+    private final Map<Collectable, CollectableGraphic> collectableGraphics = new HashMap<>();
     private final List<GraveGraphic> graveGraphics = new ArrayList<>();
+    private final List<BarrelObstacleGraphic> barrelObstacleGraphics = new ArrayList<>();
+    private final List<OctopusObstacleGraphic> octopusObstacleGraphics = new ArrayList<>();
+
+    private final String SLIDING_UP_PAM_PATH = "768/FULL/EFFECTS/TILESLIDER_ICEAGE_UP/TILESLIDER_ICEAGE_UP.PAM";
+    private final String SLIDING_DOWN_PAM_PATH = "768/FULL/EFFECTS/TILESLIDER_ICEAGE_DOWN/TILESLIDER_ICEAGE_DOWN.PAM";
+    private final String SLIDING_CLIP = "idle";
+    private final String WAVE_PAM_PATH = "768/FULL/BACKGROUNDS/WAVE_UPPERLAYER/WAVE_UPPERLAYER.PAM";
+    private final String WAVE_CLIP = "water";
+    private final String LOW_LYING_PAM_PATH = "768/FULL/WORLDMAP/BEACH/ANIM20/ANIM20.PAM";
+    private final String LOW_LYING_CLIP = "idle";
+    private final String NECROMANCY_PAM_PATH = "768/FULL/WORLDMAP/DARK/ANIM5/ANIM5.PAM";
+    private final String NECROMANCY_CLIP = "idle";
 
     private final Map<Sandstorm, SandstormGraphic> sandstormGraphics = new HashMap<>();
+
+    private final Map<Zombie, ExplosionEffectGraphic> pendingNecromancyEffects = new HashMap<>();
+    private static final String DIRT_SPAWN_DIRT_PAM_PATH = "768/INITIAL/EFFECTS/DIRT_SPAWN_DIRT/DIRT_SPAWN_DIRT.PAM";
+    private static final String DIRT_SPAWN_DIRT_ANIM_STATE = "tomb_dirt_anim";
     private record PanStep(float targetCenterX, float duration, boolean isTravel) {
     }
+
+    private float shakeTimeRemaining = 0f;
+    private float shakeMagnitude = 0f;
+
+    private final Map<PusherZombie, PianoGraphic> pianoGraphics = new HashMap<>();
+    private final Map<PusherZombie, IceBlockGraphic> iceBlockGraphics = new HashMap<>();
+    private final Map<PusherZombie, ArcadeCabinetGraphic> arcadeCabinetGraphics = new HashMap<>();
 
     public GameScreen(Main game, GameWorld world, Chapter chapter) {
         super(game);
         this.world = world;
         this.chapter = chapter;
 
-        zombiePreviewManager = new ZombiePreviewManager(world.getWaveManager(), world.getRows(), world.getCols());  // <<< اضافه شد
+        zombiePreviewManager = new ZombiePreviewManager(world.getWaveManager(), world.getRows(), world.getCols());
 
         String[] keys = getBackgroundKeys(chapter);
         bgLeft = game.textureBank.region(keys[0]);
@@ -130,7 +160,7 @@ public class GameScreen extends MenuScreen {
         mainLawnHeight = 1000;
 
         initWorldCamera(mainLawnWidth, mainLawnHeight);
-        lawnGridDebugRenderer = new LawnGridDebugRenderer();
+        lawnGridDebugRenderer = new LawnGridRenderer();
 
         FileHandle assetsFolder = Gdx.files.internal("");
         pamPlayer = new PamPlayer(game.textureBank, assetsFolder);
@@ -141,6 +171,12 @@ public class GameScreen extends MenuScreen {
         pamPlayer.loadAsync("768/FULL/EFFECTS/SUN_BOMB/SUN_BOMB.PAM", null);
 
         pamPlayer.loadAsync("768/INITIAL/EFFECTS/SANDSTORM_TOP/SANDSTORM_TOP.PAM", null);
+
+        if (chapter == Chapter.DARK_AGES) {
+            pamPlayer.loadAsync("768/FULL/EFFECTS/DIRT_SPAWN_FUTURE/DIRT_SPAWN_FUTURE.PAM", null);
+            pamPlayer.loadAsync("768/INITIAL/EFFECTS/DIRT_SPAWN_DIRT/DIRT_SPAWN_DIRT.PAM", null);
+        }
+        pamPlayer.loadAsync("768/FULL/EFFECTS/ZOMBIE_HUNTER_SNOWBALL_SPLAT/ZOMBIE_HUNTER_SNOWBALL_SPLAT.PAM", null);
 
         computeSideWidths();
         buildIntroPanSequence();
@@ -207,33 +243,7 @@ public class GameScreen extends MenuScreen {
     }
 
     public void restartLevel() {
-        world.reset();
-        world.setEndGameHandled(false);
-        for (int i = 0; i < 8; i++){
-            hud.getSelectedPlantsList().getSlots()[i] = null;
-        }
-        hud.getSelectedPlantsList().build();
-
-        plantGraphics.clear();
-        zombieGraphics.clear();
-        zombiePreviewManager = new ZombiePreviewManager(world.getWaveManager(), world.getRows(), world.getCols());  // <<< اضافه شد
-
-        if (endGameOverlay != null) {
-            endGameOverlay.remove();
-            endGameOverlay = null;
-        }
-
-        buildIntroPanSequence();
-
-        if (daveOverlay != null) {
-            daveOverlay.remove();
-        }
-        List<String> starting = world.getStartingDialogs();
-        if (starting == null) {
-            starting = new ArrayList<>();
-        }
-        daveOverlay = new CrazyDaveOverlay(game, starting, world);
-        modalStack.addActor(daveOverlay);
+        GameMenuController.restart();
     }
 
     private void showEndGameOverlay() {
@@ -414,7 +424,6 @@ public class GameScreen extends MenuScreen {
         }
         introPausedAtStreet = false;
         zombiePreviewVisible = false;
-        // moving effect
         hideStreetTable();
         hud.setInGameDetailsVisibility(true);
 
@@ -446,6 +455,12 @@ public class GameScreen extends MenuScreen {
     @Override
     protected void drawBackground(float delta) {
         world.tick(delta);
+
+        for (Zombie z : world.getActiveZombies()) {
+            if (z.consumeScreenShakeRequest()) {
+                triggerCameraShake(0.3f, 15f);
+            }
+        }
         if (world.getState() != GameState.PAUSED) {
             if (objectivesDismissed) {
                 if (!introFinished) {
@@ -484,14 +499,12 @@ public class GameScreen extends MenuScreen {
             }
         }
 
-
-
-        applyWorldViewport();
+        applyWorldViewportWithShake(delta);
         game.batch.begin();
         drawLawnBackground();
         renderWorldContent(delta);
         worldViewport.unproject(cursorWorldPos);
-        plantPlacementManager.drawPreview(game.batch, cursorWorldPos);
+        plantPlacementManager.drawPreview(pamPlayer, game.batch, cursorWorldPos, delta);
         plantfoodPlacementManager.drawPreview(game.batch, cursorWorldPos);
         shovelPlacementManager.drawPreview(game.batch, cursorWorldPos);
 
@@ -500,16 +513,59 @@ public class GameScreen extends MenuScreen {
             zombiePreviewManager.draw(game.batch, pamPlayer);
         }
 
+        syncNecromancyZombieEffects(delta);
         syncZombieGraphics();
+        syncPianoGraphics();
+        syncIceBlockGraphics();
+        syncArcadeCabinetGraphics();
         List<ZombieGraphic> sortedZombies = new ArrayList<>(zombieGraphics.values());
         sortedZombies.sort((z1, z2) -> Float.compare(z2.getZombie().getY(), z1.getZombie().getY()));
+
+        for (PianoGraphic pg : pianoGraphics.values()) {
+            pg.update(delta, pamPlayer);
+            pg.draw(game.batch, pamPlayer);
+        }
+        game.batch.end();
+        if (App.getCurrentUser().isShowGrid()) {
+            lawnGridDebugRenderer.draw(worldCamera);
+        }
+        if (world instanceof BigWaveBeachWorld bigWaveBeachWorld){
+            lawnGridDebugRenderer.drawLine(Color.BLUE,
+                App.getCellCenterX(bigWaveBeachWorld.getTideLineCol())-App.getCellWidth()/2,
+                worldCamera);
+        }
+        game.batch.begin();
         for (PlantGraphic pg : plantGraphics){
             pg.update(delta);
             pg.draw(game.batch, pamPlayer);
         }
+
+        for (IceBlockGraphic ig : iceBlockGraphics.values()) {
+            ig.update(delta, pamPlayer);
+            ig.draw(game.batch, pamPlayer);
+        }
+
+        for (ArcadeCabinetGraphic ag : arcadeCabinetGraphics.values()) {
+            ag.update(delta, pamPlayer);
+            ag.draw(game.batch, pamPlayer);
+        }
+
         for (ZombieGraphic zg : sortedZombies) {
             zg.update(delta, pamPlayer);
             zg.draw(game.batch, pamPlayer);
+        }
+
+        for (int i = octopusObstacleGraphics.size() - 1; i >= 0; i--) {
+            OctopusObstacleGraphic graphic = octopusObstacleGraphics.get(i);
+            OctopusObstacle octopus = graphic.getObstacle();
+
+            graphic.update(delta, pamPlayer);
+            graphic.draw(game.batch, pamPlayer);
+
+            if (octopus.isDestroyed() && graphic.isDeathAnimationFinished()) {
+                octopusObstacleGraphics.remove(i);
+                world.removeObstacle(octopus);
+            }
         }
 
         for (ExplosionEffectGraphic eg : explosionGraphics) {
@@ -532,18 +588,18 @@ public class GameScreen extends MenuScreen {
         }
         explosionGraphics.removeIf(eg -> eg.isFinished(pamPlayer));
         syncSunGraphics();
+        syncCollectableGraphics();
 
         for (SunGraphic sg : new ArrayList<>(sunGraphics.values())) {
             sg.update(delta);
             sg.draw(game.batch, pamPlayer, game);
         }
+        for (CollectableGraphic cg : new ArrayList<>(collectableGraphics.values())) {
+            cg.update(delta);
+            cg.draw(game.batch, pamPlayer);
+        }
         renderProjectiles(delta, game.batch, pamPlayer);
         game.batch.end();
-
-
-        if (App.getCurrentUser().isShowGrid()) {
-            lawnGridDebugRenderer.draw(worldCamera);
-        }
 
         if (hud != null) {
             hud.update(world, delta);
@@ -563,7 +619,91 @@ public class GameScreen extends MenuScreen {
         if (bgRight != null) game.batch.draw(bgRight, mainLawnWidth, y, rightWidthScaled, mainLawnHeight);
     }
 
+    private void syncGraveGraphics() {
+        for (Grave grave : world.getGraves()) {
+            boolean tracked = graveGraphics.stream().anyMatch(g -> g.getGrave() == grave);
+            if (!tracked) {
+                graveGraphics.add(new GraveGraphic(grave, world, true));
+            }
+        }
+    }
+
+    private void syncBarrelObstacleGraphics() {
+        for (var obstacle : world.getActiveObstacles()) {
+            if (!(obstacle instanceof BarrelObstacle barrel)) continue;
+            boolean tracked = barrelObstacleGraphics.stream()
+                .anyMatch(g -> g.getObstacle() == barrel);
+            if (!tracked) {
+                barrelObstacleGraphics.add(new BarrelObstacleGraphic(barrel));
+            }
+        }
+    }
+
+    private void syncOctopusObstacleGraphics() {
+        for (var obstacle : world.getActiveObstacles()) {
+            if (!(obstacle instanceof OctopusObstacle octopus)) continue;
+            boolean tracked = octopusObstacleGraphics.stream()
+                .anyMatch(g -> g.getObstacle() == octopus);
+            if (!tracked) {
+                octopusObstacleGraphics.add(new OctopusObstacleGraphic(octopus));
+            }
+        }
+    }
+
+    private void syncPianoGraphics() {
+        for (Zombie z : world.getActiveZombies()) {
+            if (z instanceof PusherZombie pusher && PusherZombie.OBJECT_PIANO.equals(pusher.getObjectName())) {
+                pianoGraphics.computeIfAbsent(pusher, PianoGraphic::new);
+            }
+        }
+
+        pianoGraphics.entrySet().removeIf(entry -> {
+            PusherZombie pusher = entry.getKey();
+            PianoGraphic pg = entry.getValue();
+            if (!world.getActiveZombies().contains(pusher)) {
+                return pg.isDeathAnimationFinished();
+            }
+            return false;
+        });
+    }
+
+    private void syncIceBlockGraphics() {
+        for (Zombie z : world.getActiveZombies()) {
+            if (z instanceof PusherZombie pusher && PusherZombie.OBJECT_ICEBLOCK.equals(pusher.getObjectName())) {
+                iceBlockGraphics.computeIfAbsent(pusher, IceBlockGraphic::new);
+            }
+        }
+
+        iceBlockGraphics.entrySet().removeIf(entry -> {
+            PusherZombie pusher = entry.getKey();
+            if (!world.getActiveZombies().contains(pusher)) {
+                return true;
+            }
+            return pusher.getObjectHealth() <= 0;
+        });
+    }
+
+    private void syncArcadeCabinetGraphics() {
+        for (Zombie z : world.getActiveZombies()) {
+            if (z instanceof PusherZombie pusher && PusherZombie.OBJECT_ARCADE.equals(pusher.getObjectName())) {
+                arcadeCabinetGraphics.computeIfAbsent(pusher, ArcadeCabinetGraphic::new);
+            }
+        }
+
+        arcadeCabinetGraphics.entrySet().removeIf(entry -> {
+            PusherZombie pusher = entry.getKey();
+            ArcadeCabinetGraphic ag = entry.getValue();
+            if (!world.getActiveZombies().contains(pusher)) {
+                return ag.isDeathAnimationFinished();
+            }
+            return false;
+        });
+    }
+
     private void renderWorldContent(float delta) {
+        syncGraveGraphics();
+        syncBarrelObstacleGraphics();
+        syncOctopusObstacleGraphics();
         if (world.getLawnMowerManager() != null) {
             for (LawnMower mower : world.getLawnMowerManager().getMowers()) {
                 if (!mower.isSpent()) {
@@ -584,21 +724,85 @@ public class GameScreen extends MenuScreen {
             }
         }
         syncGraveGraphics();
+        if (world instanceof FrostbiteCavesWorld frostbiteCavesWorld){
+            drawFrostbiteContent(frostbiteCavesWorld, delta);
+        }
+        else if (world instanceof BigWaveBeachWorld bigWaveBeachWorld){
+            drawBeachContent(bigWaveBeachWorld);
+        }
+        else if (world instanceof DarkAgesWorld darkAgesWorld){
+            drawDarkContent(darkAgesWorld);
+        }
         for (int i = graveGraphics.size() - 1; i >= 0; i--) {
             GraveGraphic graphic = graveGraphics.get(i);
-            Grave grave = graphic.getGrave(); // گرفتن مدل از گرافیک
+            Grave grave = graphic.getGrave();
 
-            // آپدیت و رسم انیمیشن
             graphic.update(delta);
             graphic.draw(game.batch, pamPlayer, game);
 
-            // اگر انیمیشن تمام شده و قبر نابود شده است
             if (grave.isDestroyed() && graphic.isBreakFinished()) {
-                graveGraphics.remove(i);       // ۱. حذف از لیست گرافیکی
-                world.removeObstacle(grave);   // ۲. حذف واقعی و نهایی از دنیای بازی (activeObstacles)
+                graveGraphics.remove(i);
+                world.removeObstacle(grave);
+            }
+        }
+
+        for (int i = barrelObstacleGraphics.size() - 1; i >= 0; i--) {
+            BarrelObstacleGraphic graphic = barrelObstacleGraphics.get(i);
+            BarrelObstacle barrel = graphic.getObstacle();
+
+            graphic.update(delta, pamPlayer);
+            graphic.draw(game.batch, pamPlayer);
+
+            if (barrel.isDestroyed() && graphic.isBreakFinished()) {
+                barrelObstacleGraphics.remove(i);
+                world.removeObstacle(barrel);
             }
         }
     }
+
+    private void drawDarkContent(DarkAgesWorld darkAgesWorld) {
+        float time = stateTime;
+        GameWorld world = App.getCurrentGame();
+        if (world != null && world.getState() != GameState.PLAYING) time = 0;
+        for (Cell cell : darkAgesWorld.getNecromancyCells()){
+            pamPlayer.draw(game.batch, NECROMANCY_PAM_PATH, NECROMANCY_CLIP, time, cell.getX(), cell.getY(), 0.5f, 0.5f,
+                true);
+        }
+    }
+
+    private void drawBeachContent(BigWaveBeachWorld bigWaveBeachWorld) {
+        float time = stateTime;
+        GameWorld world = App.getCurrentGame();
+        if (world != null && world.getState() != GameState.PLAYING) time = 0;
+        float waveX = App.getCellCenterX(bigWaveBeachWorld.getCurrentTideCol())+App.getCellWidth()*2;
+        pamPlayer.draw(game.batch, WAVE_PAM_PATH, WAVE_CLIP, stateTime, waveX, App.getCellCenterY(3)-125f, 0.8f,
+            0.45f, true);
+        for (Cell cell : bigWaveBeachWorld.getLowLyingCells()){
+            pamPlayer.draw(game.batch, LOW_LYING_PAM_PATH, LOW_LYING_CLIP, time, cell.getX(), cell.getY(), 0.5f, 0.5f,
+                true);
+        }
+    }
+
+    private void drawFrostbiteContent(FrostbiteCavesWorld frostbiteCavesWorld, float delta) {
+        float time = stateTime;
+        GameWorld world = App.getCurrentGame();
+        if (world != null && world.getState() != GameState.PLAYING){
+            delta = 0;
+            time = 0;
+        }
+        for (FrostbiteCavesWorld.Wind wind : frostbiteCavesWorld.getWinds()) {
+            windGraphics.computeIfAbsent(wind, WindGraphic::new);
+        }
+        windGraphics.keySet().removeIf(w -> !frostbiteCavesWorld.getWinds().contains(w));
+        for (WindGraphic windGraphic : windGraphics.values()){
+            windGraphic.updateAndDraw(delta, pamPlayer, game.batch);
+        }
+        for (Cell cell : frostbiteCavesWorld.getSlidingCells()){
+            String pamPath = cell.getSlippingDir() == 1 ? SLIDING_UP_PAM_PATH : SLIDING_DOWN_PAM_PATH;
+            pamPlayer.draw(game.batch, pamPath, SLIDING_CLIP, time, cell.getX(), cell.getY(), 0.8f, 0.8f, true);
+        }
+    }
+
 
     private String getMowerPamPath(Chapter chapter) {
         switch (chapter) {
@@ -709,8 +913,6 @@ public class GameScreen extends MenuScreen {
                         if (App.getCurrentUser().getUnlockedPlantsLevels().getOrDefault(PlantType.IMITATER, 0) > 0){
                             showImitatorTable();
                         }
-                        // create overlay and table
-
                         return;
                     }
                     if (plantMenuController.addPlant(plantType.name(), GameScreen.this)){
@@ -732,8 +934,6 @@ public class GameScreen extends MenuScreen {
                     hud.getSelectedPlantsList().setImitatorCardType(plantCardView.getType());
                     hud.getSelectedPlantsList().build();
                     hideImitatorTable();
-                    //remove overlay
-
                 }
             }
         };
@@ -791,6 +991,9 @@ public class GameScreen extends MenuScreen {
     }
 
     public void handleInput() {
+        if (world != null && (world.isDialogActive() || world.getState() != GameState.PLAYING)) {
+            return;
+        }
         if (Gdx.input.isKeyJustPressed(Input.Keys.SHIFT_LEFT)){
             GameMenuController.cheatSpawnZombie("ZombieDefault", 6, 1);
         }
@@ -835,7 +1038,9 @@ public class GameScreen extends MenuScreen {
                 }
             }
             else {
-                GameMenuController.collectSun(touchPoint.x, touchPoint.y);
+                if (!GameMenuController.collectSun(touchPoint.x, touchPoint.y)){
+                    GameMenuController.collectCollectable(touchPoint.x, touchPoint.y);
+                }
             }
             hud.getSelectedPlantsList().unselectPlants();
             hud.getPlantFoodBank().setSelected(false);
@@ -867,6 +1072,7 @@ public class GameScreen extends MenuScreen {
                         fxPath, fxClip, pg.getWorldX(), y, pamPlayer, scaleX,
                         scaleY
                     ));
+                    triggerCameraShake(0.3f, 10);
                 }
             });
         }
@@ -923,19 +1129,68 @@ public class GameScreen extends MenuScreen {
 
     private final Map<Zombie, ZombieGraphic> zombieGraphics = new HashMap<>();
 
+    private void syncNecromancyZombieEffects(float delta) {
+        if (!(world instanceof DarkAgesWorld darkWorld)) return;
+
+        for (Zombie zombie : darkWorld.getNecromancyZombies()) {
+            boolean alreadyVisible = zombieGraphics.containsKey(zombie);
+            boolean alreadyPending = pendingNecromancyEffects.containsKey(zombie);
+            boolean stillAlive = world.getActiveZombies().contains(zombie);
+            if (!alreadyVisible && !alreadyPending && stillAlive) {
+                pendingNecromancyEffects.put(zombie, new ExplosionEffectGraphic(
+                    DIRT_SPAWN_DIRT_PAM_PATH, DIRT_SPAWN_DIRT_ANIM_STATE,
+                    zombie.getX(), zombie.getY(), pamPlayer, 1f, 1f
+                ));
+            }
+        }
+
+        Iterator<Map.Entry<Zombie, ExplosionEffectGraphic>> it = pendingNecromancyEffects.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry<Zombie, ExplosionEffectGraphic> entry = it.next();
+            ExplosionEffectGraphic effect = entry.getValue();
+            effect.update(delta);
+            effect.draw(game.batch, pamPlayer);
+            if (effect.isFinished(pamPlayer) || !world.getActiveZombies().contains(entry.getKey())) {
+                it.remove();
+            }
+        }
+    }
+
     private void syncZombieGraphics() {
         for (Zombie z : world.getActiveZombies()) {
+            if (pendingNecromancyEffects.containsKey(z)) continue;
             zombieGraphics.computeIfAbsent(z, ZombieGraphic::new);
         }
-        zombieGraphics.keySet().removeIf(z -> !world.getActiveZombies().contains(z));
+
+        zombieGraphics.entrySet().removeIf(entry -> {
+            Zombie z = entry.getKey();
+            ZombieGraphic zg = entry.getValue();
+
+            if (!world.getActiveZombies().contains(z)) {
+                return zg.isDeathAnimationFinished();
+            }
+            return false;
+        });
     }
+
     private void syncSunGraphics() {
         for (Sun sun : world.getActiveSuns()) {
             sunGraphics.computeIfAbsent(sun, SunGraphic::new);
         }
-        sunGraphics.entrySet().removeIf(entry ->
-            !world.getActiveSuns().contains(entry.getKey()) && entry.getValue().isPopFinished()
-        );
+
+        sunGraphics.entrySet().removeIf(entry -> {
+            Sun sun = entry.getKey();
+            SunGraphic sg = entry.getValue();
+            boolean notActive = !world.getActiveSuns().contains(sun);
+            return notActive || sg.isPopFinished();
+        });
+    }
+    private void syncCollectableGraphics() {
+        for (Collectable collectable : world.getActiveCollectables()) {
+            collectableGraphics.computeIfAbsent(collectable, CollectableGraphic::new);
+        }
+        collectableGraphics.entrySet().removeIf(entry ->
+            !world.getActiveCollectables().contains(entry.getKey()));
     }
 
     public List<PlantGraphic> getPlantGraphics() {
@@ -970,6 +1225,20 @@ public class GameScreen extends MenuScreen {
         }
     }
 
+    public static void spawnPlantBurnEffect(float x, float y) {
+        if (activeInstance != null) {
+            activeInstance.explosionGraphics.add(
+                new ExplosionEffectGraphic(
+                    "768/INITIAL/EFFECTS/PLANT_BURNT/PLANT_BURNT.PAM",
+                    "animation",
+                    x, y,
+                    activeInstance.pamPlayer,
+                    1f, 1f
+                )
+            );
+        }
+    }
+
     public PlantfoodPlacementManager getPlantfoodPlacementManager() {
         return plantfoodPlacementManager;
     }
@@ -978,22 +1247,41 @@ public class GameScreen extends MenuScreen {
         return shovelPlacementManager;
     }
 
-    private void syncGraveGraphics() {
-        if (world == null) return;
-        List<Grave> activeGraves = world.getGraves();
+    private void triggerCameraShake(float duration, float magnitude) {
+        this.shakeTimeRemaining = duration;
+        this.shakeMagnitude = magnitude;
+    }
 
-        for (Grave grave : activeGraves) {
-            boolean exists = false;
-            for (GraveGraphic gg : graveGraphics) {
-                if (gg.getGrave() == grave) {
-                    exists = true;
-                    break;
-                }
-            }
+    private void applyWorldViewportWithShake(float delta) {
+        float baseX = worldCamera.position.x;
+        float baseY = worldCamera.position.y;
 
-            if (!exists) {
-                graveGraphics.add(new GraveGraphic(grave, world));
-            }
+        if (shakeTimeRemaining > 0f) {
+            shakeTimeRemaining -= delta;
+            float offsetX = MathUtils.random(-shakeMagnitude, shakeMagnitude);
+            float offsetY = MathUtils.random(-shakeMagnitude, shakeMagnitude) * 0.5f;
+            worldCamera.position.x = baseX + offsetX;
+            worldCamera.position.y = baseY + offsetY;
+            worldCamera.update();
+        }
+
+        applyWorldViewport();
+
+        worldCamera.position.set(baseX, baseY, 0);
+        worldCamera.update();
+    }
+
+    public static void spawnSnowballSplat(float x, float y) {
+        if (activeInstance != null) {
+            activeInstance.explosionGraphics.add(
+                new ExplosionEffectGraphic(
+                    "768/FULL/EFFECTS/ZOMBIE_HUNTER_SNOWBALL_SPLAT/ZOMBIE_HUNTER_SNOWBALL_SPLAT.PAM",
+                    "animation",
+                    x, y,
+                    activeInstance.pamPlayer,
+                    1f, 1f
+                )
+            );
         }
     }
 }

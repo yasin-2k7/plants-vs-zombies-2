@@ -433,9 +433,8 @@ public class User {
 
     public void unlockLevel() {
         if (unlockedLevel == 4 && unlockedChapter == 4) return;
-        if (unlockedChapter-1 == currentChapter.ordinal() && unlockedLevel == currentLevel) return;
+        if (!(unlockedChapter-1 == currentChapter.ordinal() && unlockedLevel == currentLevel)) return;
         currentLevel = -1;
-        currentChapter = null;
         int newLevel = unlockedLevel == 4 ? 1 : unlockedLevel + 1;
         int newChapter = newLevel == 1 ? unlockedChapter + 1 : unlockedChapter;
         unlockedLevel = newLevel;
@@ -522,6 +521,10 @@ public class User {
 
     public boolean isDebugMode() {
         return debugMode;
+    }
+
+    public int getCurrentLevel() {
+        return currentLevel;
     }
 
     public void setDebugMode(boolean debugMode) {
