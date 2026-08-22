@@ -244,8 +244,9 @@ public class LevelFactory {
             new WaveSpawnEntry("ZombieArmor2", 300),
             new WaveSpawnEntry("ZombieLostCityJane", 200),
             new WaveSpawnEntry("ZombieBeachSnorkel", 200),
-            new WaveSpawnEntry("ZombieBeachOctopus", 800)
-        );
+            new WaveSpawnEntry("ZombieBeachOctopus", 800),
+            new WaveSpawnEntry("ZombieBeachFisherman", 400)
+            );
         List<Wave> waves = Wave.generateWaves(3, 500, availableZombies, 10);
         LevelSetup levelSetup = new BigWaveBeachLevelSetup(6, rows, cols, waves);
         LoseCondition loseCondition = new NormalLose();

@@ -131,7 +131,7 @@ public class GameScreen extends MenuScreen {
 
     private final Map<Zombie, ExplosionEffectGraphic> pendingNecromancyEffects = new HashMap<>();
     private static final String DIRT_SPAWN_DIRT_PAM_PATH = "768/INITIAL/EFFECTS/DIRT_SPAWN_DIRT/DIRT_SPAWN_DIRT.PAM";
-    private static final String DIRT_SPAWN_DIRT_ANIM_STATE = "default";
+    private static final String DIRT_SPAWN_DIRT_ANIM_STATE = "tomb_dirt_anim";
     private record PanStep(float targetCenterX, float duration, boolean isTravel) {
     }
 
@@ -422,7 +422,6 @@ public class GameScreen extends MenuScreen {
         }
         introPausedAtStreet = false;
         zombiePreviewVisible = false;
-        // moving effect
         hideStreetTable();
         hud.setInGameDetailsVisibility(true);
 
@@ -912,8 +911,6 @@ public class GameScreen extends MenuScreen {
                         if (App.getCurrentUser().getUnlockedPlantsLevels().getOrDefault(PlantType.IMITATER, 0) > 0){
                             showImitatorTable();
                         }
-                        // create overlay and table
-
                         return;
                     }
                     if (plantMenuController.addPlant(plantType.name(), GameScreen.this)){
@@ -935,8 +932,6 @@ public class GameScreen extends MenuScreen {
                     hud.getSelectedPlantsList().setImitatorCardType(plantCardView.getType());
                     hud.getSelectedPlantsList().build();
                     hideImitatorTable();
-                    //remove overlay
-
                 }
             }
         };
@@ -1174,13 +1169,18 @@ public class GameScreen extends MenuScreen {
             return false;
         });
     }
+
     private void syncSunGraphics() {
         for (Sun sun : world.getActiveSuns()) {
             sunGraphics.computeIfAbsent(sun, SunGraphic::new);
         }
-        sunGraphics.entrySet().removeIf(entry ->
-            !world.getActiveSuns().contains(entry.getKey()) && entry.getValue().isPopFinished()
-        );
+
+        sunGraphics.entrySet().removeIf(entry -> {
+            Sun sun = entry.getKey();
+            SunGraphic sg = entry.getValue();
+            boolean notActive = !world.getActiveSuns().contains(sun);
+            return notActive || sg.isPopFinished();
+        });
     }
     private void syncCollectableGraphics() {
         for (Collectable collectable : world.getActiveCollectables()) {

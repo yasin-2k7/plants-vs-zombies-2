@@ -33,6 +33,7 @@ public class PhasingZombie extends Zombie {
         if (isDead) return;
 
         if (isNewspaper && !isPhaseChanged && shieldHealth > 0) {
+            triggerDamageFlash();
             shieldHealth -= amount;
             if (shieldHealth <= 0) {
                 triggerPhaseChange();

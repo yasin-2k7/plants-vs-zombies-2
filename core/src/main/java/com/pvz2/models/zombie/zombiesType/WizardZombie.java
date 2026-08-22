@@ -14,7 +14,7 @@ import java.util.List;
 
 public class WizardZombie extends Zombie {
     private static final float COOLDOWN_MAX = 3.0f;
-    private static final float CAST_ANIM_DURATION = 1.62f; // برابر با طول واقعی کلیپ sheep در AnimKit
+    private static final float CAST_ANIM_DURATION = 2.30f;
 
     private List<Plant> transformedPlants;
     private float cooldown;
@@ -45,10 +45,12 @@ public class WizardZombie extends Zombie {
         }
 
         if (cooldown <= 0) {
-            castSpell();
+            boolean transformed = castSpell();
             cooldown = COOLDOWN_MAX;
-            isCasting = true;
-            castTimer = 0f;
+            if (transformed) {
+                isCasting = true;
+                castTimer = 0f;
+            }
         } else {
             cooldown -= delta;
         }
@@ -72,9 +74,9 @@ public class WizardZombie extends Zombie {
         }
     }
 
-    private void castSpell() {
+    private boolean castSpell() {
         GameWorld game = App.getCurrentGame();
-        if (game == null) return;
+        if (game == null) return false;
 
         int row = LawnGrid.getRowFromY(this.y);
         Plant target = game.getNearestPlantInRow(row, this.x + 10);
@@ -85,8 +87,17 @@ public class WizardZombie extends Zombie {
                 target.setSheep(true);
                 transformedPlants.add(target);
                 GameMenuController.updateState("Wizard turned a " + target.getType().name() + " into a sheep!");
+                return true;
             }
         }
+        return false;
+    }
+
+    @Override
+    public String getAnimationClip() {
+        if (isDead()) return "die";
+        if (isCasting) return "sheep";
+        return super.getAnimationClip();
     }
 
     @Override

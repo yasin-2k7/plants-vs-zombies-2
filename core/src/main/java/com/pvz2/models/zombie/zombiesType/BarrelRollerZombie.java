@@ -89,6 +89,7 @@ public class BarrelRollerZombie extends Zombie {
     public void takeDamage(int amount, String damageType) {
         if (isDead) return;
         if (barrelIntact && barrelHealth > 0) {
+            triggerDamageFlash();
             int excess = amount - barrelHealth;
             if (excess > 0) {
                 barrelHealth = 0;

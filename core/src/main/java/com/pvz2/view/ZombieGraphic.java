@@ -6,8 +6,11 @@ import com.pvz2.models.core.App;
 import com.pvz2.models.world.GameState;
 import com.pvz2.models.world.GameWorld;
 import com.pvz2.models.zombie.Zombie;
+import com.pvz2.models.zombie.zombiesType.ArmoredZombie;
 import com.pvz2.models.zombie.zombiesType.BarrelRollerZombie;
+import com.pvz2.models.zombie.zombiesType.FishermanZombie;
 import com.pvz2.models.zombie.zombiesType.RangedZombie;
+import com.pvz2.models.zombie.zombiesType.SunStealerZombie;
 import pvz.libpvz.pam.PamPlayer;
 
 import java.util.Arrays;
@@ -18,7 +21,7 @@ import java.util.Set;
 public class ZombieGraphic {
     private static final Set<String> NON_LOOPING_CLIPS = Set.of(
         "spinup", "spindown", "fly_start", "fly_end", "fire", "cannon_fire", "sheep",
-        "power", "toss"
+        "power", "toss", "power_up", "power_down", "die", "cast", "reel", "intro"
     );
 
     private static final String[] OCTOPUS_IDLE_VARIANTS = {"idle", "idle2", "idle3", "idle4", "idle5"};
@@ -29,11 +32,13 @@ public class ZombieGraphic {
     private final HashMap<String, Boolean> visibilities;
 
     private float animTime = 0f;
-    private String currentClip = "walk";
+    private String currentClip;
     private boolean isLoop = true;
 
     private float idleVariantTimer = 0f;
     private float nextIdleSwitchTime = randomIdleInterval();
+
+    private boolean armorVisualHidden = false;
 
     public ZombieGraphic(Zombie zombie) {
         this.zombie = zombie;
@@ -43,10 +48,20 @@ public class ZombieGraphic {
             : zombie.getName().name();
 
         this.pamPath = ZombiesTable.getZombiesAnimAddress().get(lookupName);
-        this.visibilities = ZombiesTable.getZombiesVisibilities().get(lookupName);
+
+        HashMap<String, Boolean> sharedVisibilities = ZombiesTable.getZombiesVisibilities().get(lookupName);
+        this.visibilities = (sharedVisibilities != null) ? new HashMap<>(sharedVisibilities) : null;
+
+        if (zombie instanceof FishermanZombie) {
+            this.currentClip = ((FishermanZombie) zombie).getFishermanState().getAnimName();
+        } else {
+            this.currentClip = zombie.getAnimationClip() != null ? resolveClip(zombie.getAnimationClip()) : "walk";
+        }
     }
 
     public void update(float delta, PamPlayer pamPlayer) {
+        checkArmorBroken();
+
         String dieClip = resolveClip("die");
 
         if (zombie.isDead() && !currentClip.equals(dieClip)) {
@@ -64,7 +79,13 @@ public class ZombieGraphic {
                     playClip(throwClip, false);
                 }
             } else {
-                String targetClip = resolveClip(zombie.getAnimationClip());
+                String targetClip;
+
+                if (zombie instanceof FishermanZombie fishermanZombie) {
+                    targetClip = fishermanZombie.getFishermanState().getAnimName();
+                } else {
+                    targetClip = resolveClip(zombie.getAnimationClip());
+                }
 
                 if (isOctopusThrower() && "idle".equals(targetClip)) {
                     updateOctopusIdle(delta);
@@ -79,6 +100,17 @@ public class ZombieGraphic {
 
         if (pamPath != null) {
             pamPlayer.loadAsync(pamPath, null);
+        }
+    }
+
+    private void checkArmorBroken() {
+        if (armorVisualHidden || visibilities == null) return;
+
+        if (zombie instanceof ArmoredZombie armoredZombie && armoredZombie.getArmorHealth() <= 0) {
+            for (String key : visibilities.keySet()) {
+                visibilities.put(key, false);
+            }
+            armorVisualHidden = true;
         }
     }
 
@@ -159,6 +191,23 @@ public class ZombieGraphic {
 
         if (flashAmount > 0f) {
             batch.setShader(null);
+        }
+
+        if (zombie instanceof SunStealerZombie stealer && !stealer.isRa()) {
+            if ("power_down".equals(stealer.getTurquoiseAnimState())) {
+                try {
+                    pamPlayer.draw(
+                        batch,
+                        SunStealerZombie.LASER_PAM_PATH,
+                        SunStealerZombie.LASER_CLIP,
+                        animTime,
+                        renderX - 250f,
+                        renderY,
+                        1.2f, 1.0f, false
+                    );
+                } catch (Exception ignored) {
+                }
+            }
         }
     }
 

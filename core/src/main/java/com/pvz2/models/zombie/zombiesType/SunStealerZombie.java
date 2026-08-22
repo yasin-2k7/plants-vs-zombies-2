@@ -13,65 +13,147 @@ import com.pvz2.view.LawnGrid;
 import java.util.List;
 
 public class SunStealerZombie extends Zombie {
-    private static final float STEAL_INTERVAL = 3.0f;
-    private static final float LASER_DELAY = 7.5f;
-    private int stolenSun;
-    private boolean isRa;
-    private float stealTimer;
-    private boolean isStealing;
+    private int stolenSun = 0;
+    private final boolean isRa;
+
+    private boolean isStealing = false;
+    private float stealingPhaseTimer = 0f;
+    private float sunAccTimer = 0f;
+    private String animState = "walk";
+    private boolean laserFiredThisCycle = false;
+
+    private static final float POWER_UP_DUR = 0.67f;
+    private static final float POWER_DUR = 1.0f;
+    private static final float TURQUOISE_POWER_DUR = 5.0f;
+    private static final float POWER_DOWN_DUR = 1.27f;
+
+    public static final String LASER_PAM_PATH = "768/FULL/EFFECTS/CRYSTALSKULL_BEAM/CRYSTALSKULL_BEAM.PAM";
+    public static final String LASER_CLIP = "laser_beam";
 
     public SunStealerZombie(int health, double speed, int damage, boolean isRa) {
         super(Zombies.SUN_STEALER, health, speed, damage);
-        this.stolenSun = 0;
         this.isRa = isRa;
-        this.stealTimer = 0;
-        this.isStealing = false;
+        if (isRa) {
+            this.specificName = "ZombieRa";
+        } else {
+            this.specificName = "ZombieTurquoise";
+        }
     }
 
     @Override
     public void update(float delta) {
         if (isDead) return;
-        super.update(delta);
+
         GameWorld game = App.getCurrentGame();
-        if (game == null) return;
+        if (game == null) {
+            super.update(delta);
+            return;
+        }
+
         if (isRa) {
-            List<Sun> suns = game.getActiveSuns();
-            for (Sun sun : suns) {
-                if (sun.isCollected()) continue;
-                float dx = sun.getX() - this.x;
-                float dy = sun.getY() - this.y;
-                if (Math.abs(dx) < 150 && Math.abs(dy) < 150) {
-                    sun.collect();
-                    stolenSun += sun.getSize();
-                    GameMenuController.updateState("Ra stole a sun of size " + sun.getSize());
-                }
-            }
+            updateRaSteal(game, delta);
         } else {
-            if (!isStealing) {
-                Cell zombieCell = Cell.findZombieCell(game.getGrid(), this);
-                if (zombieCell != null) {
-                    List<Cell> neighborCells = Cell.getNeighborCells(zombieCell, game.getGrid(), 4);
-                    boolean hasPlant = neighborCells.stream().anyMatch(cell -> !cell.isEmpty());
-                    if (hasPlant) {
-                        isStealing = true;
-                        stealTimer = 0f;
-                        GameMenuController.updateState("Turquoise started stealing suns!");
+            updateTurquoiseSteal(game, delta);
+        }
+
+        if (!isStealing) {
+            super.update(delta);
+        }
+    }
+
+    private void updateRaSteal(GameWorld game, float delta) {
+        List<Sun> suns = game.getActiveSuns();
+        boolean foundSunInRange = false;
+
+        for (Sun sun : suns) {
+            if (sun.isCollected() || sun.isExpired()) continue;
+            float dx = this.x - sun.getX();
+            float dy = this.y - sun.getY();
+            float distance = (float) Math.sqrt(dx * dx + dy * dy);
+
+            if (distance < 350f) {
+                foundSunInRange = true;
+                break;
+            }
+        }
+
+        if (!isStealing && foundSunInRange) {
+            isStealing = true;
+            stealingPhaseTimer = 0f;
+            animState = "power_up";
+        }
+
+        if (isStealing) {
+            stealingPhaseTimer += delta;
+
+            if (stealingPhaseTimer < POWER_UP_DUR) {
+                animState = "power_up";
+            } else if (stealingPhaseTimer < (POWER_UP_DUR + POWER_DUR)) {
+                animState = "power";
+
+                for (Sun sun : suns) {
+                    if (sun.isCollected() || sun.isExpired()) continue;
+
+                    float dx = this.x - sun.getX();
+                    float dy = this.y - sun.getY();
+                    float distance = (float) Math.sqrt(dx * dx + dy * dy);
+
+                    if (distance < 350f) {
+                        float pullSpeed = 400f * delta;
+                        if (distance <= pullSpeed || distance < 20f) {
+                            sun.collect();
+                            stolenSun += sun.getSize();
+                            GameMenuController.updateState("Ra stole a sun of size " + sun.getSize());
+                        } else {
+                            sun.setX(sun.getX() + (dx / distance) * pullSpeed);
+                            sun.setY(sun.getY() + (dy / distance) * pullSpeed);
+                        }
                     }
                 }
+            } else if (stealingPhaseTimer < (POWER_UP_DUR + POWER_DUR + POWER_DOWN_DUR)) {
+                animState = "power_down";
+            } else {
+                isStealing = false;
+                stealingPhaseTimer = 0f;
+                animState = "walk";
             }
+        }
+    }
 
-            if (isStealing) {
-                stealTimer+= delta;
-                if (stealTimer % STEAL_INTERVAL == 0) {
+    private void updateTurquoiseSteal(GameWorld game, float delta) {
+        if (!isStealing) {
+            if (isPlantInFront(game)) {
+                isStealing = true;
+                stealingPhaseTimer = 0f;
+                sunAccTimer = 0f;
+                animState = "power_up";
+                laserFiredThisCycle = false;
+            }
+        }
+
+        if (isStealing) {
+            stealingPhaseTimer += delta;
+
+            if (stealingPhaseTimer < POWER_UP_DUR) {
+                animState = "power_up";
+            } else if (stealingPhaseTimer < (POWER_UP_DUR + TURQUOISE_POWER_DUR)) {
+                animState = "power";
+                sunAccTimer += delta;
+                if (sunAccTimer >= 1.0f) {
                     int stolen = game.stealSunFromPlayer(25);
                     stolenSun += stolen;
-                    GameMenuController.updateState("Turquoise stole 25 suns. Total stolen: " + stolenSun);
+                    sunAccTimer -= 1.0f;
                 }
-                if (stealTimer >= LASER_DELAY) {
+            } else if (stealingPhaseTimer < (POWER_UP_DUR + TURQUOISE_POWER_DUR + POWER_DOWN_DUR)) {
+                animState = "power_down";
+                if (!laserFiredThisCycle) {
                     fireLaser(game);
-                    isStealing = false;
-                    stealTimer = 0f;
+                    laserFiredThisCycle = true;
                 }
+            } else {
+                isStealing = false;
+                stealingPhaseTimer = 0f;
+                animState = "walk";
             }
         }
     }
@@ -79,34 +161,61 @@ public class SunStealerZombie extends Zombie {
     private void fireLaser(GameWorld game) {
         int row = LawnGrid.getRowFromY(this.y);
         int col = LawnGrid.getColFromX(this.x);
+
         for (int i = 1; i <= 4; i++) {
             int targetCol = col - i;
             if (targetCol < 0) break;
             if (row >= 0 && row < game.getRows() && targetCol < game.getCols()) {
                 Cell cell = game.getGrid()[row][targetCol];
-                Plant plant = cell.getPlant();
-                if (plant != null && !plant.isDead()) {
-                    plant.die();
-                    GameMenuController.updateState(
-                            "Laser destroyed plant at (" + plant.getX() + ", " + plant.getY() + ")");
+
+                while (cell.findAndRemovePlant()) {
                 }
             }
         }
     }
 
+    private boolean isPlantInFront(GameWorld game) {
+        int row = LawnGrid.getRowFromY(this.y);
+        int col = LawnGrid.getColFromX(this.x);
+
+        for (int i = 1; i <= 4; i++) {
+            int targetCol = col - i;
+            if (targetCol < 0) break;
+
+            if (row >= 0 && row < game.getRows() && targetCol < game.getCols()) {
+                Cell cell = game.getGrid()[row][targetCol];
+
+                if (!cell.isEmpty()) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public String getAnimationClip() {
+        if (isDead) return "die";
+        if (isStealing) {
+            return animState;
+        }
+        return super.getAnimationClip();
+    }
+
     @Override
     public void die() {
         GameWorld game = App.getCurrentGame();
-        if (game != null) {
+        if (game != null && stolenSun > 0) {
             if (isRa) {
                 game.addSunToPlayer(stolenSun);
-                GameMenuController.updateState("Ra returned " + stolenSun + " suns.");
             } else {
-                int returned = stolenSun / 2;
-                game.addSunToPlayer(returned);
-                GameMenuController.updateState("Turquoise returned " + returned + " suns (half of " + stolenSun + ").");
+                game.addSunToPlayer(stolenSun / 2);
             }
         }
         super.die();
     }
+
+    public boolean isRa() { return isRa; }
+    public boolean isStealing() { return isStealing; }
+    public String getTurquoiseAnimState() { return animState; }
 }

@@ -14,6 +14,15 @@ public class Sun implements Resettable {
     private float groundedTimer = 0f;
     private static final float DESPAWN_TIME = 10f;
 
+    // --- rise-then-arc-down animation (used when a sun is produced beside a plant) ---
+    private enum FallPhase { SKY_FALL, RISING, ARC_DOWN, GROUNDED }
+    private FallPhase fallPhase = FallPhase.SKY_FALL;
+    private float arcStartX;
+    private float arcPeakY;
+    private float riseSpeed = 260f;
+    private static final float RISE_HEIGHT_BASE = 65f;
+    private static final float SIDE_OFFSET_BASE = 55f;
+
     private boolean isCollected;
     private boolean isExploded;
     private boolean isExpired;
@@ -23,6 +32,7 @@ public class Sun implements Resettable {
     private SunType type;
     private float animTime = 0f;
 
+    /** Sky-dropped sun: falls straight down from off-screen to the target cell. */
     public void setup(int row, int col, SunType type) {
         if (game == null) {
             game = App.getCurrentGame();
@@ -41,8 +51,44 @@ public class Sun implements Resettable {
         this.groundedTimer = 0f;
         this.animTime = 0f;
         this.producer = null;
+        this.fallPhase = FallPhase.SKY_FALL;
 
         GameMenuController.updateState("New " + type + " sun dropping at (" + finalX + ", " + finalY + ")");
+    }
+
+    public void setupBesidePlant(int row, int col, SunType type, int produceIndex) {
+        if (game == null) {
+            game = App.getCurrentGame();
+        }
+        this.type = type;
+        this.size = type.amount;
+        this.isCollected = false;
+        this.isExploded = false;
+        this.isExpired = false;
+        this.groundedTimer = 0f;
+        this.animTime = 0f;
+        this.producer = null;
+
+        float startX = App.getCellCenterX(col);
+        float startY = App.getCellCenterY(row);
+        beginRiseAndLandBeside(startX, startY, produceIndex);
+
+        GameMenuController.updateState("New " + type + " sun produced beside plant at (" + finalX + ", " + finalY + ")");
+    }
+
+    private void beginRiseAndLandBeside(float startX, float startY, int produceIndex) {
+        float side = (produceIndex % 2 == 0) ? -1f : 1f;
+        float offsetX = side * (SIDE_OFFSET_BASE + (produceIndex % 3) * 12f);
+        float riseHeight = RISE_HEIGHT_BASE + (produceIndex % 3) * 15f;
+
+        this.x = startX;
+        this.y = startY;
+        this.finalX = startX + offsetX;
+        this.finalY = startY;
+
+        this.arcStartX = startX;
+        this.arcPeakY = startY + riseHeight;
+        this.fallPhase = FallPhase.RISING;
     }
 
     public void update(float delta) {
@@ -50,18 +96,52 @@ public class Sun implements Resettable {
 
         animTime += delta;
 
-        if (y > finalY) {
-            y -= fallSpeed * delta;
-            if (y <= finalY) {
-                y = finalY;
-                onLand();
+        switch (fallPhase) {
+            case SKY_FALL -> {
+                if (y > finalY) {
+                    y -= fallSpeed * delta;
+                    if (y <= finalY) {
+                        y = finalY;
+                        land();
+                    }
+                } else {
+                    tickDespawn(delta);
+                }
             }
-        } else {
-            groundedTimer += delta;
-            if (groundedTimer >= DESPAWN_TIME) {
-                isExpired = true;
+            case RISING -> {
+                y += riseSpeed * delta;
+                if (y >= arcPeakY) {
+                    y = arcPeakY;
+                    fallPhase = FallPhase.ARC_DOWN;
+                }
             }
+            case ARC_DOWN -> {
+                y -= fallSpeed * delta;
+                float totalDrop = arcPeakY - finalY;
+                float fallen = arcPeakY - y;
+                float t = totalDrop > 0 ? Math.min(1f, fallen / totalDrop) : 1f;
+                x = arcStartX + (finalX - arcStartX) * t;
+                if (y <= finalY) {
+                    y = finalY;
+                    x = finalX;
+                    land();
+                }
+            }
+            case GROUNDED -> tickDespawn(delta);
         }
+    }
+
+    private void tickDespawn(float delta) {
+        groundedTimer += delta;
+        if (groundedTimer >= DESPAWN_TIME) {
+            isExpired = true;
+        }
+    }
+
+    private void land() {
+        fallPhase = FallPhase.GROUNDED;
+        groundedTimer = 0f;
+        onLand();
     }
 
     private void onLand() {
@@ -123,10 +203,6 @@ public class Sun implements Resettable {
 
     @Override
     public void reset(float x, float y, int size, SunProducerComponent component) {
-        this.x = x;
-        this.y = y;
-        this.finalX = x;
-        this.finalY = y;
         this.size = size;
         this.producer = component;
         this.game = App.getCurrentGame();
@@ -135,6 +211,11 @@ public class Sun implements Resettable {
         this.isExploded = false;
         this.isExpired = false;
         this.groundedTimer = 0f;
+        this.animTime = 0f;
+
+        int produceIndex = (component != null && component.getComponentSuns() != null)
+            ? component.getComponentSuns().size() : 0;
+        beginRiseAndLandBeside(x, y, produceIndex);
     }
 
     @Override
@@ -157,5 +238,13 @@ public class Sun implements Resettable {
     public Rectangle getBounds() {
         float size = 80f * SunGraphic.getScale(type);
         return new Rectangle(x - size / 2f, y - size / 2f, size, size);
+    }
+
+    public void setX(float x) {
+        this.x = x;
+    }
+
+    public void setY(float y) {
+        this.y = y;
     }
 }

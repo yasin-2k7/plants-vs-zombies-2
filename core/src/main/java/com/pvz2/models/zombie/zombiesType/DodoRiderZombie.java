@@ -39,15 +39,21 @@ public class DodoRiderZombie extends Zombie {
         FLY_OVER_PLANTS.addAll(DANGEROUS_PLANTS);
     }
 
+    private static final float REACH_DISTANCE = 15f;
+
     private static final float FLY_START_DURATION = 0.25f;
-    private static final float FLY_LOOP_DURATION = 0.35f;
+    private static final float FLY_LOOP_DURATION = 0.5f;
     private static final float FLY_END_DURATION = 0.25f;
+    private static final float FLY_TOTAL_DURATION =
+        FLY_START_DURATION + FLY_LOOP_DURATION + FLY_END_DURATION;
 
     private enum FlyPhase { NONE, FLY_START, FLY_LOOP, FLY_END }
 
     private boolean isRiding;
     private FlyPhase flyPhase = FlyPhase.NONE;
     private float flyPhaseTime = 0f;
+    private float flyElapsedTotal = 0f;
+    private float flyStartX, flyStartY, flyTargetX, flyTargetY;
 
     public DodoRiderZombie(int health, double speed, int damage) {
         super(Zombies.DODO_RIDER, health, speed, damage);
@@ -58,7 +64,10 @@ public class DodoRiderZombie extends Zombie {
     public void update(float delta) {
         if (isDead) return;
 
-        updateFlyPhase(delta);
+        if (flyPhase != FlyPhase.NONE) {
+            updateFlying(delta);
+            return;
+        }
 
         GameWorld game = App.getCurrentGame();
         if (game == null) {
@@ -67,7 +76,7 @@ public class DodoRiderZombie extends Zombie {
         }
 
         if (isRiding) {
-            Cell currentCell = Cell.findZombieCell(game.getGrid(), this);
+            Cell currentCell = game.getCellAt(this.x, this.y);
             if (currentCell != null) {
                 int row = currentCell.getRow();
                 int col = currentCell.getCol();
@@ -77,7 +86,9 @@ public class DodoRiderZombie extends Zombie {
                     if (frontCell != null) {
                         Plant obstacle = frontCell.getPlant();
                         if (obstacle != null && !obstacle.isDead()) {
-                            handleObstacle(obstacle, frontCell);
+                            if (obstacle != null && !obstacle.isDead()) {
+                                handleObstacle(obstacle, frontCell);
+                            }
                         }
 
                         if (frontCell.getSlippingDir() != 0) {
@@ -86,6 +97,10 @@ public class DodoRiderZombie extends Zombie {
                     }
                 }
             }
+        }
+
+        if (flyPhase != FlyPhase.NONE) {
+            return;
         }
 
         super.update(delta);
@@ -109,14 +124,19 @@ public class DodoRiderZombie extends Zombie {
         GameWorld game = App.getCurrentGame();
         if (game == null) return;
 
-        int col = cell.getCol() - 1;
+        int landingCol = cell.getCol() - 1;
         int row = cell.getRow();
-        if (col >= 0) {
-            Cell nextCell = game.getGrid()[row][col];
-            this.x = nextCell.getX();
-            this.y = nextCell.getY();
+
+        flyStartX = this.x;
+        flyStartY = this.y;
+
+        if (landingCol >= 0) {
+            Cell landingCell = game.getGrid()[row][landingCol];
+            flyTargetX = landingCell.getX();
+            flyTargetY = landingCell.getY();
         } else {
-            this.x -= App.getCellWidth();
+            flyTargetX = this.x - App.getCellWidth();
+            flyTargetY = this.y;
         }
 
         GameMenuController.updateState(
@@ -128,9 +148,12 @@ public class DodoRiderZombie extends Zombie {
     private void startFlying() {
         flyPhase = FlyPhase.FLY_START;
         flyPhaseTime = FLY_START_DURATION;
+        flyElapsedTotal = 0f;
     }
 
-    private void updateFlyPhase(float delta) {
+    private void updateFlying(float delta) {
+        flyElapsedTotal += delta;
+
         switch (flyPhase) {
             case FLY_START -> {
                 flyPhaseTime -= delta;
@@ -149,11 +172,21 @@ public class DodoRiderZombie extends Zombie {
             case FLY_END -> {
                 flyPhaseTime -= delta;
                 if (flyPhaseTime <= 0) {
+                    this.x = flyTargetX;
+                    this.y = flyTargetY;
                     flyPhase = FlyPhase.NONE;
+                    flyElapsedTotal = 0f;
+                    return;
                 }
             }
-            case NONE -> { }
+            case NONE -> {
+                return;
+            }
         }
+
+        float t = Math.min(1f, flyElapsedTotal / FLY_TOTAL_DURATION);
+        this.x = flyStartX + (flyTargetX - flyStartX) * t;
+        this.y = flyStartY + (flyTargetY - flyStartY) * t;
     }
 
     @Override
