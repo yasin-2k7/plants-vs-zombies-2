@@ -12,6 +12,8 @@ import com.pvz2.Main;
 import com.pvz2.controller.GameMenuController;
 import com.pvz2.models.core.App;
 import com.pvz2.models.core.User;
+import com.pvz2.view.audios.AudioManager;
+import com.pvz2.view.audios.SFXManager;
 
 public class SettingsMenuTable extends Table {
 
@@ -59,6 +61,53 @@ public class SettingsMenuTable extends Table {
             }
         });
 
+        Label musicVolumeLabel = new Label("Music Volume:", skin, "medium");
+        musicVolumeLabel.setColor(Color.BLACK);
+        float currentMusicVol = AudioManager.getInstance().getVolume();
+        final Label musicVolValLabel = new Label((int)(currentMusicVol * 100) + "%", skin, "medium");
+        musicVolValLabel.setColor(Color.BLACK);
+
+        final Slider musicVolumeSlider = new Slider(0f, 1f, 0.05f, false, skin);
+        musicVolumeSlider.setValue(currentMusicVol);
+        musicVolumeSlider.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                float val = musicVolumeSlider.getValue();
+                musicVolValLabel.setText((int)(val * 100) + "%");
+                AudioManager.getInstance().setVolume(val);
+            }
+        });
+
+        Label sfxVolumeLabel = new Label("SFX Volume:", skin, "medium");
+        sfxVolumeLabel.setColor(Color.BLACK);
+        float currentSfxVol = SFXManager.getInstance().getVolume();
+        final Label sfxVolValLabel = new Label((int)(currentSfxVol * 100) + "%", skin, "medium");
+        sfxVolValLabel.setColor(Color.BLACK);
+
+        final Slider sfxVolumeSlider = new Slider(0f, 1f, 0.05f, false, skin);
+        sfxVolumeSlider.setValue(currentSfxVol);
+        sfxVolumeSlider.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                float val = sfxVolumeSlider.getValue();
+                sfxVolValLabel.setText((int)(val * 100) + "%");
+                SFXManager.getInstance().setVolume(val);
+            }
+        });
+
+        final CheckBox pauseMusicCheckBox = new CheckBox(" Pause / Mute Music", skin);
+        pauseMusicCheckBox.getLabel().setColor(Color.BLACK);
+        pauseMusicCheckBox.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                if (pauseMusicCheckBox.isChecked()) {
+                    AudioManager.getInstance().pauseMusic();
+                } else {
+                    AudioManager.getInstance().resumeMusic();
+                }
+            }
+        });
+
         final CheckBox showGridCheckBox = new CheckBox(" Show Lawn Grid Lines (Red)", skin);
         showGridCheckBox.getLabel().setColor(Color.BLACK);
         if (user != null) {
@@ -94,10 +143,19 @@ public class SettingsMenuTable extends Table {
         add(difficultySlider).width(220).padBottom(15).padLeft(10);
         add(difficultyValLabel).left().padLeft(15).padBottom(15).row();
 
-        add(speedLabel).left().padBottom(20);
-        add(speedSlider).width(220).padBottom(20).padLeft(10);
-        add(speedValLabel).left().padLeft(15).padBottom(20).row();
+        add(speedLabel).left().padBottom(15);
+        add(speedSlider).width(220).padBottom(15).padLeft(10);
+        add(speedValLabel).left().padLeft(15).padBottom(15).row();
 
+        add(musicVolumeLabel).left().padBottom(15);
+        add(musicVolumeSlider).width(220).padBottom(15).padLeft(10);
+        add(musicVolValLabel).left().padLeft(15).padBottom(15).row();
+
+        add(sfxVolumeLabel).left().padBottom(20);
+        add(sfxVolumeSlider).width(220).padBottom(20).padLeft(10);
+        add(sfxVolValLabel).left().padLeft(15).padBottom(20).row();
+
+        add(pauseMusicCheckBox).colspan(3).left().padBottom(15).row();
         add(showGridCheckBox).colspan(3).left().padBottom(15).row();
         add(debugCheckBox).colspan(3).left().padBottom(15).row();
     }

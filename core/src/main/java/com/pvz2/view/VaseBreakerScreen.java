@@ -2,29 +2,41 @@ package com.pvz2.view;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.viewport.FillViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.pvz2.Main;
+import com.pvz2.controller.GameMenuController;
 import com.pvz2.models.core.App;
-import com.pvz2.models.enums.PlantLayer;
 import com.pvz2.models.enums.PlantType;
 import com.pvz2.models.miniGame.vaseBreaker.Vase;
 import com.pvz2.models.miniGame.vaseBreaker.VaseBreakerLevel;
 import com.pvz2.models.miniGame.vaseBreaker.VaseType;
 import com.pvz2.models.plant.Plant;
-import com.pvz2.models.plant.factory.PlantFactory;
+import com.pvz2.models.pool.GenericObjectPool;
+import com.pvz2.models.projectile.Projectile;
 import com.pvz2.models.world.Cell;
+import com.pvz2.models.world.GameState;
 import com.pvz2.models.zombie.Zombie;
+import com.pvz2.view.audios.GameSFX;
+import com.pvz2.view.audios.SFXManager;
 import pvz.libpvz.pam.PamPlayer;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 public class VaseBreakerScreen extends MenuScreen {
 
@@ -35,6 +47,8 @@ public class VaseBreakerScreen extends MenuScreen {
 
     private final List<ZombieGraphic> zombieGraphics = new ArrayList<>();
     private final List<PlantGraphic> plantGraphics = new ArrayList<>();
+    private final Map<Projectile, ProjectileGraphic> projectileGraphics = new HashMap<>();
+    private final List<ProjectileImpactGraphic> projectileImpacts = new ArrayList<>();
 
     private final FileHandle assetsFolder;
     private PamPlayer pamPlayer;
@@ -42,6 +56,10 @@ public class VaseBreakerScreen extends MenuScreen {
     private final List<PlantCardView> seedPackets = new ArrayList<>();
 
     private final PlantPlacementManager plantPlacementManager = new PlantPlacementManager();
+
+    private ImageButton shovelBtn;
+    private ImageButton pauseBtn;
+    private Table pauseOverlay;
 
     public enum VaseState {
         DROPPING,
@@ -71,6 +89,110 @@ public class VaseBreakerScreen extends MenuScreen {
 
     @Override
     protected void buildUI() {
+        Table topBar = new Table();
+        topBar.setFillParent(true);
+        topBar.top();
+
+        shovelBtn = createShovelBtn();
+        pauseBtn = new ImageButton(skin, "ingame_pause");
+        pauseBtn.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                togglePause();
+            }
+        });
+
+        topBar.add(shovelBtn).pad(20).left();
+        topBar.add().expandX();
+        topBar.add(pauseBtn).pad(20).right();
+
+        mainStack.addActor(topBar);
+    }
+
+    private ImageButton createShovelBtn() {
+        TextureRegion shovelIcon = game.textureBank.region("IMAGE_UI_HUD_INGAME_SHOVEL_BUTTON");
+        TextureRegion shovelIconSelected = game.textureBank.region("IMAGE_UI_HUD_INGAME_SHOVEL_BUTTON_DOWN");
+
+        Drawable shovel = shovelIcon != null ? new TextureRegionDrawable(shovelIcon) : null;
+        Drawable shovelSelected = shovelIconSelected != null ? new TextureRegionDrawable(shovelIconSelected) : null;
+
+        ImageButton button = new ImageButton(shovel, shovel, shovelSelected != null ? shovelSelected : shovel);
+        button.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                // GameMenuController.selectAndUnselectShovel() toggles
+                // world.isSelectedShovel() and clears any conflicting
+                // selection (plant / plant food), exactly like normal levels.
+                GameMenuController.selectAndUnselectShovel();
+            }
+        });
+        return button;
+    }
+
+    private void togglePause() {
+        if (world.getState() == GameState.PLAYING) {
+            world.setState(GameState.PAUSED);
+            showPauseOverlay();
+        } else if (world.getState() == GameState.PAUSED) {
+            world.setState(GameState.PLAYING);
+            hidePauseOverlay();
+        }
+    }
+
+    private void showPauseOverlay() {
+        if (pauseOverlay != null) {
+            pauseOverlay.remove();
+        }
+        pauseOverlay = new Table();
+        pauseOverlay.setFillParent(true);
+
+        Pixmap pixmap = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
+        pixmap.setColor(new Color(0, 0, 0, 0.6f));
+        pixmap.fill();
+        Texture bgTexture = new Texture(pixmap);
+        pixmap.dispose();
+        pauseOverlay.setBackground(new TextureRegionDrawable(new TextureRegion(bgTexture)));
+
+        TextButton resumeBtn = new TextButton("RESUME", skin, "purple");
+        resumeBtn.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                togglePause();
+            }
+        });
+
+        TextButton restartBtn = new TextButton("RESTART", skin, "purple");
+        restartBtn.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                restartLevel();
+            }
+        });
+
+        pauseOverlay.add(resumeBtn).pad(10).row();
+        pauseOverlay.add(restartBtn).pad(10);
+
+        modalStack.addActor(pauseOverlay);
+    }
+
+    private void hidePauseOverlay() {
+        if (pauseOverlay != null) {
+            pauseOverlay.remove();
+            pauseOverlay = null;
+        }
+    }
+
+    public void restartLevel() {
+        world.reset();
+        world.setState(GameState.PLAYING);
+        hidePauseOverlay();
+
+        plantGraphics.clear();
+        zombieGraphics.clear();
+        seedPackets.clear();
+        plantPlacementManager.cancelSelection();
+
+        initVaseGraphics();
     }
 
     @Override
@@ -111,6 +233,8 @@ public class VaseBreakerScreen extends MenuScreen {
             zg.draw(game.batch, pamPlayer);
         }
 
+        renderProjectiles(delta, game.batch, pamPlayer);
+
         for (PlantCardView card : seedPackets) {
             card.draw(game.batch, 1f);
         }
@@ -122,6 +246,44 @@ public class VaseBreakerScreen extends MenuScreen {
 
         game.batch.end();
     }
+    private void renderProjectiles(float delta, SpriteBatch batch, PamPlayer pamPlayer) {
+        List<Projectile> active = world.getActiveProjectiles();
+        GenericObjectPool<Projectile> pool = App.getCurrentGame().getProjectilesPool();
+
+        Iterator<Map.Entry<Projectile, ProjectileGraphic>> it = projectileGraphics.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry<Projectile, ProjectileGraphic> entry = it.next();
+            ProjectileGraphic pg = entry.getValue();
+            boolean reused = pool.getGeneration(entry.getKey()) != pg.getGeneration();
+            boolean noLongerActive = !active.contains(entry.getKey());
+            if (reused || noLongerActive) {
+                projectileImpacts.add(new ProjectileImpactGraphic(pg.getType(), pg.getLastX(), pg.getLastY()));
+                it.remove();
+            }
+        }
+
+        for (Projectile p : active) {
+            int currentGen = pool.getGeneration(p);
+            ProjectileGraphic existing = projectileGraphics.get(p);
+            if (existing == null || existing.getGeneration() != currentGen) {
+                projectileGraphics.put(p, new ProjectileGraphic(p, currentGen));
+            }
+        }
+
+        for (ProjectileGraphic pg : projectileGraphics.values()) {
+            pg.update(delta);
+            pg.draw(batch, pamPlayer);
+        }
+
+        Iterator<ProjectileImpactGraphic> impactIt = projectileImpacts.iterator();
+        while (impactIt.hasNext()) {
+            ProjectileImpactGraphic ig = impactIt.next();
+            ig.update(delta);
+            ig.draw(batch, pamPlayer);
+            if (ig.isFinished(pamPlayer)) impactIt.remove();
+        }
+    }
+
 
     private void initVaseGraphics() {
         vaseGraphics.clear();
@@ -143,10 +305,22 @@ public class VaseBreakerScreen extends MenuScreen {
     }
 
     private void handleInput() {
+        // world.tick() already no-ops the simulation while paused, but we
+        // also shouldn't accept any clicks (planting / shoveling / vases)
+        // while the pause overlay is up.
+        if (world.getState() == GameState.PAUSED) return;
+
         Vector3 touchPoint = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
         worldViewport.unproject(touchPoint);
 
         if (Gdx.input.justTouched()) {
+
+            if (App.getCurrentGame() != null && App.getCurrentGame().isSelectedShovel()) {
+                GameMenuController.pluckPlant(touchPoint.x, touchPoint.y);
+                plantGraphics.removeIf(pg -> pg.isDead() || pg.getPlant() == null || pg.getPlant().getCell() == null);
+                return;
+            }
+
             if (plantPlacementManager.isPlantSelected()) {
                 int row = LawnGrid.getRowFromY(touchPoint.y);
                 int col = LawnGrid.getColFromX(touchPoint.x);
@@ -164,12 +338,26 @@ public class VaseBreakerScreen extends MenuScreen {
                         }
 
                         if (cell != null) {
-                            Plant plantModel = com.pvz2.models.plant.factory.PlantFactory.createPlant(
-                                selectedPlant, (int) cell.getX(), (int) cell.getY(), cell);
+                            // Route through Cell.handlePlanting(...), the same
+                            // path GameMenuController.plantPlant(...) uses in
+                            // normal levels, instead of instantiating the
+                            // plant directly. This makes sure the plant is
+                            // properly registered on the cell/world so it
+                            // actually attacks, and that its model X/Y are
+                            // stored as row/col (like every other level),
+                            // which is what PlantGraphic expects.
+                            boolean boosted = App.getCurrentUser() != null
+                                && App.getCurrentUser().hasBoost(selectedPlant);
+
+                            Plant plantModel = cell.handlePlanting(selectedPlant, boosted);
 
                             if (plantModel != null) {
-                                cell.setPlant(plantModel, PlantLayer.MAIN);
+                                plantModel.setX(col);
+                                plantModel.setY(row);
+                                plantModel.setCell(cell);
+
                                 plantGraphics.add(new PlantGraphic(plantModel, pamPlayer));
+                                SFXManager.getInstance().playSound(GameSFX.PLANT);
                             }
                         }
                     }
@@ -307,6 +495,13 @@ public class VaseBreakerScreen extends MenuScreen {
 
                 zombie.setX(startX);
                 zombie.setY(startY);
+
+                // Register the zombie in the actual game world (same list
+                // GameMenuController.cheatSpawnZombie uses) so plants can
+                // detect and attack it and world.tick() actually moves it.
+                // Previously the zombie only existed in this screen's local
+                // list, so it was rendered but never "seen" by the game.
+                world.getActiveZombies().add(zombie);
 
                 zombieGraphics.add(new ZombieGraphic(zombie));
             }

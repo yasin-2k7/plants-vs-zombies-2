@@ -41,6 +41,8 @@ import com.pvz2.models.world.Sandstorm;
 import com.pvz2.models.world.Sun;
 import com.pvz2.models.world.obstacles.Grave;
 import com.pvz2.models.zombie.Zombie;
+import com.pvz2.view.audios.GameSFX;
+import com.pvz2.view.audios.SFXManager;
 import pvz.libpvz.pam.PamPlayer;
 import com.badlogic.gdx.utils.Align;
 import pvz.skin.BorderedTable;
@@ -814,6 +816,7 @@ public class GameScreen extends MenuScreen {
                         checkExplosion(newPlant, pg);
 
                         plantPlacementManager.tryPlace(row, col);
+                        SFXManager.getInstance().playSound(GameSFX.PLANT);
                     }
                 }
             } else if (plantfoodPlacementManager.isSelected()){

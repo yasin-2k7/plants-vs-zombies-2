@@ -17,6 +17,8 @@ import com.pvz2.models.core.App;
 import com.pvz2.models.core.News;
 import com.pvz2.models.core.UserDataManager;
 import com.pvz2.models.enums.NewsType;
+import com.pvz2.view.audios.GameSFX;
+import com.pvz2.view.audios.SFXManager;
 import pvz.libpvz.textures.TextureBank;
 import pvz.skin.BorderedTable;
 
@@ -159,17 +161,6 @@ public class MainMenuScreen extends MenuScreen {
 
         if (muPoint != null) bottomBar.add(muPoint).size(btnSize).pad(10);
 
-        TextButton shopBtn = new TextButton("STORE", skin, "green");
-
-        shopBtn.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                fadeAndSwitchScreen(new ShopMenuScreen(game));
-            }
-        });
-
-        mainTable.add(shopBtn).width(200).height(52).pad(10).row();
-
         bottomBar.add().expandX();
 
         if (leaderboardBtn != null) bottomBar.add(leaderboardBtn).size(btnSize).pad(10);
@@ -190,12 +181,14 @@ public class MainMenuScreen extends MenuScreen {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 controller.exitMenu();
+                SFXManager.getInstance().playSound(GameSFX.BUTTON_CLICK);
             }
         });
         playBtn.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 controller.enterMenu("play");
+                SFXManager.getInstance().playSound(GameSFX.BUTTON_CLICK);
             }
         });
         settingsBtn.addListener(new ClickListener(){
@@ -203,6 +196,7 @@ public class MainMenuScreen extends MenuScreen {
             public void clicked(InputEvent event, float x, float y) {
                 showScrollablePopup("SETTINGS", new SettingsMenuTable(game, skin),
                     750, 520, 680, 400);
+                SFXManager.getInstance().playSound(GameSFX.BUTTON_CLICK);
             }
         });
         newsBtn.addListener(new ClickListener(){
@@ -210,12 +204,15 @@ public class MainMenuScreen extends MenuScreen {
             public void clicked(InputEvent event, float x, float y) {
                 setUnreadStatus(false);
                 showScrollablePopup("NEWS", controller.getNews(skin));
+                SFXManager.getInstance().playSound(GameSFX.BUTTON_CLICK);
+
             }
         });
         muPoint.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 controller.enterMenu("mu point");
+                SFXManager.getInstance().playSound(GameSFX.BUTTON_CLICK);
             }
         });
         leaderboardBtn.addListener(new ClickListener(){
@@ -223,18 +220,21 @@ public class MainMenuScreen extends MenuScreen {
             public void clicked(InputEvent event, float x, float y) {
                 showScrollablePopup("LEADERBOARD", new LeaderboardMenuTable(game, skin),
                     950, 650, 800, 480);
+                SFXManager.getInstance().playSound(GameSFX.BUTTON_CLICK);
             }
         });
         profileBtn.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 showScrollablePopup("PROFILE", new ProfileMenuTable(game, skin), 660, 620, 570, 480);
+                SFXManager.getInstance().playSound(GameSFX.BUTTON_CLICK);
             }
         });
         travelLogBtn.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 showScrollablePopup("TRAVEL LOG", new TravelLogMenuTable(game, skin), 800, 500, 750, 400);
+                SFXManager.getInstance().playSound(GameSFX.BUTTON_CLICK);
             }
         });
     }
@@ -284,6 +284,7 @@ public class MainMenuScreen extends MenuScreen {
             public void clicked(InputEvent event, float x, float y) {
                 overlay.remove();
                 UserDataManager.saveUser(App.getCurrentUser());
+                SFXManager.getInstance().playSound(GameSFX.BUTTON_CLICK);
             }
         });
         topBar.add(backBtn).size(45, 45).left().expandX();
