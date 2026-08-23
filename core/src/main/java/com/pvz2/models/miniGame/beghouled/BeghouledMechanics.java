@@ -1,6 +1,7 @@
 package com.pvz2.models.miniGame.beghouled;
 
 import com.badlogic.gdx.Gdx;
+import com.pvz2.models.core.App;
 import com.pvz2.models.enums.PlantLayer;
 import com.pvz2.models.enums.PlantType;
 import com.pvz2.models.plant.Plant;
@@ -67,7 +68,7 @@ public class BeghouledMechanics implements Mechanic {
 
     private void placePlant(GameWorld world, int row, int col, PlantType type) {
         Cell cell = world.getGrid()[row][col];
-        Plant plant = PlantFactory.createPlant(type, col, row, cell);
+        Plant plant = PlantFactory.createPlant(type,(int) App.getCellCenterX(col), (int) App.getCellCenterY(row), cell);
         cell.setPlant(plant, PlantLayer.MAIN);
 
         if (!world.getActivePlants().contains(plant)) {
@@ -77,10 +78,10 @@ public class BeghouledMechanics implements Mechanic {
 
     private void placePlantWithFall(GameWorld world, int row, int col, PlantType type) {
         Cell cell = world.getGrid()[row][col];
-        Plant plant = PlantFactory.createPlant(type, col, row, cell);
-        plant.setX(col);
-        plant.setY(row - 1.5f);
-        plant.slideTo(col, row);
+        Plant plant = PlantFactory.createPlant(type, (int) App.getCellCenterX(col), (int) App.getCellCenterY(row), cell);
+        plant.setX(App.getCellCenterX(col));
+        plant.setY(App.getCellCenterY(row - 1.5f)); // one and a half cells above, in pixels
+        plant.slideTo(App.getCellCenterX(col), App.getCellCenterY(row));
         cell.setPlant(plant, PlantLayer.MAIN);
 
         if (!world.getActivePlants().contains(plant)) {
@@ -127,13 +128,13 @@ public class BeghouledMechanics implements Mechanic {
             cellA.setPlant(plantB, PlantLayer.MAIN);
             plantB.setCell(cellA);
             // شروع انیمیشن نرم به خانه جديد
-            plantB.startCombineAnimation(a.col(), a.row());
+            plantB.startCombineAnimation(App.getCellCenterX(a.col()), App.getCellCenterY(a.row()));
         }
         if (plantA != null) {
             cellB.setPlant(plantA, PlantLayer.MAIN);
             plantA.setCell(cellB);
             // شروع انیمیشن نرم به خانه جديد
-            plantA.startCombineAnimation(b.col(), b.row());
+            plantA.startCombineAnimation(App.getCellCenterX(b.col()), App.getCellCenterY(b.row()));
         }
     }
 
@@ -239,7 +240,7 @@ public class BeghouledMechanics implements Mechanic {
                     Plant p = column.get(idx++);
                     cell.setPlant(p, PlantLayer.MAIN);
                     p.setCell(cell);
-                    p.startCombineAnimation(c, r);
+                    p.startCombineAnimation(App.getCellCenterX(c), App.getCellCenterY(r));
                 } else {
                     PlantType safeType = randomPlantTypeAvoidingMatch(world, r, c);
                     placePlantWithFall(world, r, c, safeType);
@@ -331,7 +332,8 @@ public class BeghouledMechanics implements Mechanic {
                 if (plant != null && plant.getType() == from) {
                     int c = cell.getCol();
                     int r = cell.getRow();
-                    Plant upgraded = PlantFactory.createPlant(upgrade.getTo(), c, r, cell);
+                    Plant upgraded = PlantFactory.createPlant(upgrade.getTo(), (int) App.getCellCenterX(c),
+                        (int) App.getCellCenterY(r), cell);
 
                     world.getActivePlants().remove(plant);
                     cell.removePlant();

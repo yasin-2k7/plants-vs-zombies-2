@@ -105,6 +105,12 @@ public class PlantGraphic {
     public PlantGraphic(Plant plant, PamPlayer pamPlayer) {
         this.plant = plant;
 
+        int col = plant.getCell().getCol();
+        int row = plant.getCell().getRow();
+
+        this.worldX = LawnGrid.getCellX(col);
+        this.worldY = LawnGrid.getCellY(row);
+
         this.normalPamPath = PlantsCollectionMenuScreen.getPlantAnimAddress(plant.getType());
         this.imitatorPamPath = PlantsCollectionMenuScreen.getPlantAnimAddress(PlantType.IMITATER);
         this.sheepPamPath = ZombiesTable.getZombiesAnimAddress().getOrDefault("Sheep", "768/FULL/ZOMBIE/SHEEP/SHEEP.PAM");
@@ -317,6 +323,12 @@ public class PlantGraphic {
     public void draw(SpriteBatch batch, PamPlayer pamPlayer) {
         if (plant == null || plant.isDead() || pamPath == null || pamPlayer == null) return;
 
+        if (inPlantFoodBg && plantFoodBgPamPath != null) {
+            String bgClip = PlantAnimationClips.getPlantFoodBackgroundClip();
+            pamPlayer.draw(batch, plantFoodBgPamPath, bgClip, plantFoodBgAnimTime*App.getCurrentUser().getGameSpeed(), worldX+10, worldY+80, 0.8f, 0.8f,
+                true);
+        }
+
         float flashAmount = plant.getDamageFlashProgress();
         if (flashAmount > 0f) {
             ShaderProgram shader = DamageFlashShader.get();
@@ -328,11 +340,6 @@ public class PlantGraphic {
         if (flashAmount > 0f) {
             batch.setShader(null);
         }
-
-        //float currentX = plant.getX();
-        //float currentY = plant.getY();
-
-        //pamPlayer.draw(batch, pamPath, currentClip, animTime, currentX, currentY, 0.8f, 0.8f, isLoop);
 
         TextureRegion armorOverlay = resolveArmorOverlay();
         if (armorOverlay != null) {
@@ -367,8 +374,8 @@ public class PlantGraphic {
         return plant.isDead();
     }
 
-    public float getWorldX() { return plant.getX(); }
-    public float getWorldY() { return plant.getY(); }
+    public float getWorldX() { return worldX; }
+    public float getWorldY() { return worldY; }
 
     public String getCurrentClip() { return currentClip; }
     public String getInitialClip() { return initialClip; }

@@ -35,6 +35,7 @@ public class PlantFactory {
 
         Plant newPlant = REGISTRY.get(type).get();
         newPlant.setCell(cell);
+        System.out.println("factory:" + x);
         newPlant.setX(x);
         newPlant.setY(y);
         return newPlant;
