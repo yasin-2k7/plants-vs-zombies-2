@@ -22,6 +22,7 @@ import java.util.stream.Collectors;
 public class TravelLogMenuController implements MenuController {
 
     public static class QuestGroupView {
+         public final String name;
         public final String description;
         public final Reward reward;
         public final List<VariantView> variants;
@@ -30,7 +31,8 @@ public class TravelLogMenuController implements MenuController {
 
         public final boolean claimable;
 
-        public QuestGroupView(String description, Reward reward, List<VariantView> variants) {
+        public QuestGroupView(String name, String description, Reward reward, List<VariantView> variants) {
+            this.name = name;
             this.description = description;
             this.reward = reward;
             this.variants = variants;
@@ -127,7 +129,7 @@ public class TravelLogMenuController implements MenuController {
                 String label = q.getVariantLabel() != null ? q.getVariantLabel() : "";
                 variants.add(new VariantView(label, q.isCompleted(), q.isReadyToClaim(), q.getId()));
             }
-            result.add(new QuestGroupView(first.getDescription(), first.getReward(), variants));
+            result.add(new QuestGroupView(first.getName(), first.getDescription(), first.getReward(), variants));
         }
         return result;
     }
