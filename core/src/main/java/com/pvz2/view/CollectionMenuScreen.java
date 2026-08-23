@@ -9,7 +9,6 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Array;
 import com.pvz2.Main;
 import com.pvz2.controller.CollectionMenuController;
-import com.pvz2.controller.MainMenuController;
 import com.pvz2.models.core.App;
 import com.pvz2.models.enums.PlantFamily;
 import com.ray3k.tenpatch.TenPatchDrawable;

@@ -1,6 +1,5 @@
 package com.pvz2.models.world.ChapterWorld;
 
-import com.pvz2.controller.GameMenuController;
 import com.pvz2.models.world.Cell;
 import com.pvz2.models.world.GameWorld;
 import com.pvz2.models.world.cellTerrains.LandTerrain;

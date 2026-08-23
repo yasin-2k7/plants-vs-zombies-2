@@ -2,7 +2,6 @@ package com.pvz2.models.plant.components;
 
 import com.pvz2.models.Damageable;
 import com.pvz2.models.core.App;
-import com.pvz2.models.enums.PlantType;
 import com.pvz2.models.enums.ProjectileType;
 import com.pvz2.models.plant.AnimationDurations;
 import com.pvz2.models.plant.GameComponent;

@@ -1,6 +1,5 @@
 package com.pvz2.models.miniGame.IZombie;
 
-import com.pvz2.models.core.App;
 import com.pvz2.models.world.GameWorld;
 import com.pvz2.models.world.levelSetup.LevelSetup;
 import com.pvz2.models.world.loseCondition.LoseCondition;

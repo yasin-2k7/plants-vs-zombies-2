@@ -16,8 +16,6 @@ import com.pvz2.models.plant.components.explosiveTriggers.InstantTrigger;
 import com.pvz2.models.plant.components.explosiveTriggers.ProximityTrigger;
 import com.pvz2.models.world.Cell;
 import com.pvz2.models.zombie.Zombie;
-
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;

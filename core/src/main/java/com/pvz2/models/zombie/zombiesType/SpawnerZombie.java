@@ -17,6 +17,7 @@ public class SpawnerZombie extends Zombie {
 
     private boolean isThrowing;
     private float throwTimer;
+    private int throwStage;
 
     private boolean isIntro;
     private float introTimer;
@@ -29,9 +30,15 @@ public class SpawnerZombie extends Zombie {
     private boolean isSmashing;
     private float smashTimer;
     private boolean hasAppliedSmashDamage;
+    private boolean hasShakenSmashLeft;
 
-    private static final float SMASH_ANIM_DURATION = 1.33f;
-    private static final float SMASH_IMPACT_TIME = 1.27f;
+    private static final float THROW_FIRE_DURATION = 0.97f;
+    private static final float THROW_CANNON_FIRE_DURATION = 0.57f;
+
+    private static final float SMASH_EAT_DURATION = 1.27f;
+    private static final float SMASH_LEFT_DURATION = 1.77f;
+    private static final float SMASH_TOTAL_DURATION = SMASH_EAT_DURATION + SMASH_LEFT_DURATION;
+
     private static final float SMASH_RANGE = 200f;
 
     public SpawnerZombie(int health, double speed, int damage, boolean isGargantuar) {
@@ -77,20 +84,29 @@ public class SpawnerZombie extends Zombie {
                 throwTimer += delta;
                 this.speed = 0;
 
-                if (throwTimer >= 1.5f) {
-                    isThrowing = false;
-                    throwImp();
-                    this.speed = this.originalSpeed;
+                if (throwStage == 0) {
+                    if (throwTimer >= THROW_FIRE_DURATION) {
+                        throwStage = 1;
+                        throwTimer = 0f;
+                        throwImp();
+                    }
+                } else {
+                    if (throwTimer >= THROW_CANNON_FIRE_DURATION) {
+                        isThrowing = false;
+                        this.speed = this.originalSpeed;
+                    }
                 }
             } else if (!hasThrownImp && this.health <= this.maxHealth / 2) {
                 isThrowing = true;
                 hasThrownImp = true;
+                throwStage = 0;
+                throwTimer = 0f;
                 this.speed = 0;
             } else if (isSmashing) {
                 smashTimer += delta;
                 this.speed = 0;
 
-                if (!hasAppliedSmashDamage && smashTimer >= SMASH_IMPACT_TIME) {
+                if (!hasAppliedSmashDamage && smashTimer >= SMASH_EAT_DURATION) {
                     hasAppliedSmashDamage = true;
                     if (smashTarget != null && !smashTarget.isDead()) {
                         smashTarget.die();
@@ -100,7 +116,12 @@ public class SpawnerZombie extends Zombie {
                     requestScreenShake();
                 }
 
-                if (smashTimer >= SMASH_ANIM_DURATION) {
+                if (!hasShakenSmashLeft && smashTimer >= SMASH_EAT_DURATION) {
+                    hasShakenSmashLeft = true;
+                    requestScreenShake();
+                }
+
+                if (smashTimer >= SMASH_TOTAL_DURATION) {
                     isSmashing = false;
                     smashTarget = null;
                     this.speed = this.originalSpeed;
@@ -156,6 +177,7 @@ public class SpawnerZombie extends Zombie {
                 isSmashing = true;
                 smashTimer = 0f;
                 hasAppliedSmashDamage = false;
+                hasShakenSmashLeft = false;
             }
         }
     }
@@ -166,10 +188,10 @@ public class SpawnerZombie extends Zombie {
 
         if (isGargantuar) {
             if (isThrowing) {
-                return "fire";
+                return throwStage == 0 ? "fire" : "cannon_fire";
             }
             if (isSmashing) {
-                return "eat";
+                return smashTimer < SMASH_EAT_DURATION ? "eat" : "smash_left";
             }
         } else {
             if (isIntro) {

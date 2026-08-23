@@ -61,14 +61,17 @@ public class LevelFactory {
         int rows = 5;
         int cols = 9;
         List<WaveSpawnEntry> availableZombies = List.of(
-            new WaveSpawnEntry("ZombieDefault", 100),
-            new WaveSpawnEntry("ZombieArmor1", 200),
-            new WaveSpawnEntry("ZombieArmor2", 300),
-            new WaveSpawnEntry("ZombieArmor4", 400),
-            new WaveSpawnEntry("ZombieTombRaiser", 300),
-            new WaveSpawnEntry("ZombieRa", 100),
-            new WaveSpawnEntry("ZombieNewspaper", 450),
-            new WaveSpawnEntry("ZombieExplorer", 250)
+//            new WaveSpawnEntry("ZombieDefault", 100),
+//            new WaveSpawnEntry("ZombieArmor1", 200),
+//            new WaveSpawnEntry("ZombieArmor2", 300),
+//            new WaveSpawnEntry("ZombieArmor4", 400),
+//            new WaveSpawnEntry("ZombieTombRaiser", 300),
+//            new WaveSpawnEntry("ZombieRa", 100),
+//            new WaveSpawnEntry("ZombieNewspaper", 450),
+//            new WaveSpawnEntry("ZombieExplorer", 250)
+//            new WaveSpawnEntry("ZombieGargantuar", 700)
+//            new WaveSpawnEntry("ZombieModernAllStar", 200)
+
         );
         List<Wave> waves = Wave.generateWaves(3, 500, availableZombies, 20);
         LevelSetup levelSetup = new NormalLevelSetup(rows, cols, waves);
@@ -239,13 +242,13 @@ public class LevelFactory {
         int rows = 5;
         int cols = 9;
         List<WaveSpawnEntry> availableZombies = List.of(
-            new WaveSpawnEntry("ZombieDefault", 100),
-            new WaveSpawnEntry("ZombieArmor1", 200),
-            new WaveSpawnEntry("ZombieArmor2", 300),
-            new WaveSpawnEntry("ZombieLostCityJane", 200),
-            new WaveSpawnEntry("ZombieBeachSnorkel", 200),
-            new WaveSpawnEntry("ZombieBeachOctopus", 800),
-            new WaveSpawnEntry("ZombieBeachFisherman", 400)
+//            new WaveSpawnEntry("ZombieDefault", 100),
+//            new WaveSpawnEntry("ZombieArmor1", 200),
+//            new WaveSpawnEntry("ZombieArmor2", 300),
+//            new WaveSpawnEntry("ZombieLostCityJane", 200),
+//            new WaveSpawnEntry("ZombieBeachSnorkel", 200),
+            new WaveSpawnEntry("ZombieBeachOctopus", 800)
+//            new WaveSpawnEntry("ZombieBeachFisherman", 400)
             );
         List<Wave> waves = Wave.generateWaves(3, 500, availableZombies, 10);
         LevelSetup levelSetup = new BigWaveBeachLevelSetup(6, rows, cols, waves);

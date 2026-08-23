@@ -7,8 +7,6 @@ import com.pvz2.models.enums.PlantType;
 import com.pvz2.models.plant.components.ImitatorIntroComponent;
 import com.pvz2.models.world.Cell;
 import com.pvz2.models.zombie.Zombie;
-
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 

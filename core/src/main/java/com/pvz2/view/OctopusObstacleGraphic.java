@@ -1,6 +1,7 @@
 package com.pvz2.view;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.pvz2.models.world.obstacles.OctopusObstacle;
 import pvz.libpvz.pam.PamPlayer;
 
@@ -51,8 +52,20 @@ public class OctopusObstacleGraphic {
     }
 
     public void draw(SpriteBatch batch, PamPlayer pamPlayer) {
+        float flashAmount = obstacle.getDamageFlashProgress();
+        if (flashAmount > 0f) {
+            ShaderProgram shader = DamageFlashShader.get();
+            batch.setShader(shader);
+            shader.setUniformf("u_flashColor", 1f, 1f, 1f);
+            shader.setUniformf("u_flashAmount", flashAmount);
+        }
+
         pamPlayer.draw(batch, PAM_PATH, currentClip, animTime,
             obstacle.getX(), obstacle.getY(), 0.8f, 0.8f, isLoop);
+
+        if (flashAmount > 0f) {
+            batch.setShader(null);
+        }
     }
 
     public boolean isDeathAnimationFinished() {

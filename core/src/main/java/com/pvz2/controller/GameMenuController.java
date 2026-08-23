@@ -1,13 +1,9 @@
 package com.pvz2.controller;
 
-
-import com.badlogic.gdx.Screen;
 import com.pvz2.models.core.App;
 import com.pvz2.models.core.User;
 import com.pvz2.models.core.UserDataManager;
 import com.pvz2.models.enums.Chapter;
-import com.pvz2.models.enums.CollectableType;
-import com.pvz2.models.enums.PlantLayer;
 import com.pvz2.models.enums.PlantType;
 import com.pvz2.models.greenhouse.GreenHouse;
 import com.pvz2.models.miniGame.IZombie.IZombieLevel;
@@ -363,7 +359,6 @@ public class GameMenuController implements MenuController {
         if (!App.getCurrentGame().isSelectedShovel()) return;
         Cell selectedCell = findCellAt(App.getCurrentGame(), x, y);
         if (selectedCell == null || !selectedCell.findAndRemovePlant()) {
-            return;
         }
     }
 
@@ -412,7 +407,6 @@ public class GameMenuController implements MenuController {
         GameWorld game = App.getCurrentGame();
         if (!(game instanceof VaseBreakerLevel level)) {
 //            GameMenuView.getInstance().showResult("this command is only available in Vase Breaker!");
-            return;
         }
 //        GameMenuView.getInstance().showResult(level.breakVaseAt(row, col));
     }
@@ -421,7 +415,6 @@ public class GameMenuController implements MenuController {
         GameWorld game = App.getCurrentGame();
         if (!(game instanceof VaseBreakerLevel level)) {
 //            GameMenuView.getInstance().showResult("this command is only available in Vase Breaker!");
-            return;
         }
 //        GameMenuView.getInstance().showResult(level.pickUpSeedAt(row, col));
     }
@@ -472,7 +465,6 @@ public class GameMenuController implements MenuController {
                         || (z.getSpecificName() != null && z.getSpecificName().equalsIgnoreCase(type)));
         if (!allowed) {
 //            GameMenuView.getInstance().showResult("you dont have this zombie");
-            return;
         }
 //        GameMenuView.getInstance().showResult(level.placeZombie(zombie, x, y));
     }
@@ -528,7 +520,6 @@ public class GameMenuController implements MenuController {
         BowlingMechanics mechanics = game.getMechanic(BowlingMechanics.class);
         if (mechanics == null) {
 //            GameMenuView.getInstance().showResult("this command is only available in Bowling!");
-            return;
         }
 //        GameMenuView.getInstance().showResult(mechanics.throwBall(game, plantType, x, y));
     }

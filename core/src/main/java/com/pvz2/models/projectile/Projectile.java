@@ -14,7 +14,6 @@ import com.pvz2.models.projectile.strikeStrategies.CheckStrike;
 import com.pvz2.models.world.Cell;
 import com.pvz2.models.world.GameWorld;
 import com.pvz2.models.world.obstacles.Grave;
-import com.pvz2.models.world.obstacles.Obstacle;
 import com.pvz2.models.zombie.Zombie;
 import com.pvz2.models.zombie.zombiesType.DeflectorZombie;
 import com.pvz2.models.zombie.zombiesType.SnorkelZombie;

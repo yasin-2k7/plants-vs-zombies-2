@@ -14,9 +14,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.pvz2.Main;
 import com.pvz2.controller.MainMenuController;
 import com.pvz2.models.core.App;
-import com.pvz2.models.core.News;
 import com.pvz2.models.core.UserDataManager;
-import com.pvz2.models.enums.NewsType;
 import pvz.libpvz.textures.TextureBank;
 import pvz.skin.BorderedTable;
 

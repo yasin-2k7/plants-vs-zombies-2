@@ -4,9 +4,6 @@ import com.pvz2.controller.GameMenuController;
 import com.pvz2.models.enums.PlantType;
 import com.pvz2.models.plant.Plant;
 import com.pvz2.models.world.Cell;
-import com.pvz2.view.GameScreen;
-import com.pvz2.view.PlantGraphic;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;

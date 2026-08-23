@@ -2,9 +2,6 @@ package com.pvz2.view;
 
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.pvz2.models.core.App;
-import com.pvz2.models.world.GameState;
-import com.pvz2.models.world.GameWorld;
 import pvz.libpvz.pam.ClipRef;
 import pvz.libpvz.pam.PamPlayer;
 

@@ -4,8 +4,6 @@ import com.pvz2.models.Damageable;
 import com.pvz2.models.core.App;
 import com.pvz2.models.world.obstacles.Obstacle;
 import com.pvz2.models.zombie.Zombie;
-
-import java.util.Comparator;
 import java.util.List;
 
 public class CheckFumeStrike implements CheckStrike{

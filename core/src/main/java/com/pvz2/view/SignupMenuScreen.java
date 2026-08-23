@@ -22,7 +22,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 import com.badlogic.gdx.utils.Array;
 import com.pvz2.Main;
 import com.pvz2.controller.SignupMenuController;
-import pvz.libpvz.pam.ClipRef;
+
 import pvz.libpvz.textures.TextureBank;
 import pvz.skin.BorderedTable;
 

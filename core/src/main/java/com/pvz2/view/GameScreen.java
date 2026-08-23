@@ -36,10 +36,6 @@ import com.pvz2.models.projectile.Projectile;
 import com.pvz2.models.world.*;
 import com.pvz2.models.world.ChapterWorld.AncientEgyptWorld;
 import com.pvz2.models.world.ChapterWorld.DarkAgesWorld;
-import com.pvz2.models.world.GameState;
-import com.pvz2.models.world.GameWorld;
-import com.pvz2.models.world.Sandstorm;
-import com.pvz2.models.world.Sun;
 import com.pvz2.models.world.ChapterWorld.BigWaveBeachWorld;
 import com.pvz2.models.world.ChapterWorld.FrostbiteCavesWorld;
 import com.pvz2.models.world.obstacles.Grave;
@@ -1276,7 +1272,8 @@ public class GameScreen extends MenuScreen {
                     "animation",
                     x, y,
                     activeInstance.pamPlayer,
-                    1f, 1f
+                    1f, 1f,
+                    0.63f
                 )
             );
         }

@@ -8,7 +8,6 @@ import com.pvz2.models.plant.Plant;
 import com.pvz2.models.world.Cell;
 import com.pvz2.models.world.GameWorld;
 import com.pvz2.models.zombie.Zombie;
-import com.pvz2.view.LawnGrid;
 
 public class FishermanZombie extends Zombie {
     private static final float HOOK_INTERVAL = 4.5f;

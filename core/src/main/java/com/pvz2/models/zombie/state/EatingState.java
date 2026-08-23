@@ -18,6 +18,10 @@ public class EatingState implements ZombieState {
         this.targetPlant = targetPlant;
     }
 
+    public Plant getTargetPlant() {
+        return targetPlant;
+    }
+
     @Override
     public void handleAction(Zombie zombie) {
         if (targetPlant != null && !targetPlant.isDead() && Math.abs(targetPlant.getY()-zombie.getY()) < 5) {

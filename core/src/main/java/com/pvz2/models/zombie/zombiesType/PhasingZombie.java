@@ -4,6 +4,7 @@ import com.pvz2.controller.GameMenuController;
 import com.pvz2.models.enums.Zombies;
 import com.pvz2.models.zombie.Zombie;
 import com.pvz2.models.zombie.state.EatingState;
+import com.pvz2.models.zombie.state.TacklingState;
 
 public class PhasingZombie extends Zombie {
     private boolean isPhaseChanged;
@@ -41,8 +42,8 @@ public class PhasingZombie extends Zombie {
         } else {
             super.takeDamage(amount, damageType);
 
-            if (!isNewspaper && !hasKilledPlant && this.health <= this.maxHealth / 3) {
-                triggerAllStarPhaseChange("All-Star zombie lost its gear due to low health and slowed down!");
+            if (!isNewspaper && !hasKilledPlant && this.health <= this.maxHealth / 2) {
+                triggerAllStarPhaseChange("All-Star zombie lost more than half its health and slowed down!");
             }
         }
     }
@@ -73,14 +74,9 @@ public class PhasingZombie extends Zombie {
             return;
         }
 
-        boolean wasEating = (this.currentState instanceof EatingState);
-
         super.update(delta);
-
-        if (!isNewspaper && !hasKilledPlant) {
-            if (wasEating) {
-                triggerAllStarPhaseChange("All-Star tackled a plant and slowed down.");
-            }
+        if (!isNewspaper && !hasKilledPlant && this.currentState instanceof EatingState eatingState) {
+            setState(new TacklingState(eatingState.getTargetPlant()));
         }
     }
 
@@ -104,13 +100,7 @@ public class PhasingZombie extends Zombie {
             if (getFreezedTicksRemaining() > 0 || getIceHealth() > 0 || getDisabledTicksRemaining() > 0) return "idle";
             String base = currentState != null ? currentState.getAnimationClip() : "idle";
 
-            if (!hasKilledPlant) {
-                if (base.equals("walk")) return "run";
-                if (base.equals("eat")) return "tackle";
-            } else {
-                if (base.equals("walk")) return "walk";
-                if (base.equals("eat")) return "eat";
-            }
+            if (!hasKilledPlant && base.equals("walk")) return "run";
             return base;
         }
     }
