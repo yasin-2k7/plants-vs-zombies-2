@@ -133,6 +133,7 @@ public class VaseBreakerScreen extends MenuScreen {
             vaseGraphics.add(new VaseGraphic(vase, targetX, targetY));
             if (vase.getHiddenZombie() != null) {
                 String lookupName = vase.getHiddenZombie().getName().name();
+                lookupName = App.getArmoredZombieName(lookupName);
                 String pamPath = ZombiesTable.getZombiesAnimAddress().get(lookupName);
                 if (pamPath != null) {
                     pamPlayer.loadAsync(pamPath, null);

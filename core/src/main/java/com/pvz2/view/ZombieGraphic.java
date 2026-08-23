@@ -47,6 +47,7 @@ public class ZombieGraphic {
             ? zombie.getSpecificName()
             : zombie.getName().name();
 
+        lookupName = App.getArmoredZombieName(lookupName);
         this.pamPath = ZombiesTable.getZombiesAnimAddress().get(lookupName);
 
         HashMap<String, Boolean> sharedVisibilities = ZombiesTable.getZombiesVisibilities().get(lookupName);
