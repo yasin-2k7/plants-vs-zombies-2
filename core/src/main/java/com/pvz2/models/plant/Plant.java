@@ -10,6 +10,9 @@ import com.pvz2.models.zombie.Zombie;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import static com.pvz2.models.core.App.getCellCenterX;
+import static com.pvz2.models.core.App.getCellCenterY;
+
 public class Plant implements Damageable {
     private PlantType type;
     private int health;
@@ -84,18 +87,18 @@ public class Plant implements Damageable {
     public void update(float delta) {
         if (disabled || freeze || sheep) return;
         if (isCombining) {
-            float speed = 12f;
+            float speed = 600f;
             boolean reachedX = false;
             boolean reachedY = false;
 
-            if (Math.abs(x - combineTargetX) > 0.02f) {
+            if (Math.abs(x - combineTargetX) > 20f) {
                 x += Math.signum(combineTargetX - x) * speed * delta;
             } else {
                 x = combineTargetX;
                 reachedX = true;
             }
 
-            if (Math.abs(y - combineTargetY) > 0.02f) {
+            if (Math.abs(y - combineTargetY) > 20f) {
                 y += Math.signum(combineTargetY - y) * speed * delta;
             } else {
                 y = combineTargetY;
@@ -218,26 +221,33 @@ public class Plant implements Damageable {
     }
 
     public float getX() {
-        int c1 = (int) Math.floor(this.x);
-        int c2 = c1 + 1;
-        float frac = this.x - c1;
-        return App.getCellCenterX(c1) + frac * (App.getCellCenterX(c2) - App.getCellCenterX(c1));
+        return x;
     }
 
     public float getY() {
-        int r1 = (int) Math.floor(this.y);
-        int r2 = r1 + 1;
-        float frac = this.y - r1;
-        return App.getCellCenterY(r1) + frac * (App.getCellCenterY(r2) - App.getCellCenterY(r1));
+        return y;
     }
 
     public void setX(float x) {
         this.x = x;
     }
 
-
     public void setY(float y) {
         this.y = y;
+    }
+
+    public static float getInterpolatedCellX(float fractionalCol) {
+        int c1 = (int) Math.floor(fractionalCol);
+        int c2 = c1 + 1;
+        float frac = fractionalCol - c1;
+        return getCellCenterX(c1) + frac * (getCellCenterX(c2) - getCellCenterX(c1));
+    }
+
+    public static float getInterpolatedCellY(float fractionalRow) {
+        int r1 = (int) Math.floor(fractionalRow);
+        int r2 = r1 + 1;
+        float frac = fractionalRow - r1;
+        return getCellCenterY(r1) + frac * (getCellCenterY(r2) - getCellCenterY(r1));
     }
 
     public PlantType getType() {

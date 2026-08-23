@@ -103,6 +103,10 @@ public class App {
         }
     }
 
+    public static float getCellCenterY(float row) {
+        return getFirstCellY() + row * getCellHeight();
+    }
+
     public static void setGameApp(Main gameApp) {
         App.gameApp = gameApp;
     }

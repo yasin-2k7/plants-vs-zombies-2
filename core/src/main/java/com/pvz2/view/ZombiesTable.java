@@ -66,10 +66,10 @@ public class ZombiesTable extends Table {
         if (zombiesPicAddress == null){
             zombiesPicAddress = new HashMap<>();
             zombiesPicAddress.put("ZombieDefault", "IMAGE_UI_ALMANAC_PACKETS_ZOMBIES_TUTORIAL");
-            zombiesPicAddress.put("ZombieArmor1", "IMAGE_UI_ALMANAC_PACKETS_ZOMBIES_TUTORIAL_ARMOR1");
-            zombiesPicAddress.put("ZombieArmor2", "IMAGE_UI_ALMANAC_PACKETS_ZOMBIES_TUTORIAL_ARMOR2");
-            zombiesPicAddress.put("ZombieArmor4", "IMAGE_UI_ALMANAC_PACKETS_ZOMBIES_MUMMY_ARMOR4");
-            zombiesPicAddress.put("ZombieDarkArmor3", "IMAGE_UI_ALMANAC_PACKETS_ZOMBIES_DARK_ARMOR3");
+            zombiesPicAddress.put("ZombieConeHead", "IMAGE_UI_ALMANAC_PACKETS_ZOMBIES_TUTORIAL_ARMOR1");
+            zombiesPicAddress.put("ZombieBucketHead", "IMAGE_UI_ALMANAC_PACKETS_ZOMBIES_TUTORIAL_ARMOR2");
+            zombiesPicAddress.put("ZombieBrickHead", "IMAGE_UI_ALMANAC_PACKETS_ZOMBIES_MUMMY_ARMOR4");
+            zombiesPicAddress.put("ZombieKnight", "IMAGE_UI_ALMANAC_PACKETS_ZOMBIES_DARK_ARMOR3");
             zombiesPicAddress.put("ZombieGargantuar", "IMAGE_UI_ALMANAC_PACKETS_ZOMBIES_TUTORIAL_GARGANTUAR");
             zombiesPicAddress.put("ZombieImp", "IMAGE_UI_ALMANAC_PACKETS_ZOMBIES_TUTORIAL_IMP");
             zombiesPicAddress.put("ZombieRa", "IMAGE_UI_ALMANAC_PACKETS_ZOMBIES_RA");
@@ -100,10 +100,10 @@ public class ZombiesTable extends Table {
         if (zombiesAnimAddress == null){
             zombiesAnimAddress = new HashMap<>();
             zombiesAnimAddress.put("ZombieDefault", "768/INITIAL/ZOMBIE/ZOMBIE_TUTORIAL/ZOMBIE_TUTORIAL.PAM");
-            zombiesAnimAddress.put("ZombieArmor1", "768/INITIAL/ZOMBIE/ZOMBIE_TUTORIAL/ZOMBIE_TUTORIAL.PAM");
-            zombiesAnimAddress.put("ZombieArmor2", "768/INITIAL/ZOMBIE/ZOMBIE_TUTORIAL/ZOMBIE_TUTORIAL.PAM");
-            zombiesAnimAddress.put("ZombieArmor4", "768/INITIAL/ZOMBIE/ZOMBIE_EGYPT_BASIC/ZOMBIE_EGYPT_BASIC.PAM");
-            zombiesAnimAddress.put("ZombieDarkArmor3", "768/FULL/ZOMBIE/ZOMBIE_DARK_BASIC/ZOMBIE_DARK_BASIC.PAM");
+            zombiesAnimAddress.put("ZombieConeHead", "768/INITIAL/ZOMBIE/ZOMBIE_TUTORIAL/ZOMBIE_TUTORIAL.PAM");
+            zombiesAnimAddress.put("ZombieBucketHead", "768/INITIAL/ZOMBIE/ZOMBIE_TUTORIAL/ZOMBIE_TUTORIAL.PAM");
+            zombiesAnimAddress.put("ZombieBrickHead", "768/INITIAL/ZOMBIE/ZOMBIE_EGYPT_BASIC/ZOMBIE_EGYPT_BASIC.PAM");
+            zombiesAnimAddress.put("ZombieKnight", "768/FULL/ZOMBIE/ZOMBIE_DARK_BASIC/ZOMBIE_DARK_BASIC.PAM");
             zombiesAnimAddress.put("ZombieGargantuar", "768/INITIAL/ZOMBIE/TUTORIAL_GARGANTUAR/TUTORIAL_GARGANTUAR.PAM");
             zombiesAnimAddress.put("ZombieImp", "768/INITIAL/ZOMBIE/ZOMBIE_TUTORIAL_IMP/ZOMBIE_TUTORIAL_IMP.PAM");
             zombiesAnimAddress.put("ZombieRa", "768/INITIAL/ZOMBIE/ZOMBIE_EGYPT_RA/ZOMBIE_EGYPT_RA.PAM");
@@ -140,22 +140,19 @@ public class ZombiesTable extends Table {
 
             HashMap<String, Boolean> coneHeadHashMap = new HashMap<>();
             coneHeadHashMap.put("zombie_armor_cone_norm", true);
-            zombiesVisibilities.put("ZombieArmor1", coneHeadHashMap);
-
+            zombiesVisibilities.put("ZombieConeHead", coneHeadHashMap);
             HashMap<String, Boolean> bucketHeadHashMap = new HashMap<>();
             bucketHeadHashMap.put("zombie_armor_bucket_norm", true);
-            zombiesVisibilities.put("ZombieArmor2", bucketHeadHashMap);
-
+            zombiesVisibilities.put("ZombieBucketHead", bucketHeadHashMap);
             HashMap<String, Boolean> brickHeadHashMap = new HashMap<>();
             brickHeadHashMap.put("zombie_armor_brick_norm", true);
-            zombiesVisibilities.put("ZombieArmor4", brickHeadHashMap);
-
+            zombiesVisibilities.put("ZombieBrickHead", brickHeadHashMap);
             HashMap<String, Boolean> knightHashMap = new HashMap<>();
             knightHashMap.put("_zombie_armor_crown_states", true);
             knightHashMap.put("zombie_armor_crown_norm", true);
             knightHashMap.put("zombie_shoulder_armor", true);
             knightHashMap.put("zombie_shoulder_armor_norm", true);
-            zombiesVisibilities.put("ZombieDarkArmor3", knightHashMap);
+            zombiesVisibilities.put("ZombieKnight", knightHashMap);
         }
         return zombiesVisibilities;
     }

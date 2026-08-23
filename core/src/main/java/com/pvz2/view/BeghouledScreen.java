@@ -74,8 +74,8 @@ public class BeghouledScreen extends GameScreen {
                     if (cell != null && cell.getPlant() != null) {
                         Plant plant = cell.getPlant();
                         if (!plant.isCombining()) {
-                            plant.setX(c);
-                            plant.setY(r);
+                            plant.setX(LawnGrid.getCellX(c));
+                            plant.setY(LawnGrid.getCellY(r));
                         }
                         if (!world.getActivePlants().contains(plant)) {
                             world.getActivePlants().add(plant);
