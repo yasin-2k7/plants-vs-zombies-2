@@ -10,6 +10,7 @@ import com.pvz2.models.zombie.zombiesType.ArmoredZombie;
 import com.pvz2.models.zombie.zombiesType.BarrelRollerZombie;
 import com.pvz2.models.zombie.zombiesType.FishermanZombie;
 import com.pvz2.models.zombie.zombiesType.RangedZombie;
+import com.pvz2.models.zombie.zombiesType.SnorkelZombie;
 import com.pvz2.models.zombie.zombiesType.SunStealerZombie;
 import pvz.libpvz.pam.PamPlayer;
 
@@ -27,6 +28,8 @@ public class ZombieGraphic {
     private static final String[] OCTOPUS_IDLE_VARIANTS = {"idle", "idle2", "idle3", "idle4", "idle5"};
     private static final Random RANDOM = new Random();
 
+    private static final String SNORKEL_VISIBLE_PART_WHEN_SUBMERGED = "zombie_snorkeler_skull_01";
+
     private final Zombie zombie;
     private final String pamPath;
     private final HashMap<String, Boolean> visibilities;
@@ -39,6 +42,7 @@ public class ZombieGraphic {
     private float nextIdleSwitchTime = randomIdleInterval();
 
     private boolean armorVisualHidden = false;
+    private Boolean snorkelWasUnderwater = null;
 
     public ZombieGraphic(Zombie zombie) {
         this.zombie = zombie;
@@ -47,7 +51,6 @@ public class ZombieGraphic {
             ? zombie.getSpecificName()
             : zombie.getName().name();
 
-        lookupName = App.getArmoredZombieName(lookupName);
         this.pamPath = ZombiesTable.getZombiesAnimAddress().get(lookupName);
 
         HashMap<String, Boolean> sharedVisibilities = ZombiesTable.getZombiesVisibilities().get(lookupName);
@@ -62,6 +65,7 @@ public class ZombieGraphic {
 
     public void update(float delta, PamPlayer pamPlayer) {
         checkArmorBroken();
+        syncSnorkelVisibility();
 
         String dieClip = resolveClip("die");
 
@@ -112,6 +116,19 @@ public class ZombieGraphic {
                 visibilities.put(key, false);
             }
             armorVisualHidden = true;
+        }
+    }
+
+    private void syncSnorkelVisibility() {
+        if (visibilities == null) return;
+        if (!(zombie instanceof SnorkelZombie snorkel)) return;
+
+        boolean underwater = snorkel.isUnderwater();
+        if (snorkelWasUnderwater != null && snorkelWasUnderwater == underwater) return;
+        snorkelWasUnderwater = underwater;
+
+        for (String key : visibilities.keySet()) {
+            visibilities.put(key, !underwater || key.equals(SNORKEL_VISIBLE_PART_WHEN_SUBMERGED));
         }
     }
 

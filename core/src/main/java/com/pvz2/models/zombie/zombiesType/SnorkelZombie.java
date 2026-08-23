@@ -48,4 +48,15 @@ public class SnorkelZombie extends Zombie {
     public boolean isUnderwater() {
         return underwater;
     }
+
+    @Override
+    public void takeDamage(int amount, String damageType) {
+        if (isDead) return;
+
+        if (underwater) {
+            return;
+        }
+
+        super.takeDamage(amount, damageType);
+    }
 }
