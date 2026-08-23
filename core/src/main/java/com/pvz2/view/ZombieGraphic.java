@@ -29,6 +29,7 @@ public class ZombieGraphic {
     private static final Random RANDOM = new Random();
 
     private static final String SNORKEL_VISIBLE_PART_WHEN_SUBMERGED = "zombie_snorkeler_skull_01";
+    private static final float SNORKEL_SUBMERGED_Y_OFFSET = 50f;
 
     private final Zombie zombie;
     private final String pamPath;
@@ -42,7 +43,6 @@ public class ZombieGraphic {
     private float nextIdleSwitchTime = randomIdleInterval();
 
     private boolean armorVisualHidden = false;
-    private Boolean snorkelWasUnderwater = null;
 
     public ZombieGraphic(Zombie zombie) {
         this.zombie = zombie;
@@ -51,6 +51,7 @@ public class ZombieGraphic {
             ? zombie.getSpecificName()
             : zombie.getName().name();
 
+        lookupName = App.getArmoredZombieName(lookupName);
         this.pamPath = ZombiesTable.getZombiesAnimAddress().get(lookupName);
 
         HashMap<String, Boolean> sharedVisibilities = ZombiesTable.getZombiesVisibilities().get(lookupName);
@@ -65,7 +66,6 @@ public class ZombieGraphic {
 
     public void update(float delta, PamPlayer pamPlayer) {
         checkArmorBroken();
-        syncSnorkelVisibility();
 
         String dieClip = resolveClip("die");
 
@@ -116,19 +116,6 @@ public class ZombieGraphic {
                 visibilities.put(key, false);
             }
             armorVisualHidden = true;
-        }
-    }
-
-    private void syncSnorkelVisibility() {
-        if (visibilities == null) return;
-        if (!(zombie instanceof SnorkelZombie snorkel)) return;
-
-        boolean underwater = snorkel.isUnderwater();
-        if (snorkelWasUnderwater != null && snorkelWasUnderwater == underwater) return;
-        snorkelWasUnderwater = underwater;
-
-        for (String key : visibilities.keySet()) {
-            visibilities.put(key, !underwater || key.equals(SNORKEL_VISIBLE_PART_WHEN_SUBMERGED));
         }
     }
 
@@ -199,7 +186,10 @@ public class ZombieGraphic {
 
         float scaleX = zombie.getSpeed() < 0 ? -0.8f : 0.8f;
 
-        if (visibilities != null) {
+        if (zombie instanceof SnorkelZombie snorkel && snorkel.isUnderwater()) {
+            pamPlayer.drawPart(batch, pamPath, currentClip, animTime, renderX,
+                renderY - SNORKEL_SUBMERGED_Y_OFFSET, SNORKEL_VISIBLE_PART_WHEN_SUBMERGED);
+        } else if (visibilities != null) {
             pamPlayer.draw(batch, pamPath, currentClip, animTime, renderX,
                 renderY, scaleX, 0.8f, isLoop, visibilities);
         } else {
