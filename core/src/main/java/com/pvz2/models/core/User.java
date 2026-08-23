@@ -530,4 +530,12 @@ public class User {
     public void setDebugMode(boolean debugMode) {
         this.debugMode = debugMode;
     }
+
+    public Set<String> getCompletedQuestIds() {
+        return completedQuestIds;
+    }
+
+    public LocalDate getDailyOfferPurchaseDate() {
+        return dailyOfferPurchaseDate;
+    }
 }

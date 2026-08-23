@@ -15,6 +15,32 @@ public class UserDataManager {
     private static final String USERS_DIR = "pvz2/src/main/java/models/users/";
     private static final String CURRENT_USER_FILE = "pvz2/src/main/java/models/users/current_user.txt";
 
+    private static final String SESSION_TOKEN_FILE = "pvz2/src/main/java/models/users/session_token.txt";
+
+    public static void saveSessionToken(String token) {
+        try (FileWriter writer = new FileWriter(SESSION_TOKEN_FILE)) {
+            writer.write(token);
+        } catch (IOException e) {
+            GameMenuController.updateState("save session error: " + e.getMessage());
+        }
+    }
+
+    public static String getSessionToken() {
+        File file = new File(SESSION_TOKEN_FILE);
+        if (!file.exists()) return null;
+        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+            String token = reader.readLine();
+            return (token != null) ? token.trim() : null;
+        } catch (IOException e) {
+            return null;
+        }
+    }
+
+    public static void clearSessionToken() {
+        File file = new File(SESSION_TOKEN_FILE);
+        if (file.exists()) file.delete();
+    }
+
     private static final Gson GSON = new GsonBuilder()
             .registerTypeAdapter(LocalDate.class, new LocalDateAdapter())
             .addSerializationExclusionStrategy(new ExclusionStrategy() {
@@ -100,33 +126,6 @@ public class UserDataManager {
                 ".json").exists();
     }
 
-    public static void saveLoggedInUser(String username) {
-        try (FileWriter writer = new FileWriter(CURRENT_USER_FILE)) {
-            writer.write(username);
-        } catch (IOException e) {
-            GameMenuController.updateState("save logged in error: " + e.getMessage());
-        }
-    }
-
-    public static String getLoggedInUsername() {
-        File file = new File(CURRENT_USER_FILE);
-        if (!file.exists()) return null;
-
-        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
-            String username = reader.readLine();
-            return (username != null) ? username.trim() : null;
-        } catch (IOException e) {
-            return null;
-        }
-    }
-
-    public static void clearLoggedInUser() {
-        File file = new File(CURRENT_USER_FILE);
-        if (file.exists()) {
-            file.delete();
-        }
-    }
-
     public static boolean updateUsername(String oldUsername, User user) {
         if (user == null || user.getUsername() == null) return false;
 
@@ -135,13 +134,6 @@ public class UserDataManager {
             oldFile.delete();
         }
 
-        boolean saved = saveUser(user);
-
-        String loggedInUser = getLoggedInUsername();
-        if (loggedInUser != null && loggedInUser.equals(oldUsername)) {
-            saveLoggedInUser(user.getUsername());
-        }
-
-        return saved;
+        return saveUser(user);
     }
 }

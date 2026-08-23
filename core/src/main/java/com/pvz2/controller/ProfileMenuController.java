@@ -1,9 +1,6 @@
 package com.pvz2.controller;
 
-import com.pvz2.models.core.App;
-import com.pvz2.models.core.PasswordHasher;
-import com.pvz2.models.core.User;
-import com.pvz2.models.core.UserDataManager;
+import com.pvz2.models.core.*;
 
 import java.util.List;
 
@@ -50,6 +47,7 @@ public class ProfileMenuController implements MenuController {
         user.setUsername(newUsername);
 
 
+        UserManager.changeUsername(newUsername);
         UserDataManager.updateUsername(oldUsername, user);
         UserDataManager.saveUser(user);
         return "your username changed";
