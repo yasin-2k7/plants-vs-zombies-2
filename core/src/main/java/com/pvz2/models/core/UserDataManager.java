@@ -12,10 +12,36 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class UserDataManager {
-    private static final String USERS_DIR = "pvz2/src/main/java/models/users/";
-    private static final String CURRENT_USER_FILE = "pvz2/src/main/java/models/users/current_user.txt";
+    private static final String USER_HOME = System.getProperty("user.home");
 
-    private static final String SESSION_TOKEN_FILE = "pvz2/src/main/java/models/users/session_token.txt";
+    private static final String BASE_DIR = USER_HOME + File.separator + ".pvz2_server" + File.separator;
+    private static final String USERS_DIR = BASE_DIR + "users" + File.separator;
+    private static final String CURRENT_USER_FILE = BASE_DIR + "current_user.txt";
+    private static final String SESSION_TOKEN_FILE = BASE_DIR + "session_token.txt";
+
+    private static final Gson GSON = new GsonBuilder()
+        .registerTypeAdapter(LocalDate.class, new LocalDateAdapter())
+        .addSerializationExclusionStrategy(new ExclusionStrategy() {
+            @Override
+            public boolean shouldSkipField(FieldAttributes f) {
+                return false;
+            }
+
+            @Override
+            public boolean shouldSkipClass(Class<?> clazz) {
+                return clazz == java.util.Random.class;
+            }
+        })
+        .setPrettyPrinting()
+        .create();
+
+    static {
+        // ساخت پوشه‌ها در صورت عدم وجود
+        File dir = new File(USERS_DIR);
+        if (!dir.exists()) {
+            dir.mkdirs();
+        }
+    }
 
     public static void saveSessionToken(String token) {
         try (FileWriter writer = new FileWriter(SESSION_TOKEN_FILE)) {
@@ -39,30 +65,6 @@ public class UserDataManager {
     public static void clearSessionToken() {
         File file = new File(SESSION_TOKEN_FILE);
         if (file.exists()) file.delete();
-    }
-
-    private static final Gson GSON = new GsonBuilder()
-            .registerTypeAdapter(LocalDate.class, new LocalDateAdapter())
-            .addSerializationExclusionStrategy(new ExclusionStrategy() {
-                @Override
-                public boolean shouldSkipField(FieldAttributes f) {
-                    return false;
-                }
-
-                @Override
-                public boolean shouldSkipClass(Class<?> clazz) {
-                    // اگر کلاس از نوع Random بود، نادیده‌اش بگیر
-                    return clazz == java.util.Random.class;
-                }
-            })
-            .setPrettyPrinting()
-            .create();
-
-    static {
-        File dir = new File(USERS_DIR);
-        if (!dir.exists()) {
-            dir.mkdirs();
-        }
     }
 
     public static boolean saveUser(User user) {
@@ -122,8 +124,7 @@ public class UserDataManager {
     }
 
     public static boolean userExists(String username) {
-        return new File(USERS_DIR + username +
-                ".json").exists();
+        return new File(USERS_DIR + username + ".json").exists();
     }
 
     public static boolean updateUsername(String oldUsername, User user) {
