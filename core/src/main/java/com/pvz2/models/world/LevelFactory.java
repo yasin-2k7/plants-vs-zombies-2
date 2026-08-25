@@ -61,16 +61,16 @@ public class LevelFactory {
         int rows = 5;
         int cols = 9;
         List<WaveSpawnEntry> availableZombies = List.of(
-            new WaveSpawnEntry("ZombieDefault", 100),
-            new WaveSpawnEntry("ZombieArmor1", 200),
-            new WaveSpawnEntry("ZombieArmor2", 300),
-            new WaveSpawnEntry("ZombieArmor4", 400),
-            new WaveSpawnEntry("ZombieTombRaiser", 300),
-            new WaveSpawnEntry("ZombieRa", 100),
-            new WaveSpawnEntry("ZombieNewspaper", 450),
-            new WaveSpawnEntry("ZombieExplorer", 250)
+            new WaveSpawnEntry("ZombieDefault", 250),
+            new WaveSpawnEntry("ZombieArmor1", 500),
+            new WaveSpawnEntry("ZombieArmor2", 630),
+            new WaveSpawnEntry("ZombieArmor4", 650),
+            new WaveSpawnEntry("ZombieTombRaiser", 510),
+            new WaveSpawnEntry("ZombieRa", 505),
+            new WaveSpawnEntry("ZombieNewspaper", 550),
+            new WaveSpawnEntry("ZombieExplorer", 510)
         );
-        List<Wave> waves = Wave.generateWaves(3, 500, availableZombies, 20);
+        List<Wave> waves = Wave.generateWaves(12, 499, availableZombies, 1);
         LevelSetup levelSetup = new NormalLevelSetup(rows, cols, waves);
         LoseCondition loseCondition = new NormalLose();
         WinCondition winCondition = new NormalWin();

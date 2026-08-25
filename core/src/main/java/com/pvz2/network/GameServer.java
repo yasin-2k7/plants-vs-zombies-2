@@ -5,6 +5,10 @@ import com.pvz2.models.core.PasswordHasher;
 import com.pvz2.models.core.User;
 import com.pvz2.models.core.UserDataManager;
 import com.pvz2.network.messages.*;
+import com.pvz2.network.onlineIZombie.Match;
+import com.pvz2.network.onlineIZombie.MatchManager;
+import com.pvz2.network.onlineIZombie.ServerGameController;
+import com.pvz2.network.onlineIZombie.messages.*;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -21,6 +25,9 @@ public class GameServer {
     // in-memory only — a server restart invalidates every existing token, forcing re-login.
     // Fine for a course project; a persistent session store would be the real-world fix.
     private final Map<String, String> sessionTokens = new ConcurrentHashMap<>(); // token -> username
+
+    private final MatchManager matchManager = new MatchManager();
+    private final Map<String, ServerGameController> gameControllers = new ConcurrentHashMap<>();
 
     public static void main(String[] args) {
         new GameServer().start();
@@ -47,6 +54,15 @@ public class GameServer {
             case "AUTO_LOGIN" -> handleAutoLogin(sender, msg);
             case "LOGOUT" -> handleLogout(sender, msg);
             case "UPDATE_USERNAME" -> handleUpdateUsername(sender, msg);
+            case "CHALLENGE" -> handleChallenge(sender, msg);
+            case "CHALLENGE_ANSWER" -> handleChallengeAnswer(sender, msg);
+            case "RANDOM_MATCH" -> handleRandomMatch(sender, msg);
+            case "CANCEL_RANDOM_MATCH" -> handleCancelRandomMatch(sender, msg);
+            case "PLANT_PLANT" -> handlePlantPlant(sender, msg);
+            case "PLUCK_PLANT" -> handlePluckPlant(sender, msg);
+            case "COLLECT_SUN" -> handleCollectSun(sender, msg);
+            case "COLLECT_BRAIN" -> handleCollectBrain(sender, msg);
+            case "PLACE_ZOMBIE" -> handlePlaceZombie(sender, msg);
             default -> System.err.println("Unknown message type: " + msg.type);
         }
     }
@@ -58,8 +74,6 @@ public class GameServer {
 
         LoginResponse response = new LoginResponse();
         if (success) {
-            user.setHashPassword(null);
-            user.setSecurityA(null);
 
             String token = UUID.randomUUID().toString();
             sessionTokens.put(token, req.username);
@@ -187,6 +201,90 @@ public class GameServer {
         sender.send("LOGOUT", msg.requestId, new AckResponse(true));
     }
 
+    private void handleChallenge(ClientHandler sender, NetworkMessage msg) {
+        if (sender.getUsername() == null) {
+            ChallengeResponse response = new ChallengeResponse();
+            response.success = false;
+            response.errorMessage = "You must be logged in to challenge someone.";
+            sender.send("CHALLENGE", msg.requestId, response);
+            return;
+        }
+        ChallengeRequest req = GSON.fromJson(msg.payload, ChallengeRequest.class);
+        ClientHandler target = getOnlineUser(req.opponentUsername);
+        ChallengeResponse response = matchManager.challenge(sender, target);
+        sender.send("CHALLENGE", msg.requestId, response);
+    }
+
+    private void handleChallengeAnswer(ClientHandler sender, NetworkMessage msg) {
+        ChallengeAnswerRequest req = GSON.fromJson(msg.payload, ChallengeAnswerRequest.class);
+        ChallengeAnswerResponse response = matchManager.answerChallenge(sender, req.inviteId, req.accept);
+        sender.send("CHALLENGE_ANSWER", msg.requestId, response);
+    }
+
+    private void handleRandomMatch(ClientHandler sender, NetworkMessage msg) {
+        if (sender.getUsername() == null) {
+            RandomMatchResponse response = new RandomMatchResponse();
+            response.success = false;
+            response.errorMessage = "You must be logged in to find a match.";
+            sender.send("RANDOM_MATCH", msg.requestId, response);
+            return;
+        }
+        RandomMatchResponse response = matchManager.joinRandomQueue(sender);
+        sender.send("RANDOM_MATCH", msg.requestId, response);
+    }
+
+    private void handleCancelRandomMatch(ClientHandler sender, NetworkMessage msg) {
+        matchManager.cancelRandomQueue(sender);
+        sender.send("CANCEL_RANDOM_MATCH", msg.requestId, new AckResponse(true));
+    }
+
+    // These four are fire-and-forget from the client (see NetworkClient.sendMessage) —
+    // there's no direct reply; the result is a GAME_STATE push from ServerGameController.
+
+    private void handlePlantPlant(ClientHandler sender, NetworkMessage msg) {
+        PlantPlantRequest req = GSON.fromJson(msg.payload, PlantPlantRequest.class);
+        ServerGameController controller = gameControllerFor(sender, req.matchId);
+        if (controller != null) controller.handlePlantPlant(sender, req);
+    }
+
+    private void handlePluckPlant(ClientHandler sender, NetworkMessage msg) {
+        PluckPlantRequest req = GSON.fromJson(msg.payload, PluckPlantRequest.class);
+        ServerGameController controller = gameControllerFor(sender, req.matchId);
+        if (controller != null) controller.handlePluckPlant(sender, req);
+    }
+
+    private void handleCollectSun(ClientHandler sender, NetworkMessage msg) {
+        CollectSunRequest req = GSON.fromJson(msg.payload, CollectSunRequest.class);
+        ServerGameController controller = gameControllerFor(sender, req.matchId);
+        if (controller != null) controller.handleCollectSun(sender, req);
+    }
+
+    private void handleCollectBrain(ClientHandler sender, NetworkMessage msg) {
+        CollectBrainRequest req = GSON.fromJson(msg.payload, CollectBrainRequest.class);
+        ServerGameController controller = gameControllerFor(sender, req.matchId);
+        if (controller != null) controller.handleCollectBrain(sender, req);
+    }
+
+    private void handlePlaceZombie(ClientHandler sender, NetworkMessage msg) {
+        PlaceZombieRequest req = GSON.fromJson(msg.payload, PlaceZombieRequest.class);
+        ServerGameController controller = gameControllerFor(sender, req.matchId);
+        if (controller != null) controller.handlePlaceZombie(sender, req);
+    }
+
+    /** Looks up the sender's active match and lazily creates its ServerGameController on first use. */
+    private ServerGameController gameControllerFor(ClientHandler sender, String matchId) {
+        Match match = matchManager.getMatchOf(sender);
+        if (match == null || !match.getMatchId().equals(matchId)) return null; // stale/forged matchId — ignore
+        return gameControllers.computeIfAbsent(matchId, id -> {
+            ServerGameController controller = new ServerGameController(match, () -> {
+                gameControllers.remove(matchId);
+                matchManager.endMatch(matchId);
+            });
+            controller.start();
+            return controller;
+        });
+    }
+
     public void registerOnline(String username, ClientHandler handler) {
         onlineUsers.put(username, handler);
     }
@@ -194,6 +292,12 @@ public class GameServer {
     public void onDisconnect(ClientHandler handler) {
         if (handler.getUsername() != null) {
             onlineUsers.remove(handler.getUsername());
+        }
+        Match match = matchManager.getMatchOf(handler);
+        matchManager.handleDisconnect(handler);
+        if (match != null) {
+            ServerGameController controller = gameControllers.remove(match.getMatchId());
+            if (controller != null) controller.stop(); // otherwise this match keeps ticking forever, unreceived
         }
     }
 

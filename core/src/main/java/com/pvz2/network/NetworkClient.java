@@ -85,6 +85,16 @@ public class NetworkClient {
         pushHandlers.put(type, handler);
     }
 
+    /**
+     * Sends a message without waiting for any reply — for gameplay actions where the
+     * server's response is a later GAME_STATE push rather than a direct answer.
+     * Safe to call from the render thread, unlike sendRequest.
+     */
+    public void sendMessage(String type, Object payload) {
+        NetworkMessage msg = new NetworkMessage(type, GSON.toJsonTree(payload));
+        out.println(GSON.toJson(msg));
+    }
+
     public <T> T parsePayload(NetworkMessage msg, Class<T> clazz) {
         return GSON.fromJson(msg.payload, clazz);
     }

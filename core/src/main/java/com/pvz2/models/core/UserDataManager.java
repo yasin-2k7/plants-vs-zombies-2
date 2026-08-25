@@ -16,7 +16,6 @@ public class UserDataManager {
 
     private static final String BASE_DIR = USER_HOME + File.separator + ".pvz2_server" + File.separator;
     private static final String USERS_DIR = BASE_DIR + "users" + File.separator;
-    private static final String CURRENT_USER_FILE = BASE_DIR + "current_user.txt";
     private static final String SESSION_TOKEN_FILE = BASE_DIR + "session_token.txt";
 
     private static final Gson GSON = new GsonBuilder()
@@ -36,7 +35,6 @@ public class UserDataManager {
         .create();
 
     static {
-        // ساخت پوشه‌ها در صورت عدم وجود
         File dir = new File(USERS_DIR);
         if (!dir.exists()) {
             dir.mkdirs();

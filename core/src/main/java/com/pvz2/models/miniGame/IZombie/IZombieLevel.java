@@ -17,6 +17,10 @@ public class IZombieLevel extends GameWorld {
     private List<SunProducer> sunProducers;
     private int redLineCol;
 
+    public int getRedLineCol() {
+        return redLineCol;
+    }
+
     public IZombieLevel(LevelSetup levelSetup,
                         ArrayList<LoseCondition> loseConditions,
                         WinCondition winCondition,
