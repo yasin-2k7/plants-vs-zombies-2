@@ -9,6 +9,7 @@ import com.pvz2.network.onlineIZombie.messages.*;
 import com.pvz2.view.MenuScreen;
 
 import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
 /**
  * Client-side controller for a live "I, Zombie" match. One instance is created when
@@ -42,6 +43,7 @@ public class ClientGameController {
 
     private BiConsumer<Boolean, String> actionResultListener;
     private BiConsumer<Side, String> matchOverListener;
+    private Consumer<ReactionReceived> reactionListener;
 
     public ClientGameController(MatchFound info) {
         this.matchId = info.matchId;
@@ -50,6 +52,7 @@ public class ClientGameController {
         NetworkClient.get().onPush("GAME_STATE", this::onGameStatePush);
         NetworkClient.get().onPush("ACTION_RESULT", this::onActionResult);
         NetworkClient.get().onPush("MATCH_OVER", this::onMatchOver);
+        NetworkClient.get().onPush("REACTION", this::onReaction);
     }
 
     /** Whoever owns the game screen should set this once (e.g. to screen::addToast) to
@@ -61,6 +64,12 @@ public class ClientGameController {
     /** Set once by the game screen to react when the match ends — winning side + message. */
     public void setMatchOverListener(BiConsumer<Side, String> listener) {
         this.matchOverListener = listener;
+    }
+
+    /** Set once by the game screen to show the opponent's text/emoji/sticker — draw it
+     *  from your own local preset lists using received.category + received.index. */
+    public void setReactionListener(Consumer<ReactionReceived> listener) {
+        this.reactionListener = listener;
     }
 
     public Side getSide() { return side; }
@@ -82,6 +91,12 @@ public class ClientGameController {
         MatchOver update = NetworkClient.get().parsePayload(msg, MatchOver.class);
         if (!matchId.equals(update.matchId)) return;
         if (matchOverListener != null) matchOverListener.accept(Side.valueOf(update.winnerSide), update.message);
+    }
+
+    private void onReaction(NetworkMessage msg) {
+        ReactionReceived received = NetworkClient.get().parsePayload(msg, ReactionReceived.class);
+        if (!matchId.equals(received.matchId)) return;
+        if (reactionListener != null) reactionListener.accept(received);
     }
 
     // ---------------- local-only UI state: plants side ----------------

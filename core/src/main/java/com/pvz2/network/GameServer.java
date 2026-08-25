@@ -63,6 +63,7 @@ public class GameServer {
             case "COLLECT_SUN" -> handleCollectSun(sender, msg);
             case "COLLECT_BRAIN" -> handleCollectBrain(sender, msg);
             case "PLACE_ZOMBIE" -> handlePlaceZombie(sender, msg);
+            case "SEND_REACTION" -> handleSendReaction(sender, msg);
             default -> System.err.println("Unknown message type: " + msg.type);
         }
     }
@@ -269,6 +270,21 @@ public class GameServer {
         PlaceZombieRequest req = GSON.fromJson(msg.payload, PlaceZombieRequest.class);
         ServerGameController controller = gameControllerFor(sender, req.matchId);
         if (controller != null) controller.handlePlaceZombie(sender, req);
+    }
+
+    // Pure relay — no world state involved, so this skips ServerGameController entirely.
+    private void handleSendReaction(ClientHandler sender, NetworkMessage msg) {
+        SendReactionRequest req = GSON.fromJson(msg.payload, SendReactionRequest.class);
+        if (req.index < 0 || req.index > 2) return;
+
+        Match match = matchManager.getMatchOf(sender);
+        if (match == null || !match.getMatchId().equals(req.matchId)) return;
+
+        ClientHandler opponent = match.getOpponentOf(sender);
+        if (opponent == null) return;
+
+        opponent.send("REACTION", null,
+            new ReactionReceived(req.matchId, sender.getUsername(), req.category, req.index));
     }
 
     /** Looks up the sender's active match and lazily creates its ServerGameController on first use. */
