@@ -16,7 +16,28 @@ public class QuestManager {
     private List<Quest> activeQuests = new ArrayList<>();
     private List<Quest> completedQuests = new ArrayList<>();
 
+      private final Set<String> generatedQuestIds = new HashSet<>();
+
+       private boolean initialized = false;
+
+    public void ensureInitialized() {
+        if (initialized) return;
+        initialized = true;
+        generateDailyQuests();
+        generateMainQuests();
+        generateEpicQuests();
+    }
+
+    private void addQuestIfNew(Quest quest) {
+        if (quest == null) return;
+        if (!generatedQuestIds.add(quest.getId())) {
+            return;
+        }
+        activeQuests.add(quest);
+    }
+
     public void checkAllQuests(User user, boolean isGameEnded) {
+        ensureInitialized();
         QuestStats stats = user.getQuestStats();
         Collections.sort(activeQuests);
         for (Quest quest : activeQuests) {
@@ -36,6 +57,7 @@ public class QuestManager {
     }
 
     public boolean claimQuest(User user, String questId) {
+        ensureInitialized();
         Iterator<Quest> iterator = activeQuests.iterator();
         while (iterator.hasNext()) {
             Quest quest = iterator.next();
@@ -56,96 +78,96 @@ public class QuestManager {
         // 1. آفتاب‌گیر روزانه (با مقدار تصادفی از 3000، 4000، 5000)
         int sunAmount = getRandomSunAmount();
         DailyQuest sunQuest = QuestFactory.createDailySunCollectorQuest(sunAmount);
-        activeQuests.add(sunQuest);
+        addQuestIfNew(sunQuest);
 
         // 3. plant باز حرفه‌ای (یک گیاه تصادفی که قدرت کشتن دارد)
         PlantType randomKillerPlant = getRandomKillerPlant();
         if (randomKillerPlant != null) {
             DailyQuest plantKillerQuest = QuestFactory.createPlantKillerQuest(randomKillerPlant);
-            activeQuests.add(plantKillerQuest);
+            addQuestIfNew(plantKillerQuest);
         }
 
         // 4. only cactus (همیشه فعال)
         DailyQuest cactusQuest = QuestFactory.createCactusOnlyQuest();
-        activeQuests.add(cactusQuest);
+        addQuestIfNew(cactusQuest);
 
         // 8. تخریب‌گر حرفه‌ای
-        activeQuests.add(QuestFactory.createExplosiveDestroyerQuest());
+        addQuestIfNew(QuestFactory.createExplosiveDestroyerQuest());
 
         // 9. تقارن
-        activeQuests.add(QuestFactory.createSymmetryQuest());
+        addQuestIfNew(QuestFactory.createSymmetryQuest());
 
         // 10. کشتار خانوادگی (برای هر خانواده به‌جز خانواده‌های خاص)
         for (PlantFamily family : PlantFamily.values()) {
             if (family != PlantFamily.SUN_PRODUCER && family != PlantFamily.MODIFIER) {
-                activeQuests.add(QuestFactory.createFamilySlaughterQuest(family));
+                addQuestIfNew(QuestFactory.createFamilySlaughterQuest(family));
             }
         }
 
         // 11. شکوفایی در محدودیت‌ها (برای هر خانواده به جز خانواده‌های خاص)
         for (PlantFamily family : PlantFamily.values()) {
             if (family != PlantFamily.SUN_PRODUCER && family != PlantFamily.MODIFIER) {
-                activeQuests.add(QuestFactory.createFlourishInRestrictionsQuest(family));
+                addQuestIfNew(QuestFactory.createFlourishInRestrictionsQuest(family));
             }
         }
 
         // 13. برد پشت برد
-        activeQuests.add(QuestFactory.createWinStreakQuest());
+        addQuestIfNew(QuestFactory.createWinStreakQuest());
 
         // 14. تقریبا پیروز
-        activeQuests.add(QuestFactory.createAlmostVictoryQuest());
+        addQuestIfNew(QuestFactory.createAlmostVictoryQuest());
 
         // 15. OCD نَمَنَ
-        activeQuests.add(QuestFactory.createOCDQuest());
+        addQuestIfNew(QuestFactory.createOCDQuest());
     }
 
     public void generateMainQuests() {
         // 2. شکارچی فصل (برای هر فصلی که کاربر آن را باز کرده است)
         for (Chapter chapter : getAvailableChapters()) {
             MainQuest chapterQuest = QuestFactory.createChapterHunterQuest(chapter.name());
-            activeQuests.add(chapterQuest);
+            addQuestIfNew(chapterQuest);
         }
 
         // 5. گیاه‌خوار اقتصادی (برای n های 0 تا 5)
         for (int n = 0; n <= 5; n++) {
             MainQuest ecoQuest = QuestFactory.createEconomicVegetarianQuest(n);
-            activeQuests.add(ecoQuest);
+            addQuestIfNew(ecoQuest);
         }
 
         // 7. سرعت عمل
-        activeQuests.add(QuestFactory.createSpeedQuest());
+        addQuestIfNew(QuestFactory.createSpeedQuest());
 
         // 16. روز ابری
-        activeQuests.add(QuestFactory.createCloudyDayQuest());
+        addQuestIfNew(QuestFactory.createCloudyDayQuest());
 
         // 17. یه ستون کمتر (برای n=1 تا تعداد ستون‌های بازی، مثلاً 9)
         for (int n = 0; n < 9; n++) {
-            activeQuests.add(QuestFactory.createOneLessColumnQuest(n));
+            addQuestIfNew(QuestFactory.createOneLessColumnQuest(n));
         }
 
         // 18. سطر بی دفاع (برای n=0 تا تعداد سطرها، مثلاً 5)
         for (int n = 0; n < 5; n++) {
-            activeQuests.add(QuestFactory.createDefenselessRowQuest(n));
+            addQuestIfNew(QuestFactory.createDefenselessRowQuest(n));
         }
 
         // 19. صلیب بی دفاع (برای n های 0 تا min(سطرها, ستون‌ها))
         int minDim = Math.min(5, 9);
         for (int n = 0; n < minDim; n++) {
-            activeQuests.add(QuestFactory.createCrossDefenselessQuest(n));
+            addQuestIfNew(QuestFactory.createCrossDefenselessQuest(n));
         }
     }
 
     // متد جدید برای تولید کوئست‌های Epic
     public void generateEpicQuests() {
         // 6. استاد دفاع
-        activeQuests.add(QuestFactory.createMasterDefenseQuest());
+        addQuestIfNew(QuestFactory.createMasterDefenseQuest());
         // 12. شب یا صبح
-        activeQuests.add(QuestFactory.createNightOrMorningQuest());
+        addQuestIfNew(QuestFactory.createNightOrMorningQuest());
 
         // 20. وقت چمن‌زنی (برای n های 10، 20، 30، 40، 50)
         int[] options = {10, 20, 30, 40, 50};
         for (int n : options) {
-            activeQuests.add(QuestFactory.createLawnmowerTimeQuest(n));
+            addQuestIfNew(QuestFactory.createLawnmowerTimeQuest(n));
         }
     }
 
@@ -168,6 +190,7 @@ public class QuestManager {
 
 
     public void resetDailyIfNeeded(User user) {
+        ensureInitialized();
         LocalDate today = LocalDate.now();
         QuestStats stats = user.getQuestStats();
         if (!today.equals(stats.getLastResetDate())) {
@@ -177,6 +200,7 @@ public class QuestManager {
     }
 
     public List<Quest> getActiveQuests() {
+        ensureInitialized();
         return activeQuests;
     }
 

@@ -7,6 +7,7 @@ import java.util.function.Predicate;
 
 public abstract class Quest implements Comparable<Quest> {
     private String id;
+     private String name;
     private String description;
     private QuestPriority priority;
     private boolean isCompleted;
@@ -65,6 +66,14 @@ public abstract class Quest implements Comparable<Quest> {
 
     public String getId() {
         return id;
+    }
+
+    public String getName() {
+        return name != null ? name : description;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getDescription() {

@@ -106,7 +106,6 @@ public class DirectionalMeleeComponent implements GameComponent {
                 }
             }
             if ((rightTargets != null && !rightTargets.isEmpty()) || (leftTargets != null && !leftTargets.isEmpty())){
-                return;
             }
         }
     }

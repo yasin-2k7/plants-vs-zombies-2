@@ -3,11 +3,7 @@ package com.pvz2.models.core;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.pvz2.models.plant.card.PlantCardFactory;
-
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.Reader;
-import java.nio.charset.StandardCharsets;
 
 public class GameInitializer {
     public static void loadPlantUpgrades() {

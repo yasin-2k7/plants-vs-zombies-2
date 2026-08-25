@@ -1,6 +1,5 @@
 package com.pvz2.models.mupoint;
 
-import com.pvz2.models.enums.Chapter;
 import com.pvz2.models.miniGame.MiniGameWorld;
 import com.pvz2.models.world.GameWorld;
 import com.pvz2.models.world.levelSetup.LevelSetup;

@@ -28,12 +28,14 @@ public class SnorkelZombie extends Zombie {
 
         int col = LawnGrid.getColFromX(this.x);
         int row = LawnGrid.getRowFromY(this.y);
-        boolean inWater = false;
+        boolean inWater;
+
         if (row >= 0 && row < game.getRows() && col >= 0 && col < game.getCols()) {
             Cell cell = game.getGrid()[row][col];
-            if (cell != null) {
-                inWater = cell.isWater();
-            }
+            inWater = cell != null && cell.isWater();
+        } else {
+            boolean offGridToTheRight = this.x > LawnGrid.getCellX(LawnGrid.COLS - 1) + LawnGrid.CELL_WIDTH / 2f;
+            inWater = offGridToTheRight;
         }
 
         if (this.getCurrentState() instanceof EatingState) {
@@ -47,5 +49,16 @@ public class SnorkelZombie extends Zombie {
 
     public boolean isUnderwater() {
         return underwater;
+    }
+
+    @Override
+    public void takeDamage(int amount, String damageType) {
+        if (isDead) return;
+
+        if (underwater) {
+            return;
+        }
+
+        super.takeDamage(amount, damageType);
     }
 }

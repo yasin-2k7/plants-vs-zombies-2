@@ -14,7 +14,6 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.pvz2.Main;
 import com.pvz2.controller.MainMenuController;
 import com.pvz2.models.core.App;
-import com.pvz2.models.core.News;
 import com.pvz2.models.core.UserDataManager;
 import com.pvz2.models.enums.NewsType;
 import com.pvz2.view.audios.GameSFX;
@@ -181,14 +180,12 @@ public class MainMenuScreen extends MenuScreen {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 controller.exitMenu();
-                SFXManager.getInstance().playSound(GameSFX.BUTTON_CLICK);
             }
         });
         playBtn.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 controller.enterMenu("play");
-                SFXManager.getInstance().playSound(GameSFX.BUTTON_CLICK);
             }
         });
         settingsBtn.addListener(new ClickListener(){

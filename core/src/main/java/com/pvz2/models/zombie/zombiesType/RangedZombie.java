@@ -20,6 +20,7 @@ public class RangedZombie extends Zombie {
 
     private boolean throwing = false;
     private float throwAnimElapsed = 0f;
+    private boolean actionFired = false;
 
     public RangedZombie(int health, double speed, int damage, String projectileType) {
         super(Zombies.RANGED, health, speed, damage);
@@ -33,7 +34,7 @@ public class RangedZombie extends Zombie {
         } else if ("BONE".equals(projectileType)) {
             return 3.0f;
         } else if ("SNOWBALL".equals(projectileType)) {
-            return 2.2f;
+            return 2.10f;
         }
         return 0.6f;
     }
@@ -96,10 +97,16 @@ public class RangedZombie extends Zombie {
 
         if (throwing) {
             throwAnimElapsed += delta;
+
+            if (!actionFired && throwAnimElapsed >= getThrowActionTime()) {
+                throwProjectile();
+                actionFired = true;
+            }
+
             if (throwAnimElapsed >= getThrowAnimDuration()) {
                 throwing = false;
                 throwAnimElapsed = 0f;
-                throwProjectile();
+                actionFired = false;
                 cooldown = cooldownMax;
             }
             return;
@@ -111,6 +118,13 @@ public class RangedZombie extends Zombie {
         } else {
             cooldown -= delta;
         }
+    }
+
+    private float getThrowActionTime() {
+        if ("SNOWBALL".equals(projectileType)) {
+            return 1.1f;
+        }
+        return getThrowAnimDuration();
     }
 
     public boolean isThrowing() {

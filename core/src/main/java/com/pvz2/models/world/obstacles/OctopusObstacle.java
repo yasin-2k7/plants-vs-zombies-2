@@ -7,6 +7,7 @@ import com.pvz2.models.world.Cell;
 public class OctopusObstacle extends Obstacle {
     private Plant targetPlant;
     private Cell cell;
+    private boolean dying = false;
 
     public OctopusObstacle(float x, float y, Plant targetPlant, Cell cell) {
         super(x, y, 200);
@@ -35,6 +36,9 @@ public class OctopusObstacle extends Obstacle {
 
     @Override
     public void die() {
+        if (dying) return;
+        dying = true;
+
         if (targetPlant != null && !targetPlant.isDead()) {
             targetPlant.setDisabled(false);
             GameMenuController.updateState("Octopus destroyed, plant at (" +

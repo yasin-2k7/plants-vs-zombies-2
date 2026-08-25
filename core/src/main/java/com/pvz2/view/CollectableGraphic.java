@@ -1,7 +1,6 @@
 package com.pvz2.view;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.pvz2.Main;
 import com.pvz2.models.core.App;
 import com.pvz2.models.enums.CollectableType;
 import com.pvz2.models.world.*;

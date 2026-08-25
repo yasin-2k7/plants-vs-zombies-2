@@ -12,14 +12,20 @@ public class ExplosionEffectGraphic {
     private final float x, y;
     private final float scaleX, scaleY;
     private float animTime = 0f;
+    private final float fixedDuration; // <= 0 means "use the clip's own reported duration"
 
     public ExplosionEffectGraphic(String pamPath, String clip, float x, float y, PamPlayer pamPlayer, float scaleX, float scaleY) {
+        this(pamPath, clip, x, y, pamPlayer, scaleX, scaleY, -1f);
+    }
+
+    public ExplosionEffectGraphic(String pamPath, String clip, float x, float y, PamPlayer pamPlayer, float scaleX, float scaleY, float fixedDuration) {
         this.pamPath = pamPath;
         this.clip = clip;
         this.x = x;
         this.y = y;
         this.scaleX = scaleX;
         this.scaleY = scaleY;
+        this.fixedDuration = fixedDuration;
         if (pamPlayer != null) pamPlayer.loadAsync(pamPath, null);
     }
 
@@ -30,7 +36,9 @@ public class ExplosionEffectGraphic {
     }
 
     public boolean isFinished(PamPlayer pamPlayer) {
-        return pamPlayer == null || animTime >= pamPlayer.clipDurationSeconds(pamPath, clip);
+        if (pamPlayer == null) return true;
+        float duration = fixedDuration > 0f ? fixedDuration : pamPlayer.clipDurationSeconds(pamPath, clip);
+        return animTime >= duration;
     }
 
     public void draw(SpriteBatch batch, PamPlayer pamPlayer) {

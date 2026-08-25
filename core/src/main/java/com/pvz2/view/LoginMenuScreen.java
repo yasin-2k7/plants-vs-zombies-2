@@ -25,7 +25,6 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.pvz2.Main;
 import com.pvz2.controller.LoginMenuController;
 import com.pvz2.controller.SignupMenuController;
-import pvz.libpvz.pam.ClipRef;
 import pvz.libpvz.textures.TextureBank;
 import pvz.skin.BorderedTable;
 

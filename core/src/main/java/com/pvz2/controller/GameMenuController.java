@@ -1,13 +1,9 @@
 package com.pvz2.controller;
 
-
-import com.badlogic.gdx.Screen;
 import com.pvz2.models.core.App;
 import com.pvz2.models.core.User;
 import com.pvz2.models.core.UserDataManager;
 import com.pvz2.models.enums.Chapter;
-import com.pvz2.models.enums.CollectableType;
-import com.pvz2.models.enums.PlantLayer;
 import com.pvz2.models.enums.PlantType;
 import com.pvz2.models.greenhouse.GreenHouse;
 import com.pvz2.models.miniGame.IZombie.IZombieLevel;
@@ -116,21 +112,7 @@ public class GameMenuController implements MenuController {
         App.getCurrentUser().getPlantBoosts().clear();
 //        AppView.setCurrentScreen(MainMenuView.getInstance());
     }
-//    public void showCurrentMenu() {GameMenuView.getInstance().showResult("Current menu: game menu");}
 
-    public void advanceTime(int count) {
-        if (count <= 0) {
-//            GameMenuView.getInstance().showResult("Count must be an integer bigger than 0!");
-            return;
-        }
-//        GameMenuView.getInstance().showResult(count + " ticks later...");
-        GameWorld game = App.getCurrentGame();
-        for (int i = 0; i < count; i++) {
-//            if (game != null && AppView.currentScreen instanceof GameMenuView && game.getState() == GameState.PLAYING) {
-                game.tick(App.getCurrentGame().getElapsedTime());
-//            } else return;
-        }
-    }
 
     public static void restart(){
         User user = App.getCurrentUser();
@@ -199,12 +181,6 @@ public class GameMenuController implements MenuController {
         }
     }
 
-
-    public void cheatAddSun(int count) {
-        App.getCurrentGame().setSun(25 * count + App.getCurrentGame().getSun());
-//        GameMenuView.getInstance().showResult("Cheat activated! Added " + count + " suns. ☀️");
-    }
-
     public static boolean selectAndUnselectPlantfood(){
         GameWorld world = App.getCurrentGame();
         if (world == null) return false;
@@ -233,19 +209,6 @@ public class GameMenuController implements MenuController {
         }
         world.setSelectedShovel(true);
         return true;
-    }
-
-    public void releaseTheNuke() {
-        GameWorld game = App.getCurrentGame();
-        NormalMechanic normal = game.getMechanic(NormalMechanic.class);
-        if (normal != null && normal.getWaveManager() != null) {
-            normal.getWaveManager().releaseTheNuke(game);
-        } else {
-            for (Zombie zombie : game.getActiveZombies()) {
-                zombie.die();
-            }
-//            GameMenuView.getInstance().showResult("All zombies eliminated by nuke (fallback)!");
-        }
     }
 
     public static boolean selectAndUnselectPlant(PlantType type, MenuScreen screen) {
@@ -338,9 +301,6 @@ public class GameMenuController implements MenuController {
             plant = selectedCell.handlePlanting(type, App.getCurrentUser().hasBoost(type));
         }
         if (plant != null){
-            plant.setX(selectedCell.getCol());
-            plant.setY(selectedCell.getRow());
-            plant.setCell(selectedCell);
             if (isImitator) {
                 plant.setImitate(true);
                 plant.addComponent(new ImitatorIntroComponent());
@@ -352,18 +312,10 @@ public class GameMenuController implements MenuController {
         return null;
     }
 
-    public void removeCooldown() {
-        if (App.getCurrentGame().isConveyorMode()) return;
-        for (PlantCard card : App.getCurrentGame().getPlantLists()) {
-            card.deactivateCooldown();
-        }
-    }
-
     public static void pluckPlant(float x, float y) {
         if (!App.getCurrentGame().isSelectedShovel()) return;
         Cell selectedCell = findCellAt(App.getCurrentGame(), x, y);
         if (selectedCell == null || !selectedCell.findAndRemovePlant()) {
-            return;
         }
     }
 
@@ -390,13 +342,6 @@ public class GameMenuController implements MenuController {
         App.getCurrentGame().setPlantFoods(App.getCurrentGame().getPlantFoods() - 1);
     }
 
-    public void cheatAddPlantFood() {
-        if (App.getCurrentGame().getPlantFoods() < 3) {
-            App.getCurrentGame().setPlantFoods(App.getCurrentGame().getPlantFoods() + 1);
-        }
-    }
-
-
     public static void cheatSpawnZombie(String type, int col, int row) {
         Zombie zombie = new ZombieFactory().createZombie(type);
         if (zombie == null) {
@@ -412,7 +357,6 @@ public class GameMenuController implements MenuController {
         GameWorld game = App.getCurrentGame();
         if (!(game instanceof VaseBreakerLevel level)) {
 //            GameMenuView.getInstance().showResult("this command is only available in Vase Breaker!");
-            return;
         }
 //        GameMenuView.getInstance().showResult(level.breakVaseAt(row, col));
     }
@@ -421,7 +365,6 @@ public class GameMenuController implements MenuController {
         GameWorld game = App.getCurrentGame();
         if (!(game instanceof VaseBreakerLevel level)) {
 //            GameMenuView.getInstance().showResult("this command is only available in Vase Breaker!");
-            return;
         }
 //        GameMenuView.getInstance().showResult(level.pickUpSeedAt(row, col));
     }
@@ -472,7 +415,6 @@ public class GameMenuController implements MenuController {
                         || (z.getSpecificName() != null && z.getSpecificName().equalsIgnoreCase(type)));
         if (!allowed) {
 //            GameMenuView.getInstance().showResult("you dont have this zombie");
-            return;
         }
 //        GameMenuView.getInstance().showResult(level.placeZombie(zombie, x, y));
     }
@@ -528,7 +470,6 @@ public class GameMenuController implements MenuController {
         BowlingMechanics mechanics = game.getMechanic(BowlingMechanics.class);
         if (mechanics == null) {
 //            GameMenuView.getInstance().showResult("this command is only available in Bowling!");
-            return;
         }
 //        GameMenuView.getInstance().showResult(mechanics.throwBall(game, plantType, x, y));
     }

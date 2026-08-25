@@ -173,10 +173,20 @@ public class TravelLogMenuTable extends Table {
         Table topRow = new Table();
         topRow.top();
 
+        Table textCol = new Table();
+        textCol.top().left();
+
+          Label name = new Label(group.name, skin, "big");
+        name.setWrap(true);
+        name.setColor(Color.GOLD);
+        textCol.add(name).width(400).left().top().row();
+
         Label desc = new Label(group.description, skin);
         desc.setWrap(true);
         desc.setColor(DESC_COLOR);
-        topRow.add(desc).width(400).left().top().padRight(14);
+        textCol.add(desc).width(400).left().top().padTop(2);
+
+        topRow.add(textCol).left().top().padRight(14);
 
         topRow.add(buildMarkerArea(group.variants)).left().top().expandX();
 

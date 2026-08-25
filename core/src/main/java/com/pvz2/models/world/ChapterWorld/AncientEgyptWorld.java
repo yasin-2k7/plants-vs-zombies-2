@@ -87,7 +87,6 @@ public class AncientEgyptWorld extends GameWorld {
         Sandstorm sandstorm = new Sandstorm(zombie, lane, targetCol, getCols());
         activeSandstorms.add(sandstorm);
 
-        // اضافه کردن زامبی به لیست زامبی‌های دنیای بازی
         if (zombie != null) {
             addZombie(zombie);
         }

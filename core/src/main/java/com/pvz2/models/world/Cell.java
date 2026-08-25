@@ -15,8 +15,6 @@ import com.pvz2.models.world.cellTerrains.CellTerrain;
 import com.pvz2.models.world.obstacles.Grave;
 import com.pvz2.models.world.obstacles.Obstacle;
 import com.pvz2.models.zombie.Zombie;
-import com.pvz2.view.GameScreen;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
