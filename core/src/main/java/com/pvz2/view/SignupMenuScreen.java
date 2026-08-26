@@ -145,10 +145,16 @@ public class SignupMenuScreen extends MenuScreen {
                     && passwordConfirmOk && genderOk && answerOk && answerConfirmOk;
 
                 if (!allOk) return;
-                controller.createUser(usernameField.getText(), passwordField.getText(),
-                    nicknameField.getText(), emailField.getText(), genderBox.getSelected(),
-                    questionBox.getSelected(), answerField.getText());
-                controller.changeMenu();
+                new Thread(() -> {
+                    String result = controller.createUser(usernameField.getText(), passwordField.getText(),
+                        nicknameField.getText(), emailField.getText(), genderBox.getSelected(),
+                        questionBox.getSelected(), answerField.getText());
+                    Gdx.app.postRunnable(() -> {
+                        if (!result.equals("Error: could not reach server.")){
+                            controller.changeMenu();
+                        }
+                    });
+                }).start();
             }
         });
 

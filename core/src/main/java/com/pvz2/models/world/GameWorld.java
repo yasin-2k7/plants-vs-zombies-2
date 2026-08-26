@@ -4,6 +4,7 @@ import com.pvz2.controller.GameMenuController;
 import com.pvz2.models.core.App;
 import com.pvz2.models.core.User;
 import com.pvz2.models.core.UserDataManager;
+import com.pvz2.models.core.UserManager;
 import com.pvz2.models.enums.Chapter;
 import com.pvz2.models.enums.PlantFamily;
 import com.pvz2.models.enums.PlantType;
@@ -83,7 +84,8 @@ public abstract class GameWorld {
     public GameWorld(LevelSetup levelSetup, ArrayList<LoseCondition> loseConditions,
                      WinCondition winCondition, ArrayList<Mechanic> mechanics) {
         App.getCurrentUser().setGamesPlayed(App.getCurrentUser().getGamesPlayed() + 1);
-        UserDataManager.saveUser(App.getCurrentUser());
+        App.getCurrentUser().save();
+        UserManager.syncCurrentUser();
         this.levelSetup = levelSetup;
         this.loseConditions = loseConditions;
         this.winCondition = winCondition;

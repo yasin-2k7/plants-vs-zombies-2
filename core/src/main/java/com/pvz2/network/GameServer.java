@@ -13,6 +13,7 @@ import com.pvz2.network.onlineIZombie.messages.*;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -28,6 +29,7 @@ public class GameServer {
 
     private final MatchManager matchManager = new MatchManager();
     private final Map<String, ServerGameController> gameControllers = new ConcurrentHashMap<>();
+    private final Map<String, Boolean> recoveryVerified = new ConcurrentHashMap<>();
 
     public static void main(String[] args) {
         new GameServer().start();
@@ -64,8 +66,50 @@ public class GameServer {
             case "COLLECT_BRAIN" -> handleCollectBrain(sender, msg);
             case "PLACE_ZOMBIE" -> handlePlaceZombie(sender, msg);
             case "SEND_REACTION" -> handleSendReaction(sender, msg);
+            case "GET_LEADERBOARD" -> handleGetLeaderboard(sender, msg);
+            case "SAVE_USER" -> handleSaveUser(sender, msg);
+            case "FORGET_PASSWORD" -> handleForgetPassword(sender, msg);
+            case "ANSWER_SECURITY_QUESTION" -> handleAnswerSecurityQuestion(sender, msg);
+            case "NEW_PASSWORD" -> handleNewPassword(sender, msg);
             default -> System.err.println("Unknown message type: " + msg.type);
         }
+    }
+
+    private void handleGetLeaderboard(ClientHandler sender, NetworkMessage msg) {
+        List<User> allUsers = UserDataManager.loadAllUsers();
+
+        List<LeaderboardEntry> entries = allUsers.stream().map(u -> {
+            LeaderboardEntry e = new LeaderboardEntry();
+            e.username = u.getUsername();
+            e.unlockedChapter = u.getUnlockedChapter();
+            e.unlockedLevel = u.getUnlockedLevel();
+            e.miniGamesCompleted = u.getMiniGameLevels().size();
+            e.dailyQuestsCount = u.getDailyQuestsCount();
+            e.normalQuestsCount = u.getNormalQuestsCount();
+            e.maxMupoint = u.getMaxMupoint();
+            e.hasPlayedMuPoint = u.isPlayedMuPoint();
+            return e;
+        }).toList();
+
+        LeaderboardResponse response = new LeaderboardResponse();
+        response.entries = entries;
+        sender.send("GET_LEADERBOARD", msg.requestId, response);
+    }
+
+
+    private void handleSaveUser(ClientHandler sender, NetworkMessage msg) {
+        SaveUserRequest req = GSON.fromJson(msg.payload, SaveUserRequest.class);
+        AckResponse response = new AckResponse();
+
+        String username = sessionTokens.get(req.token);
+        if (username == null) {
+            response.success = false;
+            sender.send("SAVE_USER", msg.requestId, response);
+            return;
+        }
+        req.user.setUsername(username);
+        response.success = UserDataManager.saveUser(req.user);
+        sender.send("SAVE_USER", msg.requestId, response);
     }
 
     private void handleLogin(ClientHandler sender, NetworkMessage msg) {
@@ -285,6 +329,62 @@ public class GameServer {
 
         opponent.send("REACTION", null,
             new ReactionReceived(req.matchId, sender.getUsername(), req.category, req.index));
+    }
+
+    private void handleForgetPassword(ClientHandler sender, NetworkMessage msg) {
+        ForgetPasswordRequest req = GSON.fromJson(msg.payload, ForgetPasswordRequest.class);
+        ForgetPasswordResponse response = new ForgetPasswordResponse();
+
+        User user = UserDataManager.loadUser(req.username);
+        if (user == null) {
+            response.success = false;
+            response.message = "This username doesn't exist.";
+        } else if (!user.getEmail().equals(req.email)) {
+            response.success = false;
+            response.message = "Email is not correct.";
+        } else {
+            recoveryVerified.remove(req.username); // clear any stale prior attempt
+            response.success = true;
+            response.message = "Please answer security question:";
+            response.securityQ = user.getSecurityQ();
+        }
+        sender.send("FORGET_PASSWORD", msg.requestId, response);
+    }
+
+    private void handleAnswerSecurityQuestion(ClientHandler sender, NetworkMessage msg) {
+        AnswerSecurityQuestionRequest req = GSON.fromJson(msg.payload, AnswerSecurityQuestionRequest.class);
+        AckResponse response = new AckResponse();
+
+        User user = UserDataManager.loadUser(req.username);
+        if (user != null && user.checkSeqA(req.answer)) {
+            recoveryVerified.put(req.username, true);
+            response.success = true;
+        } else {
+            recoveryVerified.remove(req.username);
+            response.success = false;
+        }
+        sender.send("ANSWER_SECURITY_QUESTION", msg.requestId, response);
+    }
+
+    private void handleNewPassword(ClientHandler sender, NetworkMessage msg) {
+        NewPasswordRequest req = GSON.fromJson(msg.payload, NewPasswordRequest.class);
+        AckResponse response = new AckResponse();
+
+        if (!Boolean.TRUE.equals(recoveryVerified.get(req.username))) {
+            response.success = false;
+            sender.send("NEW_PASSWORD", msg.requestId, response);
+            return;
+        }
+
+        User user = UserDataManager.loadUser(req.username);
+        if (user == null) {
+            response.success = false;
+        } else {
+            user.setHashPassword(PasswordHasher.hashSHA256(req.newPassword));
+            response.success = UserDataManager.saveUser(user);
+            recoveryVerified.remove(req.username); // one-time use — can't replay this step again
+        }
+        sender.send("NEW_PASSWORD", msg.requestId, response);
     }
 
     /** Looks up the sender's active match and lazily creates its ServerGameController on first use. */

@@ -16,6 +16,7 @@ import com.pvz2.controller.MainMenuController;
 import com.pvz2.models.core.App;
 import com.pvz2.models.core.News;
 import com.pvz2.models.core.UserDataManager;
+import com.pvz2.models.core.UserManager;
 import com.pvz2.models.enums.NewsType;
 import pvz.libpvz.textures.TextureBank;
 import pvz.skin.BorderedTable;
@@ -283,7 +284,8 @@ public class MainMenuScreen extends MenuScreen {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 overlay.remove();
-                UserDataManager.saveUser(App.getCurrentUser());
+                App.getCurrentUser().save();
+                UserManager.syncCurrentUser();
             }
         });
         topBar.add(backBtn).size(45, 45).left().expandX();

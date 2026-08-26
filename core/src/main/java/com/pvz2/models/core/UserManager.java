@@ -4,6 +4,8 @@ import com.pvz2.network.NetworkClient;
 import com.pvz2.network.NetworkMessage;
 import com.pvz2.network.messages.*;
 
+import java.util.List;
+
 public class UserManager {
     private static User currentUser;
 
@@ -67,6 +69,16 @@ public class UserManager {
         user.initQuests();
     }
 
+    public static List<LeaderboardEntry> getLeaderboard() {
+        try {
+            NetworkMessage reply = NetworkClient.get().sendRequest("GET_LEADERBOARD", new Object(), 5000);
+            LeaderboardResponse resp = NetworkClient.get().parsePayload(reply, LeaderboardResponse.class);
+            return resp.entries;
+        } catch (InterruptedException e) {
+            return List.of();
+        }
+    }
+
     public static User getCurrentUser() {
         return currentUser;
     }
@@ -78,13 +90,26 @@ public class UserManager {
                 try {
                     NetworkClient.get().sendRequest("LOGOUT", new LogoutRequest(token), 3000);
                 } catch (InterruptedException ignored) {
-                    // best-effort — clear local state regardless of whether the server ack arrives
                 }
             }
             currentUser = null;
             App.setCurrentUser(null);
             UserDataManager.clearSessionToken();
         }
+    }
+
+    public static void syncCurrentUser() {
+        new Thread(() -> {
+            if (currentUser == null) return;
+            String token = UserDataManager.getSessionToken();
+            if (token == null) return;
+            try {
+                SaveUserRequest req = new SaveUserRequest(token, currentUser);
+                NetworkMessage reply = NetworkClient.get().sendRequest("SAVE_USER", req, 5000);
+                NetworkClient.get().parsePayload(reply, AckResponse.class);
+            } catch (InterruptedException e) {
+            }
+        }).start();
     }
 
     public static String changeUsername(String newUsername) {
@@ -102,6 +127,39 @@ public class UserManager {
             return resp.message;
         } catch (InterruptedException e) {
             return "Error: could not reach server.";
+        }
+    }
+
+    public static String forgetPassword(String username, String email) {
+        try {
+            ForgetPasswordRequest req = new ForgetPasswordRequest(username, email);
+            NetworkMessage reply = NetworkClient.get().sendRequest("FORGET_PASSWORD", req, 5000);
+            ForgetPasswordResponse resp = NetworkClient.get().parsePayload(reply, ForgetPasswordResponse.class);
+            return resp.success ? resp.message + "\n" + resp.securityQ : resp.message;
+        } catch (InterruptedException e) {
+            return "Error: could not reach server.";
+        }
+    }
+
+    public static boolean answerSecurityQuestion(String username, String answer) {
+        try {
+            AnswerSecurityQuestionRequest req = new AnswerSecurityQuestionRequest(username, answer);
+            NetworkMessage reply = NetworkClient.get().sendRequest("ANSWER_SECURITY_QUESTION", req, 5000);
+            AckResponse resp = NetworkClient.get().parsePayload(reply, AckResponse.class);
+            return resp.success;
+        } catch (InterruptedException e) {
+            return false;
+        }
+    }
+
+    public static boolean submitNewPassword(String username, String newPassword) {
+        try {
+            NewPasswordRequest req = new NewPasswordRequest(username, newPassword);
+            NetworkMessage reply = NetworkClient.get().sendRequest("NEW_PASSWORD", req, 5000);
+            AckResponse resp = NetworkClient.get().parsePayload(reply, AckResponse.class);
+            return resp.success;
+        } catch (InterruptedException e) {
+            return false;
         }
     }
 }

@@ -2,6 +2,7 @@ package com.pvz2.models.world.winCondition;
 
 import com.pvz2.models.core.App;
 import com.pvz2.models.core.UserDataManager;
+import com.pvz2.models.core.UserManager;
 import com.pvz2.models.miniGame.MiniGameLevels;
 import com.pvz2.models.world.GameWorld;
 import com.pvz2.models.world.mechanics.NormalMechanic;
@@ -19,7 +20,8 @@ public class NormalWin implements WinCondition {
                         currentLevel.miniGame.name() + " " + (currentLevel.level+1));
             }
 
-            UserDataManager.saveUser(App.getCurrentUser());
+            App.getCurrentUser().save();
+            UserManager.syncCurrentUser();
         }
 
         return mechanic.getWaveManager().isLevelCompleted() &&

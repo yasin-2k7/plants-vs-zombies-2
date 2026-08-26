@@ -50,6 +50,7 @@ public class User {
     private int gameSpeed = 1;
     private boolean showGrid = false;
     private boolean debugMode = false;
+    private boolean playedMuPoint = false;
 
     public User() {
         this.plantBoosts = new HashMap<>();
@@ -144,10 +145,8 @@ public class User {
         }
     }
 
-    private void save() {
-        if (isLoaded || !username.isEmpty()) {
-            UserDataManager.saveUser(this);
-        }
+    public void save() {
+
     }
 
     public void addSeedPackets(PlantType type, int amount) {
@@ -440,7 +439,8 @@ public class User {
         unlockedLevel = newLevel;
         unlockedChapter = newChapter;
         notifyLevelUnlock(newChapter + "-" + newLevel);
-        UserDataManager.saveUser(this);
+        save();
+        UserManager.syncCurrentUser();
     }
 
     public HashMap<PlantType, Boolean> getPlantBoosts() {
@@ -529,6 +529,14 @@ public class User {
 
     public void setDebugMode(boolean debugMode) {
         this.debugMode = debugMode;
+    }
+
+    public void setPlayedMuPoint(boolean playedMuPoint) {
+        this.playedMuPoint = playedMuPoint;
+    }
+
+    public boolean isPlayedMuPoint() {
+        return playedMuPoint;
     }
 
     public Set<String> getCompletedQuestIds() {

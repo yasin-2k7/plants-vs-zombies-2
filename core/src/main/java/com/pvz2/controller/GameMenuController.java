@@ -3,6 +3,7 @@ package com.pvz2.controller;
 import com.pvz2.models.core.App;
 import com.pvz2.models.core.User;
 import com.pvz2.models.core.UserDataManager;
+import com.pvz2.models.core.UserManager;
 import com.pvz2.models.enums.Chapter;
 import com.pvz2.models.enums.PlantType;
 import com.pvz2.models.greenhouse.GreenHouse;
@@ -32,61 +33,44 @@ import java.util.List;
 public class GameMenuController implements MenuController {
     private static MenuScreen screen;
     public static void handleWinning(GameWorld gameWorld) {
-        if (gameWorld instanceof IZombieLevel) {
-//            GameMenuView.getInstance().showResult("Delicious! You ate all the brains and WON the level! 🧠😋");
-        } else {
-//            GameMenuView.getInstance().showResult(
-//                    "Dear humanz, zis is not done yet; we will come back to eat your brainz, humanz.");
-        }
-        if (gameWorld.isWillUnlockLevel()) {
-            App.getCurrentUser().unlockLevel();
-        }
         User user = App.getCurrentUser();
+        if (user == null) return;
+        if (gameWorld.isWillUnlockLevel()) {
+            user.unlockLevel();
+        }
         MupointManager mupointManager = gameWorld.getMupointManager();
-        if (user != null && mupointManager != null) {
+        if (mupointManager != null) {
             int currentLevelPoints = mupointManager.getTotalMupoints();
-//            GameMenuView.getInstance().showResult("Your Mupoint in this level: " + currentLevelPoints);
-
             if (currentLevelPoints > user.getMaxMupoint()) {
                 user.updateMupointRecord(currentLevelPoints);
-                UserDataManager.saveUser(user);
-//                GameMenuView.getInstance().showResult("New High Score! " +
-//                        "Updated Mupoint record to: " + currentLevelPoints);
             }
         }
-//        AppView.setCurrentScreen(MainMenuView.getInstance());
-
         if (!gameWorld.isConveyorMode()){
             for (PlantCard plantCard : gameWorld.getPlantLists()){
-                App.getCurrentUser().getPlantBoosts().remove(plantCard.getType());
+                user.getPlantBoosts().remove(plantCard.getType());
             }
         }
+        user.save();
+        UserManager.syncCurrentUser();
     }
 
     public static void handleLosing(GameWorld gameWorld) {
-        if (gameWorld instanceof IZombieLevel) {
-//            GameMenuView.getInstance().showResult("You ran out of zombies and failed to eat all the brains! LOSER!!!");
-        } else if (gameWorld.getLevelSetup() instanceof DeadLineLevelSetup) {
-//            GameMenuView.getInstance().showResult("Zombie passed deadLine; Loser!!!");
-        } else {
-//            GameMenuView.getInstance().showResult("LOSER!!!");
-        }
         User user = App.getCurrentUser();
+        if (user == null) return;
         MupointManager mupointManager = gameWorld.getMupointManager();
-        if (user != null && mupointManager != null) {
+        if (mupointManager != null) {
             int currentLevelPoints = mupointManager.getTotalMupoints();
-//            GameMenuView.getInstance().showResult("Your Mupoint in this level: " + currentLevelPoints);
-
             if (currentLevelPoints > user.getMaxMupoint()) {
                 user.updateMupointRecord(currentLevelPoints);
-                UserDataManager.saveUser(user);
-//                GameMenuView.getInstance().showResult("New High Score! " +
-//                        "Updated Mupoint record to: " + currentLevelPoints);
             }
         }
-//        AppView.setCurrentScreen(MainMenuView.getInstance());
-
-        App.getCurrentUser().getPlantBoosts().clear();
+        if (!gameWorld.isConveyorMode()){
+            for (PlantCard plantCard : gameWorld.getPlantLists()){
+                user.getPlantBoosts().remove(plantCard.getType());
+            }
+        }
+        user.save();
+        UserManager.syncCurrentUser();
     }
 
     public static void updateScreenPlants(Plant plant){

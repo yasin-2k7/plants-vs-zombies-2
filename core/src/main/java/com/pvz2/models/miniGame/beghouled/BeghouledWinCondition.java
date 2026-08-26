@@ -2,6 +2,7 @@ package com.pvz2.models.miniGame.beghouled;
 
 import com.pvz2.models.core.App;
 import com.pvz2.models.core.UserDataManager;
+import com.pvz2.models.core.UserManager;
 import com.pvz2.models.miniGame.MiniGameLevels;
 import com.pvz2.models.world.GameWorld;
 import com.pvz2.models.world.winCondition.WinCondition;
@@ -19,7 +20,8 @@ public class BeghouledWinCondition implements WinCondition {
                 if (currentLevel.level != 3) App.getCurrentUser().notifyMinigameUnlocked(
                         currentLevel.miniGame.name() + " " + (currentLevel.level+1));
             }
-            UserDataManager.saveUser(App.getCurrentUser());
+            App.getCurrentUser().save();
+            UserManager.syncCurrentUser();
         }
         return mechanics.getScore() >= mechanics.getTargetScore();
     }

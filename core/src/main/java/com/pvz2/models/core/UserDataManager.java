@@ -128,11 +128,14 @@ public class UserDataManager {
     public static boolean updateUsername(String oldUsername, User user) {
         if (user == null || user.getUsername() == null) return false;
 
+        boolean saved = saveUser(user); // write the new file FIRST
+        if (!saved) return false;
+
         File oldFile = new File(USERS_DIR + oldUsername + ".json");
-        if (oldFile.exists()) {
-            oldFile.delete();
+        if (oldFile.exists() && !oldUsername.equals(user.getUsername())) {
+            oldFile.delete(); // only delete the old one once the new one is confirmed written
         }
 
-        return saveUser(user);
+        return true;
     }
 }
