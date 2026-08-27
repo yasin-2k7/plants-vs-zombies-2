@@ -33,6 +33,8 @@ public class ConveyorLevelSetup implements LevelSetup {
         WaveManager waveManager = new WaveManager(waves);
         world.addMechanic(new NormalMechanic(waveManager));
         world.addMechanic(new ConveyorMechanic(plantCards));
+
+        world.registerZombieKillListener(() -> waveManager.onZombieKilled());
     }
 
     @Override

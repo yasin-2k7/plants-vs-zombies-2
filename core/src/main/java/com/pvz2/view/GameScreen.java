@@ -366,8 +366,12 @@ public class GameScreen extends MenuScreen {
 
     private void updateIntroPan(float delta) {
         if (introFinished || introPausedAtStreet || currentStepIndex >= introSteps.size()) {
-            if (currentStepIndex >= introSteps.size()) {
+            if (currentStepIndex >= introSteps.size() && !introFinished) {
                 introFinished = true;
+                if (world.isConveyorMode()) {
+                    zombiePreviewVisible = false;
+                    hud.setInGameDetailsVisibility(true);
+                }
             }
             return;
         }
@@ -402,6 +406,12 @@ public class GameScreen extends MenuScreen {
             stepElapsed = 0f;
             if (currentStepIndex >= introSteps.size()) {
                 introFinished = true;
+                // فعال‌سازی HUD و مخفی کردن پیش‌نمایش زامبی‌ها در حالت Conveyor
+                if (world.isConveyorMode()) {
+                    zombiePreviewVisible = false;
+                    hud.setInGameDetailsVisibility(true);
+                    world.setState(GameState.PLAYING);
+                }
             }
         }
     }
