@@ -18,6 +18,8 @@ import com.pvz2.models.core.News;
 import com.pvz2.models.core.UserDataManager;
 import com.pvz2.models.core.UserManager;
 import com.pvz2.models.enums.NewsType;
+import com.pvz2.network.NetworkClient;
+import com.pvz2.network.onlineIZombie.messages.ChallengeInvite;
 import pvz.libpvz.textures.TextureBank;
 import pvz.skin.BorderedTable;
 
@@ -36,6 +38,7 @@ public class MainMenuScreen extends MenuScreen {
     private Button profileBtn;
     private ImageButton backBtn;
     private ImageButton travelLogBtn;
+    private ImageButton onlineGameBtn;
 
     private ResourcesTable resourcesTable = new ResourcesTable(App.getCurrentUser(), game);
 
@@ -74,6 +77,9 @@ public class MainMenuScreen extends MenuScreen {
             "IMAGE_UI_HUD_SETTINGSBUTTON_BUTTONS_HUD_SETTINGS_SELECTED",
             game.textureBank
         );
+
+        onlineGameBtn = createImageButton("IMAGE_UI_GAMECENTER_ANDROID_GAMECENTER",
+            "IMAGE_UI_GAMECENTER_ANDROID_GAMECENTER_PRESS", game.textureBank);
 
         leaderboardBtn = new TextButton("", skin, "brown");
         Image cup = new Image(game.textureBank.region("IMAGE_UI_GAMECENTER_ICON"));
@@ -117,9 +123,8 @@ public class MainMenuScreen extends MenuScreen {
         mainTable.clear();
         mainTable.setFillParent(true);
 
-        if (backBtn != null) {
-            topBar.add(backBtn).left().top().pad(10);
-        }
+        if (backBtn != null) topBar.add(backBtn).left().top().pad(10);
+        if (onlineGameBtn != null) topBar.add(onlineGameBtn).pad(10);
         topBar.add().expandX();
         if (App.getCurrentUser() != null){
             topBar.add(resourcesTable).padRight(20);
@@ -184,21 +189,26 @@ public class MainMenuScreen extends MenuScreen {
         }
         mainStack.add(mainTable);
         setListeners();
+        setOnlinePopup();
     }
+
+    private void setOnlinePopup() {
+        NetworkClient.get().onPush("CHALLENGE_INVITE", msg -> {
+            ChallengeInvite invite = NetworkClient.get().parsePayload(msg, ChallengeInvite.class);
+            showChallengePopup(invite.fromUsername, accepted -> respondToChallenge(invite.inviteId, accepted));
+        });
+    }
+
+
+
 
     private void setListeners(){
         backBtn.addListener(new ClickListener(){
             @Override
-            public void clicked(InputEvent event, float x, float y) {
-                controller.exitMenu();
-            }
-        });
+            public void clicked(InputEvent event, float x, float y) { controller.exitMenu();}});
         playBtn.addListener(new ClickListener(){
             @Override
-            public void clicked(InputEvent event, float x, float y) {
-                controller.enterMenu("play");
-            }
-        });
+            public void clicked(InputEvent event, float x, float y) { controller.enterMenu("play");}});
         settingsBtn.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -238,6 +248,9 @@ public class MainMenuScreen extends MenuScreen {
                 showScrollablePopup("TRAVEL LOG", new TravelLogMenuTable(game, skin), 800, 500, 750, 400);
             }
         });
+        onlineGameBtn.addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y) { controller.enterMenu("online room");}});
     }
 
     public static ImageButton createImageButton(String normalRegionKey, String selectedRegionKey,
@@ -304,7 +317,7 @@ public class MainMenuScreen extends MenuScreen {
         stage.addActor(overlay);
     }
 
-    private Drawable createSolidColor(Color color) {
+    public static Drawable createSolidColor(Color color) {
         Pixmap pixmap = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
         pixmap.setColor(color);
         pixmap.fill();

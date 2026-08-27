@@ -47,6 +47,9 @@ public class MainMenuController implements MenuController {
 //                AppView.setCurrentScreen(PlantMenuView.getInstance());
 //                PlantMenuView.getInstance().getController().reset();
                 break;
+            case "online room":
+                mainMenuScreen.fadeAndSwitchScreen(new OnlineRoomMenuScreen(mainMenuScreen.getGame()));
+                break;
         }
 
     }
