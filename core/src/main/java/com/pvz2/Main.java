@@ -11,6 +11,8 @@ import com.pvz2.models.core.GameInitializer;
 import com.pvz2.models.core.UserManager;
 import com.pvz2.models.zombie.ZombieRegistry;
 import com.pvz2.view.*;
+import com.pvz2.view.audios.AudioManager;
+import com.pvz2.view.audios.GameMusic;
 import pvz.libpvz.pam.PamPlayer;
 import pvz.libpvz.textures.TextureBank;
 import pvz.skin.PvzSkin;
@@ -45,9 +47,11 @@ public class Main extends Game {
             }
             MainMenuScreen mainMenuScreen = new MainMenuScreen(this);
             setScreen(mainMenuScreen);
+            AudioManager.getInstance().playMusic(GameMusic.TITLE, true);
             GameMenuController.setScreen(mainMenuScreen);
         } else {
             setScreen(new LoginMenuScreen(this));
+            AudioManager.getInstance().playMusic(GameMusic.TITLE, true);
         }
     }
 

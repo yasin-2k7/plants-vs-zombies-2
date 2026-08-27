@@ -25,11 +25,16 @@ import com.pvz2.models.core.App;
 import com.pvz2.models.core.User;
 import com.pvz2.models.core.UserDataManager;
 import com.pvz2.models.enums.PlantType;
+import com.pvz2.models.miniGame.beghouled.BeghouledMechanics;
+import com.pvz2.models.miniGame.beghouled.BeghouledSetup;
 import com.pvz2.models.plant.card.PlantCard;
 import com.pvz2.models.plant.card.PlantCardFactory;
 import com.pvz2.models.world.GameState;
 import com.pvz2.models.world.GameWorld;
 import com.pvz2.models.zombie.wave.WaveManager;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.pvz2.view.audios.GameSFX;
+import com.pvz2.view.audios.SFXManager;
 import pvz.skin.BorderedTable;
 
 import java.util.ArrayList;
@@ -137,6 +142,7 @@ public class GameHUD extends Group {
                         cardView.setSelectedState(false);
                     }
                     if (isSelected){
+                        SFXManager.getInstance().playSound(GameSFX.SEED_LIFT);
                         plantCardView.setSelectedState(true);
                         screen.getPlantPlacementManager().selectPlant(plantCardView.getType(), null);
                     }
@@ -247,7 +253,12 @@ public class GameHUD extends Group {
                         UserDataManager.saveUser(user);
                     }
                     remove();
-                    game.setScreen(new LevelMenuScreen(game));
+                    if(world.getLevelSetup() instanceof BeghouledSetup){
+                        game.setScreen(new MainMenuScreen(game));
+                    } else{
+                        game.setScreen(new LevelMenuScreen(game));
+                    }
+
                 }
             });
 

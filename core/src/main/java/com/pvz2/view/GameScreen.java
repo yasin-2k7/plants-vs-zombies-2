@@ -40,6 +40,8 @@ import com.pvz2.models.world.ChapterWorld.BigWaveBeachWorld;
 import com.pvz2.models.world.ChapterWorld.FrostbiteCavesWorld;
 import com.pvz2.models.world.obstacles.Grave;
 import com.pvz2.models.zombie.Zombie;
+import com.pvz2.view.audios.GameSFX;
+import com.pvz2.view.audios.SFXManager;
 import pvz.libpvz.pam.PamPlayer;
 import com.badlogic.gdx.utils.Align;
 import pvz.skin.BorderedTable;
@@ -365,8 +367,12 @@ public class GameScreen extends MenuScreen {
 
     private void updateIntroPan(float delta) {
         if (introFinished || introPausedAtStreet || currentStepIndex >= introSteps.size()) {
-            if (currentStepIndex >= introSteps.size()) {
+            if (currentStepIndex >= introSteps.size() && !introFinished) {
                 introFinished = true;
+                if (world.isConveyorMode()) {
+                    zombiePreviewVisible = false;
+                    hud.setInGameDetailsVisibility(true);
+                }
             }
             return;
         }
@@ -401,6 +407,12 @@ public class GameScreen extends MenuScreen {
             stepElapsed = 0f;
             if (currentStepIndex >= introSteps.size()) {
                 introFinished = true;
+                // فعال‌سازی HUD و مخفی کردن پیش‌نمایش زامبی‌ها در حالت Conveyor
+                if (world.isConveyorMode()) {
+                    zombiePreviewVisible = false;
+                    hud.setInGameDetailsVisibility(true);
+                    world.setState(GameState.PLAYING);
+                }
             }
         }
     }
@@ -998,6 +1010,7 @@ public class GameScreen extends MenuScreen {
                         plantGraphics.add(pg);
                         checkExplosion(newPlant, pg);
                         plantPlacementManager.tryPlace(row, col);
+                        SFXManager.getInstance().playSound(GameSFX.PLANT);
                     }
                 }
             } else if (plantfoodPlacementManager.isSelected()){

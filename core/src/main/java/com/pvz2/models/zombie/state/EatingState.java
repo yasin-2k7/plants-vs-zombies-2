@@ -38,7 +38,7 @@ public class EatingState implements ZombieState {
                 GameWorld world = App.getCurrentGame();
                 BeghouledMechanics beghouled = world.getMechanic(BeghouledMechanics.class);
 
-                if (beghouled != null) {
+                if (beghouled != null && targetPlant.getCell() != null) {
                     beghouled.createCrater(world, targetPlant.getCell().getRow(), targetPlant.getCell().getCol());
                 }
 

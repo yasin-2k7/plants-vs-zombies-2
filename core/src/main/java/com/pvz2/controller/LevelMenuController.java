@@ -8,6 +8,8 @@ import com.pvz2.models.world.GameWorld;
 import com.pvz2.models.world.LevelFactory;
 import com.pvz2.view.GameScreen;
 import com.pvz2.view.LevelMenuScreen;
+import com.pvz2.view.audios.AudioManager;
+import com.pvz2.view.audios.GameMusic;
 
 public class LevelMenuController implements MenuController {
 
@@ -51,6 +53,7 @@ public class LevelMenuController implements MenuController {
 
         levelMenuScreen.fadeAndSwitchScreen(
                 new GameScreen(levelMenuScreen.getGame(), world, currentChapter));
+        AudioManager.getInstance().playMusic(GameMusic.HOUSE, true);
         return "level started!";
     }
 }
