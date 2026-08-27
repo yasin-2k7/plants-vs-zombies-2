@@ -19,7 +19,8 @@ public class CheckFumeStrike implements CheckStrike{
             if (lastTargets != null && lastTargets.contains(zombie)) {
                 continue;
             }
-            if (isBetween(x, y - App.getCellHeight()/2, x + range, y + App.getCellHeight()/2, zombie.getX(), zombie.getY())) {
+            if (isBetween(x, y - App.getCellHeight()/2, x + range,
+                y + App.getCellHeight()/2, zombie.getX(), zombie.getY())) {
                 return zombie;
             }
         }

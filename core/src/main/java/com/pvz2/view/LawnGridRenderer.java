@@ -16,8 +16,6 @@ public class LawnGridRenderer {
         float left = LawnGrid.ORIGIN_X - LawnGrid.CELL_WIDTH / 2f;
         float bottom = LawnGrid.ORIGIN_Y - LawnGrid.CELL_HEIGHT / 2f;
 
-        // Cell boundaries, matching exactly what getColFromX()/getRowFromY()
-        // consider "inside" a given column/row.
         shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
         shapeRenderer.setColor(Color.RED);
 
@@ -31,10 +29,6 @@ public class LawnGridRenderer {
         }
         shapeRenderer.end();
 
-        // Cross at each cell's logical center per getCellX()/getCellY() —
-        // this is where anything placed "at column c, row r" via LawnGrid
-        // should visually land. If a sprite doesn't sit on its cross, the
-        // sprite's own positioning math (not LawnGrid) is the problem.
         shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
         shapeRenderer.setColor(Color.YELLOW);
         float s = 6f;

@@ -50,7 +50,6 @@ public class LoginMenuScreen extends MenuScreen {
 
     public LoginMenuScreen(Main game) {
         super(game);
-
         FileHandle assetsFolder = Gdx.files.internal("");
         textureBank = new TextureBank("786", assetsFolder);
         textureRegion = textureBank.region("IMAGE_UI_CALENDAR_CALENDAR_CARD_7DAY_FOODFIGHT");
@@ -59,92 +58,54 @@ public class LoginMenuScreen extends MenuScreen {
     @Override
     protected void buildUI() {
         errorBorderDrawable = createBorderDrawable(Color.RED, 3);
-
-        Image backgroundImage = new Image(textureRegion);
-        mainStack.add(backgroundImage);
+        mainStack.add(new Image(textureRegion));
 
         BorderedTable formTable = new BorderedTable();
         formTable.pad(25);
-
         TextField usernameField = new TextField("", skin);
         usernameField.setMessageText("username");
         ValidatedField usernameVF = wrapTextField(usernameField);
         attachFocusValidation(usernameVF, () -> requiredFieldErrors(usernameField.getText(), "Please enter username."));
-
-        TextField passwordField = new TextField("", skin);
-        passwordField.setPasswordMode(true);
-        passwordField.setPasswordCharacter('*');
-        passwordField.setMessageText("Password");
+        TextField passwordField = createPasswordField("Password");
         ValidatedField passwordVF = wrapTextField(passwordField);
         attachFocusValidation(passwordVF, () -> requiredFieldErrors(passwordField.getText(), "Please enter password."));
-
         CheckBox stayLoggedInBox = new CheckBox(" Stay logged in", skin);
+        Label statusLabel = createDialogErrorLabel();
 
-        Label statusLabel = new Label("", skin);
-        statusLabel.setColor(Color.RED);
-        statusLabel.setFontScale(0.8f);
-        statusLabel.setWrap(true);
-        statusLabel.setVisible(false);
-
-        TextButton loginBtn = new TextButton("Login", skin);
-        loginBtn.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                boolean usernameOk = showFieldErrors(usernameVF,
-                    requiredFieldErrors(usernameField.getText(), "Please enter username."));
-                boolean passwordOk = showFieldErrors(passwordVF,
-                    requiredFieldErrors(passwordField.getText(), "Please enter password."));
-
-                if (!usernameOk || !passwordOk) return;
-
-                String result = controller.loginUser(usernameField.getText(), passwordField.getText(),
-                    stayLoggedInBox.isChecked());
-
-                boolean success = result != null && result.toLowerCase().contains("success");
-
-                if (success) {
-                    statusLabel.setVisible(false);
-                    controller.changeMenu();
-                } else {
-                    statusLabel.setText(result);
-                    statusLabel.setVisible(true);
-                    shake(usernameField);
-                    shake(passwordField);
-                }
+        TextButton loginBtn = createButton("Login", () -> {
+            boolean uOk = showFieldErrors(usernameVF,
+                requiredFieldErrors(usernameField.getText(), "Please enter username."));
+            boolean pOk = showFieldErrors(passwordVF,
+                requiredFieldErrors(passwordField.getText(), "Please enter password."));
+            if (!uOk || !pOk) return;
+            String result = controller.loginUser(usernameField.getText(),
+                passwordField.getText(), stayLoggedInBox.isChecked());
+            if (result != null && result.toLowerCase().contains("success")) {
+                statusLabel.setVisible(false);
+                controller.changeMenu();
+            } else {
+                statusLabel.setText(result);
+                statusLabel.setVisible(true);
+                shake(usernameField);
+                shake(passwordField);
             }
         });
 
-        TextButton forgotPasswordBtn = new TextButton("Forgot password?", skin);
-        forgotPasswordBtn.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                showForgotPasswordPopup();
-            }
-        });
-
-        TextButton signupBtn = new TextButton("Don't hanve an account?", skin);
-        signupBtn.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                controller.exitMenu();
-            }
-        });
+        TextButton forgotBtn = createButton("Forgot password?", this::showForgotPasswordPopup);
+        TextButton signupBtn = createButton("Don't have an account?", controller::exitMenu);
 
         addRow(formTable, usernameVF);
         addRow(formTable, passwordVF);
         formTable.add(stayLoggedInBox).left().padBottom(10).row();
         formTable.add(statusLabel).width(300).padBottom(10).row();
         formTable.add(loginBtn).width(150).padBottom(8).row();
-        formTable.add(forgotPasswordBtn).width(170).padBottom(8).row();
+        formTable.add(forgotBtn).width(170).padBottom(8).row();
         formTable.add(signupBtn).width(220).row();
 
         Table wrapper = new Table();
-        wrapper.center();
-        wrapper.add(formTable);
-
+        wrapper.center().add(formTable);
         mainStack.add(wrapper);
     }
-
 
     private void showForgotPasswordPopup() {
         Table overlay = new Table();
@@ -164,7 +125,6 @@ public class LoginMenuScreen extends MenuScreen {
 
     private void buildForgotStepOne(Table overlay, BorderedTable box) {
         box.clear();
-
         Label title = new Label("Forgot password", skin);
 
         TextField usernameField = new TextField("", skin);
@@ -175,31 +135,19 @@ public class LoginMenuScreen extends MenuScreen {
 
         Label errorLabel = createDialogErrorLabel();
 
-        TextButton nextBtn = new TextButton("Next", skin);
-        nextBtn.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                String result = controller.forgetPassword(usernameField.getText(), emailField.getText());
-
-                if (result != null && result.startsWith("Please answer security question:")) {
-                    String question = result.substring(result.indexOf("\n") + 1);
-                    buildForgotStepTwo(overlay, box, question);
-                } else {
-                    errorLabel.setText(result);
-                    errorLabel.setVisible(true);
-                    shake(usernameField);
-                    shake(emailField);
-                }
+        TextButton nextBtn = createButton("Next", () -> {
+            String result = controller.forgetPassword(usernameField.getText(), emailField.getText());
+            if (result != null && result.startsWith("Please answer security question:")) {
+                buildForgotStepTwo(overlay, box, result.substring(result.indexOf("\n") + 1));
+            } else {
+                errorLabel.setText(result);
+                errorLabel.setVisible(true);
+                shake(usernameField);
+                shake(emailField);
             }
         });
 
-        TextButton cancelBtn = new TextButton("Cancel", skin);
-        cancelBtn.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                overlay.remove();
-            }
-        });
+        TextButton cancelBtn = createButton("Cancel", overlay::remove);
 
         box.add(title).padBottom(15).row();
         box.add(usernameField).width(280).padBottom(10).row();
@@ -214,7 +162,6 @@ public class LoginMenuScreen extends MenuScreen {
 
     private void buildForgotStepTwo(Table overlay, BorderedTable box, String question) {
         box.clear();
-
         Label title = new Label("Security question", skin);
 
         Label questionLabel = new Label(question, skin);
@@ -225,29 +172,18 @@ public class LoginMenuScreen extends MenuScreen {
 
         Label errorLabel = createDialogErrorLabel();
 
-        TextButton nextBtn = new TextButton("Next", skin);
-        nextBtn.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                String result = controller.answerSQ(answerField.getText());
-
-                if ("Enter your new password:".equals(result)) {
-                    buildForgotStepThree(overlay, box);
-                } else {
-                    errorLabel.setText(result);
-                    errorLabel.setVisible(true);
-                    shake(answerField);
-                }
+        TextButton nextBtn = createButton("Next", () -> {
+            String result = controller.answerSQ(answerField.getText());
+            if ("Enter your new password:".equals(result)) {
+                buildForgotStepThree(overlay, box);
+            } else {
+                errorLabel.setText(result);
+                errorLabel.setVisible(true);
+                shake(answerField);
             }
         });
 
-        TextButton cancelBtn = new TextButton("Cancel", skin);
-        cancelBtn.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                overlay.remove();
-            }
-        });
+        TextButton cancelBtn = createButton("Cancel", overlay::remove);
 
         box.add(title).padBottom(15).row();
         box.add(questionLabel).width(280).padBottom(10).row();
@@ -262,48 +198,34 @@ public class LoginMenuScreen extends MenuScreen {
 
     private void buildForgotStepThree(Table overlay, BorderedTable box) {
         box.clear();
-
         Label title = new Label("New password", skin);
 
-        TextField newPasswordField = new TextField("", skin);
-        newPasswordField.setPasswordMode(true);
-        newPasswordField.setPasswordCharacter('*');
-        newPasswordField.setMessageText("new password");
+        TextField newPasswordField = createPasswordField("new password");
         ValidatedField passwordVF = wrapTextField(newPasswordField);
 
-        TextField confirmField = new TextField("", skin);
-        confirmField.setPasswordMode(true);
-        confirmField.setPasswordCharacter('*');
-        confirmField.setMessageText("confirm new password");
+        TextField confirmField = createPasswordField("confirm new password");
         ValidatedField confirmVF = wrapTextField(confirmField);
 
-        attachFocusValidation(passwordVF,
-            () -> passwordRules.validatePasswordStrength(newPasswordField.getText()));
-        attachFocusValidation(confirmVF,
-            () -> passwordRules.getPasswordErrors(newPasswordField.getText(), confirmField.getText()));
+        attachFocusValidation(passwordVF, () -> passwordRules.validatePasswordStrength(newPasswordField.getText()));
+        attachFocusValidation(confirmVF, () ->
+            passwordRules.getPasswordErrors(newPasswordField.getText(), confirmField.getText()));
 
         Label errorLabel = createDialogErrorLabel();
 
-        TextButton submitBtn = new TextButton("Change password", skin);
-        submitBtn.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                boolean passwordOk = showFieldErrors(passwordVF,
-                    passwordRules.validatePasswordStrength(newPasswordField.getText()));
-                boolean confirmOk = showFieldErrors(confirmVF,
-                    passwordRules.getPasswordErrors(newPasswordField.getText(), confirmField.getText()));
+        TextButton submitBtn = createButton("Change password", () -> {
+            boolean pOk =
+                showFieldErrors(passwordVF, passwordRules.validatePasswordStrength(newPasswordField.getText()));
+            boolean cOk = showFieldErrors(confirmVF,
+                passwordRules.getPasswordErrors(newPasswordField.getText(), confirmField.getText()));
+            if (!pOk || !cOk) return;
 
-                if (!passwordOk || !confirmOk) return;
-
-                String result = controller.newPassword(newPasswordField.getText());
-
-                if ("Your password changed successfully.".equals(result)) {
-                    buildForgotStepDone(overlay, box);
-                } else {
-                    errorLabel.setText(result);
-                    errorLabel.setVisible(true);
-                    shake(newPasswordField);
-                }
+            String result = controller.newPassword(newPasswordField.getText());
+            if ("Your password changed successfully.".equals(result)) {
+                buildForgotStepDone(overlay, box);
+            } else {
+                errorLabel.setText(result);
+                errorLabel.setVisible(true);
+                shake(newPasswordField);
             }
         });
 
@@ -316,21 +238,37 @@ public class LoginMenuScreen extends MenuScreen {
 
     private void buildForgotStepDone(Table overlay, BorderedTable box) {
         box.clear();
-
         Label doneLabel = new Label("Your password changed successfully.", skin);
         doneLabel.setWrap(true);
 
-        TextButton closeBtn = new TextButton("Close", skin);
-        closeBtn.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                overlay.remove();
-            }
-        });
+        TextButton closeBtn = createButton("Close", overlay::remove);
 
         box.add(doneLabel).width(280).padBottom(15).row();
         box.add(closeBtn).width(150).row();
     }
+
+    // --- Helper Methods to Reduce Boilerplate ---
+
+    private TextButton createButton(String text, Runnable action) {
+        TextButton btn = new TextButton(text, skin);
+        btn.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                action.run();
+            }
+        });
+        return btn;
+    }
+
+    private TextField createPasswordField(String message) {
+        TextField field = new TextField("", skin);
+        field.setPasswordMode(true);
+        field.setPasswordCharacter('*');
+        field.setMessageText(message);
+        return field;
+    }
+
+    // --------------------------------------------
 
     private Label createDialogErrorLabel() {
         Label label = new Label("", skin);
@@ -373,7 +311,6 @@ public class LoginMenuScreen extends MenuScreen {
 
     private boolean showFieldErrors(ValidatedField vf, List<String> errors) {
         boolean valid = errors == null || errors.isEmpty();
-
         vf.style.background = valid ? vf.defaultBackground : errorBorderDrawable;
 
         if (valid) {
@@ -384,7 +321,6 @@ public class LoginMenuScreen extends MenuScreen {
             vf.errorLabel.setVisible(true);
             shake(vf.field);
         }
-
         return valid;
     }
 

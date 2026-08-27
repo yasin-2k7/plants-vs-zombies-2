@@ -176,7 +176,6 @@ public class TravelLogMenuController implements MenuController {
         }
 
         if (!isMinigameLevelUnlocked(user, selected, level)) {
-            // this minigame level is locked
             return;
         }
 
@@ -185,22 +184,17 @@ public class TravelLogMenuController implements MenuController {
             App.setCurrentGame(world);
             switch (selected) {
                 case VASE_BREAKER -> {
-                    // اگر مستقیم وارد بازی می‌شود
                     App.getGameApp().setScreen(new VaseBreakerScreen(App.getGameApp(), (VaseBreakerLevel) world));
                 }
                 case BEGHOULED -> {
-                    App.getGameApp().setScreen(new BeghouledScreen(App.getGameApp(), App.getCurrentGame(), Chapter.EGYPT));
+                    App.getGameApp().setScreen(new BeghouledScreen(App.getGameApp(),
+                        App.getCurrentGame(), Chapter.EGYPT));
                 }
                 default -> {
-                    // مینی‌گیم‌هایی که نیاز به انتخاب کارت گیاهان دارند (مثل Bowling یا Beghouled)
-                    // یا مستقیم به GameScreen می‌روند:
                     App.getGameApp().setScreen(new GameScreen(App.getGameApp(), world, Chapter.EGYPT));
-                    // یا: App.getGame().setScreen(new GameScreen(App.getGame(), world));
                 }
                 }
-            // needs edit: wire up screen switch once GameMenuView / PlantMenuView are ready
         } catch (IllegalArgumentException e) {
-            // needs edit: surface e.getMessage() to the UI
         }
     }
 

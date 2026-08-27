@@ -6,7 +6,8 @@ import com.pvz2.models.zombie.zombiesType.PusherZombie;
 import pvz.libpvz.pam.PamPlayer;
 
 public class IceBlockGraphic {
-    private static final String PAM_PATH = "768/INITIAL/EFFECTS/ICEBLOOM_ICE_BLOCK_ZOMBIE/ICEBLOOM_ICE_BLOCK_ZOMBIE.PAM";
+    private static final String PAM_PATH =
+        "768/INITIAL/EFFECTS/ICEBLOOM_ICE_BLOCK_ZOMBIE/ICEBLOOM_ICE_BLOCK_ZOMBIE.PAM";
     private static final String IDLE_CLIP = "idle";
     private static final float OFFSET_X = -130f;
 

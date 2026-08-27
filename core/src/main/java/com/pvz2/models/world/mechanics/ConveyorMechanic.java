@@ -34,7 +34,5 @@ public class ConveyorMechanic implements Mechanic {
                 System.out.println(" 🛒 [Conveyor Belt] New card added: " + newCard.getType());
             }
         }
-
-
     }
 }

@@ -9,8 +9,6 @@ import com.pvz2.models.world.LevelFactory;
 import com.pvz2.view.GameScreen;
 import com.pvz2.view.LevelMenuScreen;
 
-import java.util.List;
-
 public class LevelMenuController implements MenuController {
 
     private final LevelMenuScreen levelMenuScreen;
@@ -54,27 +52,5 @@ public class LevelMenuController implements MenuController {
         levelMenuScreen.fadeAndSwitchScreen(
                 new GameScreen(levelMenuScreen.getGame(), world, currentChapter));
         return "level started!";
-    }
-
-    public List<String> getLevelsToShow() {
-        Chapter currentChapter = App.getCurrentUser().getCurrentChapter();
-
-        if (currentChapter == null) {
-            return List.of();
-        }
-
-        switch (currentChapter) {
-            case EGYPT:
-                return List.of("Egypt - Level 1", "Egypt - Level 2", "Egypt - Level 3");
-            case BIG_WAVE_BEACH:
-                return List.of("Big Wave Beach - Level 1", "Big Wave Beach - Level 2");
-            default:
-                return List.of();
-        }
-    }
-
-    public void showCurrentMenu() {
-        //needs edit
-//        GameMenuView.getInstance().showResult("Current menu: level menu");
     }
 }

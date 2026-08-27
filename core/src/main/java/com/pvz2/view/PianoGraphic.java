@@ -7,7 +7,7 @@ import pvz.libpvz.pam.PamPlayer;
 
 public class PianoGraphic {
     private static final String PAM_PATH = "768/FULL/ZOMBIE/PIANO/PIANO.PAM";
-    private static final float OFFSET_X = -60f; // پیانو کمی جلوتر از زامبی
+    private static final float OFFSET_X = -60f;
 
     private final PusherZombie pusherZombie;
 

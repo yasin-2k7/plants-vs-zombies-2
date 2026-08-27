@@ -26,7 +26,6 @@ public class DirectionalMeleeComponent implements GameComponent {
     private float plantFoodTimer = 0f;
     private float introOutroTimer = 0f;
 
-    // resolved lazily once the owner's PlantType is known; 0 means "no clip configured"
     private float plantFoodIntroDuration = -1f;
     private float plantFoodDuration = -1f;
     private float plantFoodOutroDuration = -1f;
@@ -41,7 +40,8 @@ public class DirectionalMeleeComponent implements GameComponent {
         if (plantFoodDuration >= 0f) return;
         plantFoodIntroDuration = AnimationDurations.hasClip(owner.getType(), PLANT_FOOD_INTRO_CLIP)
             ? AnimationDurations.getDuration(owner.getType(), PLANT_FOOD_INTRO_CLIP, 0f) : 0f;
-        plantFoodDuration = AnimationDurations.getDuration(owner.getType(), PLANT_FOOD_CLIP, DEFAULT_PLANT_FOOD_DURATION);
+        plantFoodDuration = AnimationDurations.getDuration(owner.getType(),
+            PLANT_FOOD_CLIP, DEFAULT_PLANT_FOOD_DURATION);
         plantFoodOutroDuration = AnimationDurations.hasClip(owner.getType(), PLANT_FOOD_OUTRO_CLIP)
             ? AnimationDurations.getDuration(owner.getType(), PLANT_FOOD_OUTRO_CLIP, 0f) : 0f;
     }
@@ -49,25 +49,18 @@ public class DirectionalMeleeComponent implements GameComponent {
     @Override
     public void update(Plant owner, float delta) {
         ensurePlantFoodDurationsLoaded(owner);
-
         if (owner.getState() == Plant.State.PLANT_FOOD_INTRO) {
             introOutroTimer -= delta;
             if (introOutroTimer <= 0f) {
                 dealPlantFoodDamage(owner);
                 plantFoodTimer = 0f;
-                owner.setState(Plant.State.PLANT_FOOD);
-            }
-            return;
-        }
-
+                owner.setState(Plant.State.PLANT_FOOD);}
+            return;}
         if (owner.getState() == Plant.State.PLANT_FOOD_OUTRO) {
             introOutroTimer -= delta;
             if (introOutroTimer <= 0f) {
-                owner.setState(Plant.State.IDLE);
-            }
-            return;
-        }
-
+                owner.setState(Plant.State.IDLE);}
+            return;}
         if (owner.getState() == Plant.State.PLANT_FOOD) {
             plantFoodTimer += delta;
             if (plantFoodTimer >= plantFoodDuration) {
@@ -75,15 +68,11 @@ public class DirectionalMeleeComponent implements GameComponent {
                     owner.setState(Plant.State.PLANT_FOOD_OUTRO);
                     introOutroTimer = plantFoodOutroDuration;
                 } else {
-                    owner.setState(Plant.State.IDLE);
-                }
-            }
-            return;
+                    owner.setState(Plant.State.IDLE);}
+            }return;
         }
-
         lastAttackTick += delta;
         if (owner.getState() != Plant.State.IDLE) owner.setState(Plant.State.IDLE);
-
         if (lastAttackTick >= attackIntervalTicks) {
             List<Damageable> rightTargets;
             List<Damageable> leftTargets;
@@ -91,8 +80,7 @@ public class DirectionalMeleeComponent implements GameComponent {
                 if (!rightTargets.isEmpty()) {
                     attack(rightTargets);
                     lastAttackTick = 0;
-                    if (owner.getState() != Plant.State.HIT_RIGHT) owner.setState(Plant.State.HIT_RIGHT);
-                }
+                    if (owner.getState() != Plant.State.HIT_RIGHT) owner.setState(Plant.State.HIT_RIGHT);}
             }
             if ((leftTargets = checkLeft(owner)) != null) {
                 if (!leftTargets.isEmpty()) {
@@ -109,18 +97,15 @@ public class DirectionalMeleeComponent implements GameComponent {
             }
         }
     }
-
     public List<Damageable> checkRight(Plant owner) {
         Cell cell = owner.getCell();
         if (cell == null) return null;
-
         List<Cell> cells = Cell.getCellsInRow(cell, LevelMenuController.getGameCells());
         List<Zombie> rowZombies = Cell.getZombiesInCells(cells);
         List<Damageable> targets = new ArrayList<>();
         for (Zombie zombie : rowZombies) {
             if (zombie.getX() >= owner.getX() && zombie.getX() - owner.getX() <= rangeX) {
-                targets.add(zombie);
-            }
+                targets.add(zombie);}
         }
         Cell rightCell = Cell.nextCell(cell, LevelMenuController.getGameCells());
         if (rightCell != null){
@@ -129,18 +114,15 @@ public class DirectionalMeleeComponent implements GameComponent {
         }
         return targets;
     }
-
     public List<Damageable> checkLeft(Plant owner) {
         Cell cell = owner.getCell();
         if (cell == null) return null;
-
         List<Cell> cells = Cell.getCellsInRow(cell, LevelMenuController.getGameCells());
         List<Zombie> rowZombies = Cell.getZombiesInCells(cells);
         List<Damageable> targets = new ArrayList<>();
         for (Zombie zombie : rowZombies) {
             if (zombie.getX() <= owner.getX() && owner.getX() - zombie.getX() <= rangeX) {
-                targets.add(zombie);
-            }
+                targets.add(zombie);}
         }
         Cell rightCell = Cell.previousCell(cell, LevelMenuController.getGameCells());
         if (rightCell != null){
@@ -149,11 +131,9 @@ public class DirectionalMeleeComponent implements GameComponent {
         }
         return targets;
     }
-
     private void attack(List<Damageable> targets) {
         for (Damageable damageable : targets) {
-            damageable.takeDamage(damage, "NORMAL");
-        }
+            damageable.takeDamage(damage, "NORMAL");}
     }
 
     private void dealPlantFoodDamage(Plant owner) {

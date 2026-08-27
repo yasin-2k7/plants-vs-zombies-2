@@ -44,21 +44,17 @@ public class GreenhouseMenuScreen extends MenuScreen {
         backgroundImage.setFillParent(true);
         mainStack.add(backgroundImage);
 
-        // --- ساخت نوار بالایی (Top Bar) ---
         Table topTable = new Table();
         topTable.top().setFillParent(true);
-        topTable.pad(60f, 70f, 0f, 70f); // padTop برای پایین‌تر آوردن دکمه‌ها
+        topTable.pad(60f, 70f, 0f, 70f);
 
-        // ۱. دکمه‌های سمت چپ (برگشت + شاپ)
         Button backBtn = createBackButton();
         Button shopBtn = createShopButton();
 
         topTable.add(backBtn).size(65, 65).padRight(15).padLeft(120);
         topTable.add(shopBtn).size(65, 65);
+        topTable.add().expandX();
 
-        topTable.add().expandX(); // اسپیسر
-
-        // ۲. بخش منابع سمت راست با ResourcesTable
         User currentUser = App.getCurrentUser();
         resourcesTable = new ResourcesTable(currentUser, game);
 
@@ -72,13 +68,11 @@ public class GreenhouseMenuScreen extends MenuScreen {
         topTable.add(rightContainer).right();
         mainStack.add(topTable);
 
-        // --- گرید گلدان‌ها ---
         gridTable = new Table();
         gridTable.setFillParent(true);
         gridTable.top().padTop(280);
         mainStack.add(gridTable);
 
-        // --- Label پیام‌ها ---
         statusLabel = new Label("", skin);
         statusLabel.setColor(Color.YELLOW);
         statusLabel.setAlignment(Align.center);
@@ -127,19 +121,18 @@ public class GreenhouseMenuScreen extends MenuScreen {
         TextureRegion shopNorm = game.textureBank.region("IMAGE_UI_HUD_WORLDMAP_BUTTONS_HUD_STORE_NORMAL");
         TextureRegion shopPress = game.textureBank.region("IMAGE_UI_HUD_WORLDMAP_BUTTONS_HUD_STORE_SELECTED");
 
-            ImageButton.ImageButtonStyle style = new ImageButton.ImageButtonStyle();
-            style.up = new TextureRegionDrawable(shopNorm);
-            if (shopPress != null) style.down = new TextureRegionDrawable(shopPress);
+        ImageButton.ImageButtonStyle style = new ImageButton.ImageButtonStyle();
+        style.up = new TextureRegionDrawable(shopNorm);
+        if (shopPress != null) style.down = new TextureRegionDrawable(shopPress);
 
-            ImageButton btn = new ImageButton(style);
-            btn.addListener(new ClickListener() {
-                @Override
-                public void clicked(InputEvent event, float x, float y) {
-                    fadeAndSwitchScreen(new ShopMenuScreen(game));
-                }
-            });
-            return btn;
-
+        ImageButton btn = new ImageButton(style);
+        btn.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                fadeAndSwitchScreen(new ShopMenuScreen(game));
+            }
+        });
+        return btn;
     }
 
     private void refreshGrid() {
@@ -175,131 +168,134 @@ public class GreenhouseMenuScreen extends MenuScreen {
         final Stack potStack = new Stack();
 
         if (pot.isLocked()) {
-            Image lockImage = new Image(game.textureBank.region(TEX_POT_LOCKED));
-            potStack.add(lockImage);
-
-            Table buyOverlay = new Table();
-            buyOverlay.setFillParent(true);
-
-            TextButton buyBtn = new TextButton("Unlock", skin);
-            buyBtn.getLabel().setFontScale(0.45f);
-            buyBtn.addListener(new ClickListener() {
-                @Override
-                public void clicked(InputEvent event, float cx, float cy) {
-                    refreshGrid();
-                }
-            });
-
-            buyOverlay.bottom().add(buyBtn).width(70).height(24).padBottom(-5);
-            potStack.add(buyOverlay);
-
+            buildLockedPot(potStack);
         } else if (pot.isEmpty()) {
-            Image emptyImage = new Image(game.textureBank.region(TEX_POT_EMPTY));
-            potStack.add(emptyImage);
-
-            potStack.setTouchable(Touchable.enabled);
-            potStack.addListener(new ClickListener() {
-                @Override
-                public void clicked(InputEvent event, float cx, float cy) {
-                    String resultMessage = controller.plantPot(x, y);
-                    showToast(resultMessage);
-                    refreshGrid();
-                }
-            });
-
+            buildEmptyPot(potStack, x, y);
         } else {
-            Image potBg = new Image(game.textureBank.region(TEX_POT_EMPTY));
-            potStack.add(potBg);
-
-            String pamPath = PlantsCollectionMenuScreen.getPlantAnimAddress(pot.getPlantType());
-            String clip = PlantsCollectionMenuScreen.getPlantInitialClip(pot.getPlantType());
-
-            PamActor plantPamActor = new PamActor(game.pamPlayer, pamPath, clip, 0.6f, null);
-
-            if (pot.isReady()) {
-                plantPamActor.setColor(READY_COLOR);
-            } else {
-                plantPamActor.setColor(GROWING_TINT);
-            }
-
-            Table plantContainer = new Table();
-            plantContainer.setFillParent(true);
-
-            plantContainer.add(plantPamActor).center().padBottom(40f);
-            potStack.add(plantContainer);
-
-            if (!pot.isReady()) {
-                Table overlayTable = new Table();
-                overlayTable.setFillParent(true);
-
-                Table timerTable = new Table();
-                TextureRegion timerRegion = game.textureBank.region("finish_timer_background");
-                if (timerRegion != null) timerTable.background(new TextureRegionDrawable(timerRegion));
-
-                long remainingHours = pot.getRemainingHours();
-                Label timeLabel = new Label(remainingHours + "h", skin);
-                timeLabel.setFontScale(0.55f);
-                timeLabel.setColor(Color.WHITE);
-                timerTable.add(timeLabel).pad(2, 6, 2, 6);
-
-                Table growButtonTable = new Table();
-                TextureRegion btnRegion = game.textureBank.region("IMAGE_ZEN_GARDEN_BUTTON_UNLOCK_ACTIVE");
-                if (btnRegion != null) growButtonTable.background(new TextureRegionDrawable(btnRegion));
-
-                int gemCost = (int) Math.ceil(remainingHours);
-                Label gemLabel = new Label(String.valueOf(gemCost), skin);
-                gemLabel.setFontScale(0.55f);
-                gemLabel.setColor(Color.WHITE);
-
-                TextureRegion gemRegion = game.textureBank.region("GEM_LARGE");
-                Image gemImage = (gemRegion != null) ? new Image(gemRegion) : new Image(game.textureBank.region(TEX_POT_EMPTY));
-
-                growButtonTable.add(gemLabel).padRight(2);
-                growButtonTable.add(gemImage).size(14, 14);
-
-                overlayTable.top().add(timerTable).padTop(-5).row();
-                overlayTable.bottom().add(growButtonTable).padBottom(-2);
-
-                potStack.add(overlayTable);
-            }
-
-            potStack.setTouchable(Touchable.enabled);
-            potStack.addListener(new ClickListener() {
-                @Override
-                public void clicked(InputEvent event, float cx, float cy) {
-                    String resultMessage;
-                    if (pot.isReady()) {
-                        resultMessage = controller.collect(x, y);
-                    } else {
-                        resultMessage = controller.grow(x, y);
-                    }
-                    showToast(resultMessage);
-                    refreshGrid();
-                }
-            });
+            buildOccupiedPot(potStack, pot, x, y);
         }
 
         cell.add(potStack).size(95, 95);
         return cell;
     }
 
+    private void buildLockedPot(Stack potStack) {
+        Image lockImage = new Image(game.textureBank.region(TEX_POT_LOCKED));
+        potStack.add(lockImage);
+
+        Table buyOverlay = new Table();
+        buyOverlay.setFillParent(true);
+
+        TextButton buyBtn = new TextButton("Unlock", skin);
+        buyBtn.getLabel().setFontScale(0.45f);
+        buyBtn.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float cx, float cy) {
+                refreshGrid();
+            }
+        });
+
+        buyOverlay.bottom().add(buyBtn).width(70).height(24).padBottom(-5);
+        potStack.add(buyOverlay);
+    }
+
+    private void buildEmptyPot(Stack potStack, final int x, final int y) {
+        Image emptyImage = new Image(game.textureBank.region(TEX_POT_EMPTY));
+        potStack.add(emptyImage);
+
+        potStack.setTouchable(Touchable.enabled);
+        potStack.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float cx, float cy) {
+                String resultMessage = controller.plantPot(x, y);
+                showToast(resultMessage);
+                refreshGrid();
+            }
+        });
+    }
+
+    private void buildOccupiedPot(Stack potStack, final Pot pot, final int x, final int y) {
+        Image potBg = new Image(game.textureBank.region(TEX_POT_EMPTY));
+        potStack.add(potBg);
+
+        String pamPath = PlantsCollectionMenuScreen.getPlantAnimAddress(pot.getPlantType());
+        String clip = PlantsCollectionMenuScreen.getPlantInitialClip(pot.getPlantType());
+        PamActor plantPamActor = new PamActor(game.pamPlayer, pamPath, clip, 0.6f, null);
+
+        plantPamActor.setColor(pot.isReady() ? READY_COLOR : GROWING_TINT);
+
+        Table plantContainer = new Table();
+        plantContainer.setFillParent(true);
+        plantContainer.add(plantPamActor).center().padBottom(40f);
+        potStack.add(plantContainer);
+
+        if (!pot.isReady()) {
+            addTimerOverlay(potStack, pot);
+        }
+
+        potStack.setTouchable(Touchable.enabled);
+        potStack.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float cx, float cy) {
+                String resultMessage = pot.isReady() ? controller.collect(x, y) : controller.grow(x, y);
+                showToast(resultMessage);
+                refreshGrid();
+            }
+        });
+    }
+
+    private void addTimerOverlay(Stack potStack, Pot pot) {
+        Table overlayTable = new Table();
+        overlayTable.setFillParent(true);
+
+        Table timerTable = new Table();
+        TextureRegion timerRegion = game.textureBank.region("finish_timer_background");
+        if (timerRegion != null) timerTable.background(new TextureRegionDrawable(timerRegion));
+
+        long remainingHours = pot.getRemainingHours();
+        Label timeLabel = new Label(remainingHours + "h", skin);
+        timeLabel.setFontScale(0.55f);
+        timeLabel.setColor(Color.WHITE);
+        timerTable.add(timeLabel).pad(2, 6, 2, 6);
+
+        Table growButtonTable = new Table();
+        TextureRegion btnRegion = game.textureBank.region("IMAGE_ZEN_GARDEN_BUTTON_UNLOCK_ACTIVE");
+        if (btnRegion != null) growButtonTable.background(new TextureRegionDrawable(btnRegion));
+
+        int gemCost = (int) Math.ceil(remainingHours);
+        Label gemLabel = new Label(String.valueOf(gemCost), skin);
+        gemLabel.setFontScale(0.55f);
+        gemLabel.setColor(Color.WHITE);
+
+        TextureRegion gemRegion = game.textureBank.region("GEM_LARGE");
+        Image gemImage =
+            (gemRegion != null) ? new Image(gemRegion) : new Image(game.textureBank.region(TEX_POT_EMPTY));
+
+        growButtonTable.add(gemLabel).padRight(2);
+        growButtonTable.add(gemImage).size(14, 14);
+
+        overlayTable.top().add(timerTable).padTop(-5).row();
+        overlayTable.bottom().add(growButtonTable).padBottom(-2);
+
+        potStack.add(overlayTable);
+    }
+
     private Button createBackButton() {
         TextureRegion backNorm = game.textureBank.region("IMAGE_UI_MAINMENU_BACK_BTN_NORMAL");
         TextureRegion backPress = game.textureBank.region("IMAGE_UI_MAINMENU_BACK_BTN_PRESSED");
 
-            ImageButton.ImageButtonStyle style = new ImageButton.ImageButtonStyle();
-            style.up = new TextureRegionDrawable(backNorm);
-            if (backPress != null) style.down = new TextureRegionDrawable(backPress);
+        ImageButton.ImageButtonStyle style = new ImageButton.ImageButtonStyle();
+        style.up = new TextureRegionDrawable(backNorm);
+        if (backPress != null) style.down = new TextureRegionDrawable(backPress);
 
-            ImageButton btn = new ImageButton(style);
-            btn.addListener(new ClickListener() {
-                @Override
-                public void clicked(InputEvent event, float x, float y) {
-                    fadeAndSwitchScreen(new MainMenuScreen(game));
-                }
-            });
-            return btn;
-
+        ImageButton btn = new ImageButton(style);
+        btn.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                fadeAndSwitchScreen(new MainMenuScreen(game));
+            }
+        });
+        return btn;
     }
 
     private void showToast(String message) {

@@ -41,9 +41,6 @@ public class MainMenuController implements MenuController {
             case "mu point":
                 GameWorld game = MuPointLevel.createMuPointLevel();
                 App.setCurrentGame(game);
-//
-//                AppView.setCurrentScreen(PlantMenuView.getInstance());
-//                PlantMenuView.getInstance().getController().reset();
                 break;
         }
 
@@ -79,8 +76,6 @@ public class MainMenuController implements MenuController {
             table.add(contentLabel).left().expandX().row();
             news.markAsRead();
         }
-
-
         return table;
     }
 

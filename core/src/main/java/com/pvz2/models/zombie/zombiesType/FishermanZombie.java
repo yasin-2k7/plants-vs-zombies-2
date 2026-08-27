@@ -69,7 +69,8 @@ public class FishermanZombie extends Zombie {
             if (hookCooldown < HOOK_INTERVAL - 0.5f && currentState == FishermanState.CAST) {
                 currentState = FishermanState.CAST_LOOP;
             } else if (hookCooldown < HOOK_INTERVAL - 1.5f &&
-                (currentState == FishermanState.CAST_LOOP || currentState == FishermanState.REEL || currentState == FishermanState.TOSS)) {
+                (currentState == FishermanState.CAST_LOOP || currentState == FishermanState.REEL ||
+                    currentState == FishermanState.TOSS)) {
                 currentState = FishermanState.IDLE;
             }
         }
@@ -78,30 +79,22 @@ public class FishermanZombie extends Zombie {
     private void tryHook() {
         GameWorld game = App.getCurrentGame();
         if (game == null) return;
-
-        // اصلاح شماره ۱: پیدا کردن دقیق سلول و سطر زامبی با در نظر گرفتن آفست زمین
         Cell zombieCell = Cell.findZombieCell(game.getGrid(), this);
         if (zombieCell == null) return;
         int row = zombieCell.getRow();
-
         Plant target = game.getNearestPlantInRow(row, this.x);
         if (target == null) return;
-
         Cell currentCell = Cell.findCell(target.getX(), target.getY(), game.getGrid());
         if (currentCell == null) return;
-
         int zombieCol = game.getCols() - 1;
-
         currentState = FishermanState.CAST;
-
-        // اصلاح شماره ۲: اگر گیاه دقیقاً در خانه کنار زامبی (یک ستون قبل) باشد، آن را نابود می‌کند
         if (currentCell.getCol() >= zombieCol - 1) {
             target.die();
             currentState = FishermanState.TOSS;
-            GameMenuController.updateState("Fisherman threw and destroyed plant at (" + target.getX() + ", " + target.getY() + ")");
+            GameMenuController.updateState("Fisherman threw and destroyed plant at (" + target.getX() +
+                ", " + target.getY() + ")");
             return;
         }
-
         int targetCol = currentCell.getCol() + 1;
         if (targetCol >= game.getCols()) {
             currentState = FishermanState.IDLE;
@@ -109,13 +102,10 @@ public class FishermanZombie extends Zombie {
         }
         Cell targetCell = game.getGrid()[row][targetCol];
 
-        // بررسی خالی بودن خانه سمت راست
         if (targetCell == null || !targetCell.isEmpty()) {
-            // اگر خانه مقصد پر باشد، انیمیشن باید به حالت عادی برگردد
             currentState = FishermanState.IDLE;
             return;
         }
-
         PlantLayer layer = null;
         for (PlantLayer l : PlantLayer.values()) {
             if (currentCell.getPlant(l) == target) {
@@ -124,8 +114,6 @@ public class FishermanZombie extends Zombie {
             }
         }
         if (layer == null) return;
-
-        // انتقال گیاه به خانه جدید
         currentCell.setPlant(null, layer);
         targetCell.setPlant(target, layer);
         target.setX((int) targetCell.getX());

@@ -8,16 +8,13 @@ import java.time.format.DateTimeFormatter;
 
 public class LocalDateAdapter implements JsonSerializer<LocalDate>, JsonDeserializer<LocalDate> {
 
-    // فرمت استاندارد تاریخ: YYYY-MM-DD
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ISO_LOCAL_DATE;
 
-    // تبدیل LocalDate به متن برای ذخیره در JSON
     @Override
     public JsonElement serialize(LocalDate src, Type typeOfSrc, JsonSerializationContext context) {
         return new JsonPrimitive(src.format(FORMATTER));
     }
 
-    // تبدیل متنِ داخل JSON به LocalDate هنگام خواندن فایل
     @Override
     public LocalDate deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
             throws JsonParseException {

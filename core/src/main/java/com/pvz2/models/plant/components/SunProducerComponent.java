@@ -71,7 +71,8 @@ public class SunProducerComponent implements GameComponent {
 
     private void ensurePlantFoodDurationLoaded(Plant owner) {
         if (plantFoodTotalDuration >= 0f) return;
-        plantFoodTotalDuration = AnimationDurations.getDuration(owner.getType(), PLANT_FOOD_CLIP, DEFAULT_PLANT_FOOD_DURATION);
+        plantFoodTotalDuration = AnimationDurations.getDuration(owner.getType(),
+            PLANT_FOOD_CLIP, DEFAULT_PLANT_FOOD_DURATION);
     }
 
     private void tickPlantFood(Plant owner, float delta) {

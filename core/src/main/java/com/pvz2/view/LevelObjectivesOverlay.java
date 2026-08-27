@@ -85,11 +85,13 @@ public class LevelObjectivesOverlay extends Table {
         } else if (levelSetup instanceof LockedPlantsLevelSetup) {
             objectives.add("Some of your plants are locked for this level. Make do with what you have!");
         } else if (levelSetup instanceof ConveyorLevelSetup) {
-            objectives.add("No sun will fall from the sky. Plants arrive on the conveyor belt instead — defeat every zombie!");
+            objectives.add("No sun will fall from the sky. " +
+                "Plants arrive on the conveyor belt instead — defeat every zombie!");
         } else if (levelSetup instanceof NightOpsLevelSetup) {
             objectives.add("It's nighttime — no sun will fall from the sky. Rely on sun-producing plants to survive!");
         } else if (levelSetup instanceof PlantWhatYouGetLevelSetup) {
-            objectives.add("You start with a fixed amount of sun and no Sunflowers. Plant wisely, then bring on the zombies!");
+            objectives.add("You start with a fixed amount of sun and no Sunflowers." +
+                " Plant wisely, then bring on the zombies!");
         } else if (levelSetup instanceof BigWaveBeachLevelSetup) {
             objectives.add("Defeat all the zombies before they reach your house.");
             objectives.add("Watch the tide line — it can rise and shrink your lawn!");

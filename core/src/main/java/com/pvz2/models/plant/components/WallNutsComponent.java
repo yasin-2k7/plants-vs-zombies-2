@@ -5,7 +5,7 @@ import com.pvz2.models.plant.Plant;
 
 public abstract class WallNutsComponent implements GameComponent {
 
-    private final float PLANTFOOD_TIME = 2f;
+    private final static float PLANTFOOD_TIME = 2f;
     private float plantfoodTimer = 0f;
 
     @Override

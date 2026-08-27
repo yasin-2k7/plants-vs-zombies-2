@@ -7,9 +7,9 @@ import pvz.libpvz.pam.PamPlayer;
 public class WindGraphic {
     private FrostbiteCavesWorld.Wind wind;
     private float stateTime = 0;
-    private final String PAM_PATH = "768/FULL/EFFECTS/FROSTBITE_CHILL_WIND/FROSTBITE_CHILL_WIND.PAM";
-    private final String PAM_CLIP = "animation";
-    private final float WORLD_X = LawnGrid.getCellX(4);
+    private static final String PAM_PATH = "768/FULL/EFFECTS/FROSTBITE_CHILL_WIND/FROSTBITE_CHILL_WIND.PAM";
+    private static final String PAM_CLIP = "animation";
+    private static final float WORLD_X = LawnGrid.getCellX(4);
     private final float worldY;
 
     public WindGraphic(FrostbiteCavesWorld.Wind wind) {

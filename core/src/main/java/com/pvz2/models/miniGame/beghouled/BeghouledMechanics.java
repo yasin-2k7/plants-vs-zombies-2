@@ -62,10 +62,6 @@ public class BeghouledMechanics implements Mechanic {
         needsViewUpdate = true;
     }
 
-    private PlantType randomPlantType() {
-        return availablePlantTypes.get(random.nextInt(availablePlantTypes.size()));
-    }
-
     private void placePlant(GameWorld world, int row, int col, PlantType type) {
         Cell cell = world.getGrid()[row][col];
         Plant plant = PlantFactory.createPlant(type,(int) App.getCellCenterX(col), (int) App.getCellCenterY(row), cell);
@@ -78,9 +74,10 @@ public class BeghouledMechanics implements Mechanic {
 
     private void placePlantWithFall(GameWorld world, int row, int col, PlantType type) {
         Cell cell = world.getGrid()[row][col];
-        Plant plant = PlantFactory.createPlant(type, (int) App.getCellCenterX(col), (int) App.getCellCenterY(row), cell);
+        Plant plant = PlantFactory.createPlant(type, (int) App.getCellCenterX(col)
+            , (int) App.getCellCenterY(row), cell);
         plant.setX(App.getCellCenterX(col));
-        plant.setY(App.getCellCenterY(row - 1.5f)); // one and a half cells above, in pixels
+        plant.setY(App.getCellCenterY(row - 1.5f));
         plant.slideTo(App.getCellCenterX(col), App.getCellCenterY(row));
         cell.setPlant(plant, PlantLayer.MAIN);
 
@@ -127,13 +124,11 @@ public class BeghouledMechanics implements Mechanic {
         if (plantB != null) {
             cellA.setPlant(plantB, PlantLayer.MAIN);
             plantB.setCell(cellA);
-            // شروع انیمیشن نرم به خانه جديد
             plantB.startCombineAnimation(App.getCellCenterX(a.col()), App.getCellCenterY(a.row()));
         }
         if (plantA != null) {
             cellB.setPlant(plantA, PlantLayer.MAIN);
             plantA.setCell(cellB);
-            // شروع انیمیشن نرم به خانه جديد
             plantA.startCombineAnimation(App.getCellCenterX(b.col()), App.getCellCenterY(b.row()));
         }
     }

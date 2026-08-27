@@ -61,8 +61,7 @@ public class Projectile implements Resettable {
         GameWorld game = App.getCurrentGame();
         if (hitStrategy instanceof PlantDamageStrategy) {
             checkProjectilesTowardPlants(oldX, oldY);
-            return;
-        }
+            return;}
         Damageable zombie = null;
         if (type != null && type.movement != null) {
             if (type.movement.equals("STRAIGHT") && !(hitStrategy instanceof PlantDamageStrategy)) {
@@ -75,29 +74,20 @@ public class Projectile implements Resettable {
                             pierce--;
                             if (pierce <= 0) {
                                 dead = true;
-                                return;
-                            }
-                        }
-                    }
-                }
+                                return;}}}}
             }
             if (type.movement.equals("STRAIGHT")) {
                 zombie = strikeStrategy.strike(x, y, oldX, oldY, lastTargets);
             } else if (type.movement.equals("LOBBED")) {
-                zombie = strikeStrategy.strike(x, y, target);
-            }
-        }
+                zombie = strikeStrategy.strike(x, y, target);}}
         if (zombie instanceof SnorkelZombie snorkel) {
             if (snorkel.isUnderwater() && type != null && "STRAIGHT".equals(type.movement)) {
-                zombie = null;
-            }
-        }
+                zombie = null;}}
         if (zombie != null) {
             if (zombie instanceof DeflectorZombie deflector) {
                 if (deflector.tryDeflect(this)) {
                     dead = true;
-                    return;
-                }
+                    return;}
             }
             if (hitStrategy != null) {
                 hitStrategy.applyDamage(zombie, Stream.concat(
@@ -108,28 +98,19 @@ public class Projectile implements Resettable {
             pierce--;
             if (pierce == 0) {
                 dead = true;
-                return;
-            }
+                return;}
         }
         if (movementStrategy.isDead(this)){
-            dead = true;
-        }
+            dead = true;}
     }
-
     @Override
-    public void reset(float x, float y, int size, SunProducerComponent component) {
-    }
-
+    public void reset(float x, float y, int size, SunProducerComponent component) {}
     @Override
-    public void reset(float x, float y) {
-    }
-
+    public void reset(float x, float y) {}
     @Override
     public void reset(float x, float y,
-                      HitStrategy hitStrategy,
-                      MovementStrategy movementStrategy,
-                      CheckStrike checkStrike,
-                      ProjectileType type) {
+                      HitStrategy hitStrategy, MovementStrategy movementStrategy,
+                      CheckStrike checkStrike, ProjectileType type) {
         this.x = x;
         this.y = y;
         originX = x;

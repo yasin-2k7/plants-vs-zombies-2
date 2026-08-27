@@ -51,13 +51,11 @@ public class PlantCardView extends Stack {
     public void build(){
         add(new Image(App.getGameApp().textureBank.region(
             boost ? "IMAGE_UI_PACKETS_BOOST" : "IMAGE_UI_PACKETS_MODERNDAY")));
-
         Table plantTable = new Table();
         Table detailsTable = new Table();
-
         plantTable.bottom().left().padLeft(5).padBottom(10);
-        plantTable.add(new Image(App.getGameApp().textureBank.region(PlantsTable.getPlantsMap().get(type)))).size(80/150f*getWidth(), 55/100f*getHeight());
-
+        plantTable.add(new Image(App.getGameApp().textureBank.region(PlantsTable.getPlantsMap().get(type))))
+            .size(80/150f*getWidth(), 55/100f*getHeight());
         detailsTable.left().top();
         Stack familyStack = new Stack();
         Image familyBg = new Image(App.getGameApp().textureBank.region(
@@ -68,9 +66,7 @@ public class PlantCardView extends Stack {
             PlantsTable.getPlantsFamilyMap().get(type.family))));
         detailsTable.add(familyStack).padLeft(-10).padTop(-15).size(30,30);
 
-
         this.add(plantTable);
-
 
         if (!lock) {
             Table levelWrapper = new Table();

@@ -48,7 +48,6 @@ public class LevelMenuScreen extends MenuScreen {
 
     @Override
     protected void buildUI() {
-
         float stageWidth = stage.getWidth();
         float stageHeight = stage.getHeight();
 
@@ -60,24 +59,37 @@ public class LevelMenuScreen extends MenuScreen {
             }
         };
 
-        int totalLevels = 4;
-
         User currentUser = App.getCurrentUser();
         Chapter currentChapter = currentUser.getCurrentChapter();
         int unlockedLevel = currentUser.getUnlockedLevel();
         int unlockedChapterOrdinal = currentUser.getUnlockedChapter();
-
         boolean isChapterLocked = (currentChapter != null) && (currentChapter.ordinal() > unlockedChapterOrdinal);
 
+        int totalLevels = 4;
         float nodeSize = 350f;
-        float spacingX = 300f;
         float startX = 250f;
         float baseY = (stageHeight - nodeSize) / 2f;
 
-        float[] yOffsets = { -120f, 150f, -100f, 130f, -80f, 100f };
-
         Vector2[] nodeCenters = new Vector2[totalLevels];
         Vector2[] nodePositions = new Vector2[totalLevels];
+
+        calculateNodePositions(totalLevels, nodeSize, startX, baseY, nodePositions, nodeCenters);
+        buildPathActors(totalLevels, nodeCenters, currentChapter);
+        buildLevelNodes(totalLevels, nodeSize, nodePositions, currentChapter,
+            unlockedLevel, unlockedChapterOrdinal, isChapterLocked);
+
+        float maxX = nodePositions[totalLevels - 1].x;
+        float totalWidth = maxX + nodeSize + startX;
+        minScrollX = Math.min(0, stageWidth - totalWidth);
+
+        mainStack.add(contentGroup);
+        addBackButton();
+    }
+
+    private void calculateNodePositions(int totalLevels, float nodeSize, float startX, float baseY,
+                                        Vector2[] nodePositions, Vector2[] nodeCenters) {
+        float spacingX = 300f;
+        float[] yOffsets = { -120f, 150f, -100f, 130f, -80f, 100f };
 
         for (int i = 0; i < totalLevels; i++) {
             float offsetY = yOffsets[i % yOffsets.length];
@@ -87,108 +99,78 @@ public class LevelMenuScreen extends MenuScreen {
             nodePositions[i] = new Vector2(posX, posY);
             nodeCenters[i] = new Vector2(posX + nodeSize / 2f, posY + nodeSize / 2f);
         }
+    }
 
-        final List<String> chapterPathPams = getPathPamsForChapter(currentChapter);
-        final float tileSpacing = getTileSpacingForChapter(currentChapter);
+    private void buildPathActors(int totalLevels, Vector2[] nodeCenters, Chapter currentChapter) {
+        List<String> chapterPathPams = getPathPamsForChapter(currentChapter);
+        float tileSpacing = getTileSpacingForChapter(currentChapter);
 
         for (int i = 0; i < totalLevels - 1; i++) {
-            final Vector2 c1 = nodeCenters[i];
-            final Vector2 c2 = nodeCenters[i + 1];
+            Vector2 c1 = nodeCenters[i];
+            Vector2 c2 = nodeCenters[i + 1];
 
-            final float distance = c1.dst(c2);
-            final float angleDeg = MathUtils.atan2(c2.y - c1.y, c2.x - c1.x) * MathUtils.radiansToDegrees;
+            float distance = c1.dst(c2);
+            float angleDeg = MathUtils.atan2(c2.y - c1.y, c2.x - c1.x) * MathUtils.radiansToDegrees;
+            int tileCount = Math.max(1, (int) (distance / tileSpacing));
 
-            final int tileCount = Math.max(1, (int) (distance / tileSpacing));
-
-            final boolean isPathUnlocked = !isChapterLocked && ((i + 1) < unlockedLevel);
-            final int levelIndex = i;
-
-            Actor pathActor = new Actor() {
-                private float stateTime = 0f;
-                private final Matrix4 originalMatrix = new Matrix4();
-                private final Matrix4 transformMatrix = new Matrix4();
-
-                @Override
-                public void act(float delta) {
-                    super.act(delta);
-                    stateTime += delta;
-                }
-
-                @Override
-                public void draw(Batch batch, float parentAlpha) {
-                    try {
-                        originalMatrix.set(batch.getTransformMatrix());
-
-                        for (int k = 1; k < tileCount; k++) {
-                            float t = (float) k / tileCount;
-                            float px = MathUtils.lerp(c1.x, c2.x, t);
-                            float py = MathUtils.lerp(c1.y, c2.y, t);
-
-                            int pamIndex = (levelIndex + k) % chapterPathPams.size();
-                            String selectedPam = chapterPathPams.get(pamIndex);
-
-                            transformMatrix.set(originalMatrix);
-                            transformMatrix.translate(px, py, 0);
-                            transformMatrix.rotate(0, 0, 1, angleDeg);
-
-                            batch.setTransformMatrix(transformMatrix);
-
-                            pamPlayer.draw(batch, selectedPam, "idle", stateTime, 0, 0, true);
-                        }
-
-                        batch.setTransformMatrix(originalMatrix);
-                    } catch (Exception ignored) {}
-                }
-            };
-
+            Actor pathActor = createPathActor(c1, c2, angleDeg, tileCount, i, chapterPathPams);
             contentGroup.addActor(pathActor);
         }
+    }
 
+    private Actor createPathActor(final Vector2 c1, final Vector2 c2, final float angleDeg,
+                                  final int tileCount, final int levelIndex, final List<String> chapterPathPams) {
+        return new Actor() {
+            private float stateTime = 0f;
+            private final Matrix4 originalMatrix = new Matrix4();
+            private final Matrix4 transformMatrix = new Matrix4();
+
+            @Override
+            public void act(float delta) {
+                super.act(delta);
+                stateTime += delta;
+            }
+
+            @Override
+            public void draw(Batch batch, float parentAlpha) {
+                try {
+                    originalMatrix.set(batch.getTransformMatrix());
+
+                    for (int k = 1; k < tileCount; k++) {
+                        float t = (float) k / tileCount;
+                        float px = MathUtils.lerp(c1.x, c2.x, t);
+                        float py = MathUtils.lerp(c1.y, c2.y, t);
+
+                        int pamIndex = (levelIndex + k) % chapterPathPams.size();
+                        String selectedPam = chapterPathPams.get(pamIndex);
+
+                        transformMatrix.set(originalMatrix);
+                        transformMatrix.translate(px, py, 0);
+                        transformMatrix.rotate(0, 0, 1, angleDeg);
+
+                        batch.setTransformMatrix(transformMatrix);
+                        pamPlayer.draw(batch, selectedPam, "idle", stateTime, 0, 0, true);
+                    }
+
+                    batch.setTransformMatrix(originalMatrix);
+                } catch (Exception ignored) {}
+            }
+        };
+    }
+
+    private void buildLevelNodes(int totalLevels, float nodeSize, Vector2[] nodePositions, Chapter currentChapter,
+                                 int unlockedLevel, int unlockedChapterOrdinal, boolean isChapterLocked) {
         for (int i = 0; i < totalLevels; i++) {
             final int levelIndex = i + 1;
             final boolean isBoss = (i == totalLevels - 1);
             final String nodePam = getNodePamForLevel(currentChapter, isBoss);
+            final int levelStatus = determineLevelStatus(levelIndex, currentChapter,
+                unlockedLevel, unlockedChapterOrdinal, isChapterLocked);
 
-            Vector2 pos = nodePositions[i];
-
-            final int levelStatus;
-            if (isChapterLocked) {
-                levelStatus = 0;
-            } else if (levelIndex < unlockedLevel || currentChapter.ordinal()+1 < unlockedChapterOrdinal) {
-                levelStatus = 2;
-            } else if (levelIndex == unlockedLevel) {
-                levelStatus = 1;
-            } else {
-                levelStatus = 0;
-            }
-
-            Actor levelNodeActor = new Actor() {
-                private float stateTime = 0f;
-
-                @Override
-                public void act(float delta) {
-                    super.act(delta);
-                    stateTime += delta;
-                }
-
-                @Override
-                public void draw(Batch batch, float parentAlpha) {
-                    float centerX = getX() + getWidth() / 2f;
-                    float centerY = getY() + getHeight() / 2f;
-
-                    String animName = "locked_idle";
-                    if (levelStatus == 2) animName = "finished";
-                    else if (levelStatus == 1) animName = "unlocked";
-
-                    try {
-                        pamPlayer.draw(batch, nodePam, animName, stateTime, centerX, centerY, true);
-                    } catch (Exception ignored) {}
-                }
-            };
-
+            Actor levelNodeActor = createNodeActor(nodePam, levelStatus);
             float currentSize = isBoss ? nodeSize * 1.25f : nodeSize;
             levelNodeActor.setSize(currentSize, currentSize);
-            levelNodeActor.setPosition(pos.x, pos.y);
+            levelNodeActor.setPosition(nodePositions[i].x, nodePositions[i].y);
 
             levelNodeActor.addListener(new ClickListener() {
                 @Override
@@ -205,13 +187,40 @@ public class LevelMenuScreen extends MenuScreen {
 
             contentGroup.addActor(levelNodeActor);
         }
+    }
 
-        float maxX = nodePositions[totalLevels - 1].x;
-        float totalWidth = maxX + nodeSize + startX;
-        minScrollX = Math.min(0, stageWidth - totalWidth);
+    private int determineLevelStatus(int levelIndex, Chapter currentChapter,
+                                     int unlockedLevel, int unlockedChapterOrdinal, boolean isChapterLocked) {
+        if (isChapterLocked) return 0;
+        if (levelIndex < unlockedLevel || currentChapter.ordinal() + 1 < unlockedChapterOrdinal) return 2;
+        if (levelIndex == unlockedLevel) return 1;
+        return 0;
+    }
 
-        mainStack.add(contentGroup);
-        addBackButton();
+    private Actor createNodeActor(final String nodePam, final int levelStatus) {
+        return new Actor() {
+            private float stateTime = 0f;
+
+            @Override
+            public void act(float delta) {
+                super.act(delta);
+                stateTime += delta;
+            }
+
+            @Override
+            public void draw(Batch batch, float parentAlpha) {
+                float centerX = getX() + getWidth() / 2f;
+                float centerY = getY() + getHeight() / 2f;
+
+                String animName = "locked_idle";
+                if (levelStatus == 2) animName = "finished";
+                else if (levelStatus == 1) animName = "unlocked";
+
+                try {
+                    pamPlayer.draw(batch, nodePam, animName, stateTime, centerX, centerY, true);
+                } catch (Exception ignored) {}
+            }
+        };
     }
 
     private void addBackButton() {
@@ -315,6 +324,7 @@ public class LevelMenuScreen extends MenuScreen {
                 return List.of("768/INITIAL/WORLDMAP/PATHS/ANIM6.PAM");
         }
     }
+
     private float getTileSpacingForChapter(Chapter chapter) {
         if (chapter == null) return 90f;
 
@@ -331,6 +341,7 @@ public class LevelMenuScreen extends MenuScreen {
                 return 90f;
         }
     }
+
     private String getNodePamForLevel(Chapter chapter, boolean isBoss) {
         if (chapter == null) return "768/INITIAL/WORLDMAP/LEVEL_NODE/LEVEL_NODE.PAM";
 

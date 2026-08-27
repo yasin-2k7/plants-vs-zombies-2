@@ -6,13 +6,10 @@ import com.pvz2.models.core.User;
 public class SettingMenuController implements MenuController {
     @Override
     public void changeMenu() {
-
     }
 
     @Override
     public void exitMenu() {
-        //needs edit
-//        AppView.currentScreen = MainMenuView.getInstance();
     }
 
     public String changeDifficulty(int newLevel) {
@@ -23,10 +20,5 @@ public class SettingMenuController implements MenuController {
         User user = App.getCurrentUser();
         user.setGameDifficulty(newLevel);
         return "Difficulty level changed to " + newLevel;
-    }
-
-    public void showCurrentMenu() {
-        //needs edit
-//        GameMenuView.getInstance().showResult("Current menu: settings menu");
     }
 }

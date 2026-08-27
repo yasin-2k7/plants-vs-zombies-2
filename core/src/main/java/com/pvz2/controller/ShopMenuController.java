@@ -17,8 +17,6 @@ public class ShopMenuController implements MenuController {
 
     @Override
     public void exitMenu() {
-        //needs edit
-//        AppView.currentScreen = GreenhouseMenuView.getInstance();
     }
 
     public List<String> showShopList() {
@@ -55,10 +53,5 @@ public class ShopMenuController implements MenuController {
         }
 
         return shopList.buy(itemId, type, count);
-    }
-
-    public void showCurrentMenu() {
-        //needs edit
-//        GameMenuView.getInstance().showResult("Current menu: shop menu");
     }
 }

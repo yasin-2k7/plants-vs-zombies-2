@@ -39,8 +39,6 @@ public class DodoRiderZombie extends Zombie {
         FLY_OVER_PLANTS.addAll(DANGEROUS_PLANTS);
     }
 
-    private static final float REACH_DISTANCE = 15f;
-
     private static final float FLY_START_DURATION = 0.25f;
     private static final float FLY_LOOP_DURATION = 0.5f;
     private static final float FLY_END_DURATION = 0.25f;

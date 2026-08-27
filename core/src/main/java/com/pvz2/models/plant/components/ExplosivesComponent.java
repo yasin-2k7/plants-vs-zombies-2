@@ -39,20 +39,15 @@ public class ExplosivesComponent implements GameComponent {
     private float plantFoodTimer = 0f;
     private float introOutroTimer = 0f;
 
-    // resolved lazily once the owner's PlantType is known
-    private float plantFoodIntroDuration = -1f; // 0 means "no intro configured"
+    private float plantFoodIntroDuration = -1f;
     private float plantFoodDuration = -1f;
-    private float plantFoodOutroDuration = -1f; // 0 means "no outro configured"
-
-    // jump-to-target (Squash-style) support
+    private float plantFoodOutroDuration = -1f;
     private boolean jumpsToTarget = false;
     private float jumpArcHeight = 120f;
     private boolean jumping = false;
     private boolean jumpingRight = false;
     private float jumpOriginX, jumpOriginY;
 
-    // plant-food multi-jump sequence (separate from the normal-trigger jump above,
-    // deliberately never touches isTriggered/lives/die())
     private final List<Cell> plantFoodJumpTargets = new ArrayList<>();
     private int plantFoodJumpIndex = -1;
     private boolean plantFoodJumpActive = false;
@@ -73,7 +68,8 @@ public class ExplosivesComponent implements GameComponent {
         if (plantFoodDuration >= 0f) return;
         plantFoodIntroDuration = AnimationDurations.hasClip(owner.getType(), PLANT_FOOD_INTRO_CLIP)
             ? AnimationDurations.getDuration(owner.getType(), PLANT_FOOD_INTRO_CLIP, 0f) : 0f;
-        plantFoodDuration = AnimationDurations.getDuration(owner.getType(), PLANT_FOOD_CLIP, DEFAULT_PLANT_FOOD_DURATION);
+        plantFoodDuration = AnimationDurations.getDuration(owner.getType(),
+            PLANT_FOOD_CLIP, DEFAULT_PLANT_FOOD_DURATION);
         plantFoodOutroDuration = AnimationDurations.hasClip(owner.getType(), PLANT_FOOD_OUTRO_CLIP)
             ? AnimationDurations.getDuration(owner.getType(), PLANT_FOOD_OUTRO_CLIP, 0f) : 0f;
     }
@@ -90,6 +86,12 @@ public class ExplosivesComponent implements GameComponent {
             return;
         }
 
+        if (updatePlantFoodStates(owner, delta)) return;
+        if (updateArming(owner, delta)) return;
+        updateTriggered(owner, delta);
+    }
+
+    private boolean updatePlantFoodStates(Plant owner, float delta) {
         if (owner.getState() == Plant.State.PLANT_FOOD_INTRO) {
             introOutroTimer -= delta;
             if (introOutroTimer <= 0f) {
@@ -97,7 +99,7 @@ public class ExplosivesComponent implements GameComponent {
                 plantFoodTimer = 0f;
                 owner.setState(Plant.State.PLANT_FOOD);
             }
-            return;
+            return true;
         }
 
         if (owner.getState() == Plant.State.PLANT_FOOD) {
@@ -110,7 +112,7 @@ public class ExplosivesComponent implements GameComponent {
                     owner.setState(Plant.State.IDLE);
                 }
             }
-            return;
+            return true;
         }
 
         if (owner.getState() == Plant.State.PLANT_FOOD_OUTRO) {
@@ -118,9 +120,13 @@ public class ExplosivesComponent implements GameComponent {
             if (introOutroTimer <= 0f) {
                 owner.setState(Plant.State.IDLE);
             }
-            return;
+            return true;
         }
 
+        return false;
+    }
+
+    private boolean updateArming(Plant owner, float delta) {
         if (!isArmed) {
             if (owner.getState() != Plant.State.UNARMED) {
                 owner.setState(Plant.State.UNARMED);
@@ -130,24 +136,15 @@ public class ExplosivesComponent implements GameComponent {
                 isArmed = true;
                 owner.setState(Plant.State.IDLE);
             }
-            return;
+            return true;
         }
+        return false;
+    }
 
+    private void updateTriggered(Plant owner, float delta) {
         if (isTriggered) {
             if (jumping) {
-                float t = maxPostTriggerDelay > 0f
-                    ? Math.min(1f, 1f - (postTriggerDelay / maxPostTriggerDelay)) : 1f;
-                boolean ascending = t < 0.5f;
-
-                Plant.State phaseState = ascending
-                    ? (jumpingRight ? Plant.State.JUMP_UP_RIGHT : Plant.State.JUMP_UP_LEFT)
-                    : (jumpingRight ? Plant.State.JUMP_DOWN_RIGHT : Plant.State.JUMP_DOWN_LEFT);
-                if (owner.getState() != phaseState) owner.setState(phaseState);
-
-                float x = lerp(jumpOriginX, target.getX(), t);
-                float y = lerp(jumpOriginY, target.getY(), t) + jumpArcHeight * 4f * t * (1f - t);
-                owner.setX((int) x);
-                owner.setY((int) y);
+                updateJumpAnimation(owner, delta);
             } else {
                 if (owner.getState() != Plant.State.TRIGGERED) {
                     owner.setState(Plant.State.TRIGGERED);
@@ -156,29 +153,7 @@ public class ExplosivesComponent implements GameComponent {
 
             postTriggerDelay -= delta;
             if (postTriggerDelay <= 0) {
-                if (jumping) {
-                    owner.setX((int) target.getX());
-                    owner.setY((int) target.getY());
-                    jumping = false;
-                }
-                lives--;
-                explosiveBehavior.execute(owner);
-
-                if (explodeCallback != null) {
-                    explodeCallback.onExplode(owner);
-                }
-
-                if (lives > 0) {
-                    postTriggerDelay = maxPostTriggerDelay;
-                    isTriggered = false;
-                    owner.setState(Plant.State.IDLE);
-                } else {
-                    if (delayedBehavior != null) {
-                        delayedBehavior.execute(owner);
-                    }
-                    if (owner.getType() == PlantType.HOT_POTATO) owner.setCell(null);
-                    owner.die();
-                }
+                finishTrigger(owner);
             }
             return;
         }
@@ -195,6 +170,48 @@ public class ExplosivesComponent implements GameComponent {
                 jumpOriginY = owner.getY();
                 jumpingRight = target.getX() > jumpOriginX;
             }
+        }
+    }
+
+    private void updateJumpAnimation(Plant owner, float delta) {
+        float t = maxPostTriggerDelay > 0f
+            ? Math.min(1f, 1f - (postTriggerDelay / maxPostTriggerDelay)) : 1f;
+        boolean ascending = t < 0.5f;
+
+        Plant.State phaseState = ascending
+            ? (jumpingRight ? Plant.State.JUMP_UP_RIGHT : Plant.State.JUMP_UP_LEFT)
+            : (jumpingRight ? Plant.State.JUMP_DOWN_RIGHT : Plant.State.JUMP_DOWN_LEFT);
+        if (owner.getState() != phaseState) owner.setState(phaseState);
+
+        float x = lerp(jumpOriginX, target.getX(), t);
+        float y = lerp(jumpOriginY, target.getY(), t) + jumpArcHeight * 4f * t * (1f - t);
+        owner.setX((int) x);
+        owner.setY((int) y);
+    }
+
+    private void finishTrigger(Plant owner) {
+        if (jumping) {
+            owner.setX((int) target.getX());
+            owner.setY((int) target.getY());
+            jumping = false;
+        }
+        lives--;
+        explosiveBehavior.execute(owner);
+
+        if (explodeCallback != null) {
+            explodeCallback.onExplode(owner);
+        }
+
+        if (lives > 0) {
+            postTriggerDelay = maxPostTriggerDelay;
+            isTriggered = false;
+            owner.setState(Plant.State.IDLE);
+        } else {
+            if (delayedBehavior != null) {
+                delayedBehavior.execute(owner);
+            }
+            if (owner.getType() == PlantType.HOT_POTATO) owner.setCell(null);
+            owner.die();
         }
     }
 
@@ -282,8 +299,7 @@ public class ExplosivesComponent implements GameComponent {
             if (plantFoodJumpTargets.size() == 2) break;
         }
 
-        if (plantFoodJumpTargets.isEmpty()) return; // no zombies on the field — nothing to do
-
+        if (plantFoodJumpTargets.isEmpty()) return;
         plantFoodOriginX = owner.getX();
         plantFoodOriginY = owner.getY();
         plantFoodJumpIndex = 0;
@@ -334,10 +350,6 @@ public class ExplosivesComponent implements GameComponent {
 
     public void setJumpsToTarget(boolean jumpsToTarget) {
         this.jumpsToTarget = jumpsToTarget;
-    }
-
-    public void setJumpArcHeight(float jumpArcHeight) {
-        this.jumpArcHeight = jumpArcHeight;
     }
 
     public interface ExplodeCallback {

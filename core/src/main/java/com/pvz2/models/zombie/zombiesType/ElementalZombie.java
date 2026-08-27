@@ -50,51 +50,41 @@ public class ElementalZombie extends Zombie {
     @Override
     public void update(float delta) {
         if (isDead) return;
-
         if (!isExplorer && isIgnited && !hasExploded) {
             fuseTimer -= delta;
             if (fuseTimer <= 0) {
                 startBlastoff();
             }
         }
-
         if (flightState != FlightState.NONE) {
             handleFlight(delta);
             return;
         }
-
         super.update(delta);
-
         if (isExplorer) {
             GameWorld game = App.getCurrentGame();
             if (game != null) {
                 for (Plant plant : new ArrayList<>(game.getActivePlants())) {
                     if (plant == null || plant.isDead()) continue;
-
                     float plantCenterY = (plant.getCell() != null)
                         ? App.getCellCenterY(plant.getCell().getRow())
                         : plant.getY();
-
                     boolean sameRow = Math.abs(this.y - plantCenterY) < App.getCellHeight() * 0.5f;
-
                     if (sameRow) {
                         int plantRow = (plant.getCell() != null) ? plant.getCell().getRow() : 0;
-
                         float plantWorldX = plant.getX();
-
                         float dist = (this.speed <= 0) ? (this.x - plantWorldX) : (plantWorldX - this.x);
-
                         if (dist >= 0 && dist < App.getCellWidth()) {
                             String typeName = plant.getType().name().toUpperCase();
-                            boolean isIcePlant = typeName.contains("ICE") || typeName.contains("SNOW") || ICE_TYPES.contains(typeName);
-                            boolean isFirePlant = typeName.contains("FIRE") || typeName.contains("PEPPER") || FIRE_TYPES.contains(typeName);
-
+                            boolean isIcePlant = typeName.contains("ICE") || typeName.contains("SNOW") ||
+                                ICE_TYPES.contains(typeName);
+                            boolean isFirePlant = typeName.contains("FIRE") || typeName.contains("PEPPER") ||
+                                FIRE_TYPES.contains(typeName);
                             if (isIcePlant) {
                                 extinguish();
                             } else if (isFirePlant) {
                                 ignite();
                             }
-
                             if (isIgnited) {
                                 plant.setBurnt(true);
                                 GameScreen.spawnPlantBurnEffect(plantWorldX, plantCenterY);
@@ -158,7 +148,8 @@ public class ElementalZombie extends Zombie {
     public void extinguish() {
         if (!isIgnited) return;
         this.isIgnited = false;
-        GameMenuController.updateState(isExplorer ? "Explorer's torch extinguished." : "Prospector's dynamite extinguished.");
+        GameMenuController.updateState(isExplorer ?
+            "Explorer's torch extinguished." : "Prospector's dynamite extinguished.");
     }
 
     public void ignite() {
@@ -173,7 +164,8 @@ public class ElementalZombie extends Zombie {
         if (isDead) return;
         if (damageType != null) {
             String upper = damageType.toUpperCase();
-            if (ICE_TYPES.contains(upper) || upper.contains("ICE") || upper.contains("SNOW") || upper.contains("FROST")) {
+            if (ICE_TYPES.contains(upper) || upper.contains("ICE") ||
+                upper.contains("SNOW") || upper.contains("FROST")) {
                 extinguish();
             } else if (FIRE_TYPES.contains(upper) || upper.contains("FIRE") || upper.contains("PEPPER")) {
                 if (isExplorer) {

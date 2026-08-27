@@ -48,12 +48,10 @@ public class ShopMenuScreen extends MenuScreen {
         }
 
         Table topBar = new Table();
-
         ImageButton backBtn = MainMenuScreen.createImageButton(
             "IMAGE_UI_MAINMENU_BACK_BTN_NORMAL",
             "IMAGE_UI_MAINMENU_BACK_BTN_PRESSED",
-            game.textureBank
-        );
+            game.textureBank);
 
         if (backBtn != null) {
             backBtn.addListener(new ClickListener() {
@@ -75,22 +73,16 @@ public class ShopMenuScreen extends MenuScreen {
         }
 
         mainTable.add(topBar).growX().padTop(10).padBottom(10).row();
-
         itemsGrid = new Table();
         itemsGrid.top();
-
         refreshShopItems();
-
         ScrollPane scrollPane = new ScrollPane(itemsGrid, skin);
         scrollPane.setFadeScrollBars(false);
         scrollPane.setScrollingDisabled(true, false);
         scrollPane.setFlickScroll(true);
         scrollPane.setOverscroll(false, false);
-
         stage.setScrollFocus(scrollPane);
-
         mainTable.add(scrollPane).grow().pad(10).row();
-
         mainStack.add(mainTable);
     }
 

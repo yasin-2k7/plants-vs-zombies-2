@@ -21,76 +21,65 @@ public class StraightVisionStrategy implements VisionStrategy {
 
     @Override
     public Damageable findZombie(Plant owner) {
-        GameWorld gameWorld = App.getCurrentGame();
-        if (!needZombie) {
-            for (Zombie zombie : gameWorld.getActiveZombies()) {
-                if (VisionStrategy.isBetween(zombie.getX(), owner.getX(),
-                    owner.getX() + range) &&
-                        VisionStrategy.isBetween(zombie.getY(), owner.getY() - width / 2,
-                            owner.getY() + width / 2)) {
-                    return zombie;
-                }
-            }
-            for (Obstacle obstacle : gameWorld.getActiveObstacles()) {
-                if (VisionStrategy.isBetween(obstacle.getX(), owner.getX(), owner.getX() + range) &&
-                        VisionStrategy.isBetween(obstacle.getY(),owner.getY() - width / 2,
-                            owner.getY() + width / 2)) {
-                    return obstacle;
-                }
-            }
-            if (gameWorld instanceof FrostbiteCavesWorld){
-                for (Plant plant : gameWorld.getActivePlants()) {
-                    if (!plant.isFreeze()) continue;
-                    if (VisionStrategy.isBetween(plant.getX(), owner.getX(), owner.getX() + range) &&
-                        VisionStrategy.isBetween(plant.getY(),owner.getY() - width / 2,
-                            owner.getY() + width / 2)) {
-                        return plant;
-                    }
-                }
-            }
-            return null;
-        } else {
-            float x = 3000f;
-            Zombie firstZombie = null;
-            Obstacle firstObstacle = null;
-            Plant firstPlant = null;
-            for (Zombie zombie : gameWorld.getActiveZombies()) {
-                if (VisionStrategy.isBetween(zombie.getX(), owner.getX(), owner.getX() + range) &&
-                        VisionStrategy.isBetween(zombie.getY(), owner.getY() - width / 2,
-                            owner.getY() + width / 2)) {
-                    if (zombie.getX() < x) {
-                        x = zombie.getX();
-                        firstZombie = zombie;
-                    }
-                }
-            }
-            if (firstZombie != null) return firstZombie;
-            if (gameWorld instanceof FrostbiteCavesWorld){
-                for (Plant plant : gameWorld.getActivePlants()) {
-                    if (!plant.isFreeze()) continue;
-                    if (VisionStrategy.isBetween(plant.getX(), owner.getX(), owner.getX() + range) &&
-                        VisionStrategy.isBetween(plant.getY(), owner.getY() - width / 2,
-                            owner.getY() + width / 2)) {
-                        if (plant.getX() < x) {
-                            x = plant.getX();
-                            firstPlant = plant;
-                        }
-                    }
-                }
-            }
-            if (firstPlant != null) return firstPlant;
-            for (Obstacle obstacle : gameWorld.getActiveObstacles()) {
-                if (VisionStrategy.isBetween(obstacle.getX(), owner.getX(), owner.getX() + range) &&
-                        VisionStrategy.isBetween(obstacle.getY(),owner.getY() - width / 2,
-                            owner.getY() + width / 2)) {
-                    if (obstacle.getX() < x) {
-                        x = obstacle.getX();
-                        firstObstacle = obstacle;
-                    }
-                }
-            }
-            return firstObstacle;
-        }
+        return needZombie ? findClosest(owner) : findAny(owner);
     }
 
+    private Damageable findAny(Plant owner) {
+        GameWorld world = App.getCurrentGame();
+
+        for (Zombie zombie : world.getActiveZombies()) {
+            if (inRange(owner, zombie.getX(), zombie.getY())) return zombie;
+        }
+        for (Obstacle obstacle : world.getActiveObstacles()) {
+            if (inRange(owner, obstacle.getX(), obstacle.getY())) return obstacle;
+        }
+        if (world instanceof FrostbiteCavesWorld) {
+            for (Plant plant : world.getActivePlants()) {
+                if (plant.isFreeze() && inRange(owner, plant.getX(), plant.getY())) {
+                    return plant;
+                }
+            }
+        }
+        return null;
+    }
+
+
+    private Damageable findClosest(Plant owner) {
+        GameWorld world = App.getCurrentGame();
+        float minX = Float.MAX_VALUE;
+        Damageable closest = null;
+
+        for (Zombie zombie : world.getActiveZombies()) {
+            if (inRange(owner, zombie.getX(), zombie.getY()) && zombie.getX() < minX) {
+                minX = zombie.getX();
+                closest = zombie;
+            }
+        }
+
+        if (closest == null && world instanceof FrostbiteCavesWorld) {
+            for (Plant plant : world.getActivePlants()) {
+                if (plant.isFreeze() && inRange(owner, plant.getX(), plant.getY()) && plant.getX() < minX) {
+                    minX = plant.getX();
+                    closest = plant;
+                }
+            }
+        }
+
+        if (closest == null) {
+            for (Obstacle obstacle : world.getActiveObstacles()) {
+                if (inRange(owner, obstacle.getX(), obstacle.getY()) && obstacle.getX() < minX) {
+                    minX = obstacle.getX();
+                    closest = obstacle;
+                }
+            }
+        }
+
+        return closest;
+    }
+
+
+    private boolean inRange(Plant owner, float x, float y) {
+        return VisionStrategy.isBetween(x, owner.getX(), owner.getX() + range) &&
+            VisionStrategy.isBetween(y, owner.getY() - width / 2, owner.getY() + width / 2);
+    }
 }

@@ -91,7 +91,7 @@ public class GameScreen extends MenuScreen {
 
     private CrazyDaveOverlay daveOverlay;
     private static GameScreen activeInstance;
-    private static final List<String> pendingAnnouncements = new ArrayList<>();
+    private static final List<String> PENDING_ANNOUNCEMENTS = new ArrayList<>();
 
     private LevelObjectivesOverlay objectivesOverlay;
     private boolean objectivesDismissed = false;
@@ -113,15 +113,16 @@ public class GameScreen extends MenuScreen {
     private final List<BarrelObstacleGraphic> barrelObstacleGraphics = new ArrayList<>();
     private final List<OctopusObstacleGraphic> octopusObstacleGraphics = new ArrayList<>();
 
-    private final String SLIDING_UP_PAM_PATH = "768/FULL/EFFECTS/TILESLIDER_ICEAGE_UP/TILESLIDER_ICEAGE_UP.PAM";
-    private final String SLIDING_DOWN_PAM_PATH = "768/FULL/EFFECTS/TILESLIDER_ICEAGE_DOWN/TILESLIDER_ICEAGE_DOWN.PAM";
-    private final String SLIDING_CLIP = "idle";
-    private final String WAVE_PAM_PATH = "768/FULL/BACKGROUNDS/WAVE_UPPERLAYER/WAVE_UPPERLAYER.PAM";
-    private final String WAVE_CLIP = "water";
-    private final String LOW_LYING_PAM_PATH = "768/FULL/WORLDMAP/BEACH/ANIM20/ANIM20.PAM";
-    private final String LOW_LYING_CLIP = "idle";
-    private final String NECROMANCY_PAM_PATH = "768/FULL/WORLDMAP/DARK/ANIM5/ANIM5.PAM";
-    private final String NECROMANCY_CLIP = "idle";
+    private static final String SLIDING_UP_PAM_PATH = "768/FULL/EFFECTS/TILESLIDER_ICEAGE_UP/TILESLIDER_ICEAGE_UP.PAM";
+    private static final String SLIDING_DOWN_PAM_PATH =
+        "768/FULL/EFFECTS/TILESLIDER_ICEAGE_DOWN/TILESLIDER_ICEAGE_DOWN.PAM";
+    private static final String SLIDING_CLIP = "idle";
+    private static final String WAVE_PAM_PATH = "768/FULL/BACKGROUNDS/WAVE_UPPERLAYER/WAVE_UPPERLAYER.PAM";
+    private static final String WAVE_CLIP = "water";
+    private static final String LOW_LYING_PAM_PATH = "768/FULL/WORLDMAP/BEACH/ANIM20/ANIM20.PAM";
+    private static final String LOW_LYING_CLIP = "idle";
+    private static final String NECROMANCY_PAM_PATH = "768/FULL/WORLDMAP/DARK/ANIM5/ANIM5.PAM";
+    private static final String NECROMANCY_CLIP = "idle";
 
     private final Map<Sandstorm, SandstormGraphic> sandstormGraphics = new HashMap<>();
 
@@ -201,16 +202,16 @@ public class GameScreen extends MenuScreen {
         if (activeInstance != null) {
             activeInstance.addToast("", message, true);
         } else {
-            pendingAnnouncements.add(message);
+            PENDING_ANNOUNCEMENTS.add(message);
         }
     }
 
     private void flushPendingAnnouncements() {
-        if (pendingAnnouncements.isEmpty()) return;
-        for (String msg : pendingAnnouncements) {
+        if (PENDING_ANNOUNCEMENTS.isEmpty()) return;
+        for (String msg : PENDING_ANNOUNCEMENTS) {
             addToast("", msg, true);
         }
-        pendingAnnouncements.clear();
+        PENDING_ANNOUNCEMENTS.clear();
     }
 
     @Override
@@ -277,7 +278,7 @@ public class GameScreen extends MenuScreen {
             public void clicked(InputEvent event, float x, float y) {
                 if (plantMenuController.startGame(GameScreen.this)){
                     resumeCameraToMain();
-                    pendingAnnouncements.add(0, "Prepare your petals!\nIt's time to garden or die");
+                    PENDING_ANNOUNCEMENTS.add(0, "Prepare your petals!\nIt's time to garden or die");
                     if (!world.isConveyorMode()){
                         hud.getSelectedPlantsList().activate(world.getPlantLists());
                     }
@@ -705,15 +706,11 @@ public class GameScreen extends MenuScreen {
                     float y = LawnGrid.getCellY(mower.getRow());
                     String pamPath = getMowerPamPath(chapter);
                     String animStateName = getMowerAnimStateName(mower.getState());
-
                     try {
                         pamPlayer.draw(game.batch, pamPath, animStateName, mower.getStateTime(),
                             x, y, 0.8f, 0.8f, true);
-
-
                     } catch (Exception e) {
-                        e.printStackTrace();
-                    }
+                        e.printStackTrace();}
                 }
             }
         }
@@ -730,23 +727,18 @@ public class GameScreen extends MenuScreen {
         for (int i = graveGraphics.size() - 1; i >= 0; i--) {
             GraveGraphic graphic = graveGraphics.get(i);
             Grave grave = graphic.getGrave();
-
             graphic.update(delta);
             graphic.draw(game.batch, pamPlayer, game);
-
             if (grave.isDestroyed() && graphic.isBreakFinished()) {
                 graveGraphics.remove(i);
                 world.removeObstacle(grave);
             }
         }
-
         for (int i = barrelObstacleGraphics.size() - 1; i >= 0; i--) {
             BarrelObstacleGraphic graphic = barrelObstacleGraphics.get(i);
             BarrelObstacle barrel = graphic.getObstacle();
-
             graphic.update(delta, pamPlayer);
             graphic.draw(game.batch, pamPlayer);
-
             if (barrel.isDestroyed() && graphic.isBreakFinished()) {
                 barrelObstacleGraphics.remove(i);
                 world.removeObstacle(barrel);
@@ -986,19 +978,15 @@ public class GameScreen extends MenuScreen {
 
     public void handleInput() {
         if (world != null && (world.isDialogActive() || world.getState() != GameState.PLAYING)) {
-            return;
-        }
+            return;}
         if (Gdx.input.isKeyJustPressed(Input.Keys.SHIFT_LEFT)){
-            GameMenuController.cheatSpawnZombie("ZombieDefault", 6, 1);
-        }
+            GameMenuController.cheatSpawnZombie("ZombieDefault", 6, 1);}
         Vector3 touchPoint = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
         worldViewport.unproject(touchPoint);
-
         if (Gdx.input.justTouched()) {
             if (plantPlacementManager.isPlantSelected()) {
                 int row = LawnGrid.getRowFromY(touchPoint.y);
                 int col = LawnGrid.getColFromX(touchPoint.x);
-
                 if (row >= 0 && col >= 0) {
                     Plant newPlant = GameMenuController.plantPlant(
                         plantPlacementManager.getSelectedPlant(),
@@ -1009,21 +997,18 @@ public class GameScreen extends MenuScreen {
                         PlantGraphic pg = new PlantGraphic(newPlant, pamPlayer);
                         plantGraphics.add(pg);
                         checkExplosion(newPlant, pg);
-
                         plantPlacementManager.tryPlace(row, col);
                     }
                 }
             } else if (plantfoodPlacementManager.isSelected()){
                 int row = LawnGrid.getRowFromY(touchPoint.y);
                 int col = LawnGrid.getColFromX(touchPoint.x);
-
                 if (row >= 0 && col >= 0) {
                     GameMenuController.feedPlant(App.getCellCenterX(col), App.getCellCenterY(row));
                 }
             } else if (shovelPlacementManager.isSelected()){
                 int row = LawnGrid.getRowFromY(touchPoint.y);
                 int col = LawnGrid.getColFromX(touchPoint.x);
-
                 if (row >= 0 && col >= 0) {
                     GameMenuController.pluckPlant(App.getCellCenterX(col), App.getCellCenterY(row));
                 }
@@ -1040,7 +1025,6 @@ public class GameScreen extends MenuScreen {
             plantfoodPlacementManager.setSelected(false);
             shovelPlacementManager.setSelected(false);
         }
-
     }
     private void checkExplosion(Plant newPlant, PlantGraphic pg){
         ExplosivesComponent explosives =

@@ -86,18 +86,21 @@ public class PhasingZombie extends Zombie {
 
         if (isNewspaper) {
             if (!isPhaseChanged) {
-                if (getFreezedTicksRemaining() > 0 || getIceHealth() > 0 || getDisabledTicksRemaining() > 0) return "idle_newspaper";
+                if (getFreezedTicksRemaining() > 0 || getIceHealth() > 0 || getDisabledTicksRemaining() > 0)
+                    return "idle_newspaper";
                 String base = currentState != null ? currentState.getAnimationClip() : "idle";
                 if (base.equals("walk")) return "walk_newspaper";
                 if (base.equals("eat")) return "eat_newspaper";
                 return "idle_newspaper";
             } else {
                 if (defeatAnimationTimeRemaining > 0) return "newspaper_defeat";
-                if (getFreezedTicksRemaining() > 0 || getIceHealth() > 0 || getDisabledTicksRemaining() > 0) return "idle";
+                if (getFreezedTicksRemaining() > 0 || getIceHealth() > 0 ||
+                    getDisabledTicksRemaining() > 0) return "idle";
                 return currentState != null ? currentState.getAnimationClip() : "idle";
             }
         } else {
-            if (getFreezedTicksRemaining() > 0 || getIceHealth() > 0 || getDisabledTicksRemaining() > 0) return "idle";
+            if (getFreezedTicksRemaining() > 0 || getIceHealth() > 0 ||
+                getDisabledTicksRemaining() > 0) return "idle";
             String base = currentState != null ? currentState.getAnimationClip() : "idle";
 
             if (!hasKilledPlant && base.equals("walk")) return "run";

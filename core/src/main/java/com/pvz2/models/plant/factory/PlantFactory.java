@@ -23,7 +23,7 @@ public class PlantFactory {
     }
 
     public static Plant createPlant(PlantType type, int x, int y, Cell cell) {
-        java.util.function.Supplier<Plant> plantSupplier = REGISTRY.get(type);
+        Supplier<Plant> plantSupplier = REGISTRY.get(type);
 
         if (plantSupplier == null) {
             GameMenuController.updateState("Error: Plant type " + type.name() + " is not registered in PlantFactory!");

@@ -28,6 +28,12 @@ public class ChapterMenuScreen extends MenuScreen {
 
     private final ChapterMenuController controller = new ChapterMenuController();
     private static final String LOCK_PAM_PATH = "768/INITIAL/UI/UNIVERSE/WORLD_LOCK/WORLD_LOCK.PAM";
+    private static final String[] REGION_NAMES = {
+        "IMAGE_WORLDMAP_ZOMBOSS_NODE_EGYPT_ZOMBOSS_NODE_EGYPT_914X994",
+        "IMAGE_WORLDMAP_BEACH_ANIM27_ANIM27_1362X953",
+        "IMAGE_WORLDMAP_ZOMBOSS_NODE_DARK_ZOMBOSS_NODE_DARK_905X1096",
+        "IMAGE_WORLDMAP_ZOMBOSS_NODE_ICEAGE_ZOMBOSS_NODE_ICEAGE_1055X1280"
+    };
 
     private Group contentGroup;
     private float scrollX = 0f;
@@ -41,7 +47,6 @@ public class ChapterMenuScreen extends MenuScreen {
 
     public ChapterMenuScreen(Main game) {
         super(game);
-
         FileHandle assetsFolder = Gdx.files.internal("");
         textureRegion = game.textureBank.region("IMAGE_MAINMENU_BACKGROUND");
         pamPlayer = new PamPlayer(game.textureBank, assetsFolder);
@@ -49,9 +54,11 @@ public class ChapterMenuScreen extends MenuScreen {
 
     @Override
     protected void buildUI() {
-        float stageWidth = stage.getWidth();
-        float stageHeight = stage.getHeight();
+        buildContentGroup();
+        buildTopBar();
+    }
 
+    private void buildContentGroup() {
         contentGroup = new Group() {
             @Override
             public void act(float delta) {
@@ -60,138 +67,127 @@ public class ChapterMenuScreen extends MenuScreen {
             }
         };
 
-        String[] regionNames = {
-            "IMAGE_WORLDMAP_ZOMBOSS_NODE_EGYPT_ZOMBOSS_NODE_EGYPT_914X994",
-            "IMAGE_WORLDMAP_BEACH_ANIM27_ANIM27_1362X953",
-            "IMAGE_WORLDMAP_ZOMBOSS_NODE_DARK_ZOMBOSS_NODE_DARK_905X1096",
-            "IMAGE_WORLDMAP_ZOMBOSS_NODE_ICEAGE_ZOMBOSS_NODE_ICEAGE_1055X1280"
-        };
-
-        final Chapter[] chapters = Chapter.values();
+        Chapter[] chapters = Chapter.values();
         int unlockedChapter = (App.getCurrentUser() != null) ? App.getCurrentUser().getUnlockedChapter() : 1;
-
         float nodeSize = 600f;
         float spacing = 200f;
         float startX = 200f;
-        float startY = (stageHeight - nodeSize) / 2f;
-
+        float startY = (stage.getHeight() - nodeSize) / 2f;
         int count = Math.min(4, chapters.length);
 
         for (int i = 0; i < count; i++) {
-            final TextureRegion nodeRegion = game.textureBank.region(regionNames[i]);
-            final Chapter chapter = chapters[i];
-            final boolean isLocked = chapter.ordinal() >= unlockedChapter;
+            Chapter chapter = chapters[i];
+            boolean isLocked = chapter.ordinal() >= unlockedChapter;
+            float posX = startX + i * (nodeSize + spacing);
 
-            Actor nodeActor = new Actor() {
-                private float stateTime = 0f;
-
-                @Override
-                public void act(float delta) {
-                    super.act(delta);
-                    stateTime += delta;
-                }
-
-                @Override
-                public void draw(Batch batch, float parentAlpha) {
-                    float centerX = getX() + getWidth() / 2f;
-                    float centerY = getY() + getHeight() / 2f;
-
-                    if (nodeRegion != null) {
-                        batch.draw(nodeRegion, getX(), getY(), getWidth(), getHeight());
-                    }
-
-                    if (isLocked) {
-                        try {
-                            pamPlayer.draw(batch, LOCK_PAM_PATH, "idle", stateTime, centerX, centerY, true);
-                        } catch (Exception ignored) {}
-                    }
-                }
-            };
-
+            Actor nodeActor = createNodeActor(REGION_NAMES[i], chapter, isLocked);
             nodeActor.setSize(nodeSize, nodeSize);
-            nodeActor.setPosition(startX + i * (nodeSize + spacing), startY);
-
-            nodeActor.addListener(new ClickListener() {
-                @Override
-                public void clicked(InputEvent event, float x, float y) {
-                    if (!isDragging) {
-                        String result = controller.chooseChapter(chapter);
-                        if (isLocked) {
-                            System.out.println(result);
-                        } else {
-                            game.setScreen(new LevelMenuScreen(game));
-                            System.out.println(result);
-                        }
-                    }
-                }
-            });
-
+            nodeActor.setPosition(posX, startY);
             contentGroup.addActor(nodeActor);
-            int totalLevels = 4;
-            int completedLevels = 0;
 
-            if (App.getCurrentUser() != null) {
-                int userUnlockedChapter = App.getCurrentUser().getUnlockedChapter();
-                if (userUnlockedChapter > i + 1) {
-                    completedLevels = totalLevels;
-                } else if (userUnlockedChapter == i + 1) {
-                    completedLevels = App.getCurrentUser().getUnlockedLevel()-1;
-                }
-            }
-
-            Table infoTable = new Table();
-            infoTable.setSize(nodeSize, 80f);
-            infoTable.setPosition(startX + i * (nodeSize + spacing), startY - 85f);
-
-            Label nameLabel = new Label(chapter.name().replace("_", " "), game.skin, "big_outline");
-            nameLabel.setFontScale(0.85f);
-
-            Label progressLabel = new Label(completedLevels + "/" + totalLevels, game.skin, "medium_outline");
-            progressLabel.setColor(Color.GOLD);
-
-            infoTable.add(nameLabel).row();
-            infoTable.add(progressLabel).padTop(4f);
-
+            Table infoTable = createChapterInfoTable(chapter, i, nodeSize);
+            infoTable.setPosition(posX, startY - 85f);
             contentGroup.addActor(infoTable);
         }
 
         float totalWidth = startX * 2 + count * nodeSize + (count - 1) * spacing;
-        minScrollX = Math.min(0, stageWidth - totalWidth);
-
+        minScrollX = Math.min(0, stage.getWidth() - totalWidth);
         mainStack.add(contentGroup);
+    }
 
+    private Actor createNodeActor(String regionName, Chapter chapter, boolean isLocked) {
+        TextureRegion nodeRegion = game.textureBank.region(regionName);
+
+        Actor nodeActor = new Actor() {
+            private float stateTime = 0f;
+            @Override
+            public void act(float delta) {
+                super.act(delta);
+                stateTime += delta;
+            }
+            @Override
+            public void draw(Batch batch, float parentAlpha) {
+                if (nodeRegion != null) {
+                    batch.draw(nodeRegion, getX(), getY(), getWidth(), getHeight());
+                }
+                if (isLocked) {
+                    float centerX = getX() + getWidth() / 2f;
+                    float centerY = getY() + getHeight() / 2f;
+                    try {
+                        pamPlayer.draw(batch, LOCK_PAM_PATH, "idle", stateTime, centerX, centerY, true);
+                    } catch (Exception ignored) {}
+                }
+            }
+        };
+
+        nodeActor.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                if (!isDragging) {
+                    String result = controller.chooseChapter(chapter);
+                    System.out.println(result);
+                    if (!isLocked) {
+                        game.setScreen(new LevelMenuScreen(game));
+                    }
+                }
+            }
+        });
+        return nodeActor;
+    }
+
+    private Table createChapterInfoTable(Chapter chapter, int index, float nodeSize) {
+        int totalLevels = 4;
+        int completedLevels = 0;
+
+        if (App.getCurrentUser() != null) {
+            int userUnlockedChapter = App.getCurrentUser().getUnlockedChapter();
+            if (userUnlockedChapter > index + 1) {
+                completedLevels = totalLevels;
+            } else if (userUnlockedChapter == index + 1) {
+                completedLevels = App.getCurrentUser().getUnlockedLevel() - 1;
+            }
+        }
+
+        Table infoTable = new Table();
+        infoTable.setSize(nodeSize, 80f);
+
+        Label nameLabel = new Label(chapter.name().replace("_", " "), game.skin, "big_outline");
+        nameLabel.setFontScale(0.85f);
+        Label progressLabel = new Label(completedLevels + "/" + totalLevels, game.skin, "medium_outline");
+        progressLabel.setColor(Color.GOLD);
+
+        infoTable.add(nameLabel).row();
+        infoTable.add(progressLabel).padTop(4f);
+
+        return infoTable;
+    }
+
+    private void buildTopBar() {
         Table topBar = new Table();
         topBar.top().setFillParent(true);
-
         Table buttonsTable = new Table();
 
         ImageButton backBtn = createIconButton("IMAGE_UI_ALMANAC_BUTTONS_HUD_BACK_NORMAL",
             "IMAGE_UI_ALMANAC_BUTTONS_HUD_BACK_SELECTED");
         backBtn.addListener(new ClickListener() {
             @Override
-            public void clicked(InputEvent event, float x, float y) {
-                fadeAndSwitchScreen(new MainMenuScreen(game));
-            }
+            public void clicked(InputEvent event, float x, float y) { fadeAndSwitchScreen(new MainMenuScreen(game)); }
         });
 
-        ImageButton greenBtn = createIconButton(
-            "IMAGE_UI_GENERIC_BUTTONS_HUD_ZG_NORMAL",
+        ImageButton greenBtn = createIconButton("IMAGE_UI_GENERIC_BUTTONS_HUD_ZG_NORMAL",
             "IMAGE_UI_GENERIC_BUTTONS_HUD_ZG_SELECTED");
         greenBtn.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                fadeAndSwitchScreen(new GreenhouseMenuScreen(game));
-            }
+                fadeAndSwitchScreen(new GreenhouseMenuScreen(game)); }
         });
 
-        ImageButton collectionBtn = createIconButton(
-            "IMAGE_UI_HUD_ALMANACBUTTON_BUTTONS_HUD_ALMANAC_NORMAL",
+        ImageButton collectionBtn = createIconButton("IMAGE_UI_HUD_ALMANACBUTTON_BUTTONS_HUD_ALMANAC_NORMAL",
             "IMAGE_UI_HUD_ALMANACBUTTON_BUTTONS_HUD_ALMANAC_NORMAL");
         collectionBtn.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                fadeAndSwitchScreen(new CollectionMenuScreen(game, ChapterMenuScreen.this));
-            }
+                fadeAndSwitchScreen(new CollectionMenuScreen(game, ChapterMenuScreen.this)); }
         });
 
         buttonsTable.add(backBtn).size(55, 55).padRight(10);
@@ -209,31 +205,22 @@ public class ChapterMenuScreen extends MenuScreen {
         mainStack.add(topBar);
     }
 
-
     private ImageButton createIconButton(String upRegionName, String downRegionName) {
         TextureRegion upRegion = game.textureBank.region(upRegionName);
         TextureRegion downRegion = game.textureBank.region(downRegionName);
 
-        if (upRegion == null) {
-            upRegion = game.textureBank.region("IMAGE_MAINMENU_BACKGROUND"); // تکسچر جایگزین امن
-        }
+        if (upRegion == null) upRegion = game.textureBank.region("IMAGE_MAINMENU_BACKGROUND");
 
         ImageButton.ImageButtonStyle style = new ImageButton.ImageButtonStyle();
         style.up = new TextureRegionDrawable(upRegion);
-        if (downRegion != null) {
-            style.down = new TextureRegionDrawable(downRegion);
-        }
+        if (downRegion != null) style.down = new TextureRegionDrawable(downRegion);
 
         return new ImageButton(style);
     }
 
-
-
     private void handleViewportIndependentInput() {
         if (Gdx.input.isTouched()) {
-            if (Gdx.input.justTouched()) {
-                touchStartPos.set(Gdx.input.getX(), Gdx.input.getY());
-            }
+            if (Gdx.input.justTouched()) touchStartPos.set(Gdx.input.getX(), Gdx.input.getY());
 
             currTouch.set(Gdx.input.getX(), Gdx.input.getY());
             prevTouch.set(Gdx.input.getX() - Gdx.input.getDeltaX(), Gdx.input.getY() - Gdx.input.getDeltaY());
@@ -243,9 +230,7 @@ public class ChapterMenuScreen extends MenuScreen {
 
             float deltaStageX = currTouch.x - prevTouch.x;
 
-            if (!isDragging && touchStartPos.dst(Gdx.input.getX(), Gdx.input.getY()) > 10f) {
-                isDragging = true;
-            }
+            if (!isDragging && touchStartPos.dst(Gdx.input.getX(), Gdx.input.getY()) > 10f) isDragging = true;
 
             if (isDragging) {
                 scrollX = MathUtils.clamp(scrollX + deltaStageX, minScrollX, 0);
@@ -258,10 +243,7 @@ public class ChapterMenuScreen extends MenuScreen {
                 contentGroup.setX(scrollX);
                 velocityX *= 0.92f;
             }
-
-            if (isDragging) {
-                Gdx.app.postRunnable(() -> isDragging = false);
-            }
+            if (isDragging) Gdx.app.postRunnable(() -> isDragging = false);
         }
     }
 

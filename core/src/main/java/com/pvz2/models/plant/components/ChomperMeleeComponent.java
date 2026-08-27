@@ -47,7 +47,8 @@ public class ChomperMeleeComponent implements GameComponent {
         if (plantFoodDuration >= 0f) return;
         plantFoodIntroDuration = AnimationDurations.hasClip(owner.getType(), PLANT_FOOD_INTRO_CLIP)
             ? AnimationDurations.getDuration(owner.getType(), PLANT_FOOD_INTRO_CLIP, 0f) : 0f;
-        plantFoodDuration = AnimationDurations.getDuration(owner.getType(), PLANT_FOOD_CLIP, DEFAULT_PLANT_FOOD_DURATION);
+        plantFoodDuration = AnimationDurations.getDuration(owner.getType(),
+            PLANT_FOOD_CLIP, DEFAULT_PLANT_FOOD_DURATION);
         plantFoodOutroDuration = AnimationDurations.hasClip(owner.getType(), PLANT_FOOD_OUTRO_CLIP)
             ? AnimationDurations.getDuration(owner.getType(), PLANT_FOOD_OUTRO_CLIP, 0f) : 0f;
     }
@@ -56,17 +57,14 @@ public class ChomperMeleeComponent implements GameComponent {
     public void update(Plant owner, float delta) {
         ensureBiteDurationLoaded(owner);
         ensurePlantFoodDurationsLoaded(owner);
-
         if (owner.getState() == Plant.State.PLANT_FOOD_INTRO) {
             introOutroTimer -= delta;
             if (introOutroTimer <= 0f) {
                 dealPlantFoodDamage(owner);
                 plantFoodTimer = 0f;
-                owner.setState(Plant.State.PLANT_FOOD);
-            }
+                owner.setState(Plant.State.PLANT_FOOD);}
             return;
         }
-
         if (owner.getState() == Plant.State.PLANT_FOOD) {
             plantFoodTimer += delta;
             if (plantFoodTimer >= plantFoodDuration) {
@@ -74,12 +72,9 @@ public class ChomperMeleeComponent implements GameComponent {
                     owner.setState(Plant.State.PLANT_FOOD_OUTRO);
                     introOutroTimer = plantFoodOutroDuration;
                 } else {
-                    owner.setState(Plant.State.IDLE);
-                }
-            }
+                    owner.setState(Plant.State.IDLE);}}
             return;
         }
-
         if (owner.getState() == Plant.State.PLANT_FOOD_OUTRO) {
             introOutroTimer -= delta;
             if (introOutroTimer <= 0f) {
@@ -87,17 +82,13 @@ public class ChomperMeleeComponent implements GameComponent {
             }
             return;
         }
-
         if (isDigesting) {
             digestProgressTime += delta;
-
             if (owner.getState() == Plant.State.SPECIAL) {
                 biteAnimTimer += delta;
                 if (biteAnimTimer >= biteDuration) {
-                    owner.setState(Plant.State.SPECIAL_IDLE);
-                }
+                    owner.setState(Plant.State.SPECIAL_IDLE);}
             }
-
             if (digestProgressTime >= digestTime) {
                 isDigesting = false;
                 digestProgressTime = 0f;
@@ -106,15 +97,12 @@ public class ChomperMeleeComponent implements GameComponent {
             }
             return;
         }
-
         if (owner.getState() != Plant.State.IDLE) {
             owner.setState(Plant.State.IDLE);
         }
-
         Zombie target = findTargetZombie(owner);
         if (target != null) {
-            swallowZombie(owner, target);
-        }
+            swallowZombie(owner, target);}
     }
 
     private Zombie findTargetZombie(Plant owner) {

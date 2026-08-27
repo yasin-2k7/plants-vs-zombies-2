@@ -52,38 +52,29 @@ public class MainMenuScreen extends MenuScreen {
 
     private void initFields() {
         if (mainTable != null) return;
-
         bg = game.textureBank.region("IMAGE_MAINMENU_BACKGROUND");
-
         TextureRegion logo = game.textureBank.region("IMAGE_UI_MAINMENU_PVZ2_LOGO_HORIZONTAL");
         logoImg = (logo != null) ? new Image(logo) : null;
-
         playBtn = new TextButton("PLAY", game.skin, "purple");
-
         newsBtn = createImageButton(
             "IMAGE_UI_HUD_NEWSBUTTON_BUTTONS_HUD_NEWS_NORMAL",
             "IMAGE_UI_HUD_NEWSBUTTON_BUTTONS_HUD_NEWS_SELECTED",
             game.textureBank
         );
-
         settingsBtn = createImageButton(
             "IMAGE_UI_HUD_SETTINGSBUTTON_BUTTONS_HUD_SETTINGS_NORMAL",
             "IMAGE_UI_HUD_SETTINGSBUTTON_BUTTONS_HUD_SETTINGS_SELECTED",
             game.textureBank
         );
-
         leaderboardBtn = new TextButton("", skin, "brown");
         Image cup = new Image(game.textureBank.region("IMAGE_UI_GAMECENTER_ICON"));
         leaderboardBtn.add(cup);
-
         muPoint = new TextButton("", skin, "brown");
         Image star = new Image(game.textureBank.region("IMAGE_UI_GENERIC_STAR_ICON"));
         muPoint.add(star);
-
         profileBtn = new TextButton("", skin, "brown");
         Image prof = new Image(game.textureBank.region("IMAGE_UI_MAINMENU_MM_PLAYERICON"));
         profileBtn.add(prof).padRight(5);
-
         travelLogBtn = createImageButton(
             "IMAGE_UI_GENERIC_BUTTON_HUD_MINIGAMES_ALT_SELECTED",
             "IMAGE_UI_GENERIC_BUTTON_HUD_MINIGAMES_ALT_SELECTED",
@@ -110,22 +101,16 @@ public class MainMenuScreen extends MenuScreen {
     @Override
     protected void buildUI() {
         initFields();
-
         mainTable.clear();
         mainTable.setFillParent(true);
-
         if (backBtn != null) {
-            topBar.add(backBtn).left().top().pad(10);
-        }
+            topBar.add(backBtn).left().top().pad(10);}
         topBar.add().expandX();
         if (App.getCurrentUser() != null){
-            topBar.add(resourcesTable).padRight(20);
-        }
+            topBar.add(resourcesTable).padRight(20);}
         mainTable.add(topBar).top().growX().row();
-
         if (logoImg != null) {
-            mainTable.add(logoImg).prefWidth(400).prefHeight(100).padTop(5).row();
-        }
+            mainTable.add(logoImg).prefWidth(400).prefHeight(100).padTop(5).row();}
         Table welcomeTbl = new Table();
         welcomeTbl.setBackground(new TextureRegionDrawable(game.textureBank.region(
             "IMAGE_UI_MAINMENU_MAINMENU_CONTENT_OFFLINE")));
@@ -136,49 +121,31 @@ public class MainMenuScreen extends MenuScreen {
         centerTable.add(welcomeTbl).row();
         centerTable.add(playBtn).width(200).height(60).pad(20).row();
         mainTable.add(centerTable).expandY().center().row();
-
         if (newsBtn != null) {
             setUnreadStatus(controller.checkUnreadNews());
             newsStack.add(newsBtn);
-
             badgeOverlay.top().right();
             badgeOverlay.add(unreadBadge).size(25, 25).padTop(-8).padRight(-5);
-
             newsStack.add(badgeOverlay);
-            unreadBadge.setVisible(hasUnreadNews);
-        }
-
+            unreadBadge.setVisible(hasUnreadNews);}
         float btnSize = 70f;
-
         if (settingsBtn != null) bottomBar.add(settingsBtn).size(btnSize).padLeft(25).pad(10);
         if (newsBtn != null) bottomBar.add(newsStack).size(btnSize).pad(5);
-
         bottomBar.add().expandX();
-
         if (muPoint != null) bottomBar.add(muPoint).size(btnSize).pad(10);
-
         TextButton shopBtn = new TextButton("STORE", skin, "green");
-
         shopBtn.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                fadeAndSwitchScreen(new ShopMenuScreen(game));
-            }
-        });
-
+                fadeAndSwitchScreen(new ShopMenuScreen(game));}});
         mainTable.add(shopBtn).width(200).height(52).pad(10).row();
-
         bottomBar.add().expandX();
-
         if (leaderboardBtn != null) bottomBar.add(leaderboardBtn).size(btnSize).pad(10);
         if (travelLogBtn != null) bottomBar.add(travelLogBtn).size(btnSize).pad(10);
         if (profileBtn != null) bottomBar.add(profileBtn).size(btnSize).padRight(25).pad(10);
-
         mainTable.add(bottomBar).bottom().growX().pad(10);
-
         if (bg != null) {
-            mainTable.setBackground(new TextureRegionDrawable(bg));
-        }
+            mainTable.setBackground(new TextureRegionDrawable(bg));}
         mainStack.add(mainTable);
         setListeners();
     }
@@ -213,22 +180,16 @@ public class MainMenuScreen extends MenuScreen {
         muPoint.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                controller.enterMenu("mu point");
-            }
-        });
+                controller.enterMenu("mu point");}});
         leaderboardBtn.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 showScrollablePopup("LEADERBOARD", new LeaderboardMenuTable(game, skin),
-                    950, 650, 800, 480);
-            }
-        });
+                    950, 650, 800, 480);}});
         profileBtn.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                showScrollablePopup("PROFILE", new ProfileMenuTable(game, skin), 660, 620, 570, 480);
-            }
-        });
+                showScrollablePopup("PROFILE", new ProfileMenuTable(game, skin), 660, 620, 570, 480);}});
         travelLogBtn.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y) {

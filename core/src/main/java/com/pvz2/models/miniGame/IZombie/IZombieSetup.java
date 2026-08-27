@@ -61,7 +61,6 @@ public class IZombieSetup implements LevelSetup {
                     Cell cell = grid[r][c];
 
                     Plant plant = PlantFactory.createPlant(type, x, y, cell);
-
                     if (plant != null) {
                         cell.setPlant(plant, PlantLayer.MAIN);
                         level.getActivePlants().add(plant);

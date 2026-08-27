@@ -95,18 +95,13 @@ public class GraveGraphic {
                     DIRT_SPAWN_FUTURE_PAM_PATH,
                     DIRT_SPAWN_ANIM_STATE,
                     spawnAnimTime,
-                    grave.getX(),
-                    grave.getY(),
-                    1.0f,
-                    1.0f,
-                    true
+                    grave.getX(), grave.getY(), 1.0f, 1.0f, true
                 );
             } catch (Exception e) {
                 e.printStackTrace();
             }
             return;
         }
-
         String animState;
         if (breakStarted) {
             animState = "damage1";
@@ -117,7 +112,6 @@ public class GraveGraphic {
                 default: animState = "undamaged"; break;
             }
         }
-
         float flashAmount = grave.getDamageFlashProgress();
         if (flashAmount > 0f) {
             ShaderProgram shader = DamageFlashShader.get();
@@ -125,18 +119,13 @@ public class GraveGraphic {
             shader.setUniformf("u_flashColor", 1f, 1f, 1f);
             shader.setUniformf("u_flashAmount", flashAmount);
         }
-
         try {
             pamPlayer.draw(
                 batch,
                 pamPath,
                 animState,
                 animTime*App.getCurrentUser().getGameSpeed(),
-                grave.getX(),
-                grave.getY(),
-                1.0f,
-                1.0f,
-                true
+                grave.getX(), grave.getY(), 1.0f, 1.0f, true
             );
         } catch (Exception e) {
             e.printStackTrace();

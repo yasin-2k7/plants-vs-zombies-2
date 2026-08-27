@@ -142,10 +142,8 @@ public class ZombieFactory {
             }
             ArmoredZombie zombie = new ArmoredZombie(health, speed, eatDPS, totalArmorHealth, magnetic);
             zombie.getArmorTypes().addAll(currentArmorTypes);
-//            logger.info("Created armored zombie with total armor health: " + totalArmorHealth);
             return zombie;
         }
-        // زامبی معمولی بدون زره
         return new Zombie(Zombies.ZOMBIE, health, speed, eatDPS) {
         };
     }

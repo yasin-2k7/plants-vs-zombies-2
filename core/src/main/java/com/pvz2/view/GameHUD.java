@@ -61,9 +61,7 @@ public class GameHUD extends Group {
         plantFoodBank = new PlantFoodBank(game, skin, screen);
         selectedPlantsList = new SelectedPlantsList(1, 1, false,
             150, 100, createSelectingMethod(), game);
-
         conveyorBeltView = new ConveyorBeltView(screen);
-
         ImageButton pauseBtn = new ImageButton(skin, "ingame_pause");
 
         pauseBtn.addListener(new ClickListener() {
@@ -71,12 +69,10 @@ public class GameHUD extends Group {
             public void clicked(InputEvent event, float x, float y) {
                 GameWorld world = App.getCurrentGame();
                 if (world == null) return;
-
                 if (activeOverlay != null) {
                     activeOverlay.remove();
                     activeOverlay = null;
                 }
-
                 if (world.getState() == GameState.PLAYING) {
                     world.setState(GameState.PAUSED);
                     try {
@@ -92,7 +88,6 @@ public class GameHUD extends Group {
         });
 
         shovelBtn = createShovelBtn(game);
-
         topBar = new Table();
         topBar.add(sunCounter).left().pad(MARGIN);
         topBar.add(shovelBtn).pad(5);
@@ -131,9 +126,7 @@ public class GameHUD extends Group {
         return imageButton;
     }
 
-
-   private Consumer<PlantCardView> createSelectingMethod(){
-
+    private Consumer<PlantCardView> createSelectingMethod(){
         return new Consumer<PlantCardView>() {
             @Override
             public void accept(PlantCardView plantCardView) {
@@ -145,13 +138,12 @@ public class GameHUD extends Group {
                     }
                     if (isSelected){
                         plantCardView.setSelectedState(true);
-                        screen.getPlantPlacementManager().selectPlant(plantCardView.getType(),
-                            null);
+                        screen.getPlantPlacementManager().selectPlant(plantCardView.getType(), null);
                     }
                 }
             }
         };
-   }
+    }
 
     public void resize(float stageWidth, float stageHeight) {
         topBar.pack();
@@ -166,7 +158,7 @@ public class GameHUD extends Group {
             conveyorBeltView.setPosition(x, y);
         }
 
-        plantFoodBank.setPosition(10*MARGIN, MARGIN);
+        plantFoodBank.setPosition(10 * MARGIN, MARGIN);
     }
 
     public void update(GameWorld world, float delta) {
@@ -195,9 +187,14 @@ public class GameHUD extends Group {
             setBackground(new TextureRegionDrawable(new TextureRegion(backgroundTexture)));
             pixmap.dispose();
 
-            BorderedTable frame = new BorderedTable();
-            frame.pad(40, 30, 30, 30);
+            Group toppersGroup = createToppersGroup(game);
+            BorderedTable frame = createFrame(game, skin, world, onRestart);
 
+            add(toppersGroup).padBottom(-20).row();
+            add(frame);
+        }
+
+        private Group createToppersGroup(Main game) {
             Group toppersGroup = new Group();
             TextureRegion grassReg = game.textureBank.region("IMAGE_UI_PAUSEMENU_WINDOWTOPPER");
             TextureRegion flowerReg = game.textureBank.region("IMAGE_UI_PAUSEMENU_SUNFLOWER_TOPPER");
@@ -212,10 +209,24 @@ public class GameHUD extends Group {
                 toppersGroup.addActor(grass);
                 toppersGroup.addActor(flower);
             }
+            return toppersGroup;
+        }
+
+        private BorderedTable createFrame(Main game, Skin skin, GameWorld world, Runnable onRestart) {
+            BorderedTable frame = new BorderedTable();
+            frame.pad(40, 30, 30, 30);
 
             Label title = new Label("GAME PAUSED", skin, "big");
             title.setAlignment(Align.center);
 
+            Table buttonsTable = createButtonsTable(game, skin, world, onRestart);
+
+            frame.add(title).padBottom(20).row();
+            frame.add(buttonsTable).padTop(10);
+            return frame;
+        }
+
+        private Table createButtonsTable(Main game, Skin skin, GameWorld world, Runnable onRestart) {
             TextButton resumeBtn = new TextButton("RESUME", skin, "purple");
             TextButton restartBtn = new TextButton("RESTART", skin, "brown");
             TextButton exitBtn = new TextButton("SAVE AND EXIT", skin, "green");
@@ -254,12 +265,7 @@ public class GameHUD extends Group {
             buttonsTable.add(exitBtn).pad(10).width(160);
             buttonsTable.add(restartBtn).pad(10).width(160);
             buttonsTable.add(resumeBtn).pad(10).width(160);
-
-            frame.add(title).padBottom(20).row();
-            frame.add(buttonsTable).padTop(10);
-
-            add(toppersGroup).padBottom(-20).row();
-            add(frame);
+            return buttonsTable;
         }
 
         @Override
@@ -272,7 +278,6 @@ public class GameHUD extends Group {
             return removed;
         }
     }
-
 
     private static class SunCounter extends Table {
         private final Label sunLabel;
@@ -394,7 +399,6 @@ public class GameHUD extends Group {
         private final TextureRegion leafIcon;
         private final TextureRegion leafIconSelected;
 
-
         PlantFoodBank(Main game, Skin skin, GameScreen screen) {
             visual = new BankVisual(game);
             addActor(visual);
@@ -402,20 +406,30 @@ public class GameHUD extends Group {
 
             leafIcon = game.textureBank.region("IMAGE_UI_HUD_INGAME_PLANTFOOD_BUTTON");
             leafIconSelected = game.textureBank.region("IMAGE_UI_HUD_INGAME_PLANTFOOD_BUTTON_DOWN");
+            plantfoodBtn = createPlantFoodBtn(screen);
+
+            initPips(skin);
+            positionPips();
+
+            if (App.getCurrentUser().isDebugMode()) {
+                initDebugButton(game);
+            }
+        }
+
+        private ImageButton createPlantFoodBtn(GameScreen screen) {
             Drawable leaf = new TextureRegionDrawable(leafIcon);
             Drawable leafSelected = new TextureRegionDrawable(leafIconSelected);
-
-            plantfoodBtn = new ImageButton(leaf, leaf, leafSelected);
+            ImageButton button = new ImageButton(leaf, leaf, leafSelected);
 
             Table plantfoodBtnWrapper = new Table();
-            plantfoodBtnWrapper.add(plantfoodBtn);
+            plantfoodBtnWrapper.add(button);
             addActor(plantfoodBtnWrapper);
-            plantfoodBtnWrapper.moveBy(45,45);
+            plantfoodBtnWrapper.moveBy(45, 45);
 
-            plantfoodBtn.addListener(new ChangeListener() {
+            button.addListener(new ChangeListener() {
                 @Override
                 public void changed(ChangeEvent event, Actor actor) {
-                    if (plantfoodBtn.isChecked()) {
+                    if (button.isChecked()) {
                         if (GameMenuController.selectAndUnselectPlantfood()) {
                             screen.getPlantfoodPlacementManager().setSelected(true);
                         }
@@ -425,36 +439,36 @@ public class GameHUD extends Group {
                     }
                 }
             });
+            return button;
+        }
 
-
-
+        private void initPips(Skin skin) {
             for (int i = 0; i < MAX_PLANT_FOOD; i++) {
                 CheckBox pip = new CheckBox("", skin);
                 pip.setTouchable(Touchable.disabled);
                 pips[i] = pip;
                 addActor(pip);
             }
-            positionPips();
+        }
 
-            if (App.getCurrentUser().isDebugMode()) {
-                ImageButton buyBtn = MainMenuScreen.createImageButton("IMAGE_UI_HUD_INGAME_COIN_BUY",
-                    "IMAGE_UI_HUD_INGAME_COIN_BUY_DOWN", game.textureBank);
-                float btnSize = 38f;
-                buyBtn.setSize(btnSize, btnSize);
-                buyBtn.setPosition(visual.getWidth() + 8f, visual.getHeight() / 2f - btnSize / 2f);
-                buyBtn.addListener(new ClickListener() {
-                    @Override
-                    public void clicked(InputEvent event, float x, float y) {
-                        GameWorld world = App.getCurrentGame();
-                        if (world != null && world.getPlantFoods() < MAX_PLANT_FOOD) {
-                            world.setPlantFoods(world.getPlantFoods() + 1);
-                            update(world);
-                        }
+        private void initDebugButton(Main game) {
+            ImageButton buyBtn = MainMenuScreen.createImageButton("IMAGE_UI_HUD_INGAME_COIN_BUY",
+                "IMAGE_UI_HUD_INGAME_COIN_BUY_DOWN", game.textureBank);
+            float btnSize = 38f;
+            buyBtn.setSize(btnSize, btnSize);
+            buyBtn.setPosition(visual.getWidth() + 8f, visual.getHeight() / 2f - btnSize / 2f);
+            buyBtn.addListener(new ClickListener() {
+                @Override
+                public void clicked(InputEvent event, float x, float y) {
+                    GameWorld world = App.getCurrentGame();
+                    if (world != null && world.getPlantFoods() < MAX_PLANT_FOOD) {
+                        world.setPlantFoods(world.getPlantFoods() + 1);
+                        update(world);
                     }
-                });
-                addActor(buyBtn);
-                setSize(visual.getWidth() + btnSize + 8f, visual.getHeight());
-            }
+                }
+            });
+            addActor(buyBtn);
+            setSize(visual.getWidth() + btnSize + 8f, visual.getHeight());
         }
 
         private void positionPips() {

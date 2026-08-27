@@ -36,7 +36,8 @@ public class MagnetShroomComponent implements GameComponent {
         if (plantFoodDuration >= 0f) return;
         plantFoodIntroDuration = AnimationDurations.hasClip(owner.getType(), PLANT_FOOD_INTRO_CLIP)
             ? AnimationDurations.getDuration(owner.getType(), PLANT_FOOD_INTRO_CLIP, 0f) : 0f;
-        plantFoodDuration = AnimationDurations.getDuration(owner.getType(), PLANT_FOOD_CLIP, DEFAULT_PLANT_FOOD_DURATION);
+        plantFoodDuration = AnimationDurations.getDuration(owner.getType(),
+            PLANT_FOOD_CLIP, DEFAULT_PLANT_FOOD_DURATION);
         plantFoodOutroDuration = AnimationDurations.hasClip(owner.getType(), PLANT_FOOD_OUTRO_CLIP)
             ? AnimationDurations.getDuration(owner.getType(), PLANT_FOOD_OUTRO_CLIP, 0f) : 0f;
     }
@@ -44,7 +45,6 @@ public class MagnetShroomComponent implements GameComponent {
     @Override
     public void update(Plant owner, float delta) {
         ensurePlantFoodDurationsLoaded(owner);
-
         if (owner.getState() == Plant.State.PLANT_FOOD_INTRO) {
             introOutroTimer -= delta;
             if (introOutroTimer <= 0f) {
@@ -54,7 +54,6 @@ public class MagnetShroomComponent implements GameComponent {
             }
             return;
         }
-
         if (owner.getState() == Plant.State.PLANT_FOOD) {
             plantFoodTimer += delta;
             if (plantFoodTimer >= plantFoodDuration) {
@@ -67,7 +66,6 @@ public class MagnetShroomComponent implements GameComponent {
             }
             return;
         }
-
         if (owner.getState() == Plant.State.PLANT_FOOD_OUTRO) {
             introOutroTimer -= delta;
             if (introOutroTimer <= 0f) {
@@ -75,7 +73,6 @@ public class MagnetShroomComponent implements GameComponent {
             }
             return;
         }
-
         if (disable) {
             currentDisableTime -= delta;
             if (currentDisableTime <= 0) {

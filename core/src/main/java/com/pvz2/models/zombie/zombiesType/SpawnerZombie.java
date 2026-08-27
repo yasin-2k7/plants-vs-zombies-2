@@ -34,11 +34,9 @@ public class SpawnerZombie extends Zombie {
 
     private static final float THROW_FIRE_DURATION = 0.97f;
     private static final float THROW_CANNON_FIRE_DURATION = 0.57f;
-
     private static final float SMASH_EAT_DURATION = 1.27f;
     private static final float SMASH_LEFT_DURATION = 1.77f;
     private static final float SMASH_TOTAL_DURATION = SMASH_EAT_DURATION + SMASH_LEFT_DURATION;
-
     private static final float SMASH_RANGE = 200f;
 
     public SpawnerZombie(int health, double speed, int damage, boolean isGargantuar) {
@@ -53,7 +51,6 @@ public class SpawnerZombie extends Zombie {
         if (!isGargantuar) {
             this.speed = 0;
             this.originalSpeed = 0;
-
             this.isIntro = true;
             this.introTimer = 0f;
             this.isSpecial = false;
@@ -80,86 +77,80 @@ public class SpawnerZombie extends Zombie {
         super.update(delta);
 
         if (isGargantuar) {
-            if (isThrowing) {
-                throwTimer += delta;
-                this.speed = 0;
+            updateGargantuar(delta);
+        } else {
+            updateNonGargantuar(delta);
+        }
+    }
 
-                if (throwStage == 0) {
-                    if (throwTimer >= THROW_FIRE_DURATION) {
-                        throwStage = 1;
-                        throwTimer = 0f;
-                        throwImp();
-                    }
-                } else {
-                    if (throwTimer >= THROW_CANNON_FIRE_DURATION) {
-                        isThrowing = false;
-                        this.speed = this.originalSpeed;
-                    }
-                }
-            } else if (!hasThrownImp && this.health <= this.maxHealth / 2) {
-                isThrowing = true;
-                hasThrownImp = true;
-                throwStage = 0;
+    private void updateGargantuar(float delta) {
+        if (isThrowing) {
+            updateThrowing(delta);
+            return;
+        }
+
+        if (!hasThrownImp && this.health <= this.maxHealth / 2) {
+            startThrowing();
+            return;
+        }
+
+        if (isSmashing) {
+            updateSmashing(delta);
+            return;
+        }
+
+        checkForSmashTarget();
+    }
+
+    private void updateThrowing(float delta) {
+        throwTimer += delta;
+        this.speed = 0;
+
+        if (throwStage == 0) {
+            if (throwTimer >= THROW_FIRE_DURATION) {
+                throwStage = 1;
                 throwTimer = 0f;
-                this.speed = 0;
-            } else if (isSmashing) {
-                smashTimer += delta;
-                this.speed = 0;
-
-                if (!hasAppliedSmashDamage && smashTimer >= SMASH_EAT_DURATION) {
-                    hasAppliedSmashDamage = true;
-                    if (smashTarget != null && !smashTarget.isDead()) {
-                        smashTarget.die();
-                        GameMenuController.updateState("Gargantuar smashed a plant at (" +
-                            (int) smashTarget.getX() + ", " + (int) smashTarget.getY() + ")");
-                    }
-                    requestScreenShake();
-                }
-
-                if (!hasShakenSmashLeft && smashTimer >= SMASH_EAT_DURATION) {
-                    hasShakenSmashLeft = true;
-                    requestScreenShake();
-                }
-
-                if (smashTimer >= SMASH_TOTAL_DURATION) {
-                    isSmashing = false;
-                    smashTarget = null;
-                    this.speed = this.originalSpeed;
-                }
-            } else {
-                checkForSmashTarget();
+                throwImp();
             }
         } else {
-            if (isIntro) {
-                introTimer += delta;
-                if (introTimer >= 2.0f) {
-                    isIntro = false;
-                }
-                return;
+            if (throwTimer >= THROW_CANNON_FIRE_DURATION) {
+                isThrowing = false;
+                this.speed = this.originalSpeed;
             }
+        }
+    }
 
-            if (isSpecial) {
-                specialTimer += delta;
-                if (specialTimer >= 1.5f) {
-                    isSpecial = false;
-                }
-            } else {
-                idleTimer += delta;
-                if (idleTimer >= 3.0f) {
-                    useIdle2 = !useIdle2;
-                    idleTimer = 0f;
-                }
-            }
+    private void startThrowing() {
+        isThrowing = true;
+        hasThrownImp = true;
+        throwStage = 0;
+        throwTimer = 0f;
+        this.speed = 0;
+    }
 
-            if (currentCooldown <= 0 && !isSpecial) {
-                if (knightNearbyZombie()) {
-                    isSpecial = true;
-                    specialTimer = 0f;
-                    currentCooldown = spawnCooldown;
-                }
-            } else if (!isSpecial) {
-                currentCooldown -= delta;
+    private void updateSmashing(float delta) {
+        smashTimer += delta;
+        this.speed = 0;
+
+        if (!hasAppliedSmashDamage && smashTimer >= SMASH_EAT_DURATION) {
+            hasAppliedSmashDamage = true;
+            if (smashTarget != null && !smashTarget.isDead()) {
+                smashTarget.die();
+                GameMenuController.updateState("Gargantuar smashed a plant at (" +
+                    (int) smashTarget.getX() + ", " + (int) smashTarget.getY() + ")");
             }
+            requestScreenShake();
+        }
+
+        if (!hasShakenSmashLeft && smashTimer >= SMASH_EAT_DURATION) {
+            hasShakenSmashLeft = true;
+            requestScreenShake();
+        }
+
+        if (smashTimer >= SMASH_TOTAL_DURATION) {
+            isSmashing = false;
+            smashTarget = null;
+            this.speed = this.originalSpeed;
         }
     }
 
@@ -182,6 +173,56 @@ public class SpawnerZombie extends Zombie {
         }
     }
 
+    private void updateNonGargantuar(float delta) {
+        if (isIntro) {
+            updateIntro(delta);
+            return;
+        }
+
+        if (isSpecial) {
+            updateSpecial(delta);
+            return;
+        }
+
+        updateIdle(delta);
+        updateCooldown(delta);
+    }
+
+    private void updateIntro(float delta) {
+        introTimer += delta;
+        if (introTimer >= 2.0f) {
+            isIntro = false;
+        }
+    }
+
+    private void updateSpecial(float delta) {
+        specialTimer += delta;
+        if (specialTimer >= 1.5f) {
+            isSpecial = false;
+        }
+    }
+
+    private void updateIdle(float delta) {
+        idleTimer += delta;
+        if (idleTimer >= 3.0f) {
+            useIdle2 = !useIdle2;
+            idleTimer = 0f;
+        }
+    }
+
+    private void updateCooldown(float delta) {
+        if (currentCooldown <= 0 && !isSpecial) {
+            if (knightNearbyZombie()) {
+                isSpecial = true;
+                specialTimer = 0f;
+                currentCooldown = spawnCooldown;
+            }
+        } else if (!isSpecial) {
+            currentCooldown -= delta;
+        }
+    }
+
+
     @Override
     public String getAnimationClip() {
         if (isDead) return "die";
@@ -194,12 +235,8 @@ public class SpawnerZombie extends Zombie {
                 return smashTimer < SMASH_EAT_DURATION ? "eat" : "smash_left";
             }
         } else {
-            if (isIntro) {
-                return "intro";
-            }
-            if (isSpecial) {
-                return "special";
-            }
+            if (isIntro) return "intro";
+            if (isSpecial) return "special";
             return useIdle2 ? "idle2" : "idle";
         }
 
@@ -211,7 +248,6 @@ public class SpawnerZombie extends Zombie {
         if (game == null) return;
 
         ImpZombie imp = (ImpZombie) new ZombieFactory().createZombie("ZombieImp");
-
         float targetX = App.getCellCenterX(2);
         float targetY = this.y;
 

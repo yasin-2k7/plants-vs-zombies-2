@@ -2,13 +2,9 @@ package com.pvz2.view;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
-import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.utils.viewport.FillViewport;
-import com.badlogic.gdx.utils.viewport.Viewport;
 import com.pvz2.Main;
 import com.pvz2.models.core.App;
 import com.pvz2.models.enums.PlantLayer;
@@ -17,7 +13,6 @@ import com.pvz2.models.miniGame.vaseBreaker.Vase;
 import com.pvz2.models.miniGame.vaseBreaker.VaseBreakerLevel;
 import com.pvz2.models.miniGame.vaseBreaker.VaseType;
 import com.pvz2.models.plant.Plant;
-import com.pvz2.models.plant.factory.PlantFactory;
 import com.pvz2.models.world.Cell;
 import com.pvz2.models.zombie.Zombie;
 import pvz.libpvz.pam.PamPlayer;
@@ -146,28 +141,22 @@ public class VaseBreakerScreen extends MenuScreen {
     private void handleInput() {
         Vector3 touchPoint = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
         worldViewport.unproject(touchPoint);
-
         if (Gdx.input.justTouched()) {
             if (plantPlacementManager.isPlantSelected()) {
                 int row = LawnGrid.getRowFromY(touchPoint.y);
                 int col = LawnGrid.getColFromX(touchPoint.x);
-
                 if (row >= 0 && col >= 0) {
                     PlantType selectedPlant = plantPlacementManager.getSelectedPlant();
-
                     boolean success = plantPlacementManager.tryPlace(row, col);
-
                     if (success) {
                         Cell cell = null;
                         Cell[][] grid = App.getCurrentGame().getGrid();
                         if (grid != null && row < grid.length && col < grid[0].length) {
                             cell = grid[row][col];
                         }
-
                         if (cell != null) {
                             Plant plantModel = com.pvz2.models.plant.factory.PlantFactory.createPlant(
                                 selectedPlant, (int) cell.getX(), (int) cell.getY(), cell);
-
                             if (plantModel != null) {
                                 cell.setPlant(plantModel, PlantLayer.MAIN);
                                 plantGraphics.add(new PlantGraphic(plantModel, pamPlayer));
@@ -179,12 +168,10 @@ public class VaseBreakerScreen extends MenuScreen {
                 }
                 return;
             }
-
             for (int i = seedPackets.size() - 1; i >= 0; i--) {
                 PlantCardView card = seedPackets.get(i);
                 if (touchPoint.x >= card.getX() && touchPoint.x <= card.getX() + card.getWidth() &&
                     touchPoint.y >= card.getY() && touchPoint.y <= card.getY() + card.getHeight()) {
-
                     if (card.isActive()) {
                         plantPlacementManager.selectPlant(card.getType(), () -> seedPackets.remove(card));
                     }
@@ -219,7 +206,7 @@ public class VaseBreakerScreen extends MenuScreen {
         private final String pamPath;
         private boolean contentSpawned = false;
 
-        private static final Random random = new Random();
+        private static final Random RANDOM = new Random();
 
         public VaseGraphic(Vase vase, float targetX, float targetY) {
             this.vase = vase;
@@ -267,7 +254,7 @@ public class VaseBreakerScreen extends MenuScreen {
 
             state = VaseState.BREAKING;
             animTime = 0f;
-            currentClip = random.nextBoolean() ? "break" : "break2";
+            currentClip = RANDOM.nextBoolean() ? "break" : "break2";
             isLoop = false;
         }
 

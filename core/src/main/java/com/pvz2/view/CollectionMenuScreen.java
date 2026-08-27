@@ -15,7 +15,7 @@ import com.ray3k.tenpatch.TenPatchDrawable;
 
 import java.util.function.Consumer;
 
-public class CollectionMenuScreen extends MenuScreen{
+public class CollectionMenuScreen extends MenuScreen {
     private CollectionMenuController controller;
     private ScrollPane pane;
     private PlantsTable plantsTable;
@@ -52,7 +52,8 @@ public class CollectionMenuScreen extends MenuScreen{
 
         resetMainTable();
 
-        TenPatchDrawable tenPatchDrawable = new TenPatchDrawable((TenPatchDrawable) skin.getDrawable("image_ui_quests_panel_edge_to_edge_ten"));
+        TenPatchDrawable tenPatchDrawable = new TenPatchDrawable((TenPatchDrawable)
+            skin.getDrawable("image_ui_quests_panel_edge_to_edge_ten"));
         Table headerTable = buildHeaderTable();
 
         Table containingTable = new Table();
@@ -83,8 +84,8 @@ public class CollectionMenuScreen extends MenuScreen{
             @Override
             public void accept(PlantCardView plantCardView) {
                 PlantsCollectionMenuScreen plantsCollectionMenuScreen =
-                new PlantsCollectionMenuScreen(game, plantCardView.getType(),
-                 CollectionMenuScreen.this);
+                    new PlantsCollectionMenuScreen(game, plantCardView.getType(),
+                        CollectionMenuScreen.this);
                 fadeAndSwitchScreen(plantsCollectionMenuScreen);
                 controller.setPlantsCollectionMenuScreen(plantsCollectionMenuScreen);
             }
@@ -103,39 +104,14 @@ public class CollectionMenuScreen extends MenuScreen{
 
     private Table buildHeaderTable() {
         Table headerTable = new Table();
-        ImageButton.ImageButtonStyle plantsStyle = new ImageButton.ImageButtonStyle();
-        plantsStyle.imageUp = new Image(game.textureBank.region(
-            "IMAGE_UI_ALMANAC_TABS_PLANTS_DOWN")).getDrawable();
-        plantsStyle.imageChecked = new Image(game.textureBank.region(
-            "IMAGE_UI_ALMANAC_TABS_PLANTS_ACTIVE")).getDrawable();
-        ImageButton plantsTab = new ImageButton(plantsStyle);
 
-        Image plantIcon = new Image(game.textureBank.region(
-            "IMAGE_UI_STORE_TABICONS_PLANTS"));
-        plantIcon.setTouchable(Touchable.disabled);
-        Table plantIconWrapper = new Table();
-        plantIconWrapper.add(plantIcon);
+        ImageButton plantsTab = createTabButton("IMAGE_UI_ALMANAC_TABS_PLANTS_DOWN",
+            "IMAGE_UI_ALMANAC_TABS_PLANTS_ACTIVE");
+        Stack plantsTabStack = createTabStack(plantsTab, "IMAGE_UI_STORE_TABICONS_PLANTS");
 
-        Stack plantsTabStack = new Stack();
-        plantsTabStack.add(plantsTab);
-        plantsTabStack.add(plantIconWrapper);
-
-        ImageButton.ImageButtonStyle zombiesStyle = new ImageButton.ImageButtonStyle();
-        zombiesStyle.imageUp = new Image(game.textureBank.region(
-            "IMAGE_UI_ALMANAC_TABS_ZOMBIES_DOWN")).getDrawable();
-        zombiesStyle.imageChecked = new Image(game.textureBank.region(
-            "IMAGE_UI_ALMANAC_TABS_ZOMBIES_ACTIVE")).getDrawable();
-        ImageButton zombiesTab = new ImageButton(zombiesStyle);
-
-        Image zombieIcon = new Image(game.textureBank.region(
-            "IMAGE_UI_STORE_TABICONS_ZOMBIES"));
-        zombieIcon.setTouchable(Touchable.disabled);
-        Table zombieIconWrapper = new Table();
-        zombieIconWrapper.add(zombieIcon);
-
-        Stack zombiesTabStack = new Stack();
-        zombiesTabStack.add(zombiesTab);
-        zombiesTabStack.add(zombieIconWrapper);
+        ImageButton zombiesTab = createTabButton("IMAGE_UI_ALMANAC_TABS_ZOMBIES_DOWN",
+            "IMAGE_UI_ALMANAC_TABS_ZOMBIES_ACTIVE");
+        Stack zombiesTabStack = createTabStack(zombiesTab, "IMAGE_UI_STORE_TABICONS_ZOMBIES");
 
         ButtonGroup<ImageButton> tabGroup = new ButtonGroup<>(plantsTab, zombiesTab);
         tabGroup.setMinCheckCount(1);
@@ -143,7 +119,50 @@ public class CollectionMenuScreen extends MenuScreen{
         if (currentTable instanceof PlantsTable) plantsTab.setChecked(true);
         else zombiesTab.setChecked(true);
 
+        setupTabListeners(plantsTab, zombiesTab);
 
+        Table tabsTable = new Table();
+        tabsTable.left().top();
+        tabsTable.add(plantsTabStack).top().padLeft(10).padRight(15);
+        tabsTable.add(zombiesTabStack).top();
+
+        ImageButton exitButton = MainMenuScreen.createImageButton(
+            "IMAGE_UI_ALMANAC_TABS_CLOSE_TAB", "IMAGE_UI_ALMANAC_TABS_CLOSE_TAB_DOWN",
+            game.textureBank);
+        exitButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                controller.exitMenu();
+            }
+        });
+
+        headerTable.add(tabsTable).left().expandX();
+        headerTable.add().expandX();
+        headerTable.add(exitButton).right().padBottom(-12).size(50, 50);
+
+        return headerTable;
+    }
+
+    private ImageButton createTabButton(String upRegion, String checkedRegion) {
+        ImageButton.ImageButtonStyle style = new ImageButton.ImageButtonStyle();
+        style.imageUp = new Image(game.textureBank.region(upRegion)).getDrawable();
+        style.imageChecked = new Image(game.textureBank.region(checkedRegion)).getDrawable();
+        return new ImageButton(style);
+    }
+
+    private Stack createTabStack(ImageButton tabButton, String iconRegion) {
+        Image icon = new Image(game.textureBank.region(iconRegion));
+        icon.setTouchable(Touchable.disabled);
+        Table iconWrapper = new Table();
+        iconWrapper.add(icon);
+
+        Stack tabStack = new Stack();
+        tabStack.add(tabButton);
+        tabStack.add(iconWrapper);
+        return tabStack;
+    }
+
+    private void setupTabListeners(ImageButton plantsTab, ImageButton zombiesTab) {
         plantsTab.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
@@ -167,25 +186,6 @@ public class CollectionMenuScreen extends MenuScreen{
                 }
             }
         });
-
-        Table tabsTable = new Table();
-        tabsTable.left().top();
-        tabsTable.add(plantsTabStack).top().padLeft(10).padRight(15);
-        tabsTable.add(zombiesTabStack).top();
-
-        ImageButton exitButton = MainMenuScreen.createImageButton(
-            "IMAGE_UI_ALMANAC_TABS_CLOSE_TAB", "IMAGE_UI_ALMANAC_TABS_CLOSE_TAB_DOWN",
-            game.textureBank);
-        exitButton.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                controller.exitMenu();
-            }
-        });
-        headerTable.add(tabsTable).left().expandX();
-        headerTable.add().expandX();
-        headerTable.add(exitButton).right().padBottom(-12).size(50, 50);
-        return headerTable;
     }
 
     private Table createFilterBar(PlantsTable plantsTable) {
@@ -201,7 +201,8 @@ public class CollectionMenuScreen extends MenuScreen{
         familySelect.setItems(familyOptions);
 
         SelectBox<PlantsTable.LockFilter> lockSelect = new SelectBox<>(skin);
-        lockSelect.setItems(PlantsTable.LockFilter.ALL, PlantsTable.LockFilter.UNLOCKED_ONLY, PlantsTable.LockFilter.LOCKED_ONLY);
+        lockSelect.setItems(PlantsTable.LockFilter.ALL,
+            PlantsTable.LockFilter.UNLOCKED_ONLY, PlantsTable.LockFilter.LOCKED_ONLY);
 
         CheckBox upgradeableCheck = new CheckBox("Upgradeable", skin);
 

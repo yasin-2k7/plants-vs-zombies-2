@@ -36,7 +36,8 @@ public class BowlingChargeComponent implements GameComponent {
                                   CombinedDamageStrategy thirdDamageStrategy,
                                   Supplier<MovementStrategy> movementStrategy,
                                   CombinedDamageStrategy plantFoodDamageStrategy,
-                                  int firstCharge, int secondCharge, int thirdCharge, float actionTimeInterval, float actionTime) {
+                                  int firstCharge, int secondCharge, int thirdCharge,
+                                  float actionTimeInterval, float actionTime) {
         this.shootingTime = shootingTime;
         this.actionTimeInterval = actionTimeInterval;
         this.actionTime = actionTime;

@@ -83,9 +83,4 @@ public class LoginMenuController implements MenuController {
             return "Failed to save the new password. Please try again.";
         }
     }
-
-    public void showCurrentMenu() {
-        //needs edit
-//        GameMenuView.getInstance().showResult("Current menu: login menu");
-    }
 }

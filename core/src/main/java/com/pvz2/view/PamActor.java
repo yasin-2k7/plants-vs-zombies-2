@@ -16,14 +16,14 @@ public class PamActor extends Actor {
     private float scale;
     private HashMap<String, Boolean> partVisibility;
 
-    public PamActor(PamPlayer pamPlayer, String pamPath, String clipName, float scale, HashMap<String, Boolean> partVisibility) {
+    public PamActor(PamPlayer pamPlayer, String pamPath, String clipName, float scale,
+                    HashMap<String, Boolean> partVisibility) {
         this.pamPlayer = pamPlayer;
         this.pamPath = pamPath;
         this.clipName = clipName;
         this.scale = scale;
         this.partVisibility = partVisibility;
 
-        // پیش‌بارگذاری
         this.pamPlayer.loadAsync(pamPath, () -> {
             this.clipRef = pamPlayer.getClip(pamPath, clipName);
         });

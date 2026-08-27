@@ -165,10 +165,8 @@ public class BeghouledScreen extends GameScreen {
     public void handleInput() {
         Vector3 touchPoint = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
         worldViewport.unproject(touchPoint);
-
         int col = LawnGrid.getColFromX(touchPoint.x);
         int row = LawnGrid.getRowFromY(touchPoint.y);
-
         if (Gdx.input.justTouched()) {
             if (row >= 0 && row < world.getRows() && col >= 0 && col < world.getCols()) {
                 Cell cell = world.getGrid()[row][col];
@@ -187,10 +185,8 @@ public class BeghouledScreen extends GameScreen {
             if (dragStartPos != null && draggedPlant != null) {
                 float dx = touchPoint.x - initialTouchPoint.x;
                 float dy = touchPoint.y - initialTouchPoint.y;
-
                 int targetCol = dragStartPos.col();
                 int targetRow = dragStartPos.row();
-
                 if (Math.abs(dx) > Math.abs(dy)) {
                     if (dx > LawnGrid.CELL_WIDTH / 3f) targetCol++;
                     else if (dx < -LawnGrid.CELL_WIDTH / 3f) targetCol--;
@@ -198,13 +194,10 @@ public class BeghouledScreen extends GameScreen {
                     if (dy > LawnGrid.CELL_HEIGHT / 3f) targetRow++;
                     else if (dy < -LawnGrid.CELL_HEIGHT / 3f) targetRow--;
                 }
-
                 GridPosition targetPos = new GridPosition(targetRow, targetCol);
-
                 if ((targetRow != dragStartPos.row() || targetCol != dragStartPos.col())
                     && targetRow >= 0 && targetRow < world.getRows()
                     && targetCol >= 0 && targetCol < world.getCols()) {
-
                     String error = mechanics.trySwap(world, dragStartPos, targetPos);
                     if (error != null) {
                         announce(error);

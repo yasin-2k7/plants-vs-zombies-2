@@ -123,7 +123,4 @@ public class ProfileMenuController implements MenuController {
                 "Levels completed: " + user.getCompletedLevels() + "\n" +
                 "Mu point: " + user.getMaxMupoint();
     }
-
-    public void showCurrentMenu() {}
-
 }

@@ -63,40 +63,32 @@ public class SunStealerZombie extends Zombie {
     private void updateRaSteal(GameWorld game, float delta) {
         List<Sun> suns = game.getActiveSuns();
         boolean foundSunInRange = false;
-
         for (Sun sun : suns) {
             if (sun.isCollected() || sun.isExpired()) continue;
             float dx = this.x - sun.getX();
             float dy = this.y - sun.getY();
             float distance = (float) Math.sqrt(dx * dx + dy * dy);
-
             if (distance < 350f) {
                 foundSunInRange = true;
                 break;
             }
         }
-
         if (!isStealing && foundSunInRange) {
             isStealing = true;
             stealingPhaseTimer = 0f;
             animState = "power_up";
         }
-
         if (isStealing) {
             stealingPhaseTimer += delta;
-
             if (stealingPhaseTimer < POWER_UP_DUR) {
                 animState = "power_up";
             } else if (stealingPhaseTimer < (POWER_UP_DUR + POWER_DUR)) {
                 animState = "power";
-
                 for (Sun sun : suns) {
                     if (sun.isCollected() || sun.isExpired()) continue;
-
                     float dx = this.x - sun.getX();
                     float dy = this.y - sun.getY();
                     float distance = (float) Math.sqrt(dx * dx + dy * dy);
-
                     if (distance < 350f) {
                         float pullSpeed = 400f * delta;
                         if (distance <= pullSpeed || distance < 20f) {

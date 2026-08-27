@@ -26,24 +26,20 @@ public class PlantsCollectionMenuScreen extends MenuScreen{
     @Override
     protected void buildUI() {
         if (resourcesTable == null && App.getCurrentUser() != null) {
-            resourcesTable = new ResourcesTable(App.getCurrentUser(), game);
-        }
+            resourcesTable = new ResourcesTable(App.getCurrentUser(), game);}
         Table mainTable = new Table();
         mainTable.setFillParent(true);
         Table topBar = new Table();
         ImageButton backBtn = MainMenuScreen.createImageButton(
             "IMAGE_UI_ALMANAC_BUTTONS_HUD_BACK_NORMAL",
             "IMAGE_UI_ALMANAC_BUTTONS_HUD_BACK_SELECTED",
-            game.textureBank
-        );
+            game.textureBank);
         if (backBtn != null) {
-            topBar.add(backBtn).left().top().pad(15);
-        }
+            topBar.add(backBtn).left().top().pad(15);}
         topBar.add().expandX().fillX();
         if (resourcesTable != null) {
             resourcesTable.update();
-            topBar.add(resourcesTable).right().top().pad(15);
-        }
+            topBar.add(resourcesTable).right().top().pad(15);}
         mainTable.add(topBar).top().growX().row();
         Table centerTable = new Table();
         centerTable.add(new Label(plantType.name(), skin, "big_outline"))
@@ -60,26 +56,20 @@ public class PlantsCollectionMenuScreen extends MenuScreen{
         if (cardLevel < 4){
             leftColumn.add(PlantsTable.createProgressStack(App.getCurrentUser(), plantType, cardLevel, "medium"))
                 .growX()
-                .row();
-        }
+                .row();}
         if (App.getCurrentUser().getUnlockedPlantsLevels().getOrDefault(plantType, 0) == 0){
-            leftColumn.add(createBuyBtn()).pad(10).growX();
-        }
+            leftColumn.add(createBuyBtn()).pad(10).growX();}
         else{
-            leftColumn.add(createUpgradeBtn()).pad(10).growX();
-        }
+            leftColumn.add(createUpgradeBtn()).pad(10).growX();}
         centerTable.add(leftColumn).top().padRight(80);
         centerTable.add(createCardFieldsTable(plantType, game, "medium", true)).top().size(350).row();
         mainTable.add(centerTable).expand().center().row();
         mainTable.setBackground(new TextureRegionDrawable(
-            game.textureBank.region("IMAGE_MAINMENU_BACKGROUND")
-        ));
+            game.textureBank.region("IMAGE_MAINMENU_BACKGROUND")));
         backBtn.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                fadeAndSwitchScreen(collectionMenuScreen);
-            }
-        });
+                fadeAndSwitchScreen(collectionMenuScreen);}});
         mainStack.add(mainTable);
     }
 
@@ -126,7 +116,8 @@ public class PlantsCollectionMenuScreen extends MenuScreen{
         table.add(createFieldTable("IMAGE_UI_ALMANAC_PLANTS_DAMAGE_ICON", "DAMAGE",
             result, 3, game, style)).pad(20).row();
         if (showFamily) {
-            Image familyImg = new Image(game.textureBank.region(PlantsTable.getPlantsFamilyMap().get(plantType.family)));
+            Image familyImg =
+                new Image(game.textureBank.region(PlantsTable.getPlantsFamilyMap().get(plantType.family)));
             Label familyLbl = new Label(plantType.family.name(), game.skin, "medium");
             table.add(familyImg).pad(5);
             table.add(familyLbl).row();

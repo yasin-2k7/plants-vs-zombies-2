@@ -73,7 +73,8 @@ public class Sun implements Resettable {
         float startY = App.getCellCenterY(row);
         beginRiseAndLandBeside(startX, startY, produceIndex);
 
-        GameMenuController.updateState("New " + type + " sun produced beside plant at (" + finalX + ", " + finalY + ")");
+        GameMenuController.updateState("New " + type + " sun produced beside plant at (" +
+            finalX + ", " + finalY + ")");
     }
 
     private void beginRiseAndLandBeside(float startX, float startY, int produceIndex) {

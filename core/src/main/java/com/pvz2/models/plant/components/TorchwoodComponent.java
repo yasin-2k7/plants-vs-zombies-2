@@ -18,7 +18,7 @@ import java.util.Map;
 public class TorchwoodComponent implements GameComponent {
     private int factor = 2;
     private boolean explodeOnDeath;
-    private final float PLANTFOOD_TIME = 2f;
+    private static final float PLANTFOOD_TIME = 2f;
     private float plantfoodTimer = 0f;
 
     private final Map<Projectile, Integer> convertedProjectiles = new IdentityHashMap<>();

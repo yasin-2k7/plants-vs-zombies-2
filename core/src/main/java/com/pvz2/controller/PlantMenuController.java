@@ -14,7 +14,6 @@ import java.util.*;
 public class PlantMenuController implements MenuController {
     private Set<PlantType> selectedPlants = new HashSet<>();
     private int maxSlots = 8;
-    private Map<PlantType, Boolean> boosts = new HashMap<>();
     private PlantType imitatorTarget = null;
 
     @Override
@@ -33,7 +32,6 @@ public class PlantMenuController implements MenuController {
             screen.addToast("Error", "No user logged in.");
             return false;
         }
-
         PlantType type;
         try {
             type = PlantType.valueOf(typeName.toUpperCase());
@@ -41,22 +39,19 @@ public class PlantMenuController implements MenuController {
             screen.addToast("Error", "Invalid plant type.");
             return false;
         }
-
         if (type == PlantType.IMITATER) {
-            screen.addToast("Error", "Please specify target plant for Imitator (e.g., add plant -t imitator peashooter).");
+            screen.addToast("Error", "Please specify target plant for Imitator" +
+                " (e.g., add plant -t imitator peashooter).");
             return false;
         }
-
         if (!user.getUnlockedPlantsLevels().containsKey(type)) {
             screen.addToast("Error", "Plant is locked.");
             return false;
         }
-
         if (selectedPlants.size() >= maxSlots) {
             screen.addToast("Error", "Selection is full (max " + maxSlots + " plants).");
             return false;
         }
-
         boolean gameHasThisCard = false;
         for (PlantCard card : App.getCurrentGame().getPlantLists()) {
             if (card.getType() == type) {
@@ -64,28 +59,23 @@ public class PlantMenuController implements MenuController {
                 break;
             }
         }
-
         if (gameHasThisCard) {
             screen.addToast("Error", "This plant is locked for this level!");
             return false;
         }
-
         if (selectedPlants.contains(type)) {
             screen.addToast("Error", "Plant already selected.");
             return false;
         }
-
         if (type.family == PlantFamily.SUN_PRODUCER &&
             App.getCurrentGame().getLevelSetup() instanceof PlantWhatYouGetLevelSetup) {
             screen.addToast("Error", "You cant choose sun producer plant in this level.");
             return false;
         }
-
         selectedPlants.add(type);
         screen.addToast("Added!", "Plant " + type.name() + " added to selection.");
         return true;
     }
-
     public boolean addPlant(String typeName, String targetTypeName, MenuScreen screen) {
         User user = App.getCurrentUser();
         if (user == null) {
@@ -236,11 +226,6 @@ public class PlantMenuController implements MenuController {
 
     @Override
     public void exitMenu() {
-    }
-
-    public void showCurrentMenu() {
-        //needs edit
-//        GameMenuView.getInstance().showResult("Current menu: plant menu");
     }
 
     public Set<PlantType> getSelectedPlants() {

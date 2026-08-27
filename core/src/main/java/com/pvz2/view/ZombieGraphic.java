@@ -161,13 +161,10 @@ public class ZombieGraphic {
 
     public void draw(SpriteBatch batch, PamPlayer pamPlayer) {
         if (pamPath == null) return;
-
         float renderX = zombie.getX();
         float renderY = zombie.getY();
-
         float flashAmount = zombie.getDamageFlashProgress();
         float[] flashColor = {1f, 1f, 1f};
-
         if (flashAmount <= 0f && zombie.isNearEndLine() && !zombie.isDead()) {
             long t = System.currentTimeMillis();
             boolean blinkOn = (t / 200) % 2 == 0;
@@ -176,16 +173,13 @@ public class ZombieGraphic {
                 flashColor = new float[]{1f, 0f, 0f};
             }
         }
-
         if (flashAmount > 0f) {
             ShaderProgram shader = DamageFlashShader.get();
             batch.setShader(shader);
             shader.setUniformf("u_flashColor", flashColor[0], flashColor[1], flashColor[2]);
             shader.setUniformf("u_flashAmount", flashAmount);
         }
-
         float scaleX = zombie.getSpeed() < 0 ? -0.8f : 0.8f;
-
         if (zombie instanceof SnorkelZombie snorkel && snorkel.isUnderwater()) {
             pamPlayer.drawPart(batch, pamPath, currentClip, animTime, renderX,
                 renderY - SNORKEL_SUBMERGED_Y_OFFSET, SNORKEL_VISIBLE_PART_WHEN_SUBMERGED);
@@ -196,11 +190,9 @@ public class ZombieGraphic {
             pamPlayer.draw(batch, pamPath, currentClip, animTime, renderX,
                 renderY, scaleX, 0.8f, isLoop);
         }
-
         if (flashAmount > 0f) {
             batch.setShader(null);
         }
-
         if (zombie instanceof SunStealerZombie stealer && !stealer.isRa()) {
             if ("power_down".equals(stealer.getTurquoiseAnimState())) {
                 try {
@@ -211,8 +203,7 @@ public class ZombieGraphic {
                         animTime,
                         renderX - 250f,
                         renderY,
-                        1.2f, 1.0f, false
-                    );
+                        1.2f, 1.0f, false);
                 } catch (Exception ignored) {
                 }
             }

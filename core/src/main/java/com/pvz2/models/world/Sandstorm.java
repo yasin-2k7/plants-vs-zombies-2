@@ -24,11 +24,10 @@ public class Sandstorm {
         this.lane = lane;
         this.targetCol = targetCol;
 
-        // شروع از سمت راست بیرون صفحه
         this.x = App.getFirstCellX() + totalCols * App.getCellWidth() + 100f;
         this.y = App.getCellCenterY(lane);
 
-        // مقصد زامبی روی چمن
+
         this.targetX = App.getCellCenterX(targetCol);
 
         if (zombie != null) {

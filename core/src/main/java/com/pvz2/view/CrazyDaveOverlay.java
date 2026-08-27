@@ -55,16 +55,17 @@ public class CrazyDaveOverlay extends WidgetGroup {
     private float typeTimer = 0f;
     private String targetText = "";
 
-    private final float DAVE_X = 145f;
-    private final float DAVE_Y = 310f;
-    private final float DAVE_SCALE = 0.36f;
+    private static final float DAVE_X = 145f;
+    private static final float DAVE_Y = 310f;
+    private static final float DAVE_SCALE = 0.36f;
 
-    private final float PENNY_X = 1780f;
-    private final float PENNY_Y = 160f;
-    private final float PENNY_SCALE = 0.85f;
+    private static final float PENNY_X = 1780f;
+    private static final float PENNY_Y = 160f;
+    private static final float PENNY_SCALE = 0.85f;
 
-    private final String DAVE_PAM_PATH = "768/INITIAL/CRAZYDAVE/CRAZYDAVE/CRAZYDAVE.PAM";
-    private final String PENNY_PAM_PATH = "768/INITIAL/CRAZYDAVE/DAVEWINNIE_NARRATIONICONS/DAVEWINNIE_NARRATIONICONS.PAM";
+    private static final String DAVE_PAM_PATH = "768/INITIAL/CRAZYDAVE/CRAZYDAVE/CRAZYDAVE.PAM";
+    private static final String PENNY_PAM_PATH =
+        "768/INITIAL/CRAZYDAVE/DAVEWINNIE_NARRATIONICONS/DAVEWINNIE_NARRATIONICONS.PAM";
 
     private final String[] talkAnimations = {
         "anim_smalltalk",
@@ -81,76 +82,96 @@ public class CrazyDaveOverlay extends WidgetGroup {
         setFillParent(true);
         setVisible(false);
 
-        davePam = new PamPlayer(game.textureBank, Gdx.files.internal(""));
-        davePam.loadAsync(DAVE_PAM_PATH, null);
-
-        pennyPam = new PamPlayer(game.textureBank, Gdx.files.internal(""));
-        pennyPam.loadAsync(PENNY_PAM_PATH, null);
+        davePam = createPamPlayer(DAVE_PAM_PATH);
+        pennyPam = createPamPlayer(PENNY_PAM_PATH);
 
         TextureRegion bubbleReg = game.textureBank.region("IMAGE_STORE_SPEECHBUBBLE2");
         daveBubbleDrawable = new TextureRegionDrawable(bubbleReg);
-
-        TextureRegion pennyBubbleReg = new TextureRegion(bubbleReg);
-        pennyBubbleReg.flip(true, false); // flip x = true, flip y = false
-        pennyBubbleDrawable = new TextureRegionDrawable(pennyBubbleReg);
+        pennyBubbleDrawable = createFlippedBubbleDrawable(bubbleReg);
 
         bubbleImage = new Image(daveBubbleDrawable);
         bubbleImage.setVisible(false);
 
-        Label.LabelStyle baseStyle = game.skin.get(Label.LabelStyle.class);
-
-        Label.LabelStyle textStyle = new Label.LabelStyle(baseStyle);
-        textStyle.fontColor = Color.BLACK;
-
-        if (textStyle.font != null && textStyle.font.getRegion() != null && textStyle.font.getRegion().getTexture() != null) {
-            textStyle.font.getRegion().getTexture().setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
-        }
-
-        textLabel = new Label("", textStyle);
-        textLabel.setFontScale(1.25f);
-        textLabel.setWrap(true);
-
-        if (bubbleReg != null) {
-            textLabel.setWidth(bubbleReg.getRegionWidth() - 65);
-        } else {
-            textLabel.setWidth(270);
-        }
-
-        textLabel.setAlignment(Align.topLeft);
-        textLabel.setVisible(false);
-
-        Label.LabelStyle tapStyle = new Label.LabelStyle(baseStyle);
-        tapStyle.fontColor = Color.DARK_GRAY;
-        tapToContinueLabel = new Label("TAP TO CONTINUE", tapStyle);
-        tapToContinueLabel.setFontScale(0.8f);
-        tapToContinueLabel.setVisible(false);
+        textLabel = createTextLabel(bubbleReg);
+        tapToContinueLabel = createTapLabel();
 
         addActor(bubbleImage);
         addActor(textLabel);
         addActor(tapToContinueLabel);
 
+        setupClickListener();
+    }
+
+
+    private PamPlayer createPamPlayer(String path) {
+        PamPlayer pam = new PamPlayer(game.textureBank, Gdx.files.internal(""));
+        pam.loadAsync(path, null);
+        return pam;
+    }
+
+    private TextureRegionDrawable createFlippedBubbleDrawable(TextureRegion baseRegion) {
+        TextureRegion flippedReg = new TextureRegion(baseRegion);
+        flippedReg.flip(true, false);
+        return new TextureRegionDrawable(flippedReg);
+    }
+
+    private Label createTextLabel(TextureRegion bubbleReg) {
+        Label.LabelStyle baseStyle = game.skin.get(Label.LabelStyle.class);
+        Label.LabelStyle textStyle = new Label.LabelStyle(baseStyle);
+        textStyle.fontColor = Color.BLACK;
+
+        if (textStyle.font != null && textStyle.font.getRegion() != null &&
+            textStyle.font.getRegion().getTexture() != null) {
+            textStyle.font.getRegion().getTexture().setFilter(Texture.TextureFilter.Linear,
+                Texture.TextureFilter.Linear);
+        }
+
+        Label label = new Label("", textStyle);
+        label.setFontScale(1.25f);
+        label.setWrap(true);
+        label.setWidth(bubbleReg != null ? bubbleReg.getRegionWidth() - 65 : 270);
+        label.setAlignment(Align.topLeft);
+        label.setVisible(false);
+        return label;
+    }
+
+    private Label createTapLabel() {
+        Label.LabelStyle tapStyle = new Label.LabelStyle(game.skin.get(Label.LabelStyle.class));
+        tapStyle.fontColor = Color.DARK_GRAY;
+        Label label = new Label("TAP TO CONTINUE", tapStyle);
+        label.setFontScale(0.8f);
+        label.setVisible(false);
+        return label;
+    }
+
+    private void setupClickListener() {
         addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                if (finished || !isStarted || isLeaving || currentAnim.equals("anim_enter")) return;
-
-                if (isTyping) {
-                    isTyping = false;
-                    textLabel.setText(targetText);
-                    currentAnim = "anim_idle";
-                    tapToContinueLabel.setVisible(true);
-                } else {
-                    tapToContinueLabel.setVisible(false);
-                    currentDialogIndex++;
-                    if (currentDialogIndex >= dialogs.size()) {
-                        startLeaving();
-                    } else {
-                        startTyping(dialogs.get(currentDialogIndex));
-                    }
-                }
+                handleOverlayClick();
             }
         });
     }
+
+    private void handleOverlayClick() {
+        if (finished || !isStarted || isLeaving || currentAnim.equals("anim_enter")) return;
+
+        if (isTyping) {
+            isTyping = false;
+            textLabel.setText(targetText);
+            currentAnim = "anim_idle";
+            tapToContinueLabel.setVisible(true);
+        } else {
+            tapToContinueLabel.setVisible(false);
+            currentDialogIndex++;
+            if (currentDialogIndex >= dialogs.size()) {
+                startLeaving();
+            } else {
+                startTyping(dialogs.get(currentDialogIndex));
+            }
+        }
+    }
+
 
     private void checkSpeakersInDialogs() {
         hasDave = false;
@@ -314,6 +335,7 @@ public class CrazyDaveOverlay extends WidgetGroup {
         this.stateTime = 0f;
         this.currentAnim = "anim_enter";
     }
+
     public void startPresentation(Runnable onComplete) {
         if (dialogs.isEmpty()) {
             if (onComplete != null) onComplete.run();

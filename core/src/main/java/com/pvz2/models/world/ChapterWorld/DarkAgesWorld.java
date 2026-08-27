@@ -51,7 +51,6 @@ public class DarkAgesWorld extends GameWorld {
 
     private void spawnInitialGraves() {
         int graveCount = MIN_GRAVES + random.nextInt(MAX_GRAVES - MIN_GRAVES + 1);
-//        GameMenuController.updateState(graveCount + " graves have risen from the dark ages!");
 
         Cell[][] grid = getGrid();
         int spawned = 0;
@@ -114,7 +113,6 @@ public class DarkAgesWorld extends GameWorld {
                 cell.setObstacle(grave);
                 cell.setPlantable(false);
                 addGrave(grave);
-//                GameMenuController.updateState("A new grave has risen at (" + col + ", " + row + ")");
             }
         }
     }

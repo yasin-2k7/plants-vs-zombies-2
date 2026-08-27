@@ -30,28 +30,46 @@ public class GameEndOverlay extends Table {
     public GameEndOverlay(Main game, Skin skin, GameWorld world, Runnable onRestart) {
         setFillParent(true);
 
-        // --- dimmed backdrop, same recipe as LevelObjectivesOverlay ---
-        Pixmap pixmap = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
-        pixmap.setColor(new Color(0, 0, 0, 0.6f));
-        pixmap.fill();
-        backgroundTexture = new Texture(pixmap);
-        setBackground(new TextureRegionDrawable(new TextureRegion(backgroundTexture)));
-        pixmap.dispose();
+        this.backgroundTexture = createBackgroundTexture();
+        setBackground(new TextureRegionDrawable(new TextureRegion(this.backgroundTexture)));
 
         boolean won = world.getState() == GameState.WON;
 
         BorderedTable frame = new BorderedTable();
         frame.pad(40, 30, 30, 30);
 
+        frame.add(createTitleLabel(skin, won)).padBottom(20).row();
+        frame.add(createStatusLabel(skin, world, won)).width(480f).padBottom(20).row();
+        frame.add(createButtonsTable(game, skin, world, onRestart));
+
+        add(frame);
+    }
+
+    private Texture createBackgroundTexture() {
+        Pixmap pixmap = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
+        pixmap.setColor(new Color(0, 0, 0, 0.6f));
+        pixmap.fill();
+        Texture texture = new Texture(pixmap);
+        pixmap.dispose();
+        return texture;
+    }
+
+    private Label createTitleLabel(Skin skin, boolean won) {
         Label title = new Label(won ? "LEVEL COMPLETE!" : "GAME OVER", skin, "big");
         title.setColor(won ? Color.BLACK : new Color(0.55f, 0.05f, 0.05f, 1f));
         title.setAlignment(Align.center);
+        return title;
+    }
 
+    private Label createStatusLabel(Skin skin, GameWorld world, boolean won) {
         Label status = new Label(buildStatusMessage(world, won), skin, "medium");
         status.setColor(Color.BLACK);
         status.setWrap(true);
         status.setAlignment(Align.center);
+        return status;
+    }
 
+    private Table createButtonsTable(Main game, Skin skin, GameWorld world, Runnable onRestart) {
         TextButton restartBtn = new TextButton("RESTART", skin, "brown");
         restartBtn.addListener(new ClickListener() {
             @Override
@@ -73,10 +91,9 @@ public class GameEndOverlay extends Table {
                 }
                 remove();
                 App.setCurrentGame(null);
-                if (world instanceof MiniGameWorld){
+                if (world instanceof MiniGameWorld) {
                     game.setScreen(new MainMenuScreen(game));
-                }
-                else{
+                } else {
                     game.setScreen(new LevelMenuScreen(game));
                 }
             }
@@ -86,11 +103,7 @@ public class GameEndOverlay extends Table {
         buttonsTable.add(exitBtn).pad(10).width(180);
         buttonsTable.add(restartBtn).pad(10).width(180);
 
-        frame.add(title).padBottom(20).row();
-        frame.add(status).width(480f).padBottom(20).row();
-        frame.add(buttonsTable);
-
-        add(frame);
+        return buttonsTable;
     }
 
     private String buildStatusMessage(GameWorld world, boolean won) {

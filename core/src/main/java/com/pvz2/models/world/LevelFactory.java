@@ -67,7 +67,7 @@ public class LevelFactory {
             new WaveSpawnEntry("ZombieArmor4", 400),
             new WaveSpawnEntry("ZombieRa", 100),
             new WaveSpawnEntry("ZombieNewspaper", 450),
-        new WaveSpawnEntry("ZombieGargantuar", 700)
+            new WaveSpawnEntry("ZombieGargantuar", 700)
 
         );
         List<Wave> waves = Wave.generateWaves(3, 500, availableZombies, 20);
@@ -159,7 +159,6 @@ public class LevelFactory {
             new WaveSpawnEntry("ZombieExplorer", 250),
             new WaveSpawnEntry("ZombieExplorer", 250),
             new WaveSpawnEntry("ZombieBarrelRoller", 500)
-
         );
         List<Wave> waves = Wave.generateWaves(5, 500, availableZombies, 20);
         List<PlantCard> plantCards = List.of(
@@ -190,12 +189,6 @@ public class LevelFactory {
             "PENNY:Analyzing anomaly: localized temporal distortion is providing flora directly.",
             "PENNY:Deploy them rapidly to maintain defensive integrity."
         ));
-//        world.setWinningDialogs(List.of(
-//            "PENNY:Anomaly resolved. Great botanical efficiency, neighbor."
-//        ));
-//        world.setLosingDialogs(List.of(
-//            "PENNY:Botanical delivery system overwhelmed."
-//        ));
         return world;
     }
 
@@ -222,16 +215,6 @@ public class LevelFactory {
             "DAVE:One last push, neighbor! The mummies brought their big sandy friends!",
             "DAVE:Let's show them the power of green!"
         ));
-//        world.setWinningDialogs(List.of(
-//            "DAVE:Take that, you dusty old bandages!",
-//            "PENNY:Era secured. Preparing temporal shift.",
-//            "DAVE:Egypt is safe! Next stop: the beach!"
-//        ));
-//        world.setLosingDialogs(List.of(
-//            "DAVE:I guess we are mummies now...",
-//            "PENNY:Brain functions ceasing...",
-//            "DAVE:Wrap me up in toilet paper and call me Dave-hotep!"
-//        ));
         return world;
     }
 
@@ -239,11 +222,11 @@ public class LevelFactory {
         int rows = 5;
         int cols = 9;
         List<WaveSpawnEntry> availableZombies = List.of(
-//            new WaveSpawnEntry("ZombieDefault", 100),
-//            new WaveSpawnEntry("ZombieArmor1", 200),
-//            new WaveSpawnEntry("ZombieArmor2", 300),
-            new WaveSpawnEntry("ZombieBeachSnorkel", 200)
-//            new WaveSpawnEntry("ZombieBeachOctopus", 800)
+            new WaveSpawnEntry("ZombieDefault", 100),
+            new WaveSpawnEntry("ZombieArmor1", 200),
+            new WaveSpawnEntry("ZombieArmor2", 300),
+            new WaveSpawnEntry("ZombieBeachSnorkel", 200),
+            new WaveSpawnEntry("ZombieBeachOctopus", 800)
          );
         List<Wave> waves = Wave.generateWaves(3, 500, availableZombies, 10);
         LevelSetup levelSetup = new BigWaveBeachLevelSetup(6, rows, cols, waves);
@@ -263,15 +246,7 @@ public class LevelFactory {
             "DAVE:Don't forget your sunscreen... and your octo-repellent!",
             "PENNY:Zombies here love seafood and BRAINS!"
         ));
-//        world.setWinningDialogs(List.of(
-//            "DAVE:Tubular! We rode that wave perfectly!",
-//            "PENNY:The local cephalopod threat is retreating."
-//        ));
-//        world.setLosingDialogs(List.of(
-//            "DAVE:Wipeout! They surfed right over our defenses!",
-//            "PENNY:Systems flooded. Glug glug glug...",
-//            "DAVE:My brain is completely waterlogged!"
-//        ));
+
         return world;
     }
 
@@ -310,13 +285,6 @@ public class LevelFactory {
             "DAVE:They are like my pet rocks, but greener!",
             "DAVE:Protect them with your life... or with Wall-nuts!"
         ));
-//        world.setWinningDialogs(List.of(
-//            "DAVE:The endangered plants survived! Look at them go!"
-//        ));
-//        world.setLosingDialogs(List.of(
-//            "DAVE:Nooo! My pet rocks... I mean plants!",
-//            "DAVE:Call the plant police!"
-//        ));
         return world;
     }
 
@@ -350,12 +318,6 @@ public class LevelFactory {
             "PENNY:Alert: Rising tide patterns indicate severe temporal constraints.",
             "PENNY:Eliminate hostile entities before the temporal window collapses."
         ));
-//        world.setWinningDialogs(List.of(
-//            "PENNY:Time constraints met successfully. Take that, Father Time!"
-//        ));
-//        world.setLosingDialogs(List.of(
-//            "PENNY:Time expired. Tides have washed everything away."
-//        ));
         return world;
     }
 
@@ -383,15 +345,6 @@ public class LevelFactory {
             "DAVE:The zombies brought the boombox... and the teeth!",
             "DAVE:Don't forget your swimming trunks!"
         ));
-//        world.setWinningDialogs(List.of(
-//            "DAVE:Best beach party ever!",
-//            "PENNY:Hostiles eliminated. Sandcastle structural integrity intact."
-//        ));
-//        world.setLosingDialogs(List.of(
-//            "DAVE:Party foul! They ate the host!",
-//            "PENNY:Sensory overload. Shutting down.",
-//            "DAVE:I'm getting sand everywhere..."
-//        ));
         return world;
     }
 
@@ -426,15 +379,6 @@ public class LevelFactory {
             "PENNY:Solar energy severely depleted. No sun drops from the sky at night.",
             "DAVE:Use Mushrooms, neighbor! They thrive in the shadow!"
         ));
-//        world.setWinningDialogs(List.of(
-//            "DAVE:Who's afraid of the dark? Not us!",
-//            "PENNY:Magic-based hostiles successfully neutralized."
-//        ));
-//        world.setLosingDialogs(List.of(
-//            "DAVE:It's too dark! I can't see my taco!",
-//            "PENNY:Visual sensors compromised.",
-//            "DAVE:They turned me into a toad! Wait, no, just a zombie."
-//        ));
         return world;
     }
 
@@ -469,13 +413,6 @@ public class LevelFactory {
             "DAVE:They turn my favorite plants into SHEEP!",
             "DAVE:BAAAH! See?!"
         ));
-//        world.setWinningDialogs(List.of(
-//            "DAVE:Good job breaking the spell, neighbor!"
-//        ));
-//        world.setLosingDialogs(List.of(
-//            "DAVE:Baaah? Baaah baaah baaah!",
-//            "DAVE:I guess I'm Crazy Sheep Dave now!"
-//        ));
         return world;
     }
 
@@ -510,12 +447,6 @@ public class LevelFactory {
             "PENNY:Restriction: Maximum acceptable botanical casualties is set to 5.",
             "PENNY:Warning: Exceeding this limit will result in catastrophic failure."
         ));
-//        world.setWinningDialogs(List.of(
-//            "PENNY:Casualty limit maintained. Not a single leaf was harmed... mostly."
-//        ));
-//        world.setLosingDialogs(List.of(
-//            "PENNY:Casualty limit exceeded. Retreating."
-//        ));
         return world;
     }
 
@@ -544,14 +475,6 @@ public class LevelFactory {
             "DAVE:The darkest night of all! I hear clanking armor!",
             "DAVE:Did somebody order a dragon?"
         ));
-//        world.setWinningDialogs(List.of(
-//            "PENNY:Solar radiation detected. Safe at last.",
-//            "DAVE:The sun is rising! We survived the night! Time for breakfast tacos!"
-//        ));
-//        world.setLosingDialogs(List.of(
-//            "DAVE:Goodnight, neighbor...",
-//            "PENNY:The dark ages just got a lot darker."
-//        ));
         return world;
     }
 
@@ -583,14 +506,6 @@ public class LevelFactory {
             "PENNY:Extreme sub-zero temperatures detected. Flora freezing probability is high.",
             "DAVE:Use warm plants to melt the ice!"
         ));
-//        world.setWinningDialogs(List.of(
-//            "DAVE:We melted their icy hearts!",
-//            "PENNY:Thermal equilibrium restored. My engine block is thawing."
-//        ));
-//        world.setLosingDialogs(List.of(
-//            "DAVE:Brrr! I'm shivering!",
-//            "PENNY:Core temperature critical. We are becoming popsicles."
-//        ));
         return world;
     }
 
@@ -625,12 +540,6 @@ public class LevelFactory {
             "DAVE:You get what you get and you don't get upset!",
             "DAVE:Use the provided seed cards carefully!"
         ));
-//        world.setWinningDialogs(List.of(
-//            "DAVE:You made a gourmet meal out of leftovers!"
-//        ));
-//        world.setLosingDialogs(List.of(
-//            "DAVE:I guess we needed better seeds..."
-//        ));
         return world;
     }
 
@@ -662,12 +571,6 @@ public class LevelFactory {
             "PENNY:Botanical loadout has been locked.",
             "PENNY:Please proceed with the current pre-configured strategy."
         ));
-//        world.setWinningDialogs(List.of(
-//            "PENNY:Strategy validation complete. You cracked the code, neighbor."
-//        ));
-//        world.setLosingDialogs(List.of(
-//            "PENNY:Back to the drawing board... if it wasn't frozen!"
-//        ));
         return world;
     }
 
@@ -694,15 +597,6 @@ public class LevelFactory {
             "DAVE:The Yeti is coming... maybe? I don't know!",
             "DAVE:Stay warm, neighbor!"
         ));
-//        world.setWinningDialogs(List.of(
-//            "DAVE:We conquered the ice age!",
-//            "PENNY:Ice Age bypassed. Let's go home and turn up the thermostat!"
-//        ));
-//        world.setLosingDialogs(List.of(
-//            "DAVE:We are officially fossils now.",
-//            "PENNY:Preserved in ice for future archaeologists.",
-//            "DAVE:Tell them I loved tacos."
-//        ));
         return world;
     }
 }

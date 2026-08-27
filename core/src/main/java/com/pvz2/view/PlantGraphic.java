@@ -48,7 +48,6 @@ public class PlantGraphic {
     private static final Map<PlantType, String[]> ARMOR_KEYS_MAP = new HashMap<>();
     private static final Map<PlantType, float[]> ARMORS_SCALE = new HashMap<>();
 
-
     private static final String FROST_33_KEY = "IMAGE_EFFECTS_FROSTBITE_CHILL_PLANT_FROSTBITE_CHILL_PLANT_153X62";
     private static final String FROST_66_KEY = "IMAGE_EFFECTS_FROSTBITE_CHILL_PLANT_FROSTBITE_CHILL_PLANT_153X79";
 
@@ -113,7 +112,8 @@ public class PlantGraphic {
 
         this.normalPamPath = PlantsCollectionMenuScreen.getPlantAnimAddress(plant.getType());
         this.imitatorPamPath = PlantsCollectionMenuScreen.getPlantAnimAddress(PlantType.IMITATER);
-        this.sheepPamPath = ZombiesTable.getZombiesAnimAddress().getOrDefault("Sheep", "768/FULL/ZOMBIE/SHEEP/SHEEP.PAM");
+        this.sheepPamPath = ZombiesTable.getZombiesAnimAddress().
+            getOrDefault("Sheep", "768/FULL/ZOMBIE/SHEEP/SHEEP.PAM");
 
         this.pamPath = plant.isImitate() ? imitatorPamPath : normalPamPath;
         this.currentClip = plant.isImitate() ? "idle" : PlantsCollectionMenuScreen.getPlantInitialClip(plant.getType());
@@ -138,36 +138,49 @@ public class PlantGraphic {
 
         GameWorld world = App.getCurrentGame();
         if (world != null && world.getState() != GameState.PLAYING) delta = 0;
-        if (!plant.isFreeze()){
-            animTime += delta;
-        }
+        if (!plant.isFreeze()) animTime += delta;
 
         worldX = plant.getX();
         worldY = plant.getY();
 
+        if (handleSheepUpdate()) return;
+
+        pamPath = plant.isImitate() ? imitatorPamPath : normalPamPath;
+        initialClip = PlantsCollectionMenuScreen.getPlantInitialClip(plant.getType());
+
+        Plant.State state = plant.getState();
+        updatePlantFoodBg(state, delta);
+
+        if (handleStateChange(state)) return;
+
+        if (!currentClip.equals(initialClip)) {
+            float duration = AnimationDurations.getDuration(plant.getType(), currentClip, 0.5f);
+            if (isLoop || animTime >= duration) playClip(initialClip, true);
+        }
+    }
+
+    private boolean handleSheepUpdate() {
         if (plant.isSheep() && !isSheepState) {
             isSheepState = true;
             isRevertingSheep = false;
             pamPath = sheepPamPath;
             playClip("animation", false);
-            return;
-        }
-        else if (!plant.isSheep() && isSheepState && !isRevertingSheep) {
+            return true;
+        } else if (!plant.isSheep() && isSheepState && !isRevertingSheep) {
             isRevertingSheep = true;
             pamPath = sheepPamPath;
             playClip("animation2", false);
-            return;
+            return true;
         }
 
         if (isSheepState && !isRevertingSheep) {
             if (currentClip.equals("animation") && animTime >= 1.5f) {
                 playClip("idle", true);
-            }
-            else if (currentClip.startsWith("idle") && animTime >= 2.0f) {
+            } else if (currentClip.startsWith("idle") && animTime >= 2.0f) {
                 String[] idles = {"idle", "idle2", "idle3"};
                 playClip(idles[random.nextInt(idles.length)], true);
             }
-            return;
+            return true;
         }
 
         if (isRevertingSheep) {
@@ -178,19 +191,12 @@ public class PlantGraphic {
                 playClip(initialClip, true);
                 lastState = Plant.State.IDLE;
             }
-            return;
+            return true;
         }
+        return false;
+    }
 
-        String activePamPath = plant.isImitate() ? imitatorPamPath : normalPamPath;
-        if (!activePamPath.equals(pamPath)) {
-            pamPath = activePamPath;
-            initialClip = PlantsCollectionMenuScreen.getPlantInitialClip(plant.getType());
-        }
-
-        Plant.State state = plant.getState();
-        boolean stateJustEntered = state != lastState;
-        lastState = state;
-
+    private void updatePlantFoodBg(Plant.State state, float delta) {
         boolean isPlantFoodState = (state == Plant.State.PLANT_FOOD || state == Plant.State.PLANT_FOOD2);
         if (isPlantFoodState) {
             if (!inPlantFoodBg) {
@@ -202,26 +208,20 @@ public class PlantGraphic {
         } else {
             inPlantFoodBg = false;
         }
+    }
+
+    private boolean handleStateChange(Plant.State state) {
+        boolean stateJustEntered = state != lastState;
+        lastState = state;
 
         if (state != Plant.State.IDLE) {
             if (stateJustEntered) {
                 ClipInfo info = resolveClipFor(state);
-                if (info != null) {
-                    playClip(info.clipName, info.loop);
-                }
+                if (info != null) playClip(info.clipName, info.loop);
             }
-            return;
+            return true;
         }
-
-        if (currentClip.equals(initialClip)) {
-            return;
-        }
-
-        float duration = AnimationDurations.getDuration(plant.getType(), currentClip, 0.5f);
-        boolean readyToReturnToIdle = isLoop || animTime >= duration;
-        if (readyToReturnToIdle) {
-            playClip(initialClip, true);
-        }
+        return false;
     }
 
     private static TextureRegion cachedRegion(String key) {
@@ -273,8 +273,10 @@ public class PlantGraphic {
             if (plant.getType() == PlantType.KIWIBEAST) return new ClipInfo("attack_stage3", false);
             return new ClipInfo("attack", false);
         }
-        if (state == Plant.State.TRIGGERED) return new ClipInfo(PlantAnimationClips.getTriggerClip(plant.getType()), false);
-        if (state == Plant.State.UNARMED) return new ClipInfo(PlantAnimationClips.getUnarmedClip(plant.getType()), true);
+        if (state == Plant.State.TRIGGERED) return new
+            ClipInfo(PlantAnimationClips.getTriggerClip(plant.getType()), false);
+        if (state == Plant.State.UNARMED) return new
+            ClipInfo(PlantAnimationClips.getUnarmedClip(plant.getType()), true);
         if(state == Plant.State.HIT_LEFT || state == Plant.State.HIT_RIGHT || state == Plant.State.HIT_RIGHT_AND_LEFT){
             return new ClipInfo(PlantAnimationClips.getHitClip(state), false);
         }
@@ -293,21 +295,21 @@ public class PlantGraphic {
             return new ClipInfo(PlantAnimationClips.getPlantFood2Clip(plant.getType()), loop);
         }
         if (state == Plant.State.BUSY){
-            return new ClipInfo("busy", true);
-        }
-        if (state == Plant.State.JUMP_UP_LEFT) return new ClipInfo(PlantAnimationClips.getJumpUpLeftClip(plant.getType()), false);
-        if (state == Plant.State.JUMP_UP_RIGHT) return new ClipInfo(PlantAnimationClips.getJumpUpRightClip(plant.getType()), false);
-        if (state == Plant.State.JUMP_DOWN_LEFT) return new ClipInfo(PlantAnimationClips.getJumpDownLeftClip(plant.getType()), false);
-        if (state == Plant.State.JUMP_DOWN_RIGHT) return new ClipInfo(PlantAnimationClips.getJumpDownRightClip(plant.getType()), false);
+            return new ClipInfo("busy", true);}
+        if (state == Plant.State.JUMP_UP_LEFT)
+            return new ClipInfo(PlantAnimationClips.getJumpUpLeftClip(plant.getType()), false);
+        if (state == Plant.State.JUMP_UP_RIGHT)
+            return new ClipInfo(PlantAnimationClips.getJumpUpRightClip(plant.getType()), false);
+        if (state == Plant.State.JUMP_DOWN_LEFT)
+            return new ClipInfo(PlantAnimationClips.getJumpDownLeftClip(plant.getType()), false);
+        if (state == Plant.State.JUMP_DOWN_RIGHT)
+            return new ClipInfo(PlantAnimationClips.getJumpDownRightClip(plant.getType()), false);
         if (state == Plant.State.PLANT_FOOD_IDLE){
-            return new ClipInfo(PlantAnimationClips.getPlantFoodIdleClip(), true);
-        }
+            return new ClipInfo(PlantAnimationClips.getPlantFoodIdleClip(), true);}
         if (state == Plant.State.PLANT_FOOD_INTRO) {
-            return new ClipInfo(PlantAnimationClips.getPlantFoodIntroClip(plant.getType()), false);
-        }
+            return new ClipInfo(PlantAnimationClips.getPlantFoodIntroClip(plant.getType()), false);}
         if (state == Plant.State.PLANT_FOOD_OUTRO) {
-            return new ClipInfo(PlantAnimationClips.getPlantFoodOutroClip(plant.getType()), false);
-        }
+            return new ClipInfo(PlantAnimationClips.getPlantFoodOutroClip(plant.getType()), false);}
         return null;
     }
 
@@ -325,7 +327,8 @@ public class PlantGraphic {
 
         if (inPlantFoodBg && plantFoodBgPamPath != null) {
             String bgClip = PlantAnimationClips.getPlantFoodBackgroundClip();
-            pamPlayer.draw(batch, plantFoodBgPamPath, bgClip, plantFoodBgAnimTime*App.getCurrentUser().getGameSpeed(), worldX+10, worldY+80, 0.8f, 0.8f,
+            pamPlayer.draw(batch, plantFoodBgPamPath, bgClip, plantFoodBgAnimTime*App.getCurrentUser().getGameSpeed(),
+                worldX+10, worldY+80, 0.8f, 0.8f,
                 true);
         }
 
