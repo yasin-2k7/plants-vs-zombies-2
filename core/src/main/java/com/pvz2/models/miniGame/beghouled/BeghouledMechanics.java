@@ -16,7 +16,6 @@ public class BeghouledMechanics implements Mechanic {
     private final List<PlantType> availablePlantTypes;
     private final List<PlantUpgrade> upgrades;
     private final Set<GridPosition> craters = new HashSet<>();
-    private final Random random = new Random();
     private final int targetScore;
     private int score = 0;
     private boolean needsViewUpdate = false;

@@ -15,11 +15,12 @@ import com.pvz2.Main;
 import com.pvz2.controller.MainMenuController;
 import com.pvz2.models.core.App;
 import com.pvz2.models.core.UserDataManager;
-import com.pvz2.models.enums.NewsType;
 import com.pvz2.view.audios.GameSFX;
 import com.pvz2.view.audios.SFXManager;
 import pvz.libpvz.textures.TextureBank;
 import pvz.skin.BorderedTable;
+
+import java.util.function.Supplier;
 
 public class MainMenuScreen extends MenuScreen {
     private MainMenuController controller;
@@ -98,7 +99,6 @@ public class MainMenuScreen extends MenuScreen {
         bottomBar = new Table();
         badgeOverlay = new Table();
         newsStack = new Stack();
-
     }
 
     @Override
@@ -106,118 +106,114 @@ public class MainMenuScreen extends MenuScreen {
         initFields();
         mainTable.clear();
         mainTable.setFillParent(true);
-        if (backBtn != null) {
-            topBar.add(backBtn).left().top().pad(10);}
+
+        buildTopBar();
+        buildCenterTable();
+        buildBottomBar();
+
+        if (bg != null) {
+            mainTable.setBackground(new TextureRegionDrawable(bg));
+        }
+
+        mainStack.add(mainTable);
+        setListeners();
+    }
+
+    private void buildTopBar() {
+        if (backBtn != null) topBar.add(backBtn).left().top().pad(10);
         topBar.add().expandX();
-        if (App.getCurrentUser() != null){
-            topBar.add(resourcesTable).padRight(20);}
+        if (App.getCurrentUser() != null) topBar.add(resourcesTable).padRight(20);
+
         mainTable.add(topBar).top().growX().row();
+    }
+
+    private void buildCenterTable() {
         if (logoImg != null) {
-            mainTable.add(logoImg).prefWidth(400).prefHeight(100).padTop(5).row();}
+            mainTable.add(logoImg).prefWidth(400).prefHeight(100).padTop(5).row();
+        }
+
         Table welcomeTbl = new Table();
-        welcomeTbl.setBackground(new TextureRegionDrawable(game.textureBank.region(
-            "IMAGE_UI_MAINMENU_MAINMENU_CONTENT_OFFLINE")));
-        Label welcome =
-            new Label("Welcome, " + App.getCurrentUser().getNickname(), skin, "big_outline");
+        welcomeTbl.setBackground(new TextureRegionDrawable(game.textureBank.
+            region("IMAGE_UI_MAINMENU_MAINMENU_CONTENT_OFFLINE")));
+        Label welcome = new Label("Welcome, " + App.getCurrentUser().getNickname(), skin, "big_outline");
         welcome.setColor(Color.RED);
         welcomeTbl.bottom().left().add(welcome).pad(15);
+
         centerTable.add(welcomeTbl).row();
         centerTable.add(playBtn).width(200).height(60).pad(20).row();
         mainTable.add(centerTable).expandY().center().row();
+
+        TextButton shopBtn = new TextButton("STORE", skin, "green");
+        addClickListener(shopBtn, () -> fadeAndSwitchScreen(new ShopMenuScreen(game)));
+        mainTable.add(shopBtn).width(200).height(52).pad(10).row();
+    }
+
+    private void buildBottomBar() {
         if (newsBtn != null) {
             setUnreadStatus(controller.checkUnreadNews());
             newsStack.add(newsBtn);
             badgeOverlay.top().right();
             badgeOverlay.add(unreadBadge).size(25, 25).padTop(-8).padRight(-5);
             newsStack.add(badgeOverlay);
-            unreadBadge.setVisible(hasUnreadNews);}
+            unreadBadge.setVisible(hasUnreadNews);
+        }
+
         float btnSize = 70f;
         if (settingsBtn != null) bottomBar.add(settingsBtn).size(btnSize).padLeft(25).pad(10);
         if (newsBtn != null) bottomBar.add(newsStack).size(btnSize).pad(5);
         bottomBar.add().expandX();
-        if (muPoint != null) bottomBar.add(muPoint).size(btnSize).pad(10);
-        TextButton shopBtn = new TextButton("STORE", skin, "green");
-        shopBtn.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                fadeAndSwitchScreen(new ShopMenuScreen(game));}});
-        mainTable.add(shopBtn).width(200).height(52).pad(10).row();
 
+        if (muPoint != null) bottomBar.add(muPoint).size(btnSize).pad(10);
         bottomBar.add().expandX();
+
         if (leaderboardBtn != null) bottomBar.add(leaderboardBtn).size(btnSize).pad(10);
         if (travelLogBtn != null) bottomBar.add(travelLogBtn).size(btnSize).pad(10);
         if (profileBtn != null) bottomBar.add(profileBtn).size(btnSize).padRight(25).pad(10);
+
         mainTable.add(bottomBar).bottom().growX().pad(10);
-        if (bg != null) {
-            mainTable.setBackground(new TextureRegionDrawable(bg));}
-        mainStack.add(mainTable);
-        setListeners();
     }
 
-    private void setListeners(){
-        backBtn.addListener(new ClickListener(){
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                controller.exitMenu();
-            }
+    private void setListeners() {
+        addClickListener(backBtn, () -> controller.exitMenu());
+        addClickListener(playBtn, () -> controller.enterMenu("play"));
+        addClickListener(muPoint, () -> {
+            controller.enterMenu("mu point");
+            SFXManager.getInstance().playSound(GameSFX.BUTTON_CLICK);
         });
-        playBtn.addListener(new ClickListener(){
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                controller.enterMenu("play");
-            }
+        addClickListener(newsBtn, () -> {
+            setUnreadStatus(false);
+            showScrollablePopup("NEWS", controller.getNews(skin));
+            SFXManager.getInstance().playSound(GameSFX.BUTTON_CLICK);
         });
-        settingsBtn.addListener(new ClickListener(){
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                showScrollablePopup("SETTINGS", new SettingsMenuTable(game, skin),
-                    750, 520, 680, 400);
-                SFXManager.getInstance().playSound(GameSFX.BUTTON_CLICK);
-            }
-        });
-        newsBtn.addListener(new ClickListener(){
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                setUnreadStatus(false);
-                showScrollablePopup("NEWS", controller.getNews(skin));
-                SFXManager.getInstance().playSound(GameSFX.BUTTON_CLICK);
 
-            }
+        addPopupListener(settingsBtn, "SETTINGS", () -> new SettingsMenuTable(game, skin), 750, 520, 680, 400);
+        addPopupListener(leaderboardBtn, "LEADERBOARD", () -> new LeaderboardMenuTable(game, skin), 950, 650, 800, 480);
+        addPopupListener(profileBtn, "PROFILE", () -> new ProfileMenuTable(game, skin), 660, 620, 570, 480);
+        addPopupListener(travelLogBtn, "TRAVEL LOG", () -> new TravelLogMenuTable(game, skin), 800, 500, 750, 400);
+    }
+
+    // Helper Methods برای جلوگیری از کدهای تکراری کلیک
+    private void addClickListener(Button btn, Runnable action) {
+        if (btn == null) return;
+        btn.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) { action.run(); }
         });
-        muPoint.addListener(new ClickListener(){
+    }
+
+    private void addPopupListener(Button btn, String title, Supplier<Actor> contentSupplier,
+                                  float bw, float bh, float sw, float sh) {
+        if (btn == null) return;
+        btn.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                controller.enterMenu("mu point");
-                SFXManager.getInstance().playSound(GameSFX.BUTTON_CLICK);
-            }
-        });
-        leaderboardBtn.addListener(new ClickListener(){
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                showScrollablePopup("LEADERBOARD", new LeaderboardMenuTable(game, skin),
-                    950, 650, 800, 480);}});
-                    950, 650, 800, 480);
-                SFXManager.getInstance().playSound(GameSFX.BUTTON_CLICK);
-            }
-        });
-        profileBtn.addListener(new ClickListener(){
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                showScrollablePopup("PROFILE", new ProfileMenuTable(game, skin), 660, 620, 570, 480);
-                SFXManager.getInstance().playSound(GameSFX.BUTTON_CLICK);
-            }
-        });
-        travelLogBtn.addListener(new ClickListener(){
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                showScrollablePopup("TRAVEL LOG", new TravelLogMenuTable(game, skin), 800, 500, 750, 400);
+                showScrollablePopup(title, contentSupplier.get(), bw, bh, sw, sh);
                 SFXManager.getInstance().playSound(GameSFX.BUTTON_CLICK);
             }
         });
     }
 
-    public static ImageButton createImageButton(String normalRegionKey, String selectedRegionKey,
-                                                TextureBank bank) {
+    public static ImageButton createImageButton(String normalRegionKey, String selectedRegionKey, TextureBank bank) {
         TextureRegion normalReg = bank.region(normalRegionKey);
         TextureRegion selectedReg = bank.region(selectedRegionKey);
 
@@ -236,8 +232,8 @@ public class MainMenuScreen extends MenuScreen {
     }
 
     private void showScrollablePopup(String titleText, Actor contentActor,
-                                      float boxWidth, float boxHeight,
-                                      float scrollWidth, float scrollHeight) {
+                                     float boxWidth, float boxHeight,
+                                     float scrollWidth, float scrollHeight) {
         Table overlay = new Table();
         overlay.setFillParent(true);
         overlay.setBackground(createSolidColor(new Color(0, 0, 0, 0.65f)));
@@ -264,10 +260,10 @@ public class MainMenuScreen extends MenuScreen {
                 SFXManager.getInstance().playSound(GameSFX.BUTTON_CLICK);
             }
         });
+
         topBar.add(backBtn).size(45, 45).left().expandX();
         topBar.add(titleLabel).center();
         topBar.add().expandX();
-
 
         ScrollPane scrollPane = new ScrollPane(contentActor, skin);
         scrollPane.setFadeScrollBars(false);

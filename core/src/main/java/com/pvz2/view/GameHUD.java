@@ -25,7 +25,6 @@ import com.pvz2.models.core.App;
 import com.pvz2.models.core.User;
 import com.pvz2.models.core.UserDataManager;
 import com.pvz2.models.enums.PlantType;
-import com.pvz2.models.miniGame.beghouled.BeghouledMechanics;
 import com.pvz2.models.miniGame.beghouled.BeghouledSetup;
 import com.pvz2.models.plant.card.PlantCard;
 import com.pvz2.models.plant.card.PlantCardFactory;

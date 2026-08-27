@@ -22,7 +22,6 @@ public class Wave {
                 int spawnDelayTicks,
                 boolean isFinalWave) {
         this.waveNumber = waveNumber;
-        this.totalCost = totalCost;
         this.spawnEntries = new ArrayList<>(spawnEntries);
         this.spawnDelayTicks = spawnDelayTicks;
         this.currentIndex = 0;

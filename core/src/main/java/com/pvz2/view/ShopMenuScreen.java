@@ -236,50 +236,68 @@ public class ShopMenuScreen extends MenuScreen {
             return;
         }
 
+        Table overlay = createOverlayTable();
+        BorderedTable popup = new BorderedTable();
+        popup.pad(15);
+
+        Table plantGrid = buildPlantGrid(user, item, priceText, overlay);
+        assembleDialogUI(overlay, popup, plantGrid);
+    }
+
+    private Table createOverlayTable() {
         Table overlay = new Table();
         overlay.setFillParent(true);
         overlay.setBackground(createSolidColor(new Color(0, 0, 0, 0.75f)));
         overlay.setTouchable(Touchable.enabled);
+        return overlay;
+    }
 
-        BorderedTable popup = new BorderedTable();
-        popup.pad(15);
-
-        Label title = new Label("Select Plant for Seed", skin, "big_outline");
-        title.setFontScale(0.75f);
-
+    private Table buildPlantGrid(User user, ShopItem item, String priceText, Table overlay) {
         Table plantGrid = new Table();
         plantGrid.top();
         int col = 0;
 
         for (PlantType plant : user.getUnlockedPlantsLevels().keySet()) {
-            BorderedTable plantCard = new BorderedTable();
-            plantCard.pad(5);
-
-            Image plantImg = getItemImage(plant.name());
-            Label plantName = new Label(plant.name(), skin);
-            plantName.setFontScale(0.4f);
-            plantName.setWrap(true);
-            plantName.setAlignment(com.badlogic.gdx.utils.Align.center);
-
-            plantCard.add(plantImg).size(55, 55).center().row();
-            plantCard.add(plantName).width(80).padTop(2).center();
-
-            plantCard.setTouchable(Touchable.enabled);
-            plantCard.addListener(new ClickListener() {
-                @Override
-                public void clicked(InputEvent event, float x, float y) {
-                    overlay.remove();
-                    showPurchaseConfirmation(item.getName() + " (" + plant.name() + ")", priceText, () -> {
-                        String result = controller.buyItem(item.getId(), 1, plant.name());
-                        handlePurchaseResult(result);
-                    });
-                }
-            });
-
+            BorderedTable plantCard = createPlantCard(plant, item, priceText, overlay);
             plantGrid.add(plantCard).width(95).height(100).pad(5);
+
             col++;
             if (col % 3 == 0) plantGrid.row();
         }
+        return plantGrid;
+    }
+
+    private BorderedTable createPlantCard(PlantType plant, ShopItem item, String priceText, Table overlay) {
+        BorderedTable plantCard = new BorderedTable();
+        plantCard.pad(5);
+
+        Image plantImg = getItemImage(plant.name());
+        Label plantName = new Label(plant.name(), skin);
+        plantName.setFontScale(0.4f);
+        plantName.setWrap(true);
+        plantName.setAlignment(com.badlogic.gdx.utils.Align.center);
+
+        plantCard.add(plantImg).size(55, 55).center().row();
+        plantCard.add(plantName).width(80).padTop(2).center();
+        plantCard.setTouchable(Touchable.enabled);
+
+        plantCard.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                overlay.remove();
+                showPurchaseConfirmation(item.getName() + " (" + plant.name() + ")", priceText, () -> {
+                    String result = controller.buyItem(item.getId(), 1, plant.name());
+                    handlePurchaseResult(result);
+                });
+            }
+        });
+
+        return plantCard;
+    }
+
+    private void assembleDialogUI(Table overlay, BorderedTable popup, Table plantGrid) {
+        Label title = new Label("Select Plant for Seed", skin, "big_outline");
+        title.setFontScale(0.75f);
 
         ScrollPane scroll = new ScrollPane(plantGrid, skin);
         scroll.setFadeScrollBars(false);
@@ -300,7 +318,6 @@ public class ShopMenuScreen extends MenuScreen {
         overlay.add(popup);
         stage.addActor(overlay);
     }
-
     private void handlePurchaseResult(String result) {
         boolean isError = result.toLowerCase().startsWith("error");
         showResultDialog(isError ? "Error" : "Success", result);

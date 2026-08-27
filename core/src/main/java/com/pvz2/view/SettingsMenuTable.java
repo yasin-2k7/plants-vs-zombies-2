@@ -23,8 +23,17 @@ public class SettingsMenuTable extends Table {
 
         User user = App.getCurrentUser();
 
+        buildDifficultyRow(skin, user);
+        buildSpeedRow(skin, user);
+        buildMusicVolumeRow(skin);
+        buildSfxVolumeRow(skin);
+        buildCheckboxes(skin, user);
+    }
+
+    private void buildDifficultyRow(Skin skin, User user) {
         Label difficultyLabel = new Label("Difficulty Level:", skin, "medium");
         difficultyLabel.setColor(Color.BLACK);
+
         int currentDiff = (user != null) ? user.getGameDifficulty() : 1;
         final Label difficultyValLabel = new Label(String.valueOf(currentDiff), skin, "medium");
         difficultyValLabel.setColor(Color.BLACK);
@@ -42,8 +51,15 @@ public class SettingsMenuTable extends Table {
             }
         });
 
+        add(difficultyLabel).left().padBottom(15);
+        add(difficultySlider).width(220).padBottom(15).padLeft(10);
+        add(difficultyValLabel).left().padLeft(15).padBottom(15).row();
+    }
+
+    private void buildSpeedRow(Skin skin, User user) {
         Label speedLabel = new Label("Game Speed:", skin, "medium");
         speedLabel.setColor(Color.BLACK);
+
         int currentSpeed = (user != null) ? user.getGameSpeed() : 1;
         final Label speedValLabel = new Label(currentSpeed + "x", skin, "medium");
         speedValLabel.setColor(Color.BLACK);
@@ -61,8 +77,15 @@ public class SettingsMenuTable extends Table {
             }
         });
 
+        add(speedLabel).left().padBottom(15);
+        add(speedSlider).width(220).padBottom(15).padLeft(10);
+        add(speedValLabel).left().padLeft(15).padBottom(15).row();
+    }
+
+    private void buildMusicVolumeRow(Skin skin) {
         Label musicVolumeLabel = new Label("Music Volume:", skin, "medium");
         musicVolumeLabel.setColor(Color.BLACK);
+
         float currentMusicVol = AudioManager.getInstance().getVolume();
         final Label musicVolValLabel = new Label((int)(currentMusicVol * 100) + "%", skin, "medium");
         musicVolValLabel.setColor(Color.BLACK);
@@ -78,8 +101,15 @@ public class SettingsMenuTable extends Table {
             }
         });
 
+        add(musicVolumeLabel).left().padBottom(15);
+        add(musicVolumeSlider).width(220).padBottom(15).padLeft(10);
+        add(musicVolValLabel).left().padLeft(15).padBottom(15).row();
+    }
+
+    private void buildSfxVolumeRow(Skin skin) {
         Label sfxVolumeLabel = new Label("SFX Volume:", skin, "medium");
         sfxVolumeLabel.setColor(Color.BLACK);
+
         float currentSfxVol = SFXManager.getInstance().getVolume();
         final Label sfxVolValLabel = new Label((int)(currentSfxVol * 100) + "%", skin, "medium");
         sfxVolValLabel.setColor(Color.BLACK);
@@ -95,6 +125,12 @@ public class SettingsMenuTable extends Table {
             }
         });
 
+        add(sfxVolumeLabel).left().padBottom(20);
+        add(sfxVolumeSlider).width(220).padBottom(20).padLeft(10);
+        add(sfxVolValLabel).left().padLeft(15).padBottom(20).row();
+    }
+
+    private void buildCheckboxes(Skin skin, User user) {
         final CheckBox pauseMusicCheckBox = new CheckBox(" Pause / Mute Music", skin);
         pauseMusicCheckBox.getLabel().setColor(Color.BLACK);
         pauseMusicCheckBox.addListener(new ChangeListener() {
@@ -132,28 +168,12 @@ public class SettingsMenuTable extends Table {
             public void changed(ChangeEvent event, Actor actor) {
                 if (user != null) {
                     user.setDebugMode(debugCheckBox.isChecked());
-                    if (GameMenuController.getScreen() instanceof MainMenuScreen mainMenuScreen){
+                    if (GameMenuController.getScreen() instanceof MainMenuScreen mainMenuScreen) {
                         mainMenuScreen.getResourcesTable().build();
                     }
                 }
             }
         });
-
-        add(difficultyLabel).left().padBottom(15);
-        add(difficultySlider).width(220).padBottom(15).padLeft(10);
-        add(difficultyValLabel).left().padLeft(15).padBottom(15).row();
-
-        add(speedLabel).left().padBottom(15);
-        add(speedSlider).width(220).padBottom(15).padLeft(10);
-        add(speedValLabel).left().padLeft(15).padBottom(15).row();
-
-        add(musicVolumeLabel).left().padBottom(15);
-        add(musicVolumeSlider).width(220).padBottom(15).padLeft(10);
-        add(musicVolValLabel).left().padLeft(15).padBottom(15).row();
-
-        add(sfxVolumeLabel).left().padBottom(20);
-        add(sfxVolumeSlider).width(220).padBottom(20).padLeft(10);
-        add(sfxVolValLabel).left().padLeft(15).padBottom(20).row();
 
         add(pauseMusicCheckBox).colspan(3).left().padBottom(15).row();
         add(showGridCheckBox).colspan(3).left().padBottom(15).row();

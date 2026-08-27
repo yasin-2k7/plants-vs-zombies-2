@@ -125,44 +125,72 @@ public class ShooterComponent implements GameComponent {
     @Override
     public void update(Plant owner, float delta) {
         ensureTimingLoaded(owner);
+
+        if (handleIntroOutroState(owner, delta)) return;
+        if (handlePlantFoodFinishTimer(owner, delta)) return;
+        if (handleBurstFiring(owner, delta)) return;
+        if (handlePlantFoodState(owner, delta)) return;
+
+        handleTargetingAndAttack(owner, delta);
+    }
+
+    private boolean handleIntroOutroState(Plant owner, float delta) {
         if (owner.getState() == Plant.State.PLANT_FOOD_INTRO) {
             introOutroTimer -= delta;
             if (introOutroTimer <= 0f) {
                 owner.setState(Plant.State.PLANT_FOOD);
                 plantFoodBehavior.activate(owner, this);
             }
-            return;
+            return true;
         }
         if (owner.getState() == Plant.State.PLANT_FOOD_OUTRO) {
             introOutroTimer -= delta;
             if (introOutroTimer <= 0f) {
                 owner.setState(Plant.State.IDLE);
             }
-            return;
+            return true;
         }
+        return false;
+    }
+
+    private boolean handlePlantFoodFinishTimer(Plant owner, float delta) {
         if (plantFoodFinishTimer > 0f) {
             plantFoodFinishTimer -= delta;
             if (plantFoodFinishTimer <= 0f) {
                 plantFoodFinishTimer = 0f;
                 owner.setState(Plant.State.IDLE);
             }
-            return;
+            return true;
         }
+        return false;
+    }
+
+    private boolean handleBurstFiring(Plant owner, float delta) {
         if (projectilesLeftForShoot > 0) {
             burstHandler(owner, delta);
-            return;
+            return true;
         }
-        boolean isPlantFoodState = (owner.getState() == Plant.State.PLANT_FOOD || owner.getState() == Plant.State.PLANT_FOOD2);
+        return false;
+    }
+
+    private boolean handlePlantFoodState(Plant owner, float delta) {
+        boolean isPlantFoodState = (owner.getState() == Plant.State.PLANT_FOOD ||
+            owner.getState() == Plant.State.PLANT_FOOD2);
         if (isPlantFoodState) {
             plantFoodBehavior.update(owner, this, delta);
             if (plantFoodBehavior.isFinished()) {
                 enterPlantFoodFinish(owner);
             }
-            return;
+            return true;
         }
+        return false;
+    }
+
+    private void handleTargetingAndAttack(Plant owner, float delta) {
         for (VisionStrategy visionStrategy : visions) {
             if (visionStrategy.findZombie(owner) != null) {
                 target = visionStrategy.findZombie(owner);
+
                 if (shootingTimer > 0) {
                     shootingTimer -= delta;
                     break;
@@ -171,13 +199,16 @@ public class ShooterComponent implements GameComponent {
                     owner.setState(Plant.State.ATTACK);
                     currentActionTimer = 0f;
                 }
+
                 currentActionTimer += delta;
                 if (currentActionTimer < actionTime) {
                     break;
                 }
+
                 if (attackCallback != null) {
                     attackCallback.onAttack(owner);
                 }
+
                 this.projectilesLeftForShoot = burstProjectileNumber;
                 burstDelayMax = BURST_DELAY_MAX;
                 burstDelayTimer = 0f;
@@ -192,20 +223,17 @@ public class ShooterComponent implements GameComponent {
             hasGiant && owner.getState() != Plant.State.PLANT_FOOD2){
             owner.setState(Plant.State.PLANT_FOOD2);
             burstDelayMax = giantBurstDelayTime;
-            burstDelayTimer = giantStartDelay;
-        }
+            burstDelayTimer = giantStartDelay;}
         if (burstDelayTimer > 0) {
             burstDelayTimer -= delta;
         } else {
             for (Supplier<MovementStrategy> movementStrategy : movementStrategies) {
                 Projectile p = App.getCurrentGame().getProjectilesPool().acquire();
-
                 if (activePlantFood && projectilesLeftForShoot <= giantCount && hasGiant) {
                     p.reset(owner.getX(), owner.getY() + movementStrategy.get().changeOriginY(),
                         plantFoodStrategy, movementStrategy.get(), strikeStrategy, giantType);
                     if (giantPierce != 1) {
-                        p.setPierce(giantPierce);
-                    }
+                        p.setPierce(giantPierce);}
                 } else {
                     p.reset(owner.getX(), owner.getY() + movementStrategy.get().changeOriginY(),
                         damageStrategy.get(), movementStrategy.get(), strikeStrategy, bulletType);
@@ -217,12 +245,11 @@ public class ShooterComponent implements GameComponent {
                 p.setTarget(target);
                 App.getCurrentGame().getActiveProjectiles().add(p);
             }
-
             projectilesLeftForShoot--;
             burstDelayTimer = burstDelayMax;
-
             if (projectilesLeftForShoot <= 0) {
-                boolean isPlantFoodState = (owner.getState() == Plant.State.PLANT_FOOD || owner.getState() == Plant.State.PLANT_FOOD2);
+                boolean isPlantFoodState = (owner.getState() == Plant.State.PLANT_FOOD ||
+                    owner.getState() == Plant.State.PLANT_FOOD2);
                 projectilesLeftForShoot = 0;
                 if (activePlantFood) {
                     activePlantFood = false;

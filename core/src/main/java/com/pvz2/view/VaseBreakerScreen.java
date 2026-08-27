@@ -2,6 +2,10 @@ package com.pvz2.view;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.Vector3;
@@ -12,8 +16,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
-import com.badlogic.gdx.utils.viewport.FillViewport;
-import com.badlogic.gdx.utils.viewport.Viewport;
 import com.pvz2.Main;
 import com.pvz2.controller.GameMenuController;
 import com.pvz2.models.core.App;
@@ -115,9 +117,6 @@ public class VaseBreakerScreen extends MenuScreen {
         button.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                // GameMenuController.selectAndUnselectShovel() toggles
-                // world.isSelectedShovel() and clears any conflicting
-                // selection (plant / plant food), exactly like normal levels.
                 GameMenuController.selectAndUnselectShovel();
             }
         });
@@ -241,6 +240,7 @@ public class VaseBreakerScreen extends MenuScreen {
 
         game.batch.end();
     }
+
     private void renderProjectiles(float delta, SpriteBatch batch, PamPlayer pamPlayer) {
         List<Projectile> active = world.getActiveProjectiles();
         GenericObjectPool<Projectile> pool = App.getCurrentGame().getProjectilesPool();
@@ -303,66 +303,85 @@ public class VaseBreakerScreen extends MenuScreen {
     private void handleInput() {
         if (world.getState() == GameState.PAUSED) return;
 
-        Vector3 touchPoint = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
-        worldViewport.unproject(touchPoint);
         if (Gdx.input.justTouched()) {
+            Vector3 touchPoint = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
+            worldViewport.unproject(touchPoint);
 
-            if (App.getCurrentGame() != null && App.getCurrentGame().isSelectedShovel()) {
-                GameMenuController.pluckPlant(touchPoint.x, touchPoint.y);
-                plantGraphics.removeIf(pg -> pg.isDead() || pg.getPlant() == null || pg.getPlant().getCell() == null);
-                return;
+            if (handleShovelAction(touchPoint)) return;
+            if (handlePlantPlacement(touchPoint)) return;
+            if (handleCardClick(touchPoint)) return;
+
+            handleVaseClick(touchPoint);
+        }
+    }
+
+    private boolean handleShovelAction(Vector3 touchPoint) {
+        if (App.getCurrentGame() != null && App.getCurrentGame().isSelectedShovel()) {
+            GameMenuController.pluckPlant(touchPoint.x, touchPoint.y);
+            plantGraphics.removeIf(pg -> pg.isDead() || pg.getPlant() == null || pg.getPlant().getCell() == null);
+            return true;
+        }
+        return false;
+    }
+
+    private boolean handlePlantPlacement(Vector3 touchPoint) {
+        if (!plantPlacementManager.isPlantSelected()) return false;
+
+        int row = LawnGrid.getRowFromY(touchPoint.y);
+        int col = LawnGrid.getColFromX(touchPoint.x);
+
+        if (row >= 0 && col >= 0) {
+            PlantType selectedPlant = plantPlacementManager.getSelectedPlant();
+            if (plantPlacementManager.tryPlace(row, col)) {
+                placePlantInCell(row, col, selectedPlant);
             }
+        } else {
+            plantPlacementManager.cancelSelection();
+        }
+        return true;
+    }
 
-            if (plantPlacementManager.isPlantSelected()) {
-                int row = LawnGrid.getRowFromY(touchPoint.y);
-                int col = LawnGrid.getColFromX(touchPoint.x);
-                if (row >= 0 && col >= 0) {
-                    PlantType selectedPlant = plantPlacementManager.getSelectedPlant();
-                    boolean success = plantPlacementManager.tryPlace(row, col);
-                    if (success) {
-                        Cell cell = null;
-                        Cell[][] grid = App.getCurrentGame().getGrid();
-                        if (grid != null && row < grid.length && col < grid[0].length) {
-                            cell = grid[row][col];
-                        }
-                        if (cell != null) {
-                            boolean boosted = App.getCurrentUser() != null
-                                && App.getCurrentUser().hasBoost(selectedPlant);
+    private void placePlantInCell(int row, int col, PlantType selectedPlant) {
+        Cell[][] grid = App.getCurrentGame().getGrid();
+        if (grid != null && row < grid.length && col < grid[0].length) {
+            Cell cell = grid[row][col];
+            if (cell != null) {
+                boolean boosted = App.getCurrentUser() != null && App.getCurrentUser().hasBoost(selectedPlant);
+                Plant plantModel = cell.handlePlanting(selectedPlant, boosted);
 
-                            Plant plantModel = cell.handlePlanting(selectedPlant, boosted);
+                if (plantModel != null) {
+                    plantModel.setX(col);
+                    plantModel.setY(row);
+                    plantModel.setCell(cell);
 
-                            if (plantModel != null) {
-                                plantModel.setX(col);
-                                plantModel.setY(row);
-                                plantModel.setCell(cell);
-
-                                plantGraphics.add(new PlantGraphic(plantModel, pamPlayer));
-                                SFXManager.getInstance().playSound(GameSFX.PLANT);
-                            }
-                        }
-                    }
-                } else {
-                    plantPlacementManager.cancelSelection();
-                }
-                return;
-            }
-            for (int i = seedPackets.size() - 1; i >= 0; i--) {
-                PlantCardView card = seedPackets.get(i);
-                if (touchPoint.x >= card.getX() && touchPoint.x <= card.getX() + card.getWidth() &&
-                    touchPoint.y >= card.getY() && touchPoint.y <= card.getY() + card.getHeight()) {
-                    if (card.isActive()) {
-                        plantPlacementManager.selectPlant(card.getType(), () -> seedPackets.remove(card));
-                    }
-                    return;
+                    plantGraphics.add(new PlantGraphic(plantModel, pamPlayer));
+                    SFXManager.getInstance().playSound(GameSFX.PLANT);
                 }
             }
+        }
+    }
 
-            for (int i = vaseGraphics.size() - 1; i >= 0; i--) {
-                VaseGraphic vg = vaseGraphics.get(i);
-                if (vg.contains(touchPoint.x, touchPoint.y)) {
-                    vg.onClicked();
-                    break;
+    private boolean handleCardClick(Vector3 touchPoint) {
+        for (int i = seedPackets.size() - 1; i >= 0; i--) {
+            PlantCardView card = seedPackets.get(i);
+            if (touchPoint.x >= card.getX() && touchPoint.x <= card.getX() + card.getWidth() &&
+                touchPoint.y >= card.getY() && touchPoint.y <= card.getY() + card.getHeight()) {
+
+                if (card.isActive()) {
+                    plantPlacementManager.selectPlant(card.getType(), () -> seedPackets.remove(card));
                 }
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private void handleVaseClick(Vector3 touchPoint) {
+        for (int i = vaseGraphics.size() - 1; i >= 0; i--) {
+            VaseGraphic vg = vaseGraphics.get(i);
+            if (vg.contains(touchPoint.x, touchPoint.y)) {
+                vg.onClicked();
+                break;
             }
         }
     }

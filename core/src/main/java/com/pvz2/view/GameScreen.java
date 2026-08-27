@@ -376,7 +376,6 @@ public class GameScreen extends MenuScreen {
             }
             return;
         }
-
         PanStep step = introSteps.get(currentStepIndex);
         stepElapsed += delta;
 
@@ -463,86 +462,128 @@ public class GameScreen extends MenuScreen {
     protected void drawBackground(float delta) {
         world.tick(delta);
 
+        handleCameraShakes();
+        handleGameStateAndOverlays(delta);
+
+        applyWorldViewportWithShake(delta);
+
+        game.batch.begin();
+        drawLawnBackground();
+        renderWorldContent(delta);
+        renderPlacementPreviews(delta);
+        renderZombiePreviews(delta);
+
+        List<ZombieGraphic> sortedZombies = syncAndSortZombies(delta);
+        renderPianos(delta);
+        game.batch.end();
+
+        renderDebugGrids();
+
+        game.batch.begin();
+        renderPlantsAndZombies(delta, sortedZombies);
+        renderObstacles(delta);
+        renderEffectsAndSandstorms(delta);
+        renderCollectablesAndProjectiles(delta);
+        game.batch.end();
+
+        if (hud != null) {
+            hud.update(world, delta);
+        }
+    }
+
+    private void handleCameraShakes() {
         for (Zombie z : world.getActiveZombies()) {
             if (z.consumeScreenShakeRequest()) {
                 triggerCameraShake(0.3f, 15f);
             }
         }
-        if (world.getState() != GameState.PAUSED) {
-            if (objectivesDismissed) {
-                if (!introFinished) {
-                    updateIntroPan(delta);
-                } else {
-                    if (daveOverlay != null && !daveOverlay.isStarted() && world.getState() == GameState.PLAYING) {
-                        daveOverlay.startPresentation(this::flushPendingAnnouncements);
-                    }
+    }
 
-                    if (!world.isEndGameHandled()) {
-                        if (world.getState() == GameState.WON) {
-                            world.setEndGameHandled(true);
-                            if (daveOverlay != null) {
-                                daveOverlay.startPresentation(world.getWinningDialogs(), () -> {
-                                    GameMenuController.handleWinning(world);
-                                    showEndGameOverlay();
-                                });
-                            } else {
-                                GameMenuController.handleWinning(world);
-                                showEndGameOverlay();
-                            }
-                        } else if (world.getState() == GameState.LOST) {
-                            world.setEndGameHandled(true);
-                            if (daveOverlay != null) {
-                                daveOverlay.startPresentation(world.getLosingDialogs(), () -> {
-                                    GameMenuController.handleLosing(world);
-                                    showEndGameOverlay();
-                                });
-                            } else {
-                                GameMenuController.handleLosing(world);
-                                showEndGameOverlay();
-                            }
-                        }
-                    }
-                }
-            }
+    private void handleGameStateAndOverlays(float delta) {
+        if (world.getState() == GameState.PAUSED || !objectivesDismissed) return;
+
+        if (!introFinished) {
+            updateIntroPan(delta);
+            return;
         }
 
-        applyWorldViewportWithShake(delta);
-        game.batch.begin();
-        drawLawnBackground();
-        renderWorldContent(delta);
+        if (daveOverlay != null && !daveOverlay.isStarted() && world.getState() == GameState.PLAYING) {
+            daveOverlay.startPresentation(this::flushPendingAnnouncements);
+        }
+
+        if (!world.isEndGameHandled()) {
+            handleEndGameConditions();
+        }
+    }
+
+    private void handleEndGameConditions() {
+        if (world.getState() == GameState.WON) {
+            world.setEndGameHandled(true);
+            triggerEndGameDialog(world.getWinningDialogs(), () -> GameMenuController.handleWinning(world));
+        } else if (world.getState() == GameState.LOST) {
+            world.setEndGameHandled(true);
+            triggerEndGameDialog(world.getLosingDialogs(), () -> GameMenuController.handleLosing(world));
+        }
+    }
+
+    private void triggerEndGameDialog(List<String> dialogs, Runnable onCompleteAction) {
+        if (daveOverlay != null) {
+            daveOverlay.startPresentation(dialogs, () -> {
+                onCompleteAction.run();
+                showEndGameOverlay();
+            });
+        } else {
+            onCompleteAction.run();
+            showEndGameOverlay();
+        }
+    }
+
+    private void renderPlacementPreviews(float delta) {
         worldViewport.unproject(cursorWorldPos);
         plantPlacementManager.drawPreview(pamPlayer, game.batch, cursorWorldPos, delta);
         plantfoodPlacementManager.drawPreview(game.batch, cursorWorldPos);
         shovelPlacementManager.drawPreview(game.batch, cursorWorldPos);
+    }
 
+    private void renderZombiePreviews(float delta) {
         if (zombiePreviewManager != null && zombiePreviewVisible) {
             zombiePreviewManager.update(delta, pamPlayer);
             zombiePreviewManager.draw(game.batch, pamPlayer);
         }
+    }
 
+    private List<ZombieGraphic> syncAndSortZombies(float delta) {
         syncNecromancyZombieEffects(delta);
         syncZombieGraphics();
         syncPianoGraphics();
         syncIceBlockGraphics();
         syncArcadeCabinetGraphics();
+
         List<ZombieGraphic> sortedZombies = new ArrayList<>(zombieGraphics.values());
         sortedZombies.sort((z1, z2) -> Float.compare(z2.getZombie().getY(), z1.getZombie().getY()));
+        return sortedZombies;
+    }
 
+    private void renderPianos(float delta) {
         for (PianoGraphic pg : pianoGraphics.values()) {
             pg.update(delta, pamPlayer);
             pg.draw(game.batch, pamPlayer);
         }
-        game.batch.end();
+    }
+
+    private void renderDebugGrids() {
         if (App.getCurrentUser().isShowGrid()) {
             lawnGridDebugRenderer.draw(worldCamera);
         }
-        if (world instanceof BigWaveBeachWorld bigWaveBeachWorld){
+        if (world instanceof BigWaveBeachWorld bigWaveBeachWorld) {
             lawnGridDebugRenderer.drawLine(Color.BLUE,
-                App.getCellCenterX(bigWaveBeachWorld.getTideLineCol())-App.getCellWidth()/2,
+                App.getCellCenterX(bigWaveBeachWorld.getTideLineCol()) - App.getCellWidth() / 2,
                 worldCamera);
         }
-        game.batch.begin();
-        for (PlantGraphic pg : plantGraphics){
+    }
+
+    private void renderPlantsAndZombies(float delta, List<ZombieGraphic> sortedZombies) {
+        for (PlantGraphic pg : plantGraphics) {
             pg.update(delta);
             pg.draw(game.batch, pamPlayer);
         }
@@ -561,7 +602,9 @@ public class GameScreen extends MenuScreen {
             zg.update(delta, pamPlayer);
             zg.draw(game.batch, pamPlayer);
         }
+    }
 
+    private void renderObstacles(float delta) {
         for (int i = octopusObstacleGraphics.size() - 1; i >= 0; i--) {
             OctopusObstacleGraphic graphic = octopusObstacleGraphics.get(i);
             OctopusObstacle octopus = graphic.getObstacle();
@@ -574,14 +617,15 @@ public class GameScreen extends MenuScreen {
                 world.removeObstacle(octopus);
             }
         }
+    }
 
+    private void renderEffectsAndSandstorms(float delta) {
         for (ExplosionEffectGraphic eg : explosionGraphics) {
             eg.update(delta);
             eg.draw(game.batch, pamPlayer);
         }
-        if (world instanceof AncientEgyptWorld) {
-            AncientEgyptWorld egyptWorld = (AncientEgyptWorld) world;
 
+        if (world instanceof AncientEgyptWorld egyptWorld) {
             for (Sandstorm sandstorm : egyptWorld.getActiveSandstorms()) {
                 sandstormGraphics.computeIfAbsent(sandstorm, SandstormGraphic::new);
             }
@@ -594,6 +638,9 @@ public class GameScreen extends MenuScreen {
             }
         }
         explosionGraphics.removeIf(eg -> eg.isFinished(pamPlayer));
+    }
+
+    private void renderCollectablesAndProjectiles(float delta) {
         syncSunGraphics();
         syncCollectableGraphics();
 
@@ -606,11 +653,6 @@ public class GameScreen extends MenuScreen {
             cg.draw(game.batch, pamPlayer);
         }
         renderProjectiles(delta, game.batch, pamPlayer);
-        game.batch.end();
-
-        if (hud != null) {
-            hud.update(world, delta);
-        }
     }
 
     private void drawLawnBackground() {
@@ -1023,8 +1065,7 @@ public class GameScreen extends MenuScreen {
                 int row = LawnGrid.getRowFromY(touchPoint.y);
                 int col = LawnGrid.getColFromX(touchPoint.x);
                 if (row >= 0 && col >= 0) {
-                    GameMenuController.pluckPlant(App.getCellCenterX(col), App.getCellCenterY(row));
-                }
+                    GameMenuController.pluckPlant(App.getCellCenterX(col), App.getCellCenterY(row));}
             }
             else {
                 if (!GameMenuController.collectSun(touchPoint.x, touchPoint.y)){
