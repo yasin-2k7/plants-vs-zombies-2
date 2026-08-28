@@ -178,4 +178,8 @@ public class ClientGameController {
         if (side != Side.ZOMBIES) return;
         NetworkClient.get().sendMessage("PLACE_ZOMBIE", new PlaceZombieRequest(matchId, zombieType, x, y));
     }
+
+    public void sendReaction(ReactionCategory category, int index){
+        NetworkClient.get().sendMessage("SEND_REACTION", new SendReactionRequest(matchId, category, index));
+    }
 }

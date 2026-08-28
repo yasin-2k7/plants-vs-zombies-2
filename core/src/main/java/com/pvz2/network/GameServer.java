@@ -71,8 +71,41 @@ public class GameServer {
             case "FORGET_PASSWORD" -> handleForgetPassword(sender, msg);
             case "ANSWER_SECURITY_QUESTION" -> handleAnswerSecurityQuestion(sender, msg);
             case "NEW_PASSWORD" -> handleNewPassword(sender, msg);
+            case "CHANGE_PASSWORD" -> handleChangePassword(sender, msg);
             default -> System.err.println("Unknown message type: " + msg.type);
         }
+    }
+
+    private void handleChangePassword(ClientHandler sender, NetworkMessage msg) {
+        ChangePasswordRequest req = GSON.fromJson(msg.payload, ChangePasswordRequest.class);
+        AckResponse response = new AckResponse();
+
+        String username = sessionTokens.get(req.token);
+        if (username == null) {
+            response.success = false;
+            response.message = "Session expired. Please log in again.";
+            sender.send("CHANGE_PASSWORD", msg.requestId, response);
+            return;
+        }
+
+        User user = UserDataManager.loadUser(username);
+        if (user == null || !user.checkPassword(req.oldPassword)) {
+            response.success = false;
+            response.message = "Your password is incorrect.";
+            sender.send("CHANGE_PASSWORD", msg.requestId, response);
+            return;
+        }
+        if (user.checkPassword(req.newPassword)) {
+            response.success = false;
+            response.message = "New password must be different from your current password.";
+            sender.send("CHANGE_PASSWORD", msg.requestId, response);
+            return;
+        }
+
+        user.setHashPassword(PasswordHasher.hashSHA256(req.newPassword));
+        response.success = UserDataManager.saveUser(user);
+        response.message = response.success ? "Your password changed." : "Failed to save the new password.";
+        sender.send("CHANGE_PASSWORD", msg.requestId, response);
     }
 
     private void handleGetLeaderboard(ClientHandler sender, NetworkMessage msg) {

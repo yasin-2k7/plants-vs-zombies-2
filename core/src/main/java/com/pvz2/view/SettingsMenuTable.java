@@ -10,31 +10,30 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.pvz2.Main;
 import com.pvz2.controller.GameMenuController;
-import com.pvz2.models.core.App;
-import com.pvz2.models.core.User;
+import com.pvz2.controller.SettingMenuController;
 import com.pvz2.view.audios.AudioManager;
 import com.pvz2.view.audios.SFXManager;
 
 public class SettingsMenuTable extends Table {
 
+    private final SettingMenuController controller = new SettingMenuController();
+
     public SettingsMenuTable(Main game, Skin skin) {
         super(skin);
         pad(20);
 
-        User user = App.getCurrentUser();
-
-        buildDifficultyRow(skin, user);
-        buildSpeedRow(skin, user);
+        buildDifficultyRow(skin);
+        buildSpeedRow(skin);
         buildMusicVolumeRow(skin);
         buildSfxVolumeRow(skin);
-        buildCheckboxes(skin, user);
+        buildCheckboxes(skin);
     }
 
-    private void buildDifficultyRow(Skin skin, User user) {
+    private void buildDifficultyRow(Skin skin) {
         Label difficultyLabel = new Label("Difficulty Level:", skin, "medium");
         difficultyLabel.setColor(Color.BLACK);
 
-        int currentDiff = (user != null) ? user.getGameDifficulty() : 1;
+        int currentDiff = controller.getCurrentDifficulty();
         final Label difficultyValLabel = new Label(String.valueOf(currentDiff), skin, "medium");
         difficultyValLabel.setColor(Color.BLACK);
 
@@ -45,9 +44,7 @@ public class SettingsMenuTable extends Table {
             public void changed(ChangeEvent event, Actor actor) {
                 int val = (int) difficultySlider.getValue();
                 difficultyValLabel.setText(String.valueOf(val));
-                if (user != null) {
-                    user.setGameDifficulty(val);
-                }
+                controller.changeDifficulty(val);
             }
         });
 
@@ -56,11 +53,11 @@ public class SettingsMenuTable extends Table {
         add(difficultyValLabel).left().padLeft(15).padBottom(15).row();
     }
 
-    private void buildSpeedRow(Skin skin, User user) {
+    private void buildSpeedRow(Skin skin) {
         Label speedLabel = new Label("Game Speed:", skin, "medium");
         speedLabel.setColor(Color.BLACK);
 
-        int currentSpeed = (user != null) ? user.getGameSpeed() : 1;
+        int currentSpeed = controller.getCurrentGameSpeed();
         final Label speedValLabel = new Label(currentSpeed + "x", skin, "medium");
         speedValLabel.setColor(Color.BLACK);
 
@@ -71,9 +68,7 @@ public class SettingsMenuTable extends Table {
             public void changed(ChangeEvent event, Actor actor) {
                 int val = (int) speedSlider.getValue();
                 speedValLabel.setText(val + "x");
-                if (user != null) {
-                    user.setGameSpeed(val);
-                }
+                controller.changeGameSpeed(val);
             }
         });
 
@@ -130,7 +125,7 @@ public class SettingsMenuTable extends Table {
         add(sfxVolValLabel).left().padLeft(15).padBottom(20).row();
     }
 
-    private void buildCheckboxes(Skin skin, User user) {
+    private void buildCheckboxes(Skin skin) {
         final CheckBox pauseMusicCheckBox = new CheckBox(" Pause / Mute Music", skin);
         pauseMusicCheckBox.getLabel().setColor(Color.BLACK);
         pauseMusicCheckBox.addListener(new ChangeListener() {
@@ -146,31 +141,23 @@ public class SettingsMenuTable extends Table {
 
         final CheckBox showGridCheckBox = new CheckBox(" Show Lawn Grid Lines (Red)", skin);
         showGridCheckBox.getLabel().setColor(Color.BLACK);
-        if (user != null) {
-            showGridCheckBox.setChecked(user.isShowGrid());
-        }
+        showGridCheckBox.setChecked(controller.isShowGrid());
         showGridCheckBox.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                if (user != null) {
-                    user.setShowGrid(showGridCheckBox.isChecked());
-                }
+                controller.setShowGrid(showGridCheckBox.isChecked());
             }
         });
 
         final CheckBox debugCheckBox = new CheckBox(" Enable Debug Mode (Add Sun, Food, Coins, Gems)", skin);
         debugCheckBox.getLabel().setColor(Color.BLACK);
-        if (user != null) {
-            debugCheckBox.setChecked(user.isDebugMode());
-        }
+        debugCheckBox.setChecked(controller.isDebugMode());
         debugCheckBox.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                if (user != null) {
-                    user.setDebugMode(debugCheckBox.isChecked());
-                    if (GameMenuController.getScreen() instanceof MainMenuScreen mainMenuScreen) {
-                        mainMenuScreen.getResourcesTable().build();
-                    }
+                controller.setDebugMode(debugCheckBox.isChecked());
+                if (GameMenuController.getScreen() instanceof MainMenuScreen mainMenuScreen) {
+                    mainMenuScreen.getResourcesTable().build();
                 }
             }
         });

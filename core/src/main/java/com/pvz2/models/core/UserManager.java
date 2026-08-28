@@ -22,11 +22,11 @@ public class UserManager {
                 applyLoggedInUser(resp.user, resp.token);
                 return true;
             } else {
-                UserDataManager.clearSessionToken(); // stale/expired token — don't keep retrying it
+                UserDataManager.clearSessionToken();
                 return false;
             }
         } catch (InterruptedException e) {
-            return false; // server unreachable — fall through to login screen
+            return false;
         }
     }
 
@@ -122,8 +122,21 @@ public class UserManager {
             RegisterResponse resp = NetworkClient.get().parsePayload(reply, RegisterResponse.class);
 
             if (resp.success && currentUser != null) {
-                currentUser.setUsername(newUsername); // keep the client's cached copy in sync
+                currentUser.setUsername(newUsername);
             }
+            return resp.message;
+        } catch (InterruptedException e) {
+            return "Error: could not reach server.";
+        }
+    }
+
+    public static String changePassword(String oldPassword, String newPassword) {
+        String token = UserDataManager.getSessionToken();
+        if (token == null) return "You must be logged in to do this.";
+        try {
+            ChangePasswordRequest req = new ChangePasswordRequest(token, oldPassword, newPassword);
+            NetworkMessage reply = NetworkClient.get().sendRequest("CHANGE_PASSWORD", req, 5000);
+            AckResponse resp = NetworkClient.get().parsePayload(reply, AckResponse.class);
             return resp.message;
         } catch (InterruptedException e) {
             return "Error: could not reach server.";

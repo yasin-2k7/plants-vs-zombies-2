@@ -1,7 +1,6 @@
 package com.pvz2.controller;
 
 import com.badlogic.gdx.Gdx;
-import com.pvz2.models.core.UserDataManager;
 import com.pvz2.models.core.UserManager;
 import com.pvz2.view.LoginMenuScreen;
 import com.pvz2.view.SignupMenuScreen;

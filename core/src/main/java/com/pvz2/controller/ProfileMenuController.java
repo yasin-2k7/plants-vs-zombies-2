@@ -1,7 +1,6 @@
 package com.pvz2.controller;
 
 import com.pvz2.models.core.*;
-import com.pvz2.network.NetworkClient;
 
 import java.util.List;
 
@@ -14,7 +13,6 @@ public class ProfileMenuController implements MenuController {
 
     @Override
     public void exitMenu() {
-
     }
 
     public String getCurrentUsername() {
@@ -34,7 +32,6 @@ public class ProfileMenuController implements MenuController {
 
     public String changeUsername(String newUsername) {
         User user = App.getCurrentUser();
-        String oldUsername = user.getUsername();
 
         if (user.getUsername().equals(newUsername)) {
             return "new username and your username are similar.";
@@ -45,11 +42,7 @@ public class ProfileMenuController implements MenuController {
             return String.join("\n", errors);
         }
 
-        user.setUsername(newUsername);
-
-
-        UserManager.changeUsername(newUsername);
-        return "your username changed";
+        return UserManager.changeUsername(newUsername);
     }
 
     public String changeNickname(String newNickname) {
@@ -89,38 +82,21 @@ public class ProfileMenuController implements MenuController {
     }
 
     public String changePassword(String password, String newPassword) {
-        User user = App.getCurrentUser();
-
-        String hashPassword = PasswordHasher.hashSHA256(password);
-        String hashNewPass = PasswordHasher.hashSHA256(newPassword);
-
-        if (!user.getHashPassword().equals(hashPassword)) {
-            return "your password is incorrect.";
-        }
-
-        if (user.getHashPassword().equals(hashNewPass)) {
-            return "new pass and your pass are similar.";
-        }
-
         List<String> errors = signupMenuController.getPasswordErrors(newPassword, newPassword);
         if (!errors.isEmpty()) {
             return String.join("\n", errors);
         }
-
-        user.setHashPassword(hashNewPass);
-        user.save();
-        UserManager.syncCurrentUser();
-        return "your pass changed.";
+        return UserManager.changePassword(password, newPassword);
     }
 
     public String showInfo() {
         User user = App.getCurrentUser();
         return "Username: " + user.getUsername() + "\n" +
-                "Nickname: " + user.getNickname() + "\n" +
-                "Games played: " + user.getGamesPlayed() + "\n" +
-                "Coins: " + user.getCoins() + "\n" +
-                "Gems: " + user.getGems() + "\n" +
-                "Levels completed: " + user.getCompletedLevels() + "\n" +
-                "Mu point: " + user.getMaxMupoint();
+            "Nickname: " + user.getNickname() + "\n" +
+            "Games played: " + user.getGamesPlayed() + "\n" +
+            "Coins: " + user.getCoins() + "\n" +
+            "Gems: " + user.getGems() + "\n" +
+            "Levels completed: " + user.getCompletedLevels() + "\n" +
+            "Mu point: " + user.getMaxMupoint();
     }
 }
