@@ -1,0 +1,91 @@
+package com.pvz2.controller;
+
+import com.pvz2.network.NetworkClient;
+import com.pvz2.network.NetworkMessage;
+import com.pvz2.network.messages.AckResponse;
+import com.pvz2.network.onlineIZombie.ClientGameController;
+import com.pvz2.network.onlineIZombie.messages.*;
+import com.pvz2.view.MainMenuScreen;
+import com.pvz2.view.OnlineGameScreen;
+import com.pvz2.view.OnlineRoomMenuScreen;
+
+public class OnlineRoomMenuController implements MenuController{
+    OnlineRoomMenuScreen screen;
+
+    public OnlineRoomMenuController(OnlineRoomMenuScreen screen) {
+        this.screen = screen;
+        NetworkClient.get().onPush("MATCH_FOUND", msg -> {
+            MatchFound info = NetworkClient.get().parsePayload(msg, MatchFound.class);
+            ClientGameController controller = new ClientGameController(info);
+            screen.fadeAndSwitchScreen(new OnlineGameScreen(screen.getGame(), controller));
+        });
+        NetworkClient.get().onPush("CHALLENGE_DECLINED", msg -> {
+            ChallengeDeclined info = NetworkClient.get().parsePayload(msg, ChallengeDeclined.class);
+            screen.toggleToRequestSection();
+            screen.addToast("INFO", "User " + info.byUsername + "refused your request");
+        });
+    }
+
+    @Override
+    public void changeMenu() {
+
+    }
+
+    @Override
+    public void exitMenu() {
+        screen.fadeAndSwitchScreen(new MainMenuScreen(screen.getGame()));
+    }
+
+    public void challenge(String username){
+        try {
+            NetworkMessage message =
+                NetworkClient.get().sendRequest("CHALLENGE", new ChallengeRequest(username), 5000);
+            ChallengeResponse response = NetworkClient.get().parsePayload(message, ChallengeResponse.class);
+            if (response.success){
+                screen.toggleToLoading("challenge");
+            }
+            else{
+                screen.addToast("Error",response.errorMessage);
+            }
+        } catch (InterruptedException e) {
+            screen.addToast("Error", "please try again");
+        }
+    }
+
+    public void play(){
+        try {
+            NetworkMessage message =
+                NetworkClient.get().sendRequest("RANDOM_MATCH", new RandomMatchRequest(), 5000);
+            RandomMatchResponse response = NetworkClient.get().parsePayload(message, RandomMatchResponse.class);
+            if (response.success){
+                if (response.waiting){
+                    screen.toggleToLoading("play");
+                }
+            }
+            else{
+                screen.addToast("Error",response.errorMessage);
+            }
+        } catch (InterruptedException e) {
+            screen.addToast("Error", "please try again");
+        }
+    }
+
+    public boolean cancelRandomMatch() {
+        try {
+            NetworkMessage message =
+                NetworkClient.get().sendRequest("CANCEL_RANDOM_MATCH", new CancelRandomMatchRequest(), 5000);
+            AckResponse response = NetworkClient.get().parsePayload(message, AckResponse.class);
+            if (response.success){
+                screen.toggleToRequestSection();
+                return true;
+            }
+            else{
+                screen.addToast("Error","please try again");
+                return false;
+            }
+        } catch (InterruptedException e) {
+            screen.addToast("Error", "please try again");
+            return false;
+        }
+    }
+}

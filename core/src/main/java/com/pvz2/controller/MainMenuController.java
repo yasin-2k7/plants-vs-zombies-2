@@ -42,6 +42,9 @@ public class MainMenuController implements MenuController {
                 GameWorld game = MuPointLevel.createMuPointLevel();
                 App.setCurrentGame(game);
                 break;
+            case "online room":
+                mainMenuScreen.fadeAndSwitchScreen(new OnlineRoomMenuScreen(mainMenuScreen.getGame()));
+                break;
         }
 
     }

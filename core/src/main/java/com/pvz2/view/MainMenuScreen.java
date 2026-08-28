@@ -15,6 +15,9 @@ import com.pvz2.Main;
 import com.pvz2.controller.MainMenuController;
 import com.pvz2.models.core.App;
 import com.pvz2.models.core.UserDataManager;
+import com.pvz2.models.core.UserManager;
+import com.pvz2.network.NetworkClient;
+import com.pvz2.network.onlineIZombie.messages.ChallengeInvite;
 import com.pvz2.view.audios.GameSFX;
 import com.pvz2.view.audios.SFXManager;
 import pvz.libpvz.textures.TextureBank;
@@ -37,6 +40,7 @@ public class MainMenuScreen extends MenuScreen {
     private Button profileBtn;
     private ImageButton backBtn;
     private ImageButton travelLogBtn;
+    private ImageButton onlineGameBtn;
 
     private ResourcesTable resourcesTable = new ResourcesTable(App.getCurrentUser(), game);
 
@@ -56,29 +60,44 @@ public class MainMenuScreen extends MenuScreen {
 
     private void initFields() {
         if (mainTable != null) return;
+
         bg = game.textureBank.region("IMAGE_MAINMENU_BACKGROUND");
+
         TextureRegion logo = game.textureBank.region("IMAGE_UI_MAINMENU_PVZ2_LOGO_HORIZONTAL");
         logoImg = (logo != null) ? new Image(logo) : null;
+
         playBtn = new TextButton("PLAY", game.skin, "purple");
+
         newsBtn = createImageButton(
             "IMAGE_UI_HUD_NEWSBUTTON_BUTTONS_HUD_NEWS_NORMAL",
             "IMAGE_UI_HUD_NEWSBUTTON_BUTTONS_HUD_NEWS_SELECTED",
             game.textureBank
         );
+
         settingsBtn = createImageButton(
             "IMAGE_UI_HUD_SETTINGSBUTTON_BUTTONS_HUD_SETTINGS_NORMAL",
             "IMAGE_UI_HUD_SETTINGSBUTTON_BUTTONS_HUD_SETTINGS_SELECTED",
             game.textureBank
         );
+
+        onlineGameBtn = createImageButton(
+            "IMAGE_UI_GAMECENTER_ANDROID_GAMECENTER",
+            "IMAGE_UI_GAMECENTER_ANDROID_GAMECENTER_PRESS",
+            game.textureBank
+        );
+
         leaderboardBtn = new TextButton("", skin, "brown");
         Image cup = new Image(game.textureBank.region("IMAGE_UI_GAMECENTER_ICON"));
         leaderboardBtn.add(cup);
+
         muPoint = new TextButton("", skin, "brown");
         Image star = new Image(game.textureBank.region("IMAGE_UI_GENERIC_STAR_ICON"));
         muPoint.add(star);
+
         profileBtn = new TextButton("", skin, "brown");
         Image prof = new Image(game.textureBank.region("IMAGE_UI_MAINMENU_MM_PLAYERICON"));
         profileBtn.add(prof).padRight(5);
+
         travelLogBtn = createImageButton(
             "IMAGE_UI_GENERIC_BUTTON_HUD_MINIGAMES_ALT_SELECTED",
             "IMAGE_UI_GENERIC_BUTTON_HUD_MINIGAMES_ALT_SELECTED",
@@ -117,10 +136,12 @@ public class MainMenuScreen extends MenuScreen {
 
         mainStack.add(mainTable);
         setListeners();
+        setOnlinePopup();
     }
 
     private void buildTopBar() {
         if (backBtn != null) topBar.add(backBtn).left().top().pad(10);
+        if (onlineGameBtn != null) topBar.add(onlineGameBtn).pad(10);
         topBar.add().expandX();
         if (App.getCurrentUser() != null) topBar.add(resourcesTable).padRight(20);
 
@@ -159,6 +180,7 @@ public class MainMenuScreen extends MenuScreen {
         }
 
         float btnSize = 70f;
+
         if (settingsBtn != null) bottomBar.add(settingsBtn).size(btnSize).padLeft(25).pad(10);
         if (newsBtn != null) bottomBar.add(newsStack).size(btnSize).pad(5);
         bottomBar.add().expandX();
@@ -173,9 +195,17 @@ public class MainMenuScreen extends MenuScreen {
         mainTable.add(bottomBar).bottom().growX().pad(10);
     }
 
+    private void setOnlinePopup() {
+        NetworkClient.get().onPush("CHALLENGE_INVITE", msg -> {
+            ChallengeInvite invite = NetworkClient.get().parsePayload(msg, ChallengeInvite.class);
+            // logic for displaying challenge popup if implemented
+        });
+    }
+
     private void setListeners() {
         addClickListener(backBtn, () -> controller.exitMenu());
         addClickListener(playBtn, () -> controller.enterMenu("play"));
+        addClickListener(onlineGameBtn, () -> controller.enterMenu("online room"));
         addClickListener(muPoint, () -> {
             controller.enterMenu("mu point");
             SFXManager.getInstance().playSound(GameSFX.BUTTON_CLICK);
@@ -192,7 +222,6 @@ public class MainMenuScreen extends MenuScreen {
         addPopupListener(travelLogBtn, "TRAVEL LOG", () -> new TravelLogMenuTable(game, skin), 800, 500, 750, 400);
     }
 
-    // Helper Methods برای جلوگیری از کدهای تکراری کلیک
     private void addClickListener(Button btn, Runnable action) {
         if (btn == null) return;
         btn.addListener(new ClickListener() {
@@ -257,6 +286,7 @@ public class MainMenuScreen extends MenuScreen {
             public void clicked(InputEvent event, float x, float y) {
                 overlay.remove();
                 UserDataManager.saveUser(App.getCurrentUser());
+                UserManager.syncCurrentUser();
                 SFXManager.getInstance().playSound(GameSFX.BUTTON_CLICK);
             }
         });
@@ -276,7 +306,7 @@ public class MainMenuScreen extends MenuScreen {
         stage.addActor(overlay);
     }
 
-    private Drawable createSolidColor(Color color) {
+    public static Drawable createSolidColor(Color color) {
         Pixmap pixmap = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
         pixmap.setColor(color);
         pixmap.fill();

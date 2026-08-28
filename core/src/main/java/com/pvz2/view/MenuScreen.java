@@ -7,9 +7,12 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Interpolation;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Queue;
@@ -19,6 +22,16 @@ import com.badlogic.gdx.utils.viewport.FillViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.pvz2.Main;
 import com.pvz2.controller.GameMenuController;
+import com.pvz2.models.core.App;
+import com.pvz2.models.core.UserManager;
+import com.pvz2.network.NetworkClient;
+import com.pvz2.network.onlineIZombie.ClientGameController;
+import com.pvz2.network.onlineIZombie.messages.ChallengeAnswerRequest;
+import com.pvz2.network.onlineIZombie.messages.ChallengeAnswerResponse;
+import com.pvz2.network.onlineIZombie.messages.MatchFound;
+import pvz.skin.BorderedTable;
+
+import java.util.function.Consumer;
 
 public abstract class MenuScreen implements Screen {
     protected final Main game;
@@ -102,6 +115,12 @@ public abstract class MenuScreen implements Screen {
 
         // ساخت عناصر ویجت منو در کلاس‌های فرزند
         buildUI();
+        NetworkClient.get().onPush("CHALLENGE_ANSWER", msg -> {
+            ChallengeAnswerResponse response = NetworkClient.get().parsePayload(msg, ChallengeAnswerResponse.class);
+            if (!response.success){
+                addToast("Error", response.errorMessage);
+            }
+        });
     }
 
     /**
@@ -210,6 +229,56 @@ public abstract class MenuScreen implements Screen {
         if (!hasNotification) {
             showNextToast();
         }
+    }
+
+    protected void showChallengePopup(String fromUsername, Consumer<Boolean> response) {
+        Table overlay = new Table();
+        overlay.setFillParent(true);
+        overlay.setBackground(MainMenuScreen.createSolidColor(new Color(0, 0, 0, 0.65f)));
+        overlay.setTouchable(Touchable.enabled);
+        overlay.addListener(new ClickListener());
+        BorderedTable popupBox = new BorderedTable();
+        popupBox.center().pad(20);
+        Table topBar = new Table();
+        Label titleLabel = new Label("Challenge request", skin, "big_outline");
+        topBar.add(titleLabel).center();
+        Label username = new Label("from user " + fromUsername, skin, "medium_outline");
+        popupBox.add(topBar).growX().pad(10).row();
+        popupBox.add(username).growX().row();
+        TextButton acceptBtn = new TextButton("ACCEPT", skin);
+        TextButton refuseBtn = new TextButton("REFUSE", skin);
+        acceptBtn.addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                NetworkClient.get().onPush("MATCH_FOUND", msg -> {
+                    MatchFound info = NetworkClient.get().parsePayload(msg, MatchFound.class);
+                    ClientGameController controller = new ClientGameController(info);
+                    fadeAndSwitchScreen(new OnlineGameScreen(game, controller));
+                });
+                overlay.remove();
+                response.accept(true);
+            }
+        });
+        refuseBtn.addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                overlay.remove();
+                response.accept(false);
+            }
+        });
+        popupBox.add(refuseBtn);
+        popupBox.add(acceptBtn);
+        overlay.add(popupBox).width(400).height(300);
+        stage.addActor(overlay);
+    }
+
+    protected void respondToChallenge(String inviteId, boolean accept) {
+        new Thread(() -> {
+            try {
+                NetworkClient.get().sendRequest("CHALLENGE_ANSWER",
+                    new ChallengeAnswerRequest(inviteId, accept), 5000);
+            } catch (InterruptedException ignored) {}
+        }).start();
     }
 
     protected void showNextToast() {

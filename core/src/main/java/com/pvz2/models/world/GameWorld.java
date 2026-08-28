@@ -4,6 +4,7 @@ import com.pvz2.controller.GameMenuController;
 import com.pvz2.models.core.App;
 import com.pvz2.models.core.User;
 import com.pvz2.models.core.UserDataManager;
+import com.pvz2.models.core.UserManager;
 import com.pvz2.models.enums.Chapter;
 import com.pvz2.models.enums.PlantFamily;
 import com.pvz2.models.enums.PlantType;
@@ -48,15 +49,15 @@ public abstract class GameWorld {
     protected List<Projectile> activeProjectiles;
     protected List<Obstacle> activeObstacles;
     protected LawnMowerManager lawnMowerManager;
-    private GameState state;
-    private float elapsedTime = 0f;
+    protected GameState state;
+    protected float elapsedTime = 0f;
     private Chapter currentChapter;
     private boolean willUnlockLevel = false;
     private int currentSun;
     private LevelSetup levelSetup;
     private ArrayList<LoseCondition> loseConditions;
     private WinCondition winCondition;
-    private ArrayList<Mechanic> mechanics;
+    protected ArrayList<Mechanic> mechanics;
     private List<PlantCard> conveyorBelt = new ArrayList<>();
     private List<PlantCard> plantLists;
     private boolean isConveyorMode;
@@ -83,7 +84,8 @@ public abstract class GameWorld {
     public GameWorld(LevelSetup levelSetup, ArrayList<LoseCondition> loseConditions,
                      WinCondition winCondition, ArrayList<Mechanic> mechanics) {
         App.getCurrentUser().setGamesPlayed(App.getCurrentUser().getGamesPlayed() + 1);
-        UserDataManager.saveUser(App.getCurrentUser());
+        App.getCurrentUser().save();
+        UserManager.syncCurrentUser();
         this.levelSetup = levelSetup;
         this.loseConditions = loseConditions;
         this.winCondition = winCondition;
@@ -297,7 +299,7 @@ public abstract class GameWorld {
             }
         }
     }
-    private void updateAll(float delta) {
+    protected void updateAll(float delta) {
         activePlants.forEach(plant -> plant.update(delta));
         activeCollectables.forEach(collectable -> collectable.update(delta));
         List<Projectile> projectileSnapshot = new ArrayList<>(activeProjectiles);
@@ -318,7 +320,7 @@ public abstract class GameWorld {
             }
         }
     }
-    private void removeIfDead() {
+    protected void removeIfDead() {
         activeSuns.removeIf(sun -> {
             if (sun.isCollected()) {
                 sunsPool.release(sun);
@@ -349,7 +351,7 @@ public abstract class GameWorld {
     }
     protected abstract void applyChapterRules();
     public void tick(float delta) {
-        if (state != GameState.PLAYING || isDialogActive) return;   // <<< انتقال به بالا
+        if (state != GameState.PLAYING || isDialogActive) return;
         elapsedTime += delta;
         delta *= App.getCurrentUser().getGameSpeed();
         updateAll(delta);

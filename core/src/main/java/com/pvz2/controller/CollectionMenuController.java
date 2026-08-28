@@ -102,8 +102,8 @@ public class CollectionMenuController implements MenuController {
             return false;
         }
         App.getCurrentUser().getUnlockedPlantsLevels().put(type, plantLevel + 1);
-        App.getCurrentUser().spendCoins(neededCoin);
         App.getCurrentUser().getSeedPackets().put(type, currentSeedPacket - neededSeedPacket);
+        App.getCurrentUser().spendCoins(neededCoin);
         if (menuScreen != null){
             menuScreen.addToast("plant " + type + " upgraded.",
                 "new level: " + plantLevel + 1);
@@ -118,13 +118,13 @@ public class CollectionMenuController implements MenuController {
             }
             return false;
         }
-        App.getCurrentUser().spendCoins(2000);
         App.getCurrentUser().unlockPlant(type);
         if (plantsCollectionMenuScreen != null){
             plantsCollectionMenuScreen.addToast("Purchased successfully",
                 "Now you have " + type.name() + ".");
         }
         App.getCurrentUser().notifyPlantUnlock(type.name());
+        App.getCurrentUser().spendCoins(2000);
         return true;
     }
 

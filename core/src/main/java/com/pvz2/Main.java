@@ -10,12 +10,15 @@ import com.pvz2.models.core.App;
 import com.pvz2.models.core.GameInitializer;
 import com.pvz2.models.core.UserManager;
 import com.pvz2.models.zombie.ZombieRegistry;
+import com.pvz2.network.NetworkClient;
 import com.pvz2.view.*;
 import com.pvz2.view.audios.AudioManager;
 import com.pvz2.view.audios.GameMusic;
 import pvz.libpvz.pam.PamPlayer;
 import pvz.libpvz.textures.TextureBank;
 import pvz.skin.PvzSkin;
+
+import java.io.IOException;
 
 /** {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms. */
 public class Main extends Game {
@@ -28,6 +31,14 @@ public class Main extends Game {
 
     @Override
     public void create() {
+        try {
+            NetworkClient.get().connect("localhost", 5000);
+        } catch (IOException e) {
+            System.err.println("Could not connect to server: " + e.getMessage());
+            // fall through — screens should handle a disconnected NetworkClient gracefully,
+            // e.g. sendRequest already throws/times out rather than hanging forever
+        }
+
         boolean foundUser = UserManager.loadInitialUser();
 
         GameInitializer.loadPlantUpgrades();

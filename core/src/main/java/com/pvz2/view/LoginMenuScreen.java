@@ -62,13 +62,16 @@ public class LoginMenuScreen extends MenuScreen {
 
         BorderedTable formTable = new BorderedTable();
         formTable.pad(25);
+
         TextField usernameField = new TextField("", skin);
         usernameField.setMessageText("username");
         ValidatedField usernameVF = wrapTextField(usernameField);
         attachFocusValidation(usernameVF, () -> requiredFieldErrors(usernameField.getText(), "Please enter username."));
+
         TextField passwordField = createPasswordField("Password");
         ValidatedField passwordVF = wrapTextField(passwordField);
         attachFocusValidation(passwordVF, () -> requiredFieldErrors(passwordField.getText(), "Please enter password."));
+
         CheckBox stayLoggedInBox = new CheckBox(" Stay logged in", skin);
         Label statusLabel = createDialogErrorLabel();
 
@@ -78,17 +81,23 @@ public class LoginMenuScreen extends MenuScreen {
             boolean pOk = showFieldErrors(passwordVF,
                 requiredFieldErrors(passwordField.getText(), "Please enter password."));
             if (!uOk || !pOk) return;
-            String result = controller.loginUser(usernameField.getText(),
-                passwordField.getText(), stayLoggedInBox.isChecked());
-            if (result != null && result.toLowerCase().contains("success")) {
-                statusLabel.setVisible(false);
-                controller.changeMenu();
-            } else {
-                statusLabel.setText(result);
-                statusLabel.setVisible(true);
-                shake(usernameField);
-                shake(passwordField);
-            }
+
+            new Thread(() -> {
+                String result = controller.loginUser(usernameField.getText(),
+                    passwordField.getText(), stayLoggedInBox.isChecked());
+                Gdx.app.postRunnable(() -> {
+                    boolean success = result != null && result.toLowerCase().contains("success");
+                    if (success) {
+                        statusLabel.setVisible(false);
+                        controller.changeMenu();
+                    } else {
+                        statusLabel.setText(result);
+                        statusLabel.setVisible(true);
+                        shake(usernameField);
+                        shake(passwordField);
+                    }
+                });
+            }).start();
         });
 
         TextButton forgotBtn = createButton("Forgot password?", this::showForgotPasswordPopup);
@@ -136,15 +145,20 @@ public class LoginMenuScreen extends MenuScreen {
         Label errorLabel = createDialogErrorLabel();
 
         TextButton nextBtn = createButton("Next", () -> {
-            String result = controller.forgetPassword(usernameField.getText(), emailField.getText());
-            if (result != null && result.startsWith("Please answer security question:")) {
-                buildForgotStepTwo(overlay, box, result.substring(result.indexOf("\n") + 1));
-            } else {
-                errorLabel.setText(result);
-                errorLabel.setVisible(true);
-                shake(usernameField);
-                shake(emailField);
-            }
+            new Thread(() -> {
+                String result = controller.forgetPassword(usernameField.getText(), emailField.getText());
+                Gdx.app.postRunnable(() -> {
+                    if (result != null && result.startsWith("Please answer security question:")) {
+                        String question = result.substring(result.indexOf("\n") + 1);
+                        buildForgotStepTwo(overlay, box, question);
+                    } else {
+                        errorLabel.setText(result);
+                        errorLabel.setVisible(true);
+                        shake(usernameField);
+                        shake(emailField);
+                    }
+                });
+            }).start();
         });
 
         TextButton cancelBtn = createButton("Cancel", overlay::remove);
@@ -173,14 +187,18 @@ public class LoginMenuScreen extends MenuScreen {
         Label errorLabel = createDialogErrorLabel();
 
         TextButton nextBtn = createButton("Next", () -> {
-            String result = controller.answerSQ(answerField.getText());
-            if ("Enter your new password:".equals(result)) {
-                buildForgotStepThree(overlay, box);
-            } else {
-                errorLabel.setText(result);
-                errorLabel.setVisible(true);
-                shake(answerField);
-            }
+            new Thread(() -> {
+                String result = controller.answerSQ(answerField.getText());
+                Gdx.app.postRunnable(() -> {
+                    if ("Enter your new password:".equals(result)) {
+                        buildForgotStepThree(overlay, box);
+                    } else {
+                        errorLabel.setText(result);
+                        errorLabel.setVisible(true);
+                        shake(answerField);
+                    }
+                });
+            }).start();
         });
 
         TextButton cancelBtn = createButton("Cancel", overlay::remove);
@@ -213,20 +231,22 @@ public class LoginMenuScreen extends MenuScreen {
         Label errorLabel = createDialogErrorLabel();
 
         TextButton submitBtn = createButton("Change password", () -> {
-            boolean pOk =
-                showFieldErrors(passwordVF, passwordRules.validatePasswordStrength(newPasswordField.getText()));
-            boolean cOk = showFieldErrors(confirmVF,
-                passwordRules.getPasswordErrors(newPasswordField.getText(), confirmField.getText()));
+            boolean pOk = showFieldErrors(passwordVF, passwordRules.validatePasswordStrength(newPasswordField.getText()));
+            boolean cOk = showFieldErrors(confirmVF, passwordRules.getPasswordErrors(newPasswordField.getText(), confirmField.getText()));
             if (!pOk || !cOk) return;
 
-            String result = controller.newPassword(newPasswordField.getText());
-            if ("Your password changed successfully.".equals(result)) {
-                buildForgotStepDone(overlay, box);
-            } else {
-                errorLabel.setText(result);
-                errorLabel.setVisible(true);
-                shake(newPasswordField);
-            }
+            new Thread(() -> {
+                String result = controller.newPassword(newPasswordField.getText());
+                Gdx.app.postRunnable(() -> {
+                    if ("Your password changed successfully.".equals(result)) {
+                        buildForgotStepDone(overlay, box);
+                    } else {
+                        errorLabel.setText(result);
+                        errorLabel.setVisible(true);
+                        shake(newPasswordField);
+                    }
+                });
+            }).start();
         });
 
         box.add(title).padBottom(15).row();

@@ -4,6 +4,7 @@ import com.pvz2.controller.GameMenuController;
 import com.pvz2.models.core.App;
 import com.pvz2.models.core.User;
 import com.pvz2.models.core.UserDataManager;
+import com.pvz2.models.core.UserManager;
 import com.pvz2.models.world.ChapterWorld.AncientEgyptWorld;
 import com.pvz2.models.world.GameWorld;
 import com.pvz2.models.zombie.Zombie;
@@ -125,7 +126,8 @@ public class WaveManager {
             if (!user.getShowedZombies().containsKey(inGameName)) {
                 user.getShowedZombies().put(inGameName, true);
                 user.notifyZombieUnlock(inGameName);
-                UserDataManager.saveUser(App.getCurrentUser());
+                user.save();
+                UserManager.syncCurrentUser();
             }
         }
 

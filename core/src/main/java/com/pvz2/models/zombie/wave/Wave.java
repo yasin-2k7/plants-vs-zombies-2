@@ -1,5 +1,6 @@
 package com.pvz2.models.zombie.wave;
 
+import com.badlogic.gdx.Gdx;
 import com.pvz2.models.core.App;
 import com.pvz2.models.core.DifficultyCalculator;
 
@@ -11,9 +12,9 @@ public class Wave {
     private int waveNumber;
     private int totalCost;
     private List<WaveSpawnEntry> spawnEntries;
-    private int spawnDelayTicks;
+    private float spawnDelayTicks;
     private int currentIndex;
-    private int ticksSinceLastSpawn;
+    private float ticksSinceLastSpawn;
     private boolean isFinalWave;
 
     public Wave(int waveNumber,
@@ -82,11 +83,11 @@ public class Wave {
             boolean isFinal = (i == totalWaves);
             double difficulty = baseDifficulty * Math.pow(1.25, i - 1);
             if (isFinal) {
-                difficulty *= 2;
+                difficulty *= 1.5;
             }
             int cost = (int) Math.round(difficulty * decreaseFactor);
 
-            Wave wave = generateRandomWave(i, cost, availableEntries, i == 1 ? 60 : spawnDelayTicks, isFinal, random);
+            Wave wave = generateRandomWave(i, cost, availableEntries, i == 1 ? 5 : spawnDelayTicks, isFinal, random);
             waves.add(wave);
         }
         return waves;
@@ -106,7 +107,7 @@ public class Wave {
     public WaveSpawnEntry getNextSpawn() {
         if (isFinishedSpawning()) return null;
         if (ticksSinceLastSpawn < spawnDelayTicks) {
-            ticksSinceLastSpawn++;
+            ticksSinceLastSpawn += Gdx.graphics.getDeltaTime();
             return null;
         }
         ticksSinceLastSpawn = 0;

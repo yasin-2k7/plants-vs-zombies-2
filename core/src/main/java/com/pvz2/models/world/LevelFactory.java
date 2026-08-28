@@ -61,16 +61,16 @@ public class LevelFactory {
         int rows = 5;
         int cols = 9;
         List<WaveSpawnEntry> availableZombies = List.of(
-            new WaveSpawnEntry("ZombieDefault", 100),
-            new WaveSpawnEntry("ZombieArmor1", 200),
-            new WaveSpawnEntry("ZombieArmor2", 300),
-            new WaveSpawnEntry("ZombieArmor4", 400),
-            new WaveSpawnEntry("ZombieRa", 100),
-            new WaveSpawnEntry("ZombieNewspaper", 450),
-            new WaveSpawnEntry("ZombieGargantuar", 700)
-
+            new WaveSpawnEntry("ZombieDefault", 250),
+            new WaveSpawnEntry("ZombieArmor1", 500),
+            new WaveSpawnEntry("ZombieArmor2", 630),
+            new WaveSpawnEntry("ZombieArmor4", 650),
+            new WaveSpawnEntry("ZombieTombRaiser", 510),
+            new WaveSpawnEntry("ZombieRa", 505),
+            new WaveSpawnEntry("ZombieNewspaper", 550),
+            new WaveSpawnEntry("ZombieExplorer", 510)
         );
-        List<Wave> waves = Wave.generateWaves(3, 500, availableZombies, 20);
+        List<Wave> waves = Wave.generateWaves(10, 499, availableZombies, 1);
         LevelSetup levelSetup = new NormalLevelSetup(rows, cols, waves);
         LoseCondition loseCondition = new NormalLose();
         WinCondition winCondition = new NormalWin();
@@ -91,17 +91,6 @@ public class LevelFactory {
             "DAVE:Look! Mummies are coming to eat your hot sauce! Plant these Peashooters!",
             "DAVE:WABBA WABBA RAAGH!"
         ));
-//        world.setWinningDialogs(List.of(
-//            "DAVE:YEEHAW! We saved my taco! Er... I mean, your brains!",
-//            "PENNY:Tactical defense successful. Brain integrity remains at 100%.",
-//            "DAVE:Good job neighbor! Let's eat some victory tacos!"
-//        ));
-//
-//        world.setLosingDialogs(List.of(
-//            "DAVE:NOOO! They ate your brains!",
-//            "PENNY:Critical failure. Temporal retreat advised.",
-//            "DAVE:And worse... they didn't leave any hot sauce for my taco!"
-//        ));
         return world;
     }
 
@@ -136,13 +125,6 @@ public class LevelFactory {
             "DAVE:If a zombie steps over that line, my taco will fall on the ground!",
             "DAVE:DON'T LET THEM CROSS IT!"
         ));
-//        world.setWinningDialogs(List.of(
-//            "DAVE:My taco didn't get sandy! You're the best neighbor!"
-//        ));
-//        world.setLosingDialogs(List.of(
-//            "DAVE:Oh no! They crossed the line! My taco is sandy... and so are my brains!",
-//            "DAVE:WAAAAAH!"
-//        ));
         return world;
     }
 

@@ -24,6 +24,7 @@ import com.pvz2.controller.GameMenuController;
 import com.pvz2.models.core.App;
 import com.pvz2.models.core.User;
 import com.pvz2.models.core.UserDataManager;
+import com.pvz2.models.core.UserManager;
 import com.pvz2.models.enums.PlantType;
 import com.pvz2.models.miniGame.beghouled.BeghouledSetup;
 import com.pvz2.models.plant.card.PlantCard;
@@ -249,7 +250,8 @@ public class GameHUD extends Group {
                 public void clicked(InputEvent event, float x, float y) {
                     User user = App.getCurrentUser();
                     if (user != null) {
-                        UserDataManager.saveUser(user);
+                        user.save();
+                        UserManager.syncCurrentUser();
                     }
                     remove();
                     if(world.getLevelSetup() instanceof BeghouledSetup){

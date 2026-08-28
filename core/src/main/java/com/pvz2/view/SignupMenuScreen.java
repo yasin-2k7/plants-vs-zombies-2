@@ -22,7 +22,6 @@ import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 import com.badlogic.gdx.utils.Array;
 import com.pvz2.Main;
 import com.pvz2.controller.SignupMenuController;
-
 import pvz.libpvz.textures.TextureBank;
 import pvz.skin.BorderedTable;
 
@@ -64,7 +63,7 @@ public class SignupMenuScreen extends MenuScreen {
         ValidatedField nicknameVF = createNicknameField();
         ValidatedField emailVF = createEmailField();
         ValidatedField passwordVF = createPasswordField();
-        ValidatedField passwordConfirmVF = createPasswordConfirmField();
+        ValidatedField passwordConfirmVF = createPasswordConfirmField(passwordVF);
         ValidatedField genderVF = createGenderField();
         ValidatedField questionVF = createQuestionField();
         ValidatedField answerVF = createAnswerField();
@@ -132,13 +131,14 @@ public class SignupMenuScreen extends MenuScreen {
         return vf;
     }
 
-    private ValidatedField createPasswordConfirmField() {
+    private ValidatedField createPasswordConfirmField(ValidatedField passwordVF) {
         TextField field = new TextField("", skin);
         field.setPasswordMode(true);
         field.setPasswordCharacter('*');
         field.setMessageText("Confirm password");
         ValidatedField vf = wrapTextField(field);
-        // We need password field reference; we'll attach later after creation
+        TextField passwordField = (TextField) passwordVF.field;
+        attachFocusValidation(vf, () -> controller.getPasswordErrors(passwordField.getText(), field.getText()));
         return vf;
     }
 
@@ -247,11 +247,11 @@ public class SignupMenuScreen extends MenuScreen {
         if (vf.style instanceof TextField.TextFieldStyle) {
             TextField.TextFieldStyle s = (TextField.TextFieldStyle) vf.style;
             s.background = valid ? (com.badlogic.gdx.scenes.scene2d.utils.Drawable)
-                                   vf.defaultBackground : errorBorderDrawable;
+                vf.defaultBackground : errorBorderDrawable;
         } else if (vf.style instanceof SelectBox.SelectBoxStyle) {
             SelectBox.SelectBoxStyle s = (SelectBox.SelectBoxStyle) vf.style;
             s.background = valid ? (com.badlogic.gdx.scenes.scene2d.utils.Drawable)
-                                   vf.defaultBackground : errorBorderDrawable;
+                vf.defaultBackground : errorBorderDrawable;
         }
 
         if (valid) {
@@ -344,10 +344,17 @@ public class SignupMenuScreen extends MenuScreen {
                     && passwordConfirmOk && genderOk && answerOk && answerConfirmOk;
 
                 if (!allOk) return;
-                controller.createUser(usernameField.getText(), passwordField.getText(),
-                    nicknameField.getText(), emailField.getText(), genderBox.getSelected(),
-                    questionBox.getSelected(), answerField.getText());
-                controller.changeMenu();
+
+                new Thread(() -> {
+                    String result = controller.createUser(usernameField.getText(), passwordField.getText(),
+                        nicknameField.getText(), emailField.getText(), genderBox.getSelected(),
+                        questionBox.getSelected(), answerField.getText());
+                    Gdx.app.postRunnable(() -> {
+                        if (result != null && !result.equals("Error: could not reach server.")) {
+                            controller.changeMenu();
+                        }
+                    });
+                }).start();
             }
         });
         return btn;

@@ -1,69 +1,81 @@
 package com.pvz2.models.core;
 
+import com.pvz2.network.NetworkClient;
+import com.pvz2.network.NetworkMessage;
+import com.pvz2.network.messages.*;
 
-
+import java.util.List;
 
 public class UserManager {
     private static User currentUser;
 
-
     public static boolean loadInitialUser() {
-        String loggedInUsername = UserDataManager.getLoggedInUsername();
-        boolean found = false;
-        if (loggedInUsername != null) {
-            User user = UserDataManager.loadUser(loggedInUsername);
-            if (user != null) {
-                currentUser = user;
-                App.setCurrentUser(user);
-                user.initQuests();
-                found = true;
+        String token = UserDataManager.getSessionToken();
+        if (token == null) return false;
+
+        try {
+            AutoLoginRequest req = new AutoLoginRequest(token);
+            NetworkMessage reply = NetworkClient.get().sendRequest("AUTO_LOGIN", req, 5000);
+            LoginResponse resp = NetworkClient.get().parsePayload(reply, LoginResponse.class);
+
+            if (resp.success) {
+                applyLoggedInUser(resp.user, resp.token);
+                return true;
+            } else {
+                UserDataManager.clearSessionToken(); // stale/expired token — don't keep retrying it
+                return false;
             }
+        } catch (InterruptedException e) {
+            return false; // server unreachable — fall through to login screen
         }
-        return found;
     }
 
-    public static String register(String username,
-                                  String password,
-                                  String nickname,
-                                  String email,
-                                  String gender,
-                                  String securityQ,
-                                  String securityA) {
-        User newUser = new User();
-        newUser.setUsername(username);
-        newUser.setHashPassword(PasswordHasher.hashSHA256(password));
-        newUser.setNickname(nickname);
-        newUser.setEmail(email);
-        newUser.setGender(gender);
-        newUser.setSecurityQ(securityQ);
-        newUser.setSecurityA(PasswordHasher.hashSHA256(securityA));
-
-        boolean isSaved = UserDataManager.saveUser(newUser);
-        if (isSaved) {
-            return "Register successfully. Redirecting to Login Menu...";
-        } else {
-            return "Error: Could not save user data to disk.";
-
+    public static String register(String username, String password, String nickname, String email,
+                                  String gender, String securityQ, String securityA) {
+        try {
+            RegisterRequest req = new RegisterRequest(username, password, nickname, email, gender, securityQ, securityA);
+            NetworkMessage reply = NetworkClient.get().sendRequest("REGISTER", req, 5000);
+            RegisterResponse resp = NetworkClient.get().parsePayload(reply, RegisterResponse.class);
+            return resp.message;
+        } catch (InterruptedException e) {
+            return "Error: could not reach server.";
         }
-
     }
 
     public static String login(String username, String password, boolean stayLoggedIn) {
-        User user = UserDataManager.loadUser(username);
-        if (user == null) {
-            return "Error: Username not found.";
-        }
+        try {
+            LoginRequest req = new LoginRequest(username, password);
+            NetworkMessage reply = NetworkClient.get().sendRequest("LOGIN", req, 5000);
+            LoginResponse resp = NetworkClient.get().parsePayload(reply, LoginResponse.class);
 
-        if (user.checkPassword(password)) {
-            currentUser = user;
-            App.setCurrentUser(user);
-            user.initQuests();
-            if (stayLoggedIn) {
-                UserDataManager.saveLoggedInUser(username);
+            if (resp.success) {
+                applyLoggedInUser(resp.user, resp.token);
+                if (stayLoggedIn) {
+                    UserDataManager.saveSessionToken(resp.token);
+                }
+                return "Login successful! Welcome " + currentUser.getNickname();
+            } else {
+                return resp.errorMessage;
             }
-            return "Login successful! Welcome " + user.getNickname();
-        } else {
-            return "Error: Incorrect password.";
+        } catch (InterruptedException e) {
+            return "Error: could not reach server.";
+        }
+    }
+
+    private static void applyLoggedInUser(User user, String token) {
+        user.afterLoad();
+        currentUser = user;
+        App.setCurrentUser(user);
+        user.initQuests();
+    }
+
+    public static List<LeaderboardEntry> getLeaderboard() {
+        try {
+            NetworkMessage reply = NetworkClient.get().sendRequest("GET_LEADERBOARD", new Object(), 5000);
+            LeaderboardResponse resp = NetworkClient.get().parsePayload(reply, LeaderboardResponse.class);
+            return resp.entries;
+        } catch (InterruptedException e) {
+            return List.of();
         }
     }
 
@@ -73,10 +85,81 @@ public class UserManager {
 
     public static void logout() {
         if (currentUser != null) {
-            UserDataManager.saveUser(currentUser); // ذخیره نهایی قبل از خروج
+            String token = UserDataManager.getSessionToken();
+            if (token != null) {
+                try {
+                    NetworkClient.get().sendRequest("LOGOUT", new LogoutRequest(token), 3000);
+                } catch (InterruptedException ignored) {
+                }
+            }
             currentUser = null;
             App.setCurrentUser(null);
-            UserDataManager.clearLoggedInUser();
+            UserDataManager.clearSessionToken();
+        }
+    }
+
+    public static void syncCurrentUser() {
+        new Thread(() -> {
+            if (currentUser == null) return;
+            String token = UserDataManager.getSessionToken();
+            if (token == null) return;
+            try {
+                SaveUserRequest req = new SaveUserRequest(token, currentUser);
+                NetworkMessage reply = NetworkClient.get().sendRequest("SAVE_USER", req, 5000);
+                NetworkClient.get().parsePayload(reply, AckResponse.class);
+            } catch (InterruptedException e) {
+            }
+        }).start();
+    }
+
+    public static String changeUsername(String newUsername) {
+        String token = UserDataManager.getSessionToken();
+        if (token == null) return "You must be logged in to do this.";
+
+        try {
+            UpdateUsernameRequest req = new UpdateUsernameRequest(token, newUsername);
+            NetworkMessage reply = NetworkClient.get().sendRequest("UPDATE_USERNAME", req, 5000);
+            RegisterResponse resp = NetworkClient.get().parsePayload(reply, RegisterResponse.class);
+
+            if (resp.success && currentUser != null) {
+                currentUser.setUsername(newUsername); // keep the client's cached copy in sync
+            }
+            return resp.message;
+        } catch (InterruptedException e) {
+            return "Error: could not reach server.";
+        }
+    }
+
+    public static String forgetPassword(String username, String email) {
+        try {
+            ForgetPasswordRequest req = new ForgetPasswordRequest(username, email);
+            NetworkMessage reply = NetworkClient.get().sendRequest("FORGET_PASSWORD", req, 5000);
+            ForgetPasswordResponse resp = NetworkClient.get().parsePayload(reply, ForgetPasswordResponse.class);
+            return resp.success ? resp.message + "\n" + resp.securityQ : resp.message;
+        } catch (InterruptedException e) {
+            return "Error: could not reach server.";
+        }
+    }
+
+    public static boolean answerSecurityQuestion(String username, String answer) {
+        try {
+            AnswerSecurityQuestionRequest req = new AnswerSecurityQuestionRequest(username, answer);
+            NetworkMessage reply = NetworkClient.get().sendRequest("ANSWER_SECURITY_QUESTION", req, 5000);
+            AckResponse resp = NetworkClient.get().parsePayload(reply, AckResponse.class);
+            return resp.success;
+        } catch (InterruptedException e) {
+            return false;
+        }
+    }
+
+    public static boolean submitNewPassword(String username, String newPassword) {
+        try {
+            NewPasswordRequest req = new NewPasswordRequest(username, newPassword);
+            NetworkMessage reply = NetworkClient.get().sendRequest("NEW_PASSWORD", req, 5000);
+            AckResponse resp = NetworkClient.get().parsePayload(reply, AckResponse.class);
+            return resp.success;
+        } catch (InterruptedException e) {
+            return false;
         }
     }
 }

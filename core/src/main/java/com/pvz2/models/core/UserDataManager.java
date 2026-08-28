@@ -12,31 +12,57 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class UserDataManager {
-    private static final String USERS_DIR = "pvz2/src/main/java/models/users/";
-    private static final String CURRENT_USER_FILE = "pvz2/src/main/java/models/users/current_user.txt";
+    private static final String USER_HOME = System.getProperty("user.home");
+
+    private static final String BASE_DIR = USER_HOME + File.separator + ".pvz2_server" + File.separator;
+    private static final String USERS_DIR = BASE_DIR + "users" + File.separator;
+    private static final String SESSION_TOKEN_FILE = BASE_DIR + "session_token.txt";
 
     private static final Gson GSON = new GsonBuilder()
-            .registerTypeAdapter(LocalDate.class, new LocalDateAdapter())
-            .addSerializationExclusionStrategy(new ExclusionStrategy() {
-                @Override
-                public boolean shouldSkipField(FieldAttributes f) {
-                    return false;
-                }
+        .registerTypeAdapter(LocalDate.class, new LocalDateAdapter())
+        .addSerializationExclusionStrategy(new ExclusionStrategy() {
+            @Override
+            public boolean shouldSkipField(FieldAttributes f) {
+                return false;
+            }
 
-                @Override
-                public boolean shouldSkipClass(Class<?> clazz) {
-                    // اگر کلاس از نوع Random بود، نادیده‌اش بگیر
-                    return clazz == java.util.Random.class;
-                }
-            })
-            .setPrettyPrinting()
-            .create();
+            @Override
+            public boolean shouldSkipClass(Class<?> clazz) {
+                return clazz == java.util.Random.class;
+            }
+        })
+        .setPrettyPrinting()
+        .create();
 
     static {
         File dir = new File(USERS_DIR);
         if (!dir.exists()) {
             dir.mkdirs();
         }
+    }
+
+    public static void saveSessionToken(String token) {
+        try (FileWriter writer = new FileWriter(SESSION_TOKEN_FILE)) {
+            writer.write(token);
+        } catch (IOException e) {
+            GameMenuController.updateState("save session error: " + e.getMessage());
+        }
+    }
+
+    public static String getSessionToken() {
+        File file = new File(SESSION_TOKEN_FILE);
+        if (!file.exists()) return null;
+        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+            String token = reader.readLine();
+            return (token != null) ? token.trim() : null;
+        } catch (IOException e) {
+            return null;
+        }
+    }
+
+    public static void clearSessionToken() {
+        File file = new File(SESSION_TOKEN_FILE);
+        if (file.exists()) file.delete();
     }
 
     public static boolean saveUser(User user) {
@@ -96,52 +122,20 @@ public class UserDataManager {
     }
 
     public static boolean userExists(String username) {
-        return new File(USERS_DIR + username +
-                ".json").exists();
-    }
-
-    public static void saveLoggedInUser(String username) {
-        try (FileWriter writer = new FileWriter(CURRENT_USER_FILE)) {
-            writer.write(username);
-        } catch (IOException e) {
-            GameMenuController.updateState("save logged in error: " + e.getMessage());
-        }
-    }
-
-    public static String getLoggedInUsername() {
-        File file = new File(CURRENT_USER_FILE);
-        if (!file.exists()) return null;
-
-        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
-            String username = reader.readLine();
-            return (username != null) ? username.trim() : null;
-        } catch (IOException e) {
-            return null;
-        }
-    }
-
-    public static void clearLoggedInUser() {
-        File file = new File(CURRENT_USER_FILE);
-        if (file.exists()) {
-            file.delete();
-        }
+        return new File(USERS_DIR + username + ".json").exists();
     }
 
     public static boolean updateUsername(String oldUsername, User user) {
         if (user == null || user.getUsername() == null) return false;
 
+        boolean saved = saveUser(user); // write the new file FIRST
+        if (!saved) return false;
+
         File oldFile = new File(USERS_DIR + oldUsername + ".json");
-        if (oldFile.exists()) {
-            oldFile.delete();
+        if (oldFile.exists() && !oldUsername.equals(user.getUsername())) {
+            oldFile.delete(); // only delete the old one once the new one is confirmed written
         }
 
-        boolean saved = saveUser(user);
-
-        String loggedInUser = getLoggedInUsername();
-        if (loggedInUser != null && loggedInUser.equals(oldUsername)) {
-            saveLoggedInUser(user.getUsername());
-        }
-
-        return saved;
+        return true;
     }
 }

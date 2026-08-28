@@ -47,9 +47,6 @@ public class SignupMenuController implements MenuController {
         if (!username.matches("^[0-9A-Za-z-]+$")) {
             errors.add("Invalid username (only letters, digits, and '-' allowed).");
         }
-        if (UserDataManager.userExists(username)) {
-            errors.add("Username already exists.");
-        }
         return errors;
     }
 
@@ -121,11 +118,7 @@ public class SignupMenuController implements MenuController {
                              String gender,
                              String securityQ,
                              String securityA) {
-        String result = UserManager.register(username, password, nickname, email, gender, securityQ, securityA);
-        //needs edit
-//        AppView.currentScreen = LoginMenuView.getInstance(new LoginMenuController());
-        return result;
-
+        return UserManager.register(username, password, nickname, email, gender, securityQ, securityA);
     }
 
     public List<String> getEmailErrors(String email) {

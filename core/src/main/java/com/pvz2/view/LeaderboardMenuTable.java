@@ -1,5 +1,6 @@
 package com.pvz2.view;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
@@ -13,9 +14,11 @@ import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.pvz2.Main;
+import com.pvz2.controller.LeaderboardMenuController;
 import com.pvz2.models.core.User;
 import com.pvz2.models.core.UserDataManager;
 import com.pvz2.models.enums.LeaderboardSortField;
+import com.pvz2.network.messages.LeaderboardEntry;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -53,10 +56,75 @@ public class LeaderboardMenuTable extends Table {
     private TextButton orderBtn;
     private boolean ascending = false;
 
+    private final LeaderboardMenuController controller = new LeaderboardMenuController();
+    private List<LeaderboardEntry> currentEntries = new ArrayList<>();
+
     public LeaderboardMenuTable(Main game, Skin skin) {
         this.game = game;
         this.skin = skin;
         build();
+    }
+
+    private void refreshRows() {
+        new Thread(() -> {
+            List<LeaderboardEntry> entries = controller.loadLeaderboard();
+            Gdx.app.postRunnable(() -> {
+                currentEntries = entries;
+                rebuildRows();
+            });
+        }).start();
+    }
+
+    private void rebuildRows() {
+        rowsTable.clear();
+
+        LeaderboardSortField field = sortBox.getSelected();
+        List<LeaderboardEntry> sorted = getSortedLeaderboard(currentEntries, field, ascending);
+
+        int rank = 1;
+        for (LeaderboardEntry entry : sorted) {
+            Table row = new Table();
+            if (rank % 2 == 0) {
+                row.setBackground(createSolidColor(ROW_STRIPE_COLOR));
+            }
+            row.pad(4, 8, 4, 8);
+
+            row.add(buildRankCell(rank)).width(COL_RANK);
+            addColumnDivider(row, DIVIDER_COLOR, 16);
+            row.add(dataLabel(entry.username, rank == 1 ? HEADER_COLOR : Color.BLACK)).width(COL_USERNAME);
+            addColumnDivider(row, DIVIDER_COLOR, 16);
+            row.add(dataLabel("Season " + entry.unlockedChapter + " - Level " + entry.unlockedLevel, Color.BLACK)).width(COL_STAGE);
+            addColumnDivider(row, DIVIDER_COLOR, 16);
+            row.add(dataLabel(String.valueOf(entry.miniGamesCompleted), Color.BLACK)).width(COL_MINI);
+            addColumnDivider(row, DIVIDER_COLOR, 16);
+            row.add(dataLabel(String.valueOf(entry.dailyQuestsCount), Color.BLACK)).width(COL_DAILY);
+            addColumnDivider(row, DIVIDER_COLOR, 16);
+            row.add(dataLabel(String.valueOf(entry.normalQuestsCount), Color.BLACK)).width(COL_NORMAL);
+            addColumnDivider(row, DIVIDER_COLOR, 16);
+            row.add(dataLabel(entry.hasPlayedMuPoint ? String.valueOf(entry.maxMupoint) : "—", Color.BLACK)).width(COL_SCORE);
+
+            rowsTable.add(row).growX().row();
+            rank++;
+        }
+
+        if (sorted.isEmpty()) {
+            Label empty = new Label("No players yet.", skin);
+            empty.setColor(Color.BLACK);
+            rowsTable.add(empty).left().padTop(10);
+        }
+    }
+
+    public List<LeaderboardEntry> getSortedLeaderboard(List<LeaderboardEntry> allEntries, LeaderboardSortField field, boolean ascending) {
+        List<LeaderboardEntry> sortedList = new ArrayList<>(allEntries);
+        Comparator<LeaderboardEntry> comparator = field.getComparator();
+
+        if (!ascending) {
+            comparator = comparator.reversed();
+        }
+        comparator = comparator.thenComparing(e -> e.username);
+
+        sortedList.sort(comparator);
+        return sortedList;
     }
 
     private void build() {
@@ -136,48 +204,6 @@ public class LeaderboardMenuTable extends Table {
         return label;
     }
 
-    private void refreshRows() {
-        rowsTable.clear();
-
-        LeaderboardSortField field = sortBox.getSelected();
-        List<User> users = getSortedLeaderboard(
-            UserDataManager.loadAllUsers(), field, ascending);
-
-        int rank = 1;
-        for (User user : users) {
-            Table row = new Table();
-            if (rank % 2 == 0) {
-                row.setBackground(createSolidColor(ROW_STRIPE_COLOR));
-            }
-            row.pad(4, 8, 4, 8);
-
-            row.add(buildRankCell(rank)).width(COL_RANK);
-            addColumnDivider(row, DIVIDER_COLOR, 16);
-            row.add(dataLabel(user.getUsername(),
-                rank == 1 ? HEADER_COLOR : Color.BLACK)).width(COL_USERNAME);
-            addColumnDivider(row, DIVIDER_COLOR, 16);
-            row.add(dataLabel("Season " + user.getUnlockedChapter() + " - Level "
-                + user.getUnlockedLevel(), Color.BLACK)).width(COL_STAGE);
-            addColumnDivider(row, DIVIDER_COLOR, 16);
-            row.add(dataLabel(String.valueOf(user.getMiniGameLevels().size()), Color.BLACK)).width(COL_MINI);
-            addColumnDivider(row, DIVIDER_COLOR, 16);
-            row.add(dataLabel(String.valueOf(user.getDailyQuestsCount()), Color.BLACK)).width(COL_DAILY);
-            addColumnDivider(row, DIVIDER_COLOR, 16);
-            row.add(dataLabel(String.valueOf(user.getNormalQuestsCount()), Color.BLACK)).width(COL_NORMAL);
-            addColumnDivider(row, DIVIDER_COLOR, 16);
-            row.add(dataLabel(String.valueOf(user.getMaxMupoint()), Color.BLACK)).width(COL_SCORE);
-
-            rowsTable.add(row).growX().row();
-            rank++;
-        }
-
-        if (users.isEmpty()) {
-            Label empty = new Label("No players yet.", skin);
-            empty.setColor(Color.BLACK);
-            rowsTable.add(empty).left().padTop(10);
-        }
-    }
-
     private Table buildRankCell(int rank) {
         Table cell = new Table();
 
@@ -230,21 +256,6 @@ public class LeaderboardMenuTable extends Table {
         Texture texture = new Texture(pixmap);
         pixmap.dispose();
         return new TextureRegionDrawable(new TextureRegion(texture));
-    }
-
-    public List<User> getSortedLeaderboard(List<User> allUsers, LeaderboardSortField field, boolean ascending) {
-        List<User> sortedList = new ArrayList<>(allUsers);
-        Comparator<User> comparator = field.getComparator();
-
-        if (!ascending) {
-            comparator = comparator.reversed();
-        }
-
-        comparator = comparator.thenComparing(User::getUsername);
-
-        sortedList.sort(comparator);
-
-        return sortedList;
     }
 
     private Drawable createCircle(Color color, int diameter) {

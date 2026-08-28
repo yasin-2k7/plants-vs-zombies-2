@@ -3,6 +3,7 @@ package com.pvz2.controller;
 import com.pvz2.models.core.App;
 import com.pvz2.models.core.User;
 import com.pvz2.models.core.UserDataManager;
+import com.pvz2.models.core.UserManager;
 import com.pvz2.models.enums.Chapter;
 import com.pvz2.models.enums.PlantType;
 import com.pvz2.models.greenhouse.GreenHouse;
@@ -25,42 +26,44 @@ import java.util.List;
 public class GameMenuController implements MenuController {
     private static MenuScreen screen;
     public static void handleWinning(GameWorld gameWorld) {
-        if (gameWorld.isWillUnlockLevel()) {
-            App.getCurrentUser().unlockLevel();
-        }
         User user = App.getCurrentUser();
+        if (user == null) return;
+        if (gameWorld.isWillUnlockLevel()) {
+            user.unlockLevel();
+        }
         MupointManager mupointManager = gameWorld.getMupointManager();
-        if (user != null && mupointManager != null) {
+        if (mupointManager != null) {
             int currentLevelPoints = mupointManager.getTotalMupoints();
-
             if (currentLevelPoints > user.getMaxMupoint()) {
                 user.updateMupointRecord(currentLevelPoints);
-                UserDataManager.saveUser(user);
             }
         }
         if (!gameWorld.isConveyorMode()){
             for (PlantCard plantCard : gameWorld.getPlantLists()){
-                App.getCurrentUser().getPlantBoosts().remove(plantCard.getType());
+                user.getPlantBoosts().remove(plantCard.getType());
             }
         }
+        user.save();
+        UserManager.syncCurrentUser();
     }
 
     public static void handleLosing(GameWorld gameWorld) {
-        if (gameWorld instanceof IZombieLevel) {
-        } else if (gameWorld.getLevelSetup() instanceof DeadLineLevelSetup) {
-        } else {
-        }
         User user = App.getCurrentUser();
+        if (user == null) return;
         MupointManager mupointManager = gameWorld.getMupointManager();
-        if (user != null && mupointManager != null) {
+        if (mupointManager != null) {
             int currentLevelPoints = mupointManager.getTotalMupoints();
-
             if (currentLevelPoints > user.getMaxMupoint()) {
                 user.updateMupointRecord(currentLevelPoints);
-                UserDataManager.saveUser(user);
             }
         }
-        App.getCurrentUser().getPlantBoosts().clear();
+        if (!gameWorld.isConveyorMode()){
+            for (PlantCard plantCard : gameWorld.getPlantLists()){
+                user.getPlantBoosts().remove(plantCard.getType());
+            }
+        }
+        user.save();
+        UserManager.syncCurrentUser();
     }
 
     public static void updateScreenPlants(Plant plant){

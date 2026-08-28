@@ -16,6 +16,7 @@ import com.pvz2.Main;
 import com.pvz2.models.core.App;
 import com.pvz2.models.core.User;
 import com.pvz2.models.core.UserDataManager;
+import com.pvz2.models.core.UserManager;
 import com.pvz2.models.miniGame.MiniGameWorld;
 import com.pvz2.models.world.GameState;
 import com.pvz2.models.world.GameWorld;
@@ -87,7 +88,8 @@ public class GameEndOverlay extends Table {
             public void clicked(InputEvent event, float x, float y) {
                 User user = App.getCurrentUser();
                 if (user != null) {
-                    UserDataManager.saveUser(user);
+                    user.save();
+                    UserManager.syncCurrentUser();
                 }
                 remove();
                 App.setCurrentGame(null);
