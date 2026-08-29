@@ -103,7 +103,7 @@ public class BeghouledScreen extends GameScreen {
     private void initHUDUpgrades() {
         if (mechanics == null || getHud() == null) return;
 
-        GameHUD.SelectedPlantsList selectedList = getHud().getSelectedPlantsList();
+        SelectedPlantsList selectedList = getHud().getSelectedPlantsList();
 
         PlantType[] slots = selectedList.getSlots();
         for (int i = 0; i < slots.length; i++) {

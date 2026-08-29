@@ -10,6 +10,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.pvz2.models.core.App;
 import com.pvz2.models.core.User;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.function.Consumer;
 
@@ -18,9 +19,15 @@ public class ZombiesTable extends Table {
     private static HashMap<String, String> zombiesAnimAddress;
     private static HashMap<String, HashMap<String, Boolean>> zombiesVisibilities;
     private Consumer<String> clickMethod;
+    private int column;
+    private Collection<String> strings;
+    private boolean forceShow;
 
-    public ZombiesTable(Consumer<String> clickMethod) {
+    public ZombiesTable(Consumer<String> clickMethod, int column, Collection<String> strings, boolean forceShow) {
         this.clickMethod = clickMethod;
+        this.column = column;
+        this.strings = strings;
+        this.forceShow = forceShow;
         build();
     }
 
@@ -29,9 +36,9 @@ public class ZombiesTable extends Table {
         this.defaults().pad(20).padLeft(40).padRight(40);
         if (user == null) return;
         int i = 1;
-        for (String zombieName : user.getShowedZombies().keySet()){
+        for (String zombieName : strings){
             this.add(zombieCell(zombieName, user));
-            if (i == 6){
+            if (i == column){
                 i = 1;
                 this.row();
                 continue;
@@ -46,7 +53,7 @@ public class ZombiesTable extends Table {
             , App.getGameApp().textureBank);
         Stack stack = new Stack();
         stack.add(imageButton);
-        if (user.getShowedZombies().get(name)){
+        if (user.getShowedZombies().get(name) || forceShow){
             Image image = new Image(App.getGameApp().textureBank.region(getZombiesPicAddress().get(name)));
             Table imageWrapper = new Table();
             imageWrapper.add(image).bottom().pad(5);

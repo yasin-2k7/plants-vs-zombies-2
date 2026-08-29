@@ -5,6 +5,7 @@ import com.pvz2.models.world.GameWorld;
 import com.pvz2.models.world.cellTerrains.LandTerrain;
 import com.pvz2.models.world.levelSetup.LevelSetup;
 import com.pvz2.models.zombie.Zombie;
+import com.pvz2.network.onlineIZombie.ZombieCard;
 
 import java.util.List;
 
@@ -27,7 +28,8 @@ public class OnlineIZombieSetup implements LevelSetup {
     }
 
     @Override
-    public void groundSetup(GameWorld world) {
+    public void groundSetup(GameWorld gameWorld) {
+        OnlineIZombieLevel world = (OnlineIZombieLevel) gameWorld;
         world.setConveyorMode(false);
         if (world.getLawnMowerManager() != null) {
             world.getLawnMowerManager().setEnabled(false);
@@ -41,6 +43,10 @@ public class OnlineIZombieSetup implements LevelSetup {
             }
         }
         world.setGrid(grid);
+        for (Zombie zombie : stageZombies){
+            world.getZombieCards().add(new ZombieCard(zombie.getSpecificName(),
+                getBrainCost(zombie.getSpecificName())));
+        }
 
         if (world instanceof IZombieLevel level) {
             level.setAvailableZombies(stageZombies);
@@ -51,6 +57,18 @@ public class OnlineIZombieSetup implements LevelSetup {
             // ServerGameController's class comment for why zombie income needs its
             // own decision in network mode before this gets ported over too.
         }
+    }
+
+    private int getBrainCost(String type){
+        return switch (type){
+            case "ZombieArmor1" -> 100;
+            case "ZombieArmor2" -> 150;
+            case "ZombieArmor4", "ZombieModernAllStar" -> 300;
+            case "ZombieWizard" -> 200;
+            case "ZombieLostCityJane" -> 75;
+            case "ZombieGargantuar" -> 400;
+            default -> 50;
+        };
     }
 
     @Override

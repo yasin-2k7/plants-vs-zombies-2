@@ -10,6 +10,7 @@ import com.pvz2.models.world.levelSetup.LevelSetup;
 import com.pvz2.models.world.loseCondition.LoseCondition;
 import com.pvz2.models.world.mechanics.Mechanic;
 import com.pvz2.models.world.winCondition.WinCondition;
+import com.pvz2.network.onlineIZombie.ZombieCard;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,6 +18,7 @@ import java.util.List;
 public class OnlineIZombieLevel extends IZombieLevel {
     private int zombieBrains = 0;
     private final List<BrainCurrency> activeBrains = new ArrayList<>();
+    private List<ZombieCard> zombieCards = new ArrayList<>();
 
     public OnlineIZombieLevel(LevelSetup levelSetup,
                                ArrayList<LoseCondition> loseConditions,
@@ -30,6 +32,7 @@ public class OnlineIZombieLevel extends IZombieLevel {
         if (state != GameState.PLAYING) return;
         elapsedTime += delta;
         updateAll(delta);
+        for (ZombieCard zombieCard : zombieCards) zombieCard.update(delta);
         removeIfDead();
         for (Cell[] row : grid) {
             for (Cell cell : row) {
@@ -56,7 +59,6 @@ public class OnlineIZombieLevel extends IZombieLevel {
         }
     }
 
-
     public int getZombieBrains() {
         return zombieBrains;
     }
@@ -67,5 +69,9 @@ public class OnlineIZombieLevel extends IZombieLevel {
 
     public List<BrainCurrency> getActiveBrains() {
         return activeBrains;
+    }
+
+    public List<ZombieCard> getZombieCards() {
+        return zombieCards;
     }
 }
