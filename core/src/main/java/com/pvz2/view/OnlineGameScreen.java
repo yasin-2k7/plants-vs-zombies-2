@@ -9,6 +9,7 @@ import java.util.function.Consumer;
 
 public class OnlineGameScreen extends MenuScreen{
     ClientGameController controller;
+    private ZombiePlacementManager zombiePlacementManager = new ZombiePlacementManager();
 
     public OnlineGameScreen(Main game, ClientGameController controller) {
         super(game);
@@ -42,5 +43,9 @@ public class OnlineGameScreen extends MenuScreen{
     @Override
     protected void buildUI() {
 
+    }
+
+    public ZombiePlacementManager getZombiePlacementManager() {
+        return zombiePlacementManager;
     }
 }

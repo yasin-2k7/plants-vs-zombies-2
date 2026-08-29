@@ -39,8 +39,8 @@ public class ClientGameController {
     private boolean shovelSelected = false;
     private boolean plantSelected = false;
     private PlantType selectedPlantType = null;
-    // TODO zombie side: private boolean zombieSelected; private <ZombieType> selectedZombieType;
-
+    private boolean zombieSelected = false;
+    private String selectedZombieType = null;
     private BiConsumer<Boolean, String> actionResultListener;
     private BiConsumer<Side, String> matchOverListener;
     private Consumer<ReactionReceived> reactionListener;
@@ -148,8 +148,37 @@ public class ClientGameController {
         selectedPlantType = null;
     }
 
-    // ---------------- local-only UI state: zombie side ----------------
-    // TODO: same shape as selectAndUnselectPlant above, once the zombie roster API exists.
+    public boolean selectAndUnselectZombie(String type, MenuScreen screen) {
+        if (world == null) return false;
+        if (zombieSelected) {
+            if (selectedZombieType.equals(type)) {
+                unselectZombie();
+                return false;
+            }
+            unselectZombie();
+        }
+        PlantCard selectedCard = null;
+        for (PlantCard card : world.getPlantLists()) {
+            if (card.getType().equals(type)) { selectedCard = card; break; }
+        }
+        if (selectedCard == null) return false;
+        if (!selectedCard.isReady()) {
+            screen.addToast("Error", "This plant isn't ready!");
+            return false;
+        }
+        if (selectedCard.getSunCost() > world.getSun()) {
+            screen.addToast("Error", "You don't have enough suns!");
+            return false;
+        }
+        plantSelected = true;
+//        selectedPlantType = type;
+        return true;
+    }
+
+    public void unselectZombie() {
+        zombieSelected = false;
+        selectedZombieType = null;
+    }
 
     // ---------------- network gameplay actions ----------------
 

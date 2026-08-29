@@ -153,6 +153,7 @@ public class User {
         int currentSeeds = this.seedPackets.getOrDefault(type, 0);
         this.seedPackets.put(type, currentSeeds + amount);
         save();
+        UserManager.syncCurrentUser();
     }
 
     public int getSeedPacketsCount(PlantType type) {
@@ -171,22 +172,26 @@ public class User {
     public void unlockPlant(PlantType plantType) {
         this.unlockedPlantsLevels.put(plantType, 1);
         save();
+        UserManager.syncCurrentUser();
     }
 
     public void addCoins(int amount) {
         this.coins += amount;
         save();
+        UserManager.syncCurrentUser();
     }
 
     public boolean spendCoins(int amount) {
         if (coins < amount) return false;
         coins -= amount;
         save();
+        UserManager.syncCurrentUser();
         return true;
     }
 
     public void addGems(int amount) {
         this.gems += amount;
+        UserManager.syncCurrentUser();
         save();
     }
 
@@ -194,6 +199,7 @@ public class User {
         if (gems < amount) return false;
         gems -= amount;
         save();
+        UserManager.syncCurrentUser();
         return true;
     }
 
@@ -208,6 +214,7 @@ public class User {
     public void addBoost(PlantType type) {
         plantBoosts.put(type, true);
         save();
+        UserManager.syncCurrentUser();
     }
 
     public List<PlantType> getUnlockedPlantTypesWithPlantFood() {
@@ -248,6 +255,7 @@ public class User {
         }
         this.plantFoods += count;
         save();
+        UserManager.syncCurrentUser();
         return true;
     }
 
@@ -428,6 +436,7 @@ public class User {
     public void addCompletedQuest(String questId) {
         completedQuestIds.add(questId);
         save();
+        UserManager.syncCurrentUser();
     }
 
     public void unlockLevel() {
@@ -475,6 +484,7 @@ public class User {
         this.dailyOfferPurchaseDate = LocalDate.now();
         this.dailyOfferPurchasedToday = true;
         save();
+        UserManager.syncCurrentUser();
     }
 
     public int getNormalQuestsCount() {

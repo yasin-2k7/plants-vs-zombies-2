@@ -40,7 +40,8 @@ public class CollectionMenuScreen extends MenuScreen {
     protected void buildUI() {
         plantsTable = new PlantsTable(8, 30, true, 150, 100, createCollectionMenuCardsMethod());
         plantsTable.build();
-        zombiesTable = new ZombiesTable(createCollectionMenuZombieCardsMethod());
+        zombiesTable = new ZombiesTable(createCollectionMenuZombieCardsMethod(), 6,
+            App.getCurrentUser().getShowedZombies().keySet(), false);
         currentTable = plantsTabActive ? plantsTable : zombiesTable;
 
         pane = new ScrollPane(currentTable, skin);
