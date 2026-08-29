@@ -14,7 +14,7 @@ import com.pvz2.network.onlineIZombie.ZombieCard;
 import java.util.function.Consumer;
 
 public class ZombieCardView extends Stack {
-    private boolean active, lock;
+    private boolean active;
     private int brainCost;
     private String zombieName;
     private Consumer<ZombieCardView> onClick;
@@ -22,9 +22,8 @@ public class ZombieCardView extends Stack {
     private ZombieCard card;
     private Image selectedImg;
 
-    public ZombieCardView(boolean active, boolean lock, int brainCost, String zombieName) {
+    public ZombieCardView(boolean active, int brainCost, String zombieName) {
         this.active = active;
-        this.lock = lock;
         this.brainCost = brainCost;
         this.zombieName = zombieName;
         this.overlay = new CooldownOverlay(PlantCardView.createSolidColor(Color.WHITE));
@@ -51,14 +50,6 @@ public class ZombieCardView extends Stack {
         overlay.setProgress(active ? 0 : 1);
         this.add(overlay);
 
-        if (lock) {
-            Table lockTable = new Table();
-            lockTable.center().right();
-            lockTable.add(new Image(App.getGameApp().textureBank.region(
-                "IMAGE_UI_CARDS_LOCK_MEDIUM"))).size(30, 40).pad(10);
-            this.add(lockTable);
-        }
-
         selectedImg = new Image(App.getGameApp().textureBank.region("IMAGE_UI_PACKETS_SELECT"));
         this.add(selectedImg);
         selectedImg.setVisible(false);
@@ -79,7 +70,6 @@ public class ZombieCardView extends Stack {
 
     public String getZombieName() { return zombieName; }
     public boolean isActive() { return active; }
-    public boolean isLock() { return lock; }
     public int getBrainCost() { return brainCost; }
     public void setActive(boolean active) { this.active = active; }
     public void setSelectedState(boolean state) { selectedImg.setVisible(state); }

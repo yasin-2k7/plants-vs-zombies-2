@@ -134,6 +134,11 @@ public class ServerGameController {
         PlantCard selectedCard = findCard(req.type);
         if (selectedCard == null || !selectedCard.isReady()) return;
         if (selectedCard.getSunCost() > world.getSun()) return;
+        int col = LawnGrid.getColFromX(req.x);
+        if (col > 3) {
+            sendResult(sender, false, "you cant plant here");
+            return;
+        }
 
         User plantsUser = UserDataManager.loadUser(sender.getUsername());
         boolean isImitator = selectedCard instanceof ImitatorCard;

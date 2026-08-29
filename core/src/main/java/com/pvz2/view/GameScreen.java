@@ -75,6 +75,7 @@ public class GameScreen extends MenuScreen {
 
     private Vector3 cursorWorldPos = new Vector3(0, 0, 0);
     private final List<PlantGraphic> plantGraphics = new ArrayList<>();
+    private final Map<Zombie, ZombieGraphic> zombieGraphics = new HashMap<>();
     private final List<ExplosionEffectGraphic> explosionGraphics = new ArrayList<>();
     private final Map<Projectile, ProjectileGraphic> projectileGraphics = new HashMap<>();
     private final List<ProjectileImpactGraphic> projectileImpacts = new ArrayList<>();
@@ -340,7 +341,7 @@ public class GameScreen extends MenuScreen {
     }
 
     private void buildIntroPanSequence() {
-        float mainCenterX = mainLawnWidth / 2f;
+        float mainCenterX = mainLawnWidth / 2f + 150f;
         float minCameraX = -leftWidthScaled + mainLawnWidth / 2f;
         float maxCameraX = mainLawnWidth + rightWidthScaled - mainLawnWidth / 2f;
 
@@ -1051,7 +1052,7 @@ public class GameScreen extends MenuScreen {
                         PlantGraphic pg = new PlantGraphic(newPlant, pamPlayer);
                         plantGraphics.add(pg);
                         checkExplosion(newPlant, pg);
-                        plantPlacementManager.tryPlace(row, col);
+                        plantPlacementManager.tryPlace();
                         SFXManager.getInstance().playSound(GameSFX.PLANT);
                     }
                 }
@@ -1156,7 +1157,7 @@ public class GameScreen extends MenuScreen {
         }
     }
 
-    private final Map<Zombie, ZombieGraphic> zombieGraphics = new HashMap<>();
+
 
     private void syncNecromancyZombieEffects(float delta) {
         if (!(world instanceof DarkAgesWorld darkWorld)) return;

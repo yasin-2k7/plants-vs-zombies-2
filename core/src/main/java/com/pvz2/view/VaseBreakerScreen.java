@@ -177,16 +177,7 @@ public class VaseBreakerScreen extends MenuScreen {
     }
 
     public void restartLevel() {
-        world.reset();
-        world.setState(GameState.PLAYING);
-        hidePauseOverlay();
-
-        plantGraphics.clear();
-        zombieGraphics.clear();
-        seedPackets.clear();
-        plantPlacementManager.cancelSelection();
-
-        initVaseGraphics();
+        GameMenuController.restartVase(world);
     }
 
     @Override
@@ -332,7 +323,7 @@ public class VaseBreakerScreen extends MenuScreen {
 
         if (row >= 0 && col >= 0) {
             PlantType selectedPlant = plantPlacementManager.getSelectedPlant();
-            if (plantPlacementManager.tryPlace(row, col)) {
+            if (plantPlacementManager.tryPlace()) {
                 placePlantInCell(row, col, selectedPlant);
             }
         } else {
@@ -350,8 +341,8 @@ public class VaseBreakerScreen extends MenuScreen {
                 Plant plantModel = cell.handlePlanting(selectedPlant, boosted);
 
                 if (plantModel != null) {
-                    plantModel.setX(col);
-                    plantModel.setY(row);
+                    plantModel.setX(LawnGrid.getCellX(col));
+                    plantModel.setY(LawnGrid.getCellY(row));
                     plantModel.setCell(cell);
 
                     plantGraphics.add(new PlantGraphic(plantModel, pamPlayer));

@@ -1,5 +1,6 @@
 package com.pvz2.controller;
 
+import com.badlogic.gdx.Gdx;
 import com.pvz2.network.NetworkClient;
 import com.pvz2.network.NetworkMessage;
 import com.pvz2.network.messages.AckResponse;
@@ -16,13 +17,17 @@ public class OnlineRoomMenuController implements MenuController{
         this.screen = screen;
         NetworkClient.get().onPush("MATCH_FOUND", msg -> {
             MatchFound info = NetworkClient.get().parsePayload(msg, MatchFound.class);
-            ClientGameController controller = new ClientGameController(info);
-            screen.fadeAndSwitchScreen(new OnlineGameScreen(screen.getGame(), controller));
+            Gdx.app.postRunnable(() -> {
+                ClientGameController controller = new ClientGameController(info);
+                screen.fadeAndSwitchScreen(new OnlineGameScreen(screen.getGame(), controller));
+            });
         });
         NetworkClient.get().onPush("CHALLENGE_DECLINED", msg -> {
             ChallengeDeclined info = NetworkClient.get().parsePayload(msg, ChallengeDeclined.class);
-            screen.toggleToRequestSection();
-            screen.addToast("INFO", "User " + info.byUsername + "refused your request");
+            Gdx.app.postRunnable(() -> {
+                screen.toggleToRequestSection();
+                screen.addToast("INFO", "User " + info.byUsername + "refused your request");
+            });
         });
     }
 
@@ -41,14 +46,18 @@ public class OnlineRoomMenuController implements MenuController{
             NetworkMessage message =
                 NetworkClient.get().sendRequest("CHALLENGE", new ChallengeRequest(username), 5000);
             ChallengeResponse response = NetworkClient.get().parsePayload(message, ChallengeResponse.class);
-            if (response.success){
-                screen.toggleToLoading("challenge");
-            }
-            else{
-                screen.addToast("Error",response.errorMessage);
-            }
+            Gdx.app.postRunnable(() -> {
+                if (response.success){
+                    screen.toggleToLoading("challenge");
+                }
+                else{
+                    screen.addToast("Error",response.errorMessage);
+                }
+            });
         } catch (InterruptedException e) {
-            screen.addToast("Error", "please try again");
+            Gdx.app.postRunnable(() -> {
+                screen.addToast("Error", "please try again");
+            });
         }
     }
 
@@ -57,16 +66,20 @@ public class OnlineRoomMenuController implements MenuController{
             NetworkMessage message =
                 NetworkClient.get().sendRequest("RANDOM_MATCH", new RandomMatchRequest(), 5000);
             RandomMatchResponse response = NetworkClient.get().parsePayload(message, RandomMatchResponse.class);
-            if (response.success){
-                if (response.waiting){
-                    screen.toggleToLoading("play");
+            Gdx.app.postRunnable(() -> {
+                if (response.success){
+                    if (response.waiting){
+                        screen.toggleToLoading("play");
+                    }
                 }
-            }
-            else{
-                screen.addToast("Error",response.errorMessage);
-            }
+                else{
+                    screen.addToast("Error",response.errorMessage);
+                }
+            });
         } catch (InterruptedException e) {
-            screen.addToast("Error", "please try again");
+            Gdx.app.postRunnable(() -> {
+                screen.addToast("Error", "please try again");
+            });
         }
     }
 
@@ -76,15 +89,21 @@ public class OnlineRoomMenuController implements MenuController{
                 NetworkClient.get().sendRequest("CANCEL_RANDOM_MATCH", new CancelRandomMatchRequest(), 5000);
             AckResponse response = NetworkClient.get().parsePayload(message, AckResponse.class);
             if (response.success){
-                screen.toggleToRequestSection();
+                Gdx.app.postRunnable(() -> {
+                    screen.toggleToRequestSection();
+                });
                 return true;
             }
             else{
-                screen.addToast("Error","please try again");
+                Gdx.app.postRunnable(() -> {
+                    screen.addToast("Error","please try again");
+                });
                 return false;
             }
         } catch (InterruptedException e) {
-            screen.addToast("Error", "please try again");
+            Gdx.app.postRunnable(() -> {
+                screen.addToast("Error", "please try again");
+            });
             return false;
         }
     }

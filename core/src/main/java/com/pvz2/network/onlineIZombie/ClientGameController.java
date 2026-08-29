@@ -1,5 +1,6 @@
 package com.pvz2.network.onlineIZombie;
 
+import com.badlogic.gdx.Gdx;
 import com.pvz2.models.enums.PlantType;
 import com.pvz2.models.miniGame.IZombie.OnlineIZombieLevel;
 import com.pvz2.models.plant.card.PlantCard;
@@ -79,24 +80,32 @@ public class ClientGameController {
     private void onGameStatePush(NetworkMessage msg) {
         GameStateUpdate update = NetworkClient.get().parsePayload(msg, GameStateUpdate.class);
         if (!matchId.equals(update.matchId)) return; // stale push from a different/older match
-        world = (OnlineIZombieLevel) update.world;
+        Gdx.app.postRunnable(() -> world = (OnlineIZombieLevel) update.world);
     }
 
     private void onActionResult(NetworkMessage msg) {
         ActionResult result = NetworkClient.get().parsePayload(msg, ActionResult.class);
-        if (actionResultListener != null) actionResultListener.accept(result.success, result.message);
+        Gdx.app.postRunnable(() -> {
+            if (actionResultListener != null) actionResultListener.accept(result.success, result.message);
+        });
     }
 
     private void onMatchOver(NetworkMessage msg) {
         MatchOver update = NetworkClient.get().parsePayload(msg, MatchOver.class);
         if (!matchId.equals(update.matchId)) return;
-        if (matchOverListener != null) matchOverListener.accept(Side.valueOf(update.winnerSide), update.message);
+        Gdx.app.postRunnable(() -> {
+            if (matchOverListener != null) matchOverListener.accept(Side.valueOf(update.winnerSide), update.message);
+        });
+
     }
 
     private void onReaction(NetworkMessage msg) {
         ReactionReceived received = NetworkClient.get().parsePayload(msg, ReactionReceived.class);
         if (!matchId.equals(received.matchId)) return;
-        if (reactionListener != null) reactionListener.accept(received);
+        Gdx.app.postRunnable(() -> {
+            if (reactionListener != null) reactionListener.accept(received);
+        });
+
     }
 
     // ---------------- local-only UI state: plants side ----------------

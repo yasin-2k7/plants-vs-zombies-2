@@ -28,6 +28,7 @@ import com.pvz2.network.NetworkClient;
 import com.pvz2.network.onlineIZombie.ClientGameController;
 import com.pvz2.network.onlineIZombie.messages.ChallengeAnswerRequest;
 import com.pvz2.network.onlineIZombie.messages.ChallengeAnswerResponse;
+import com.pvz2.network.onlineIZombie.messages.ChallengeInvite;
 import com.pvz2.network.onlineIZombie.messages.MatchFound;
 import pvz.skin.BorderedTable;
 
@@ -117,9 +118,18 @@ public abstract class MenuScreen implements Screen {
         buildUI();
         NetworkClient.get().onPush("CHALLENGE_ANSWER", msg -> {
             ChallengeAnswerResponse response = NetworkClient.get().parsePayload(msg, ChallengeAnswerResponse.class);
-            if (!response.success){
-                addToast("Error", response.errorMessage);
+            if (!response.success) {
+                Gdx.app.postRunnable(() -> addToast("Error", response.errorMessage));
             }
+        });
+        NetworkClient.get().onPush("CHALLENGE_INVITE", msg -> {
+            ChallengeInvite invite = NetworkClient.get().parsePayload(msg, ChallengeInvite.class);
+            Gdx.app.postRunnable(() -> showChallengePopup(invite.fromUsername, new Consumer<Boolean>() {
+                @Override
+                public void accept(Boolean aBoolean) {
+                    respondToChallenge(invite.inviteId, aBoolean);
+                }
+            }));
         });
     }
 
@@ -243,8 +253,8 @@ public abstract class MenuScreen implements Screen {
         Label titleLabel = new Label("Challenge request", skin, "big_outline");
         topBar.add(titleLabel).center();
         Label username = new Label("from user " + fromUsername, skin, "medium_outline");
-        popupBox.add(topBar).growX().pad(10).row();
-        popupBox.add(username).growX().row();
+        popupBox.add(topBar).center().growX().pad(10).row();
+        popupBox.add(username).center().growX().row();
         TextButton acceptBtn = new TextButton("ACCEPT", skin);
         TextButton refuseBtn = new TextButton("REFUSE", skin);
         acceptBtn.addListener(new ClickListener(){
@@ -252,8 +262,10 @@ public abstract class MenuScreen implements Screen {
             public void clicked(InputEvent event, float x, float y) {
                 NetworkClient.get().onPush("MATCH_FOUND", msg -> {
                     MatchFound info = NetworkClient.get().parsePayload(msg, MatchFound.class);
-                    ClientGameController controller = new ClientGameController(info);
-                    fadeAndSwitchScreen(new OnlineGameScreen(game, controller));
+                    Gdx.app.postRunnable(() -> {
+                        ClientGameController controller = new ClientGameController(info);
+                        fadeAndSwitchScreen(new OnlineGameScreen(game, controller));
+                    });
                 });
                 overlay.remove();
                 response.accept(true);
@@ -268,7 +280,7 @@ public abstract class MenuScreen implements Screen {
         });
         popupBox.add(refuseBtn);
         popupBox.add(acceptBtn);
-        overlay.add(popupBox).width(400).height(300);
+        overlay.add(popupBox).width(500).height(500);
         stage.addActor(overlay);
     }
 

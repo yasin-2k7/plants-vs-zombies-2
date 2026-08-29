@@ -319,7 +319,6 @@ public class BeghouledMechanics implements Mechanic {
         if (upgrade == null) return "no upgrade for this plant";
         if (world.getSun() < upgrade.getCost()) return "not enough sun";
 
-        int count = 0;
         for (Cell[] row : world.getGrid()) {
             for (Cell cell : row) {
                 Plant plant = cell.getPlant();
@@ -334,13 +333,12 @@ public class BeghouledMechanics implements Mechanic {
 
                     cell.setPlant(upgraded, PlantLayer.MAIN);
                     world.getActivePlants().add(upgraded);
-                    count++;
                 }
             }
         }
 
-        if (count == 0) return "you dont have this type of plant";
-
+        availablePlantTypes.remove(from);
+        availablePlantTypes.add(upgrade.getTo());
         world.setSun(world.getSun() - upgrade.getCost());
         needsViewUpdate = true;
         return null;
