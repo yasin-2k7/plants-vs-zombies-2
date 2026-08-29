@@ -35,6 +35,8 @@ public class UserProfile {
     public int plantFoods;
     public int maxMupoint;
 
+    public boolean playedMuPoint;
+
     public Set<String> completedQuestIds;
     public LocalDate dailyOfferPurchaseDate;
     public boolean dailyOfferPurchasedToday;
@@ -70,6 +72,7 @@ public class UserProfile {
         p.gameDifficulty = user.getGameDifficulty();
         p.plantFoods = user.getPlantFoods();
         p.maxMupoint = user.getMaxMupoint();
+        p.playedMuPoint = user.isPlayedMuPoint();
 
         p.completedQuestIds = user.getCompletedQuestIds();
         p.dailyOfferPurchaseDate = user.getDailyOfferPurchaseDate();
