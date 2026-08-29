@@ -27,6 +27,7 @@ import com.pvz2.models.core.UserDataManager;
 import com.pvz2.models.core.UserManager;
 import com.pvz2.models.enums.PlantType;
 import com.pvz2.models.miniGame.beghouled.BeghouledSetup;
+import com.pvz2.models.mupoint.MuPointLevel;
 import com.pvz2.models.plant.card.PlantCard;
 import com.pvz2.models.plant.card.PlantCardFactory;
 import com.pvz2.models.world.GameState;
@@ -254,7 +255,8 @@ public class GameHUD extends Group {
                         UserManager.syncCurrentUser();
                     }
                     remove();
-                    if(world.getLevelSetup() instanceof BeghouledSetup){
+                    if(world.getLevelSetup() instanceof BeghouledSetup ||
+                    world.getLevelSetup() instanceof MuPointLevel){
                         game.setScreen(new MainMenuScreen(game));
                     } else{
                         game.setScreen(new LevelMenuScreen(game));

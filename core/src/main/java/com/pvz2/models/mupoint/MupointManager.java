@@ -1,6 +1,8 @@
 package com.pvz2.models.mupoint;
 
 import com.pvz2.controller.GameMenuController;
+import com.pvz2.view.GameScreen;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,6 +24,8 @@ public class MupointManager {
             int pts = strategy.calculatePoints(event);
             if (pts > 0) {
                 String strategyName = strategy.getClass().getSimpleName();
+                GameScreen.announce(strategyName + ": +" + pts + " pts!");
+
                 GameMenuController.updateState(strategyName + ": +" + pts + " point");
                 pointsGained += pts;
             }
@@ -34,7 +38,7 @@ public class MupointManager {
             if (strategy instanceof SunMilestoneStrategy) {
                 int pts = strategy.calculatePoints(null);
                 if (pts > 0) {
-                    GameMenuController.updateState("SunMilestoneStrategy: +" + pts + " point");
+                    GameScreen.announce("Sun Milestone: +" + pts + " pts!");
                     applyPoints(pts);
                 }
             }

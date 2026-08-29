@@ -460,7 +460,9 @@ public class GameScreen extends MenuScreen {
 
     @Override
     protected void drawBackground(float delta) {
-        world.tick(delta);
+        if (introFinished && world.getState() == GameState.PLAYING) {
+            world.tick(delta);
+        }
 
         handleCameraShakes();
         handleGameStateAndOverlays(delta);
