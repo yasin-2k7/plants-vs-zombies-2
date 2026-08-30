@@ -178,4 +178,10 @@ public class ClientGameController {
         if (side != Side.ZOMBIES) return;
         NetworkClient.get().sendMessage("PLACE_ZOMBIE", new PlaceZombieRequest(matchId, zombieType, x, y));
     }
+
+    /** Fire-and-forget, same shape as the actions above — the opponent gets it as a
+     *  REACTION push (see onReaction / ClientGameController.setReactionListener on their side). */
+    public void sendReaction(ReactionCategory category, int index) {
+        NetworkClient.get().sendMessage("SEND_REACTION", new SendReactionRequest(matchId, category, index));
+    }
 }
