@@ -15,6 +15,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.pvz2.Main;
 import com.pvz2.controller.LeaderboardMenuController;
+import com.pvz2.models.core.App;
 import com.pvz2.models.core.User;
 import com.pvz2.models.core.UserDataManager;
 import com.pvz2.models.enums.LeaderboardSortField;
@@ -101,7 +102,8 @@ public class LeaderboardMenuTable extends Table {
             addColumnDivider(row, DIVIDER_COLOR, 16);
             row.add(dataLabel(String.valueOf(entry.normalQuestsCount), Color.BLACK)).width(COL_NORMAL);
             addColumnDivider(row, DIVIDER_COLOR, 16);
-            row.add(dataLabel(entry.hasPlayedMuPoint ? String.valueOf(entry.maxMupoint) : "—", Color.BLACK)).width(COL_SCORE);
+            entry.hasPlayedMuPoint = App.getCurrentUser().isPlayedMuPoint();
+            row.add(dataLabel(entry.hasPlayedMuPoint ? String.valueOf(entry.maxMupoint) : "-", Color.BLACK)).width(COL_SCORE);
 
             rowsTable.add(row).growX().row();
             rank++;

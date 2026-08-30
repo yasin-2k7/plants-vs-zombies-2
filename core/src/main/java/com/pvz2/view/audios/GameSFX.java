@@ -15,7 +15,9 @@ public enum GameSFX {
     SEED_LIFT("Audios/SFX/1-86. SFX seedlift.ogg"),
     VASE_BREAKING("Audios/SFX/1-104. SFX vase breaking.ogg"),
     HUGE_WAVE("Audios/SFX/03. hugewave.ogg"),
-    PAUSE("Audios/SFX/24. SFX pause.ogg");
+    PAUSE("Audios/SFX/24. SFX pause.ogg"),
+    SPLAT("Audios/SFX/splat3.ogg"),
+    LOBBED("Audios/SFX/butter (1).ogg");
 
     private final String filePath;
 

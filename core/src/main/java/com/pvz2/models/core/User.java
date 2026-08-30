@@ -461,6 +461,7 @@ public class User {
     }
 
     public void updateMupointRecord(int currentScore) {
+        this.playedMuPoint = true;
         if (currentScore > this.maxMupoint) {
             this.maxMupoint = currentScore;
         }

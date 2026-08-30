@@ -19,7 +19,7 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class GameServer {
-    private static final int PORT = 5000;
+    private static final int PORT = 8080;
     private static final Gson GSON = NetworkGson.INSTANCE;
 
     private final Map<String, ClientHandler> onlineUsers = new ConcurrentHashMap<>();

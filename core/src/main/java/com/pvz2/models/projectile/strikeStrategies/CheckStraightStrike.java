@@ -4,6 +4,9 @@ import com.pvz2.models.Damageable;
 import com.pvz2.models.core.App;
 import com.pvz2.models.world.obstacles.Obstacle;
 import com.pvz2.models.zombie.Zombie;
+import com.pvz2.view.audios.GameSFX;
+import com.pvz2.view.audios.SFXManager;
+
 import java.util.Comparator;
 import java.util.List;
 
@@ -18,6 +21,7 @@ public class CheckStraightStrike implements CheckStrike {
                 continue;
             }
             if (isCollidingWithCircle(oldX, oldY, x, y, zombie.getX(), zombie.getY(), 40)) {
+                SFXManager.getInstance().playSound(GameSFX.SPLAT);
                 return zombie;
             }
         }
@@ -26,6 +30,7 @@ public class CheckStraightStrike implements CheckStrike {
             .toList();
         for (Obstacle obstacle : sortedObstacle) {
             if (isCollidingWithCircle(oldX, oldY, x, y, obstacle.getX(), obstacle.getY(), 40)) {
+                SFXManager.getInstance().playSound(GameSFX.SPLAT);
                 return obstacle;
             }
         }

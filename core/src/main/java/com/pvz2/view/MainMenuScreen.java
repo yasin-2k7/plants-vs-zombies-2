@@ -16,6 +16,9 @@ import com.pvz2.controller.MainMenuController;
 import com.pvz2.models.core.App;
 import com.pvz2.models.core.UserDataManager;
 import com.pvz2.models.core.UserManager;
+import com.pvz2.models.enums.Chapter;
+import com.pvz2.models.mupoint.MuPointLevel;
+import com.pvz2.models.world.GameWorld;
 import com.pvz2.network.NetworkClient;
 import com.pvz2.network.onlineIZombie.messages.ChallengeInvite;
 import com.pvz2.view.audios.GameSFX;
@@ -209,6 +212,9 @@ public class MainMenuScreen extends MenuScreen {
         addClickListener(muPoint, () -> {
             controller.enterMenu("mu point");
             SFXManager.getInstance().playSound(GameSFX.BUTTON_CLICK);
+            GameWorld mupointWorld = MuPointLevel.createMuPointLevel();
+            App.setCurrentGame(mupointWorld);
+            fadeAndSwitchScreen(new GameScreen(game, mupointWorld, Chapter.EGYPT));
         });
         addClickListener(newsBtn, () -> {
             setUnreadStatus(false);

@@ -33,6 +33,7 @@ public class GameMenuController implements MenuController {
         }
         MupointManager mupointManager = gameWorld.getMupointManager();
         if (mupointManager != null) {
+            user.setPlayedMuPoint(true);
             int currentLevelPoints = mupointManager.getTotalMupoints();
             if (currentLevelPoints > user.getMaxMupoint()) {
                 user.updateMupointRecord(currentLevelPoints);
@@ -52,6 +53,7 @@ public class GameMenuController implements MenuController {
         if (user == null) return;
         MupointManager mupointManager = gameWorld.getMupointManager();
         if (mupointManager != null) {
+            user.setPlayedMuPoint(true);
             int currentLevelPoints = mupointManager.getTotalMupoints();
             if (currentLevelPoints > user.getMaxMupoint()) {
                 user.updateMupointRecord(currentLevelPoints);

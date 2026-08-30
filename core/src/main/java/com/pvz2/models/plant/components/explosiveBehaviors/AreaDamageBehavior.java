@@ -6,6 +6,8 @@ import com.pvz2.models.plant.components.explosionRanges.ExplosionRange;
 import com.pvz2.models.world.Cell;
 import com.pvz2.models.world.obstacles.Obstacle;
 import com.pvz2.models.zombie.Zombie;
+import com.pvz2.view.audios.GameSFX;
+import com.pvz2.view.audios.SFXManager;
 
 import java.util.DoubleSummaryStatistics;
 import java.util.List;
@@ -32,6 +34,7 @@ public class AreaDamageBehavior implements ExplosiveBehavior {
                 .summaryStatistics();
         double minY = yStats.getMin();
         double maxY = yStats.getMax();
+        SFXManager.getInstance().playSound(GameSFX.CHERRY_BOMB);
 
         for (Zombie zombie : App.getCurrentGame().getActiveZombies()) {
             if (zombie.getY() <= maxY && zombie.getY() >= minY && zombie.getX() <= maxX && zombie.getX() >= minX) {

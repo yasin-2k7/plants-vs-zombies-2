@@ -4,6 +4,7 @@ import com.pvz2.models.core.App;
 import com.pvz2.models.core.User;
 import com.pvz2.models.enums.PlantType;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -20,9 +21,13 @@ public class ShopList {
         permanentItems.add(new ShopItem("4", "Specific Seed Packet", 0, 5, -1, true));
         permanentItems.add(new ShopItem("5", "Currency Exchange", 0, 5, -1, true));
 
+        long todaySeed = LocalDate.now().toEpochDay();
         PlantType[] types = PlantType.values();
-        PlantType randomType = types[new Random().nextInt(types.length)];
-        dailyOffer = new DailyOffer(randomType, 1600);
+
+        int dailyIndex = new Random(todaySeed).nextInt(types.length);
+        PlantType dailyType = types[dailyIndex];
+
+        dailyOffer = new DailyOffer(dailyType, 1600);
     }
 
     private String checkDailyItem(int count, User user) {

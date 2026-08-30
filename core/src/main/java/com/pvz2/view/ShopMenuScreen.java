@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
@@ -12,7 +13,6 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.pvz2.Main;
 import com.pvz2.controller.ShopMenuController;
 import com.pvz2.models.core.App;
-import com.pvz2.models.core.User;
 import com.pvz2.models.enums.PlantType;
 import com.pvz2.models.shop.DailyOffer;
 import com.pvz2.models.shop.ShopItem;
@@ -86,7 +86,6 @@ public class ShopMenuScreen extends MenuScreen {
         mainStack.add(mainTable);
     }
 
-
     public void refreshShopItems() {
         itemsGrid.clear();
         int cols = 0;
@@ -123,7 +122,49 @@ public class ShopMenuScreen extends MenuScreen {
         titleLabel.setWrap(true);
         titleLabel.setAlignment(com.badlogic.gdx.utils.Align.center);
 
-        Image itemImg = getItemImage(offer.getPlantType().name());
+        Actor plantDisplay;
+        try {
+            PlantType plant = offer.getPlantType();
+            String path = PlantsCollectionMenuScreen.getPlantAnimAddress(plant);
+            String clip = PlantsCollectionMenuScreen.getPlantInitialClip(plant);
+            plantDisplay = new PamActor(game.pamPlayer, path, clip, 0.55f, null);
+        } catch (Exception e) {
+            plantDisplay = getItemImage(offer.getPlantType().name());
+        }
+
+        Container<Actor> animContainer = new Container<>(plantDisplay);
+        animContainer.center();
+        animContainer.padLeft(18).padTop(10);
+
+        Label timerTitle = new Label("Resets in: ", skin);
+        timerTitle.setFontScale(0.6f);
+        timerTitle.setColor(Color.BLACK);
+
+        Label timerLabel = new Label("", skin);
+        timerLabel.setFontScale(0.7f);
+        timerLabel.setColor(Color.RED);
+
+        timerLabel.addAction(com.badlogic.gdx.scenes.scene2d.actions.Actions.forever(
+            com.badlogic.gdx.scenes.scene2d.actions.Actions.sequence(
+                com.badlogic.gdx.scenes.scene2d.actions.Actions.run(() -> {
+                    java.time.LocalDateTime now = java.time.LocalDateTime.now();
+                    java.time.LocalDateTime midnight = now.toLocalDate().plusDays(1).atStartOfDay();
+                    java.time.Duration duration = java.time.Duration.between(now, midnight);
+
+                    long totalSeconds = Math.max(0, duration.getSeconds());
+                    long hours = totalSeconds / 3600;
+                    long minutes = (totalSeconds % 3600) / 60;
+                    long seconds = totalSeconds % 60;
+
+                    timerLabel.setText(String.format("%02d:%02d:%02d", hours, minutes, seconds));
+                }),
+                com.badlogic.gdx.scenes.scene2d.actions.Actions.delay(1f)
+            )
+        ));
+
+        Table timerBox = new Table();
+        timerBox.add(timerTitle);
+        timerBox.add(timerLabel);
 
         TextButton buyBtn = new TextButton(offer.getCoinCost() + " Coins", skin, "purple");
         buyBtn.addListener(new ClickListener() {
@@ -138,7 +179,8 @@ public class ShopMenuScreen extends MenuScreen {
 
         card.add(badge).center().padTop(5).row();
         card.add(titleLabel).width(170).height(40).center().padBottom(5).row();
-        card.add(itemImg).size(80, 80).center().padBottom(10).row();
+        card.add(animContainer).size(100, 85).center().row();
+        card.add(timerBox).center().padTop(5).padBottom(5).row();
         card.add().expandY().row();
         card.add(buyBtn).width(150).height(42).padBottom(15).bottom();
 
@@ -163,8 +205,12 @@ public class ShopMenuScreen extends MenuScreen {
         buyBtn.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                if (item.getName().equalsIgnoreCase("Specific Seed Packet")) {
-                    showPlantSelectionDialog(item, priceText);
+                String cleanName = item.getName().toLowerCase();
+                boolean isSpecificSeed = cleanName.contains("specific") || cleanName.contains("choose") ||
+                    cleanName.contains("select");
+
+                if (isSpecificSeed) {
+                    showAllPlantsCollectionDialog(item, priceText);
                 } else {
                     showPurchaseConfirmation(item.getName(), priceText, () -> {
                         String result = controller.buyItem(item.getId(), 1, null);
@@ -174,7 +220,7 @@ public class ShopMenuScreen extends MenuScreen {
             }
         });
 
-        card.add(titleLabel).width(170).height(45).center().padBottom(5).row();
+        card.add(titleLabel).width(170).height(45).center().padBottom(30).row();
         card.add(itemImg).size(80, 80).center().padBottom(10).row();
         card.add().expandY().row();
         card.add(buyBtn).width(150).height(42).padBottom(15).bottom();
@@ -182,11 +228,95 @@ public class ShopMenuScreen extends MenuScreen {
         return card;
     }
 
-    private void showPurchaseConfirmation(String itemName, String priceText, Runnable onConfirm) {
+    private void showAllPlantsCollectionDialog(ShopItem item, String priceText) {
+        Table overlay = createOverlayTable();
+        BorderedTable popup = new BorderedTable();
+        popup.pad(20);
+
+        Label title = new Label("Select Plant to Purchase", skin, "big_outline");
+        title.setFontScale(0.85f);
+
+        Table plantGrid = new Table();
+        plantGrid.top();
+        int col = 0;
+
+        for (PlantType plant : PlantType.values()) {
+            Table plantCell = createDirectPlantCell(plant, item, priceText, overlay);
+            plantGrid.add(plantCell).width(130).height(140).pad(10);
+
+            col++;
+            if (col % 4 == 0) plantGrid.row();
+        }
+
+        ScrollPane scroll = new ScrollPane(plantGrid, skin);
+        scroll.setFadeScrollBars(false);
+        scroll.setScrollingDisabled(true, false);
+        stage.setScrollFocus(scroll);
+
+        TextButton cancelBtn = new TextButton("Cancel", skin, "purple");
+        cancelBtn.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                overlay.remove();
+            }
+        });
+
+        popup.add(title).padBottom(15).row();
+        popup.add(scroll).width(650).height(380).padBottom(15).row();
+        popup.add(cancelBtn).width(140).height(45);
+
+        overlay.add(popup);
+        stage.addActor(overlay);
+    }
+
+    private Table createDirectPlantCell(PlantType plant, ShopItem item, String priceText, Table overlay) {
+        Table cell = new Table();
+        cell.pad(5);
+        cell.top();
+
+        Actor plantDisplay;
+        try {
+            String path = PlantsCollectionMenuScreen.getPlantAnimAddress(plant);
+            String clip = PlantsCollectionMenuScreen.getPlantInitialClip(plant);
+            plantDisplay = new PamActor(game.pamPlayer, path, clip, 0.45f, null);
+        } catch (Exception e) {
+            plantDisplay = getItemImage(plant.name());
+        }
+
+        Label plantName = new Label(plant.name().replace("_", " "), skin);
+        plantName.setFontScale(0.35f);
+        plantName.setWrap(true);
+        plantName.setAlignment(com.badlogic.gdx.utils.Align.center);
+        plantName.setColor(Color.BLACK);
+
+        cell.add(plantDisplay).size(85, 85).center().row();
+        cell.add(plantName).width(110).padTop(6).center().row();
+
+        cell.setTouchable(Touchable.enabled);
+        cell.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                overlay.remove();
+                showPurchaseConfirmation(item.getName() + " (" + plant.name() + ")", priceText, () -> {
+                    String result = controller.buyItem(item.getId(), 1, plant.name());
+                    handlePurchaseResult(result);
+                });
+            }
+        });
+
+        return cell;
+    }
+
+    private Table createOverlayTable() {
         Table overlay = new Table();
         overlay.setFillParent(true);
-        overlay.setBackground(createSolidColor(new Color(0, 0, 0, 0.65f)));
+        overlay.setBackground(createSolidColor(new Color(0, 0, 0, 0.75f)));
         overlay.setTouchable(Touchable.enabled);
+        return overlay;
+    }
+
+    private void showPurchaseConfirmation(String itemName, String priceText, Runnable onConfirm) {
+        Table overlay = createOverlayTable();
 
         BorderedTable popup = new BorderedTable();
         popup.pad(20);
@@ -229,95 +359,6 @@ public class ShopMenuScreen extends MenuScreen {
         stage.addActor(overlay);
     }
 
-    private void showPlantSelectionDialog(ShopItem item, String priceText) {
-        User user = App.getCurrentUser();
-        if (user == null || user.getUnlockedPlantsLevels().isEmpty()) {
-            showResultDialog("Error", "You have no unlocked plants to buy seeds for.");
-            return;
-        }
-
-        Table overlay = createOverlayTable();
-        BorderedTable popup = new BorderedTable();
-        popup.pad(15);
-
-        Table plantGrid = buildPlantGrid(user, item, priceText, overlay);
-        assembleDialogUI(overlay, popup, plantGrid);
-    }
-
-    private Table createOverlayTable() {
-        Table overlay = new Table();
-        overlay.setFillParent(true);
-        overlay.setBackground(createSolidColor(new Color(0, 0, 0, 0.75f)));
-        overlay.setTouchable(Touchable.enabled);
-        return overlay;
-    }
-
-    private Table buildPlantGrid(User user, ShopItem item, String priceText, Table overlay) {
-        Table plantGrid = new Table();
-        plantGrid.top();
-        int col = 0;
-
-        for (PlantType plant : user.getUnlockedPlantsLevels().keySet()) {
-            BorderedTable plantCard = createPlantCard(plant, item, priceText, overlay);
-            plantGrid.add(plantCard).width(95).height(100).pad(5);
-
-            col++;
-            if (col % 3 == 0) plantGrid.row();
-        }
-        return plantGrid;
-    }
-
-    private BorderedTable createPlantCard(PlantType plant, ShopItem item, String priceText, Table overlay) {
-        BorderedTable plantCard = new BorderedTable();
-        plantCard.pad(5);
-
-        Image plantImg = getItemImage(plant.name());
-        Label plantName = new Label(plant.name(), skin);
-        plantName.setFontScale(0.4f);
-        plantName.setWrap(true);
-        plantName.setAlignment(com.badlogic.gdx.utils.Align.center);
-
-        plantCard.add(plantImg).size(55, 55).center().row();
-        plantCard.add(plantName).width(80).padTop(2).center();
-        plantCard.setTouchable(Touchable.enabled);
-
-        plantCard.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                overlay.remove();
-                showPurchaseConfirmation(item.getName() + " (" + plant.name() + ")", priceText, () -> {
-                    String result = controller.buyItem(item.getId(), 1, plant.name());
-                    handlePurchaseResult(result);
-                });
-            }
-        });
-
-        return plantCard;
-    }
-
-    private void assembleDialogUI(Table overlay, BorderedTable popup, Table plantGrid) {
-        Label title = new Label("Select Plant for Seed", skin, "big_outline");
-        title.setFontScale(0.75f);
-
-        ScrollPane scroll = new ScrollPane(plantGrid, skin);
-        scroll.setFadeScrollBars(false);
-        stage.setScrollFocus(scroll);
-
-        TextButton cancelBtn = new TextButton("Cancel", skin, "purple");
-        cancelBtn.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                overlay.remove();
-            }
-        });
-
-        popup.add(title).padBottom(10).row();
-        popup.add(scroll).width(340).height(220).padBottom(10).row();
-        popup.add(cancelBtn).width(120).height(38);
-
-        overlay.add(popup);
-        stage.addActor(overlay);
-    }
     private void handlePurchaseResult(String result) {
         boolean isError = result.toLowerCase().startsWith("error");
         showResultDialog(isError ? "Error" : "Success", result);
@@ -330,10 +371,7 @@ public class ShopMenuScreen extends MenuScreen {
     }
 
     private void showResultDialog(String titleStr, String messageStr) {
-        Table overlay = new Table();
-        overlay.setFillParent(true);
-        overlay.setBackground(createSolidColor(new Color(0, 0, 0, 0.65f)));
-        overlay.setTouchable(Touchable.enabled);
+        Table overlay = createOverlayTable();
 
         BorderedTable popup = new BorderedTable();
         popup.pad(20);
@@ -342,6 +380,7 @@ public class ShopMenuScreen extends MenuScreen {
         Label msg = new Label(messageStr, skin);
         msg.setWrap(true);
         msg.setAlignment(com.badlogic.gdx.utils.Align.center);
+        msg.setColor(Color.BLACK);
 
         TextButton okBtn = new TextButton("OK", skin);
         okBtn.addListener(new ClickListener() {
@@ -352,7 +391,7 @@ public class ShopMenuScreen extends MenuScreen {
         });
 
         popup.add(title).padBottom(10).row();
-        popup.add(msg).width(300).padBottom(15).row();
+        popup.add(msg).width(320).padBottom(15).row();
         popup.add(okBtn).width(100);
 
         overlay.add(popup);
@@ -365,13 +404,17 @@ public class ShopMenuScreen extends MenuScreen {
 
         if (cleanName.contains("food")) {
             reg = game.textureBank.region("IMAGE_UI_DANGERROOM_PLANTFOOD_ICON");
-        } else if (cleanName.contains("seed") || cleanName.contains("packet")) {
-            reg = game.textureBank.region("IMAGE_UI_PACKETS_READY_PREMIUM");
+        } else if (cleanName.contains("specific")) {
+            reg = game.textureBank.region("IMAGE_UI_PACKETS_PEASHOOTER");
         } else if (cleanName.contains("pot") || cleanName.contains("sprout")) {
-            reg = game.textureBank.region("IMAGE_UI_PACKETS_THYMEWARP");
-        } else if (cleanName.contains("random") || cleanName.contains("mystery")) {
+            reg = game.textureBank.region(
+                "IMAGE_ZEN_GARDEN_GROWING_PLANT_SLOT_GROWING_PLANT_SLOT_184X161");
+        } else if (cleanName.contains("random")) {
             reg = game.textureBank.region("IMAGE_UI_STOREMULTI_SEEDPACKETICON");
-        } else {
+        } else if(cleanName.contains("currency")) {
+            reg = game.textureBank.region("IMAGE_EFFECTS_COIN_GOLD_COIN_GOLD_98X95");
+        }
+        else {
             reg = game.textureBank.region("IMAGE_UI_PACKETS_" + name.toUpperCase());
         }
 
