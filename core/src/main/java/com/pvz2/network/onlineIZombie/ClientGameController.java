@@ -45,6 +45,10 @@ public class ClientGameController {
     private BiConsumer<Boolean, String> actionResultListener;
     private BiConsumer<Side, String> matchOverListener;
     private Consumer<ReactionReceived> reactionListener;
+    private Runnable onWorldReadyListener;
+    private boolean worldReadyFired = false;
+
+
 
     public ClientGameController(MatchFound info) {
         this.matchId = info.matchId;
@@ -80,7 +84,13 @@ public class ClientGameController {
     private void onGameStatePush(NetworkMessage msg) {
         GameStateUpdate update = NetworkClient.get().parsePayload(msg, GameStateUpdate.class);
         if (!matchId.equals(update.matchId)) return; // stale push from a different/older match
-        Gdx.app.postRunnable(() -> world = (OnlineIZombieLevel) update.world);
+        boolean wasNull = (world == null);
+        world = update.world;
+        if (wasNull && onWorldReadyListener != null && !worldReadyFired) {
+            worldReadyFired = true;
+            onWorldReadyListener.run();
+        }
+
     }
 
     private void onActionResult(NetworkMessage msg) {
@@ -187,6 +197,14 @@ public class ClientGameController {
     public void unselectZombie() {
         zombieSelected = false;
         selectedZombieType = null;
+    }
+
+    public void setOnWorldReadyListener(Runnable listener) {
+        this.onWorldReadyListener = listener;
+        if (world != null && !worldReadyFired) {
+            worldReadyFired = true;
+            listener.run(); // covers the race where the first snapshot already arrived before this was registered
+        }
     }
 
     // ---------------- network gameplay actions ----------------

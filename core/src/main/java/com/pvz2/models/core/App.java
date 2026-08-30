@@ -23,6 +23,11 @@ public class App {
         App.currentUser = currentUser;
     }
 
+    public static int getSpeed(){
+        if (currentUser != null) return currentUser.getGameSpeed();
+        return 1;
+    }
+
     public static GameWorld getCurrentGame() {
         return currentGame;
     }

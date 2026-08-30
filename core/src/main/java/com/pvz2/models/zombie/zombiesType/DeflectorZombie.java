@@ -25,7 +25,6 @@ public class DeflectorZombie extends Zombie {
     private SpinPhase spinPhase = SpinPhase.NONE;
     private float spinPhaseTime = 0f;
     private float spinTime = 0f;
-    private double originalSpeed;
 
     public DeflectorZombie(int health, double speed, int damage, boolean isJuggler) {
         super(Zombies.DEFLECTOR, health, speed, damage);

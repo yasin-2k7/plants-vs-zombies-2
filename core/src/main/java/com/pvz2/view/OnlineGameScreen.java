@@ -1,50 +1,28 @@
 package com.pvz2.view;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.Pixmap;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.pvz2.Main;
-import com.pvz2.controller.GameMenuController;
-import com.pvz2.controller.PlantMenuController;
 import com.pvz2.models.core.App;
-import com.pvz2.models.enums.Chapter;
 import com.pvz2.models.enums.PlantType;
-import com.pvz2.models.lawnMower.LawnMower;
 import com.pvz2.models.miniGame.IZombie.Brain;
 import com.pvz2.models.plant.Plant;
 import com.pvz2.models.plant.PlantAnimationClips;
 import com.pvz2.models.plant.components.ExplosivesComponent;
-import com.pvz2.models.pool.GenericObjectPool;
 import com.pvz2.models.projectile.Projectile;
 import com.pvz2.models.world.*;
-import com.pvz2.models.world.ChapterWorld.AncientEgyptWorld;
-import com.pvz2.models.world.ChapterWorld.BigWaveBeachWorld;
-import com.pvz2.models.world.ChapterWorld.DarkAgesWorld;
-import com.pvz2.models.world.ChapterWorld.FrostbiteCavesWorld;
-import com.pvz2.models.world.obstacles.BarrelObstacle;
-import com.pvz2.models.world.obstacles.Grave;
-import com.pvz2.models.world.obstacles.OctopusObstacle;
 import com.pvz2.models.zombie.Zombie;
-import com.pvz2.models.zombie.zombiesType.PusherZombie;
 import com.pvz2.network.onlineIZombie.BrainCurrency;
 import com.pvz2.network.onlineIZombie.ClientGameController;
 import com.pvz2.network.onlineIZombie.messages.ReactionCategory;
@@ -52,7 +30,6 @@ import com.pvz2.network.onlineIZombie.messages.ReactionReceived;
 import com.pvz2.view.audios.GameSFX;
 import com.pvz2.view.audios.SFXManager;
 import pvz.libpvz.pam.PamPlayer;
-import pvz.skin.BorderedTable;
 
 import java.util.*;
 import java.util.function.Consumer;
@@ -63,6 +40,7 @@ public class OnlineGameScreen extends MenuScreen{
 
     private OnlineGameHud hud;
     private PamPlayer pamPlayer;
+    private GameEndOverlay endGameOverlay;
 
     private final TextureRegion bgLeft;
     private final TextureRegion bgMain;
@@ -96,6 +74,8 @@ public class OnlineGameScreen extends MenuScreen{
 
     private float shakeTimeRemaining = 0f;
     private float shakeMagnitude = 0f;
+    private Table loadingTable;
+
 
     public OnlineGameScreen(Main game, ClientGameController controller) {
         super(game);
@@ -183,6 +163,26 @@ public class OnlineGameScreen extends MenuScreen{
 
     @Override
     protected void buildUI() {
+        if (controller.getWorld() == null) {
+            showLoadingUI();
+            controller.setOnWorldReadyListener(() -> Gdx.app.postRunnable(this::initGameplayUI));
+        } else {
+            initGameplayUI();
+        }
+    }
+
+    private void showLoadingUI() {
+        loadingTable = new Table();
+        loadingTable.setFillParent(true);
+        loadingTable.add(new Label("Waiting for match to start...", skin));
+        mainStack.addActor(loadingTable);
+    }
+
+    private void initGameplayUI() {
+        if (loadingTable != null) {
+            loadingTable.remove();
+            loadingTable = null;
+        }
         hud = new OnlineGameHud(game, skin, this);
         mainStack.addActor(hud);
     }
@@ -248,12 +248,12 @@ public class OnlineGameScreen extends MenuScreen{
 
     private void showEndScreen(ClientGameController.Side winner, String msg) {
         boolean won = winner == controller.getSide();
-        modalStack.clearChildren();
+        if (endGameOverlay != null) endGameOverlay.remove();
 
-        GameEndOverlay overlay = new GameEndOverlay(skin, won, msg, null, () -> {
+        endGameOverlay = new GameEndOverlay(skin, won, msg, null, () -> {
             game.setScreen(new MainMenuScreen(game));
         });
-        modalStack.addActor(overlay);
+        modalStack.addActor(endGameOverlay);
     }
 
     private void renderPlacementPreviews(float delta) {
@@ -397,6 +397,7 @@ public class OnlineGameScreen extends MenuScreen{
     public void handleInput() {
         if (controller.getWorld() != null && controller.getWorld().getState() != GameState.PLAYING) {
             return;}
+        if (controller.getWorld() == null) return;
         Vector3 touchPoint = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
         worldViewport.unproject(touchPoint);
         if (Gdx.input.justTouched()) {
@@ -587,10 +588,9 @@ public class OnlineGameScreen extends MenuScreen{
                 PlantGraphic pg = new PlantGraphic(p, pamPlayer);
                 plantGraphics.put(p.getId(), pg);
                 checkExplosion(p, pg);
-                plantPlacementManager.tryPlace();
-                SFXManager.getInstance().playSound(GameSFX.PLANT);
             } else {
-                existing.updateModel(p); // same logical plant, fresh deserialized object — keep the graphic's timers
+                existing.updateModel(p);
+                checkExplosion(p, existing);
             }
         }
 

@@ -327,7 +327,7 @@ public class PlantGraphic {
 
         if (inPlantFoodBg && plantFoodBgPamPath != null) {
             String bgClip = PlantAnimationClips.getPlantFoodBackgroundClip();
-            pamPlayer.draw(batch, plantFoodBgPamPath, bgClip, plantFoodBgAnimTime*App.getCurrentUser().getGameSpeed(),
+            pamPlayer.draw(batch, plantFoodBgPamPath, bgClip, plantFoodBgAnimTime*App.getSpeed(),
                 worldX+10, worldY+80, 0.8f, 0.8f,
                 true);
         }

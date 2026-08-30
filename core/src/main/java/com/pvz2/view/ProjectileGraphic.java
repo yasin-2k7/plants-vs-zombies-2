@@ -57,7 +57,7 @@ public class ProjectileGraphic {
         }
         if (info.kind == ProjectileAssets.Kind.PAM) {
             pamPlayer.draw(batch, info.flightPamPath, info.flightClip,
-                animTime* App.getCurrentUser().getGameSpeed(), drawX, drawY, true);
+                animTime* App.getSpeed(), drawX, drawY, true);
         } else {
             TextureRegion region = ProjectileAssets.region(info.textureRegionKey);
             if (region == null) return;

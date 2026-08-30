@@ -7,25 +7,25 @@ import com.pvz2.models.zombie.Zombie;
 
 public class SunProducer extends Zombie {
     private int baseSunRate;
-    private float spawnTime;
+    private float sunSpawnTime;
     private float lastSunProduceTime;
     private boolean initialized = false;
 
     public SunProducer(Zombies name, int health, double speed, int damage) {
         super(name, health, speed, damage);
         this.baseSunRate = 50;
-        this.spawnTime = 0f;
+        this.sunSpawnTime = 0f;
         this.lastSunProduceTime = 0f;
     }
 
     public void initSpawnTick(float currentTime) {
-        this.spawnTime = currentTime;
+        this.sunSpawnTime = currentTime;
         this.lastSunProduceTime = currentTime;
         this.initialized = true;
     }
 
     public int calculateSunAmount(float currentTime) {
-        float elapsedTicks = currentTime - spawnTime;
+        float elapsedTicks = currentTime - sunSpawnTime;
         return 15 + (int) (elapsedTicks / 100) * 5;
     }
 

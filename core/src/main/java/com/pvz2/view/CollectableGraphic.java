@@ -26,7 +26,7 @@ public class CollectableGraphic {
                 batch,
                 getPamPath(collectable.getType()),
                 getClip(collectable.getType()),
-                animTime* App.getCurrentUser().getGameSpeed(),
+                animTime* App.getSpeed(),
                 collectable.getX(),
                 collectable.getY(),
                 0.5f,

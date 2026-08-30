@@ -35,7 +35,7 @@ public class SandstormGraphic {
                 batch,
                 SANDSTORM_PAM_PATH,
                 animName,
-                sandstorm.getStateTime()* App.getCurrentUser().getGameSpeed(),
+                sandstorm.getStateTime()* App.getSpeed(),
                 sandstorm.getX(),
                 sandstorm.getY(),
                 1.0f,

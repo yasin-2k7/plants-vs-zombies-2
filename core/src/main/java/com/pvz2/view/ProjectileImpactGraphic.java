@@ -32,7 +32,7 @@ public class ProjectileImpactGraphic {
         if (info.kind == ProjectileAssets.Kind.PAM) {
             if (info.impactClip == null) return; // no impact animation configured
             pamPlayer.draw(batch, info.impactPamPath, info.impactClip,
-                animTime* App.getCurrentUser().getGameSpeed(), x - 20, y, false);
+                animTime* App.getSpeed(), x - 20, y, false);
         } else {
             if (info.impactTextureRegionKey == null) return; // no impact art — nothing to draw
             TextureRegion region = ProjectileAssets.region(info.impactTextureRegionKey);

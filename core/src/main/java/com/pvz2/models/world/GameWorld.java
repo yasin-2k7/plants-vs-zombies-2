@@ -83,9 +83,11 @@ public abstract class GameWorld {
 
     public GameWorld(LevelSetup levelSetup, ArrayList<LoseCondition> loseConditions,
                      WinCondition winCondition, ArrayList<Mechanic> mechanics) {
-        App.getCurrentUser().setGamesPlayed(App.getCurrentUser().getGamesPlayed() + 1);
-        App.getCurrentUser().save();
-        UserManager.syncCurrentUser();
+        if (App.getCurrentUser() != null) {
+            App.getCurrentUser().setGamesPlayed(App.getCurrentUser().getGamesPlayed() + 1);
+            App.getCurrentUser().save();
+        }
+            UserManager.syncCurrentUser();
         this.levelSetup = levelSetup;
         this.loseConditions = loseConditions;
         this.winCondition = winCondition;
@@ -102,8 +104,10 @@ public abstract class GameWorld {
         this.plantLists = new ArrayList<>();
         this.levelSetup.groundSetup(this);
         this.lawnMowerManager = new LawnMowerManager(this);
-        this.plantFoods = App.getCurrentUser().getPlantFoods();
-        App.getCurrentUser().setPlantFoods(0);
+        if (App.getCurrentUser() != null) {
+            this.plantFoods = App.getCurrentUser().getPlantFoods();
+            App.getCurrentUser().setPlantFoods(0);
+        }
     }
     public GameWorld() {}
 

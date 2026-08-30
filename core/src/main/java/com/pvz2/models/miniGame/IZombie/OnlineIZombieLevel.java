@@ -19,9 +19,9 @@ import java.util.List;
 
 public class OnlineIZombieLevel extends IZombieLevel {
     private int zombieBrains = 0;
-    private final List<BrainCurrency> activeBrains = new ArrayList<>();
+    private List<BrainCurrency> activeBrains = new ArrayList<>();
     private List<ZombieCard> zombieCards = new ArrayList<>();
-    private final GenericObjectPool<BrainCurrency> brainsPool = new GenericObjectPool<>(BrainCurrency::new);
+    private GenericObjectPool<BrainCurrency> brainsPool = new GenericObjectPool<>(BrainCurrency::new);
 
     public OnlineIZombieLevel(LevelSetup levelSetup,
                                ArrayList<LoseCondition> loseConditions,
@@ -77,13 +77,19 @@ public class OnlineIZombieLevel extends IZombieLevel {
     }
 
     public List<BrainCurrency> getActiveBrains() {
+        if (activeBrains == null) activeBrains = new ArrayList<>();
         return activeBrains;
     }
 
     public List<ZombieCard> getZombieCards() {
+        if (zombieCards == null){
+            zombieCards = new ArrayList<>();
+        }
         return zombieCards;
     }
 
-    public GenericObjectPool<BrainCurrency> getBrainsPool() { return brainsPool; }
+    public GenericObjectPool<BrainCurrency> getBrainsPool() {
+        if (brainsPool == null) brainsPool = new GenericObjectPool<>(BrainCurrency::new);
+        return brainsPool; }
 
 }

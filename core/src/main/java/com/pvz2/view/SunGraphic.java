@@ -49,7 +49,7 @@ public class SunGraphic {
                 batch,
                 pamPath,
                 animState,
-                animTime* App.getCurrentUser().getGameSpeed(),
+                animTime* App.getSpeed(),
                 sun.getX(),
                 sun.getY(),
                 scale,
