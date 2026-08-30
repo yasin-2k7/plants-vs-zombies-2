@@ -1,12 +1,15 @@
 package com.pvz2.models.miniGame.IZombie;
 
+import com.pvz2.models.plant.card.PlantCard;
 import com.pvz2.models.pool.GenericObjectPool;
+import com.pvz2.models.projectile.Projectile;
 import com.pvz2.models.world.Cell;
 import com.pvz2.models.world.GameState;
 import com.pvz2.models.world.Sun;
 import com.pvz2.models.world.obstacles.Grave;
 import com.pvz2.models.world.obstacles.Obstacle;
 import com.pvz2.models.world.obstacles.OctopusObstacle;
+import com.pvz2.models.zombie.Zombie;
 import com.pvz2.network.onlineIZombie.BrainCurrency;
 import com.pvz2.models.world.levelSetup.LevelSetup;
 import com.pvz2.models.world.loseCondition.LoseCondition;
@@ -28,6 +31,28 @@ public class OnlineIZombieLevel extends IZombieLevel {
                                WinCondition winCondition,
                                ArrayList<Mechanic> mechanics) {
         super(levelSetup, loseConditions, winCondition, mechanics);
+        Cell.setCurrentWorld(this);
+    }
+
+    @Override
+    protected void updateAll(float delta) {
+        activePlants.forEach(plant -> plant.update(delta, this));
+        List<Projectile> projectileSnapshot = new ArrayList<>(activeProjectiles);
+        projectileSnapshot.forEach(projectile -> projectile.update(delta, this));
+        List<Zombie> zombieSnapshot = new ArrayList<>(activeZombies);
+        zombieSnapshot.forEach(zombie -> zombie.update(delta, this));
+        for (PlantCard card : plantLists) card.update(delta);
+        for (Sun sun : activeSuns) {
+            sun.update(delta, this);
+            if (sun.getProducer() == null && sun.isExpired()) {
+                sun.collect();
+            }
+        }
+        for (Cell[] cells : grid){
+            for (Cell cell : cells){
+                cell.update(delta);
+            }
+        }
     }
 
     @Override
@@ -82,8 +107,13 @@ public class OnlineIZombieLevel extends IZombieLevel {
     }
 
     public List<ZombieCard> getZombieCards() {
-        if (zombieCards == null){
+        if (zombieCards == null || zombieCards.isEmpty()) {
             zombieCards = new ArrayList<>();
+            OnlineIZombieSetup setup = (OnlineIZombieSetup) getLevelSetup();
+            for (Zombie zombie : setup.getStageZombies()) {
+                zombieCards.add(new ZombieCard(zombie.getSpecificName(),
+                    setup.getBrainCost(zombie.getSpecificName())));
+            }
         }
         return zombieCards;
     }

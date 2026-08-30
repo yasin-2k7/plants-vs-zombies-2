@@ -104,12 +104,6 @@ public class PlantGraphic {
     public PlantGraphic(Plant plant, PamPlayer pamPlayer) {
         this.plant = plant;
 
-        int col = plant.getCell().getCol();
-        int row = plant.getCell().getRow();
-
-        this.worldX = LawnGrid.getCellX(col);
-        this.worldY = LawnGrid.getCellY(row);
-
         this.normalPamPath = PlantsCollectionMenuScreen.getPlantAnimAddress(plant.getType());
         this.imitatorPamPath = PlantsCollectionMenuScreen.getPlantAnimAddress(PlantType.IMITATER);
         this.sheepPamPath = ZombiesTable.getZombiesAnimAddress().

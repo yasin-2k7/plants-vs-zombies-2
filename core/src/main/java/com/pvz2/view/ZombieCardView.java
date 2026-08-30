@@ -3,10 +3,7 @@ package com.pvz2.view;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
-import com.badlogic.gdx.scenes.scene2d.ui.Image;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.Stack;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.pvz2.models.core.App;
 import com.pvz2.network.onlineIZombie.ZombieCard;
@@ -38,8 +35,13 @@ public class ZombieCardView extends Stack {
     }
 
     public void build() {
-        add(new Image(App.getGameApp().textureBank.region(
-            ZombiesTable.getZombiesPicAddress().get(zombieName))));
+        Image back = new Image(App.getGameApp().textureBank.region("IMAGE_UI_ALMANAC_PACKETS_ZOMBIES_READY"));
+        add(back);
+        Table imageWrapper = new Table();
+        Image image = new Image(App.getGameApp().textureBank.region(
+            ZombiesTable.getZombiesPicAddress().get(App.getArmoredZombieName(zombieName))));
+        imageWrapper.add(image).bottom().pad(5);
+        add(imageWrapper);
 
         Table costWrapper = new Table();
         costWrapper.bottom().right();

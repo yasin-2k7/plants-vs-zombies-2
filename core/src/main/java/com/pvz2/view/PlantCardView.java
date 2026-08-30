@@ -100,8 +100,6 @@ public class PlantCardView extends Stack {
 
     public void update(){
         if (card == null) return;
-        GameWorld world = App.getCurrentGame();
-        if (world != null && world.getState() != GameState.PLAYING) return;
         if (card.isReady()){
             this.active = true;
             overlay.setProgress(0);
@@ -109,7 +107,7 @@ public class PlantCardView extends Stack {
         else{
             this.active = false;
             float remainingFraction = (card.getMaxCooldownTicks() - card.getCurrentCooldownTicks())
-                / (float) card.getMaxCooldownTicks();
+                / card.getMaxCooldownTicks();
             overlay.setProgress(remainingFraction);
         }
     }

@@ -57,7 +57,7 @@ public class ServerGameController {
 
         List<Zombie> stageZombies = new ArrayList<>();
         ZombieFactory zombieFactory = new ZombieFactory();
-        stageZombies.add(zombieFactory.createZombie("ZombieDefault"));
+        stageZombies.add(zombieFactory.createZombie("ZombieImp"));
         stageZombies.add(zombieFactory.createZombie("ZombieArmor1"));
         stageZombies.add(zombieFactory.createZombie("ZombieArmor2"));
         stageZombies.add(zombieFactory.createZombie("ZombieArmor4"));
@@ -155,6 +155,7 @@ public class ServerGameController {
         Plant plant = selectedCell.handlePlanting(typeToPlant, boosted);
         if (plant == null) return;
 
+        plant.setCell(selectedCell);
         if (isImitator) {
             plant.setImitate(true);
             plant.addComponent(new ImitatorIntroComponent());

@@ -37,6 +37,7 @@ public abstract class Zombie implements Damageable {
     private int poisonDamage;
     private float iceHealth = 0;
     private boolean glowing = false;
+    private GameWorld currentWorld;
 
     private PlantType killerPlantType;
 
@@ -78,6 +79,11 @@ public abstract class Zombie implements Damageable {
         this.originalSpeed = this.speed;
     }
 
+    public void update(float delta, GameWorld world){
+        if (currentWorld == null) currentWorld = world;
+        update(delta);
+    }
+
     public void update(float delta) {
         if (isDead || health <= 0 || iceHealth > 0) return;
         if (freezedTimeRemaining > 0) {
@@ -103,7 +109,7 @@ public abstract class Zombie implements Damageable {
             return;
         }
 
-        Cell currentCell = Cell.findZombieCell(App.getCurrentGame().getGrid(), this);
+        Cell currentCell = Cell.findZombieCell(App.getCurrentGame(this).getGrid(), this);
         if (currentCell != null && currentCell.getSlippingDir() != 0) {
             y += App.getCellHeight() * currentCell.getSlippingDir();
             x -= App.getCellWidth() / 2;
@@ -397,5 +403,9 @@ public abstract class Zombie implements Damageable {
         boolean valid = (System.currentTimeMillis() - shakeRequestTimestamp) < SHAKE_REQUEST_TTL_MS;
         shakeRequestTimestamp = -1L;
         return valid;
+    }
+
+    public GameWorld getCurrentWorld() {
+        return currentWorld;
     }
 }

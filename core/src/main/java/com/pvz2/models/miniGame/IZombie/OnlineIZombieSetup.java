@@ -47,10 +47,7 @@ public class OnlineIZombieSetup implements LevelSetup {
             }
         }
         world.setGrid(grid);
-        for (Zombie zombie : stageZombies){
-            world.getZombieCards().add(new ZombieCard(zombie.getSpecificName(),
-                getBrainCost(zombie.getSpecificName())));
-        }
+
         world.getPlantLists().addAll(List.of(PlantCardFactory.createCard(PlantType.SUNFLOWER, 1),
             PlantCardFactory.createCard(PlantType.CABBAGE_PULT, 1),
             PlantCardFactory.createCard(PlantType.POTATO_MINE, 1),
@@ -72,7 +69,7 @@ public class OnlineIZombieSetup implements LevelSetup {
         }
     }
 
-    private int getBrainCost(String type){
+    public int getBrainCost(String type){
         return switch (type){
             case "ZombieArmor1" -> 100;
             case "ZombieArmor2" -> 150;
@@ -82,6 +79,10 @@ public class OnlineIZombieSetup implements LevelSetup {
             case "ZombieGargantuar" -> 400;
             default -> 50;
         };
+    }
+
+    public List<Zombie> getStageZombies() {
+        return stageZombies;
     }
 
     @Override

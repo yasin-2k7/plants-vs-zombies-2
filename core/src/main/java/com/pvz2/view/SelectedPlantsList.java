@@ -57,7 +57,7 @@ public class SelectedPlantsList extends PlantsTable{
                 }
                 boolean boost = !noBoost && user.hasBoost(plantType);
                 PlantCardView plantCardView = new PlantCardView(false, boost, false
-                    , cardLevel, card.getSunCost(), plantType);
+                    , Math.max(1, cardLevel), card.getSunCost(), plantType);
                 cardTable.add(plantCardView).size(cardWidth, cardHeight);
                 plantCardView.setClickMethod(cardClickMethod);
                 plantCardViewList.add(plantCardView);
@@ -91,6 +91,10 @@ public class SelectedPlantsList extends PlantsTable{
                 }
             }
         }
+    }
+
+    public void activate(){
+        isActive = true;
     }
 
     public void update(){

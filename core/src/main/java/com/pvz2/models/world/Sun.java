@@ -32,12 +32,13 @@ public class Sun implements Resettable {
     private SunType type;
     private float animTime = 0f;
     private String id = java.util.UUID.randomUUID().toString(); // not final — regenerated on every real reuse
+    private GameWorld currentWorld;
 
     public String getId() { return id; }
 
     public void setup(int row, int col, SunType type) {
         if (game == null) {
-            game = App.getCurrentGame();
+            game = App.getCurrentGame(this);
         }
         this.id = java.util.UUID.randomUUID().toString();
         this.finalX = App.getCellCenterX(col);
@@ -62,7 +63,7 @@ public class Sun implements Resettable {
     public void setupBesidePlant(int row, int col, SunType type, int produceIndex) {
         this.id = java.util.UUID.randomUUID().toString();
         if (game == null) {
-            game = App.getCurrentGame();
+            game = App.getCurrentGame(this);
         }
         this.type = type;
         this.size = type.amount;
@@ -94,6 +95,11 @@ public class Sun implements Resettable {
         this.arcStartX = startX;
         this.arcPeakY = startY + riseHeight;
         this.fallPhase = FallPhase.RISING;
+    }
+
+    public void update(float delta, GameWorld world){
+        if (currentWorld == null) currentWorld = world;
+        update(delta);
     }
 
     public void update(float delta) {
@@ -162,7 +168,7 @@ public class Sun implements Resettable {
         this.isExploded = true;
         GameMenuController.updateState("Radioactive sun exploded at (" + x + ", " + y + ")");
 
-        Cell[][] grid = App.getCurrentGame().getGrid();
+        Cell[][] grid = App.getCurrentGame(this).getGrid();
         Cell sunCell = Cell.findCell(x, y, grid);
         if (sunCell != null) {
             var zombieCells = Cell.getNeighborCells(sunCell, grid, 2);
@@ -211,7 +217,7 @@ public class Sun implements Resettable {
         this.id = java.util.UUID.randomUUID().toString();
         this.size = size;
         this.producer = component;
-        this.game = App.getCurrentGame();
+        this.game = App.getCurrentGame(this);
         this.type = SunType.NORMAL;
         this.isCollected = false;
         this.isExploded = false;
@@ -249,7 +255,9 @@ public class Sun implements Resettable {
     public void setX(float x) {
         this.x = x;
     }
-
+    public GameWorld getCurrentWorld() {
+        return currentWorld;
+    }
     public void setY(float y) {
         this.y = y;
     }

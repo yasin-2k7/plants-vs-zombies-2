@@ -228,7 +228,7 @@ public class OnlineGameScreen extends MenuScreen{
         renderCollectablesAndProjectiles(delta);
         for (Brain brain : controller.getWorld().getBrains()){
             if (!brain.isEaten()){
-                game.batch.draw(brainRegion, brain.getX(), brain.getY());
+                game.batch.draw(brainRegion, brain.getX()-30, brain.getY()-50, 90f, 90f);
             }
         }
         game.batch.end();
@@ -458,10 +458,8 @@ public class OnlineGameScreen extends MenuScreen{
 
 
     private void checkExplosion(Plant newPlant, PlantGraphic pg){
-        ExplosivesComponent explosives =
-            newPlant.getComponent(ExplosivesComponent.class);
-        if (explosives != null) {
-            explosives.setExplodeCallback(owner -> {
+        if (newPlant.isExplosive()) {
+            newPlant.setExplosiveCallBack(owner -> {
                 String fxPath = PlantAnimationClips.getExplosionPamPath(owner.getType());
                 String fxClip = PlantAnimationClips.getExplosionClip(owner.getType());
                 if (fxPath != null) {
@@ -587,6 +585,7 @@ public class OnlineGameScreen extends MenuScreen{
             if (existing == null) {
                 PlantGraphic pg = new PlantGraphic(p, pamPlayer);
                 plantGraphics.put(p.getId(), pg);
+
                 checkExplosion(p, pg);
             } else {
                 existing.updateModel(p);
@@ -656,5 +655,9 @@ public class OnlineGameScreen extends MenuScreen{
 
         worldCamera.position.set(baseX, baseY, 0);
         worldCamera.update();
+    }
+
+    public ClientGameController getController() {
+        return controller;
     }
 }

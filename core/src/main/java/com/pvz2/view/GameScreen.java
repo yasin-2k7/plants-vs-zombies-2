@@ -489,7 +489,7 @@ public class GameScreen extends MenuScreen {
         renderCollectablesAndProjectiles(delta);
         game.batch.end();
 
-        if (hud != null) {
+        if (hud != null && world.getState() == GameState.PLAYING) {
             hud.update(world, delta);
         }
     }

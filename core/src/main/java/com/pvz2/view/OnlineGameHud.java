@@ -1,5 +1,6 @@
 package com.pvz2.view;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
@@ -10,8 +11,9 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.pvz2.Main;
-import com.pvz2.models.enums.PlantType;
+import com.pvz2.models.miniGame.IZombie.OnlineIZombieLevel;
 import com.pvz2.models.plant.card.PlantCard;
+import com.pvz2.models.world.GameState;
 import com.pvz2.models.world.GameWorld;
 import com.pvz2.view.audios.GameSFX;
 import com.pvz2.view.audios.SFXManager;
@@ -31,18 +33,30 @@ public class OnlineGameHud extends Group {
         this.screen = screen;
 
         sunCounter = new GameHUD.SunCounter(game, skin);
-        selectedPlantsList = new SelectedPlantsList(1, 1, false,
-            150, 100, createSelectingMethod(), game);
-        selectedPlantsList.setNoBoost(true);
-        selectedZombiesList = new SelectedZombiesList(100, 200, createZombieClickMethod());
-        selectedZombiesList.build(screen.controller.getWorld().getZombieCards());
-        shovelBtn = createShovelBtn(game);
-        topBar = new Table();
-        topBar.add(sunCounter).left().pad(MARGIN);
-        topBar.add(shovelBtn).pad(5);
 
-        topBar.add(selectedPlantsList).left().pad(MARGIN);
-        topBar.add(selectedZombiesList).right().pad(MARGIN);
+        selectedPlantsList = new SelectedPlantsList(1, 1, false, 150, 100, createSelectingMethod(), game);
+        selectedPlantsList.setNoBoost(true);
+        selectedPlantsList.activate();
+
+        selectedZombiesList = new SelectedZombiesList(100, 200, createZombieClickMethod());
+
+        if (screen.controller.getWorld() != null) {
+            selectedZombiesList.build(screen.controller.getWorld().getZombieCards());
+        }
+
+        shovelBtn = createShovelBtn(game);
+
+        topBar = new Table();
+
+        Table leftSide = new Table();
+        leftSide.add(sunCounter).pad(MARGIN);
+        leftSide.add(shovelBtn).pad(5).row();
+        leftSide.add(selectedPlantsList).pad(MARGIN);
+
+        topBar.add(leftSide).expandX().left();
+
+        topBar.add().expandX();
+        topBar.right().add(selectedZombiesList).top().right().pad(MARGIN);
 
         addActor(topBar);
     }
@@ -51,30 +65,26 @@ public class OnlineGameHud extends Group {
         return new Consumer<ZombieCardView>() {
             @Override
             public void accept(ZombieCardView card) {
-                boolean isSelected =
-                    screen.controller.selectAndUnselectZombie(card.getZombieName(), screen);
-                    for (ZombieCardView cardView : selectedZombiesList.getZombieCardViewList()){
-                        cardView.setSelectedState(false);
-                    }
-                    if (isSelected){
-                        SFXManager.getInstance().playSound(GameSFX.SEED_LIFT);
-                        card.setSelectedState(true);
-                        screen.getZombiePlacementManager().selectZombie(card.getZombieName());
-                    }
-
+                boolean isSelected = screen.controller.selectAndUnselectZombie(card.getZombieName(), screen);
+                for (ZombieCardView cardView : selectedZombiesList.getZombieCardViewList()){
+                    cardView.setSelectedState(false);
+                }
+                if (isSelected){
+                    SFXManager.getInstance().playSound(GameSFX.SEED_LIFT);
+                    card.setSelectedState(true);
+                    screen.getZombiePlacementManager().selectZombie(card.getZombieName());
+                }
             }
         };
     }
 
-
     private ImageButton createShovelBtn(Main game) {
-        TextureRegion shovelIcon;
-        TextureRegion shovelIconSelected;
-        shovelIcon = game.textureBank.region("IMAGE_UI_HUD_INGAME_SHOVEL_BUTTON");
-        shovelIconSelected = game.textureBank.region("IMAGE_UI_HUD_INGAME_SHOVEL_BUTTON_DOWN");
+        TextureRegion shovelIcon = game.textureBank.region("IMAGE_UI_HUD_INGAME_SHOVEL_BUTTON");
+        TextureRegion shovelIconSelected = game.textureBank.region("IMAGE_UI_HUD_INGAME_SHOVEL_BUTTON_DOWN");
         Drawable shovel = new TextureRegionDrawable(shovelIcon);
         Drawable shovelSelected = new TextureRegionDrawable(shovelIconSelected);
         ImageButton imageButton = new ImageButton(shovel, shovel, shovelSelected);
+
         imageButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
@@ -96,41 +106,49 @@ public class OnlineGameHud extends Group {
             @Override
             public void accept(PlantCardView plantCardView) {
                 if (selectedPlantsList.isActive()){
-                    boolean isSelected =
-                        screen.controller.selectAndUnselectPlant(plantCardView.getType(), screen);
-                    for (PlantCardView cardView : selectedPlantsList.getPlantCardViewList()){
-                        cardView.setSelectedState(false);
-                    }
-                    if (isSelected){
-                        SFXManager.getInstance().playSound(GameSFX.SEED_LIFT);
-                        plantCardView.setSelectedState(true);
-                        screen.getPlantPlacementManager().selectPlant(plantCardView.getType(), null);
-                    }
+                    boolean isSelected = screen.controller.selectAndUnselectPlant(plantCardView.getType(), screen);
+                    Gdx.app.postRunnable(() -> {
+                        for (PlantCardView cardView : selectedPlantsList.getPlantCardViewList()){
+                            cardView.setSelectedState(false);
+                        }
+                        if (isSelected){
+                            SFXManager.getInstance().playSound(GameSFX.SEED_LIFT);
+                            plantCardView.setSelectedState(true);
+                            screen.getPlantPlacementManager().selectPlant(plantCardView.getType(), null);
+                        }
+                    });
                 }
             }
         };
     }
 
     public void resize(float stageWidth, float stageHeight) {
+        topBar.setWidth(stageWidth);
         topBar.pack();
-        topBar.setSize(stageWidth, topBar.getHeight());
-        topBar.invalidate();
-        topBar.validate();
+        topBar.setWidth(stageWidth);
         topBar.setPosition(0, stageHeight - topBar.getHeight());
-
     }
 
-    public void update(GameWorld world, float delta) {
+    public void update(GameWorld gameWorld, float delta) {
+        if (gameWorld.getState() != GameState.PLAYING) return;
+        OnlineIZombieLevel world = (OnlineIZombieLevel) gameWorld;
         sunCounter.update(world);
         selectedPlantsList.update();
+        selectedZombiesList.updateCards();
+
         if (selectedPlantsList.getSlots()[0] == null){
-            if (world != null){
-                int i = 0;
-                for (PlantCard plantCard : world.getPlantLists()){
-                    selectedPlantsList.getSlots()[i] = plantCard.getType();
-                    i++;
-                }
+            int i = 0;
+            for (PlantCard plantCard : world.getPlantLists()){
+                selectedPlantsList.getSlots()[i] = plantCard.getType();
+                i++;
             }
+            selectedPlantsList.build();
+            topBar.pack();
+        }
+
+        if (selectedZombiesList.getZombieCardViewList().isEmpty() && world != null && !world.getZombieCards().isEmpty()) {
+            selectedZombiesList.build(world.getZombieCards());
+            topBar.pack();
         }
     }
 

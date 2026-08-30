@@ -37,6 +37,7 @@ public class Cell {
     private boolean plantable = true;
     private boolean necromancyPotential = false;
     private boolean necromancyTriggered = false;
+    private static GameWorld currentWorld;
 
 
     public Cell(int row, int col, CellTerrain initialTerrain) {
@@ -45,6 +46,11 @@ public class Cell {
         x = App.getCellCenterX(col);
         y = App.getCellCenterY(row);
         this.terrain = initialTerrain;
+    }
+
+    public void update(float delta, GameWorld world){
+        if (currentWorld == null) currentWorld = world;
+        update(delta);
     }
 
     public void update(float delta){
@@ -93,7 +99,8 @@ public class Cell {
     }
 
     public static List<Zombie> getZombiesInCells(List<Cell> affectedCells) {
-        List<Zombie> activeZombies = App.getCurrentGame().getActiveZombies();
+        List<Zombie> activeZombies = App.getCurrentGame() == null ? currentWorld.activeZombies :
+            App.getCurrentGame().getActiveZombies();
 
         return activeZombies.stream()
                 .filter(zombie -> affectedCells.stream().anyMatch(cell ->
@@ -104,7 +111,8 @@ public class Cell {
     }
 
     public static List<Zombie> getZombiesInCell(Cell affectedCell) {
-        List<Zombie> activeZombies = App.getCurrentGame().getActiveZombies();
+        List<Zombie> activeZombies = App.getCurrentGame() == null ? currentWorld.activeZombies :
+        App.getCurrentGame().getActiveZombies();
 
         return activeZombies.stream()
                 .filter(zombie ->
@@ -230,7 +238,9 @@ public class Cell {
 
         if (isLayerEmpty(layer) || type == PlantType.HOT_POTATO) {
             if (type != PlantType.HOT_POTATO) setPlant(newPlant, layer);
-            App.getCurrentGame().getActivePlants().add(newPlant);
+            GameWorld world = App.getCurrentGame() == null ? currentWorld :
+                App.getCurrentGame();
+            world.getActivePlants().add(newPlant);
             User user = App.getCurrentUser();
             if (user != null) {
                 QuestStats stats = user.getQuestStats();
@@ -400,5 +410,13 @@ public class Cell {
             if (zombie.getIceHealth() > 0) return true;
         }
         return false;
+    }
+
+    public static void setCurrentWorld(GameWorld currentWorld) {
+        Cell.currentWorld = currentWorld;
+    }
+
+    public static GameWorld getCurrentWorld() {
+        return currentWorld;
     }
 }

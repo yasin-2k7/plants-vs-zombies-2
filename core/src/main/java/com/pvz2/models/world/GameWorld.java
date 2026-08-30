@@ -59,7 +59,7 @@ public abstract class GameWorld {
     private WinCondition winCondition;
     protected ArrayList<Mechanic> mechanics;
     private List<PlantCard> conveyorBelt = new ArrayList<>();
-    private List<PlantCard> plantLists;
+    protected List<PlantCard> plantLists;
     private boolean isConveyorMode;
     private GenericObjectPool<Sun> sunsPool = new GenericObjectPool<>(Sun::new);
     private GenericObjectPool<Projectile> projectilesPool = new GenericObjectPool<>(Projectile::new);
@@ -83,7 +83,7 @@ public abstract class GameWorld {
 
     public GameWorld(LevelSetup levelSetup, ArrayList<LoseCondition> loseConditions,
                      WinCondition winCondition, ArrayList<Mechanic> mechanics) {
-        if (App.getCurrentUser() != null) {
+        if (App.getCurrentUser().getNickname() != null) {
             App.getCurrentUser().setGamesPlayed(App.getCurrentUser().getGamesPlayed() + 1);
             App.getCurrentUser().save();
         }
@@ -104,7 +104,7 @@ public abstract class GameWorld {
         this.plantLists = new ArrayList<>();
         this.levelSetup.groundSetup(this);
         this.lawnMowerManager = new LawnMowerManager(this);
-        if (App.getCurrentUser() != null) {
+        if (App.getCurrentUser().getNickname() != null) {
             this.plantFoods = App.getCurrentUser().getPlantFoods();
             App.getCurrentUser().setPlantFoods(0);
         }
