@@ -31,7 +31,7 @@ public class ZombieGraphic {
     private static final String SNORKEL_VISIBLE_PART_WHEN_SUBMERGED = "zombie_snorkeler_skull_01";
     private static final float SNORKEL_SUBMERGED_Y_OFFSET = 50f;
 
-    private final Zombie zombie;
+    private Zombie zombie;
     private final String pamPath;
     private final HashMap<String, Boolean> visibilities;
 
@@ -220,6 +220,10 @@ public class ZombieGraphic {
 
     public boolean isDeathAnimationFinished() {
         return zombie.isDead() && currentClip.equals(resolveClip("die")) && animTime >= 1.5f;
+    }
+
+    public void updateModel(Zombie newZombie) {
+        this.zombie = newZombie;
     }
 
     public Zombie getZombie() {

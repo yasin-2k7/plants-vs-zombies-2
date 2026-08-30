@@ -35,6 +35,7 @@ public class Projectile implements Resettable {
     private boolean dead = false;
     private PlantType plantType;
     private List<Damageable> lastTargets = new ArrayList<>();
+    private String id = java.util.UUID.randomUUID().toString();
 
     void checkProjectilesTowardPlants(double oldX, double oldY) {
         Damageable plantTarget = null;
@@ -111,6 +112,7 @@ public class Projectile implements Resettable {
     public void reset(float x, float y,
                       HitStrategy hitStrategy, MovementStrategy movementStrategy,
                       CheckStrike checkStrike, ProjectileType type) {
+        this.id = java.util.UUID.randomUUID().toString();
         this.x = x;
         this.y = y;
         originX = x;
@@ -210,7 +212,7 @@ public class Projectile implements Resettable {
     public int getPierce() {
         return pierce;
     }
-
+    public String getId() { return id; }
     public void setPlantType(PlantType plantType) {
         this.plantType = plantType;
     }

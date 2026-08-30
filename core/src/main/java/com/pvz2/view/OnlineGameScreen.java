@@ -29,6 +29,7 @@ import com.pvz2.models.core.App;
 import com.pvz2.models.enums.Chapter;
 import com.pvz2.models.enums.PlantType;
 import com.pvz2.models.lawnMower.LawnMower;
+import com.pvz2.models.miniGame.IZombie.Brain;
 import com.pvz2.models.plant.Plant;
 import com.pvz2.models.plant.PlantAnimationClips;
 import com.pvz2.models.plant.components.ExplosivesComponent;
@@ -44,6 +45,7 @@ import com.pvz2.models.world.obstacles.Grave;
 import com.pvz2.models.world.obstacles.OctopusObstacle;
 import com.pvz2.models.zombie.Zombie;
 import com.pvz2.models.zombie.zombiesType.PusherZombie;
+import com.pvz2.network.onlineIZombie.BrainCurrency;
 import com.pvz2.network.onlineIZombie.ClientGameController;
 import com.pvz2.network.onlineIZombie.messages.ReactionCategory;
 import com.pvz2.network.onlineIZombie.messages.ReactionReceived;
@@ -72,28 +74,32 @@ public class OnlineGameScreen extends MenuScreen{
     private float rightWidthScaled;
 
     private LawnGridRenderer lawnGridDebugRenderer;
-
+    private final Map<String, PlantGraphic> plantGraphics = new HashMap<>();
+    private final Map<String, ZombieGraphic> zombieGraphics = new HashMap<>();
+    private final Map<String, ProjectileGraphic> projectileGraphics = new HashMap<>();
+    private final Map<String, SunGraphic> sunGraphics = new HashMap<>();
+    private final Map<String, BrainCurrencyGraphic> brainCurrencyGraphics = new HashMap<>();
     private Vector3 cursorWorldPos = new Vector3(0, 0, 0);
-    private final Map<Plant, PlantGraphic> plantGraphics = new HashMap<>();
     private final List<ExplosionEffectGraphic> explosionGraphics = new ArrayList<>();
-    private final Map<Projectile, ProjectileGraphic> projectileGraphics = new HashMap<>();
     private final List<ProjectileImpactGraphic> projectileImpacts = new ArrayList<>();
 
     private static OnlineGameScreen activeInstance;
     private static final List<String> PENDING_ANNOUNCEMENTS = new ArrayList<>();
 
 
+    private TextureRegion brainRegion;
 
 
     private final PlantPlacementManager plantPlacementManager = new PlantPlacementManager();
     private final ShovelPlacementManager shovelPlacementManager = new ShovelPlacementManager();
 
-    private final Map<Sun, SunGraphic> sunGraphics = new HashMap<>();
+
     private float shakeTimeRemaining = 0f;
     private float shakeMagnitude = 0f;
 
     public OnlineGameScreen(Main game, ClientGameController controller) {
         super(game);
+        brainRegion = game.textureBank.region("IMAGE_UI_GAMEOVER_FAIL_SCREEN_BRAIN_ONLY");
         this.controller = controller;
         controller.setActionResultListener((success, message) ->
             addToast(success ? "Info" : "Error", message, !success));
@@ -220,6 +226,11 @@ public class OnlineGameScreen extends MenuScreen{
         renderPlantsAndZombies(delta, sortedZombies);
         renderEffectsAndSandstorms(delta);
         renderCollectablesAndProjectiles(delta);
+        for (Brain brain : controller.getWorld().getBrains()){
+            if (!brain.isEaten()){
+                game.batch.draw(brainRegion, brain.getX(), brain.getY());
+            }
+        }
         game.batch.end();
 
         if (hud != null) {
@@ -290,11 +301,8 @@ public class OnlineGameScreen extends MenuScreen{
     }
 
     private void renderCollectablesAndProjectiles(float delta) {
-        syncSunGraphics();
-        for (SunGraphic sg : new ArrayList<>(sunGraphics.values())) {
-            sg.update(delta);
-            sg.draw(game.batch, pamPlayer, game);
-        }
+        renderSuns(delta, game.batch, pamPlayer);
+        renderBrains(delta, game.batch, pamPlayer);
         renderProjectiles(delta, game.batch, pamPlayer);
     }
 
@@ -475,27 +483,84 @@ public class OnlineGameScreen extends MenuScreen{
         }
     }
 
-    private void renderProjectiles(float delta, SpriteBatch batch, PamPlayer pamPlayer) {
-        List<Projectile> active = controller.getWorld().getActiveProjectiles();
-        GenericObjectPool<Projectile> pool = controller.getWorld().getProjectilesPool();
+    private void renderSuns(float delta, SpriteBatch batch, PamPlayer pamPlayer){
+        List<Sun> active = controller.getWorld().getActiveSuns();
+        Set<String> currentIds = new HashSet<>();
 
-        Iterator<Map.Entry<Projectile, ProjectileGraphic>> it = projectileGraphics.entrySet().iterator();
-        while (it.hasNext()) {
-            Map.Entry<Projectile, ProjectileGraphic> entry = it.next();
-            ProjectileGraphic pg = entry.getValue();
-            boolean reused = pool.getGeneration(entry.getKey()) != pg.getGeneration();
-            boolean noLongerActive = !active.contains(entry.getKey());
-            if (reused || noLongerActive) {
-                projectileImpacts.add(new ProjectileImpactGraphic(pg.getType(), pg.getLastX(), pg.getLastY()));
-                it.remove();
+        for (Sun s : active) {
+            currentIds.add(s.getId());
+            SunGraphic existing = sunGraphics.get(s.getId());
+            if (existing == null) {
+                sunGraphics.put(s.getId(), new SunGraphic(s));
+            } else {
+                existing.updateModel(s);
             }
         }
 
+        for (SunGraphic sg : sunGraphics.values()) {
+            sg.update(delta);
+            sg.draw(batch, pamPlayer, game);
+        }
+
+        Iterator<Map.Entry<String, SunGraphic>> it = sunGraphics.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry<String, SunGraphic> entry = it.next();
+            SunGraphic sg = entry.getValue();
+            if (!currentIds.contains(entry.getKey()) || sg.isPopFinished()) {
+                it.remove();
+            }
+        }
+    }
+
+    private void renderBrains(float delta, SpriteBatch batch, PamPlayer pamPlayer){
+        List<BrainCurrency> active = controller.getWorld().getActiveBrains();
+        Set<String> currentIds = new HashSet<>();
+
+        for (BrainCurrency s : active) {
+            currentIds.add(s.getId());
+            BrainCurrencyGraphic existing = brainCurrencyGraphics.get(s.getId());
+            if (existing == null) {
+                brainCurrencyGraphics.put(s.getId(), new BrainCurrencyGraphic(s));
+            } else {
+                existing.updateModel(s);
+            }
+        }
+
+        for (BrainCurrencyGraphic sg : brainCurrencyGraphics.values()) {
+            sg.update(delta);
+            sg.draw(batch, pamPlayer, game);
+        }
+
+        Iterator<Map.Entry<String, BrainCurrencyGraphic>> it = brainCurrencyGraphics.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry<String, BrainCurrencyGraphic> entry = it.next();
+            if (!currentIds.contains(entry.getKey())) {
+                it.remove();
+            }
+        }
+    }
+
+    private void renderProjectiles(float delta, SpriteBatch batch, PamPlayer pamPlayer) {
+        List<Projectile> active = controller.getWorld().getActiveProjectiles();
+        Set<String> currentIds = new HashSet<>();
+
         for (Projectile p : active) {
-            int currentGen = pool.getGeneration(p);
-            ProjectileGraphic existing = projectileGraphics.get(p);
-            if (existing == null || existing.getGeneration() != currentGen) {
-                projectileGraphics.put(p, new ProjectileGraphic(p, currentGen));
+            currentIds.add(p.getId());
+            ProjectileGraphic existing = projectileGraphics.get(p.getId());
+            if (existing == null) {
+                projectileGraphics.put(p.getId(), new ProjectileGraphic(p, 0));
+            } else {
+                existing.updateModel(p);
+            }
+        }
+
+        Iterator<Map.Entry<String, ProjectileGraphic>> it = projectileGraphics.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry<String, ProjectileGraphic> entry = it.next();
+            if (!currentIds.contains(entry.getKey())) {
+                ProjectileGraphic pg = entry.getValue();
+                projectileImpacts.add(new ProjectileImpactGraphic(pg.getType(), pg.getLastX(), pg.getLastY()));
+                it.remove();
             }
         }
 
@@ -513,54 +578,40 @@ public class OnlineGameScreen extends MenuScreen{
         }
     }
 
-    private final Map<Zombie, ZombieGraphic> zombieGraphics = new HashMap<>();
+    private void syncPlantGraphics() {
+        Set<String> currentIds = new HashSet<>();
+        for (Plant p : controller.getWorld().getActivePlants()) {
+            currentIds.add(p.getId());
+            PlantGraphic existing = plantGraphics.get(p.getId());
+            if (existing == null) {
+                PlantGraphic pg = new PlantGraphic(p, pamPlayer);
+                plantGraphics.put(p.getId(), pg);
+                checkExplosion(p, pg);
+                plantPlacementManager.tryPlace();
+                SFXManager.getInstance().playSound(GameSFX.PLANT);
+            } else {
+                existing.updateModel(p); // same logical plant, fresh deserialized object — keep the graphic's timers
+            }
+        }
+
+        plantGraphics.entrySet().removeIf(entry ->
+            !currentIds.contains(entry.getKey()) && entry.getValue().isDead());
+    }
 
     private void syncZombieGraphics() {
+        Set<String> currentIds = new HashSet<>();
         for (Zombie z : controller.getWorld().getActiveZombies()) {
-            zombieGraphics.computeIfAbsent(z, ZombieGraphic::new);
-        }
-
-        zombieGraphics.entrySet().removeIf(entry -> {
-            Zombie z = entry.getKey();
-            ZombieGraphic zg = entry.getValue();
-
-            if (!controller.getWorld().getActiveZombies().contains(z)) {
-                return zg.isDeathAnimationFinished();
-            }
-            return false;
-        });
-    }
-
-    private void syncPlantGraphics() {
-        for (Plant p : controller.getWorld().getActivePlants()) {
-            if (!plantGraphics.containsKey(p)) {
-                PlantGraphic pg = new PlantGraphic(p, pamPlayer);
-                plantGraphics.put(p, pg);
-                checkExplosion(p, pg);
+            currentIds.add(z.getId());
+            ZombieGraphic existing = zombieGraphics.get(z.getId());
+            if (existing == null) {
+                zombieGraphics.put(z.getId(), new ZombieGraphic(z));
+            } else {
+                existing.updateModel(z);
             }
         }
 
-        plantGraphics.entrySet().removeIf(entry -> {
-            Plant p = entry.getKey();
-            PlantGraphic pg = entry.getValue();
-            if (!controller.getWorld().getActivePlants().contains(p)) {
-                return pg.isDead();
-            }
-            return false;
-        });
-    }
-
-    private void syncSunGraphics() {
-        for (Sun sun : controller.getWorld().getActiveSuns()) {
-            sunGraphics.computeIfAbsent(sun, SunGraphic::new);
-        }
-
-        sunGraphics.entrySet().removeIf(entry -> {
-            Sun sun = entry.getKey();
-            SunGraphic sg = entry.getValue();
-            boolean notActive = !controller.getWorld().getActiveSuns().contains(sun);
-            return notActive || sg.isPopFinished();
-        });
+        zombieGraphics.entrySet().removeIf(entry ->
+            !currentIds.contains(entry.getKey()) && entry.getValue().isDeathAnimationFinished());
     }
 
     @Override
@@ -579,7 +630,7 @@ public class OnlineGameScreen extends MenuScreen{
         return shovelPlacementManager;
     }
 
-    public Map<Plant, PlantGraphic> getPlantGraphics() {
+    public Map<String, PlantGraphic> getPlantGraphics() {
         return plantGraphics;
     }
 

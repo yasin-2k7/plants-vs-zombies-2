@@ -50,6 +50,10 @@ public abstract class Zombie implements Damageable {
     private long shakeRequestTimestamp = -1L;
     private static final long SHAKE_REQUEST_TTL_MS = 300L;
 
+    private final String id = java.util.UUID.randomUUID().toString();
+
+    public String getId() { return id; }
+
 
     public Zombie(Zombies name, int health, double speed, int damage) {
         this.name = name;

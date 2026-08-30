@@ -42,6 +42,10 @@ public class Plant implements Damageable {
     private float combineTargetX;
     private float combineTargetY;
 
+    private final String id = java.util.UUID.randomUUID().toString();
+
+    public String getId() { return id; }
+
     public enum State {
         IDLE, SPECIAL, ATTACK, UNARMED, TRIGGERED,
         HIT_RIGHT, HIT_LEFT, HIT_RIGHT_AND_LEFT,

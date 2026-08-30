@@ -1,7 +1,9 @@
 package com.pvz2.models.miniGame.IZombie;
 
+import com.pvz2.models.pool.GenericObjectPool;
 import com.pvz2.models.world.Cell;
 import com.pvz2.models.world.GameState;
+import com.pvz2.models.world.Sun;
 import com.pvz2.models.world.obstacles.Grave;
 import com.pvz2.models.world.obstacles.Obstacle;
 import com.pvz2.models.world.obstacles.OctopusObstacle;
@@ -19,6 +21,7 @@ public class OnlineIZombieLevel extends IZombieLevel {
     private int zombieBrains = 0;
     private final List<BrainCurrency> activeBrains = new ArrayList<>();
     private List<ZombieCard> zombieCards = new ArrayList<>();
+    private final GenericObjectPool<BrainCurrency> brainsPool = new GenericObjectPool<>(BrainCurrency::new);
 
     public OnlineIZombieLevel(LevelSetup levelSetup,
                                ArrayList<LoseCondition> loseConditions,
@@ -33,6 +36,12 @@ public class OnlineIZombieLevel extends IZombieLevel {
         elapsedTime += delta;
         updateAll(delta);
         for (ZombieCard zombieCard : zombieCards) zombieCard.update(delta);
+        for (BrainCurrency brainCurrency : activeBrains) {
+            brainCurrency.update(delta);
+            if (brainCurrency.isExpired()) {
+                brainCurrency.collect();
+            }
+        }
         removeIfDead();
         for (Cell[] row : grid) {
             for (Cell cell : row) {
@@ -74,4 +83,7 @@ public class OnlineIZombieLevel extends IZombieLevel {
     public List<ZombieCard> getZombieCards() {
         return zombieCards;
     }
+
+    public GenericObjectPool<BrainCurrency> getBrainsPool() { return brainsPool; }
+
 }

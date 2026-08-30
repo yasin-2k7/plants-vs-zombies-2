@@ -31,12 +31,15 @@ public class Sun implements Resettable {
     private GameWorld game;
     private SunType type;
     private float animTime = 0f;
+    private String id = java.util.UUID.randomUUID().toString(); // not final — regenerated on every real reuse
 
-    /** Sky-dropped sun: falls straight down from off-screen to the target cell. */
+    public String getId() { return id; }
+
     public void setup(int row, int col, SunType type) {
         if (game == null) {
             game = App.getCurrentGame();
         }
+        this.id = java.util.UUID.randomUUID().toString();
         this.finalX = App.getCellCenterX(col);
         this.finalY = App.getCellCenterY(row);
 
@@ -57,6 +60,7 @@ public class Sun implements Resettable {
     }
 
     public void setupBesidePlant(int row, int col, SunType type, int produceIndex) {
+        this.id = java.util.UUID.randomUUID().toString();
         if (game == null) {
             game = App.getCurrentGame();
         }
@@ -204,6 +208,7 @@ public class Sun implements Resettable {
 
     @Override
     public void reset(float x, float y, int size, SunProducerComponent component) {
+        this.id = java.util.UUID.randomUUID().toString();
         this.size = size;
         this.producer = component;
         this.game = App.getCurrentGame();

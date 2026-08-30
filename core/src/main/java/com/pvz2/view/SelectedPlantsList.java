@@ -19,6 +19,7 @@ public class SelectedPlantsList extends PlantsTable{
     private final Main game;
     private PlantType imitatorCardType;
     private boolean isActive = false;
+    private boolean noBoost = false;
 
     public SelectedPlantsList(int column, int pad, boolean upgradeBar,
                               int cardWidth, int cardHeight, Consumer<PlantCardView> cardClickMethod, Main game) {
@@ -54,7 +55,8 @@ public class SelectedPlantsList extends PlantsTable{
                 else{
                     card = PlantCardFactory.createCard(plantType, Math.max(1, cardLevel));
                 }
-                PlantCardView plantCardView = new PlantCardView(false, user.hasBoost(plantType), false
+                boolean boost = !noBoost && user.hasBoost(plantType);
+                PlantCardView plantCardView = new PlantCardView(false, boost, false
                     , cardLevel, card.getSunCost(), plantType);
                 cardTable.add(plantCardView).size(cardWidth, cardHeight);
                 plantCardView.setClickMethod(cardClickMethod);
@@ -146,5 +148,9 @@ public class SelectedPlantsList extends PlantsTable{
 
     public PlantType[] getSlots() {
         return slots;
+    }
+
+    public void setNoBoost(boolean noBoost) {
+        this.noBoost = noBoost;
     }
 }

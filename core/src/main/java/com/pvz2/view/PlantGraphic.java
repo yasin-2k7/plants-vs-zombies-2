@@ -19,7 +19,7 @@ import java.util.Random;
 
 public class PlantGraphic {
 
-    private final Plant plant;
+    private Plant plant;
     private float worldX;
     private float worldY;
 
@@ -376,7 +376,9 @@ public class PlantGraphic {
         }
         return plant.isDead();
     }
-
+    public void updateModel(Plant newPlant) {
+        this.plant = newPlant;
+    }
     public float getWorldX() { return worldX; }
     public float getWorldY() { return worldY; }
 

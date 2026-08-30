@@ -10,6 +10,8 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.pvz2.Main;
+import com.pvz2.models.enums.PlantType;
+import com.pvz2.models.plant.card.PlantCard;
 import com.pvz2.models.world.GameWorld;
 import com.pvz2.view.audios.GameSFX;
 import com.pvz2.view.audios.SFXManager;
@@ -31,6 +33,7 @@ public class OnlineGameHud extends Group {
         sunCounter = new GameHUD.SunCounter(game, skin);
         selectedPlantsList = new SelectedPlantsList(1, 1, false,
             150, 100, createSelectingMethod(), game);
+        selectedPlantsList.setNoBoost(true);
         selectedZombiesList = new SelectedZombiesList(100, 200, createZombieClickMethod());
         selectedZombiesList.build(screen.controller.getWorld().getZombieCards());
         shovelBtn = createShovelBtn(game);
@@ -120,6 +123,15 @@ public class OnlineGameHud extends Group {
     public void update(GameWorld world, float delta) {
         sunCounter.update(world);
         selectedPlantsList.update();
+        if (selectedPlantsList.getSlots()[0] == null){
+            if (world != null){
+                int i = 0;
+                for (PlantCard plantCard : world.getPlantLists()){
+                    selectedPlantsList.getSlots()[i] = plantCard.getType();
+                    i++;
+                }
+            }
+        }
     }
 
     public SelectedZombiesList getSelectedZombiesList() {

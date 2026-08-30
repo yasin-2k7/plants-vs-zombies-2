@@ -3,6 +3,7 @@ package com.pvz2.view;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.pvz2.Main;
 import com.pvz2.models.core.App;
+import com.pvz2.models.projectile.Projectile;
 import com.pvz2.models.world.GameState;
 import com.pvz2.models.world.GameWorld;
 import com.pvz2.models.world.Sun;
@@ -10,7 +11,7 @@ import com.pvz2.models.world.SunType;
 import pvz.libpvz.pam.PamPlayer;
 
 public class SunGraphic {
-    private final Sun sun;
+    private Sun sun;
     private float animTime = 0f;
     private boolean popping = false;
     private boolean popFinished = false;
@@ -75,6 +76,9 @@ public class SunGraphic {
         }
     }
 
+    public void updateModel(Sun newSun) {
+        this.sun = newSun;
+    }
     public Sun getSun() { return sun; }
     public boolean isPopFinished() { return popFinished; }
 }
