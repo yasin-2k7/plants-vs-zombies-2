@@ -1,39 +1,57 @@
 package com.pvz2.view;
 
-import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Container;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.pvz2.Main;
-import com.pvz2.network.onlineIZombie.ClientGameController;
 import com.pvz2.network.onlineIZombie.messages.ReactionCategory;
 
-public class OnlineGameScreen extends MenuScreen {
-    ClientGameController controller;
+/**
+ * TEMPORARY screen, only for visually checking the reaction system with your real assets
+ * before OnlineGameScreen/GameScreen is wired up for real matches. No server round trip —
+ * picking something in the panel shows the bubble on THIS same screen, immediately.
+ * Delete this file (and the button that opens it) once the real screen is ready.
+ */
+public class ReactionPreviewScreen extends MenuScreen {
 
-    private ReactionPanel reactionPanel;
     private Container<ReactionPanel> reactionPanelContainer;
     private Table opponentBubbleLayer;
 
-    public OnlineGameScreen(Main game, ClientGameController controller) {
+    public ReactionPreviewScreen(Main game) {
         super(game);
-        this.controller = controller;
-        controller.setActionResultListener((success, message) ->
-            addToast(success ? "Info" : "Error", message, !success));
-        controller.setMatchOverListener((winner, msg) -> showEndScreen(winner, msg));
-        controller.setReactionListener(r -> showOpponentReaction(r.category, r.index));
     }
 
     @Override
     protected void buildUI() {
-        buildReactionUI();
-    }
+        Table mainTable = new Table();
+        mainTable.setFillParent(true);
+        mainTable.setBackground(new TextureRegionDrawable(game.textureBank.region("IMAGE_MAINMENU_BACKGROUND")));
+        mainStack.add(mainTable);
 
-    private void buildReactionUI() {
-        reactionPanel = new ReactionPanel(game, skin, this::sendReaction);
+        ImageButton backBtn = MainMenuScreen.createImageButton(
+            "IMAGE_UI_MAINMENU_BACK_BTN_NORMAL",
+            "IMAGE_UI_MAINMENU_BACK_BTN_PRESSED",
+            game.textureBank
+        );
+        backBtn.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                fadeAndSwitchScreen(new MainMenuScreen(game));
+            }
+        });
+        Table topBar = new Table();
+        topBar.top().add(backBtn).pad(10);
+        topBar.add().expandX();
+        mainTable.add(topBar).top().growX().row();
+        mainTable.add().expandY().row();
+
+        ReactionPanel reactionPanel = new ReactionPanel(game, skin, this::onPick);
         reactionPanelContainer = new Container<>(reactionPanel);
         reactionPanelContainer.size(440, 420);
         reactionPanelContainer.setVisible(false);
@@ -78,11 +96,9 @@ public class OnlineGameScreen extends MenuScreen {
         }
     }
 
-    private void sendReaction(ReactionCategory category, int index) {
-        controller.sendReaction(category, index);
-    }
-
-    private void showOpponentReaction(ReactionCategory category, int index) {
+    /** Loopback: what would normally go to the server + come back as the opponent's
+     *  bubble is shown here directly, so you can see both halves without a match. */
+    private void onPick(ReactionCategory category, int index) {
         Actor bubble = ReactionBubbleFactory.build(game, skin, category, index);
         opponentBubbleLayer.clearChildren();
         opponentBubbleLayer.add(bubble);
@@ -92,8 +108,5 @@ public class OnlineGameScreen extends MenuScreen {
             Actions.delay(2.5f),
             Actions.fadeOut(0.4f)
         ));
-    }
-
-    private void showEndScreen(ClientGameController.Side winner, String msg) {
     }
 }

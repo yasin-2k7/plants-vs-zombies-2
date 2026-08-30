@@ -3,7 +3,7 @@ package com.pvz2.view;
 public final class ReactionAssets {
 
     public static final String[] TEXTS = {
-        "gg, that was actually rough",
+        "ggg, that was actually rough",
         "my plants are built different",
         "one more wave and I'm the one turning to ash"
     };
@@ -21,9 +21,9 @@ public final class ReactionAssets {
     };
 
     public static final String[] STICKER_ANIMATIONS = {
-        "WALK",
-        "ANIMATION",
-        "JUMP_UP_RIGHT"
+        "walk",
+        "animation",
+        "jump_up_right"
     };
 
     private ReactionAssets() {}

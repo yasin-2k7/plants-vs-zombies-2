@@ -39,6 +39,7 @@ public class MainMenuScreen extends MenuScreen {
     private ImageButton backBtn;
     private ImageButton travelLogBtn;
     private ImageButton onlineGameBtn;
+    private TextButton reactionPreviewBtn; // TEMPORARY — remove once GameScreen has the real thing
 
     private ResourcesTable resourcesTable = new ResourcesTable(App.getCurrentUser(), game);
 
@@ -106,6 +107,8 @@ public class MainMenuScreen extends MenuScreen {
         );
 
         unreadBadge = new Image(game.textureBank.region("IMAGE_UI_CLAIM_SMALL"));
+
+        reactionPreviewBtn = new TextButton("TEST REACTIONS", skin); // TEMPORARY
 
         mainTable = new Table();
         topBar = new Table();
@@ -175,6 +178,7 @@ public class MainMenuScreen extends MenuScreen {
         });
 
         mainTable.add(shopBtn).width(200).height(52).pad(10).row();
+        mainTable.add(reactionPreviewBtn).width(200).height(44).pad(5).row(); // TEMPORARY
 
         bottomBar.add().expandX();
 
@@ -198,8 +202,6 @@ public class MainMenuScreen extends MenuScreen {
             showChallengePopup(invite.fromUsername, accepted -> respondToChallenge(invite.inviteId, accepted));
         });
     }
-
-
 
 
     private void setListeners(){
@@ -251,6 +253,13 @@ public class MainMenuScreen extends MenuScreen {
         onlineGameBtn.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y) { controller.enterMenu("online room");}});
+
+        reactionPreviewBtn.addListener(new ClickListener(){ // TEMPORARY
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                fadeAndSwitchScreen(new ReactionPreviewScreen(game));
+            }
+        });
     }
 
     public static ImageButton createImageButton(String normalRegionKey, String selectedRegionKey,
@@ -273,8 +282,8 @@ public class MainMenuScreen extends MenuScreen {
     }
 
     private void showScrollablePopup(String titleText, Actor contentActor,
-                                      float boxWidth, float boxHeight,
-                                      float scrollWidth, float scrollHeight) {
+                                     float boxWidth, float boxHeight,
+                                     float scrollWidth, float scrollHeight) {
         Table overlay = new Table();
         overlay.setFillParent(true);
         overlay.setBackground(createSolidColor(new Color(0, 0, 0, 0.65f)));
