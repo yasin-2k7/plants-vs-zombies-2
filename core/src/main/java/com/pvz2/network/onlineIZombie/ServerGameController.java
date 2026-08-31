@@ -90,8 +90,9 @@ public class ServerGameController {
         if (tickTask != null) tickTask.cancel(false);
     }
 
-    private void onTick() {
+    private synchronized void onTick() {
         if (matchEnded) return;
+        long startTime = System.currentTimeMillis();
         try {
             world.tick(TICK_INTERVAL_SECONDS);
 
@@ -107,12 +108,11 @@ public class ServerGameController {
             }
 
             broadcastState();
-        } catch (Exception e) {
-            // scheduleAtFixedRate silently stops rescheduling if the task throws —
-            // catching here keeps the match ticking even if one tick hits a bug,
-            // instead of the whole match quietly freezing with no error anywhere.
-            e.printStackTrace();
+        }  catch (Throwable t) {
+            t.printStackTrace();
         }
+        long duration = System.currentTimeMillis() - startTime;
+        System.out.println("Tick took: " + duration + " ms");
     }
 
     private void endMatch(Match.Side winner, String message) {
@@ -124,7 +124,7 @@ public class ServerGameController {
         onMatchEnd.run();
     }
 
-    public void handlePlantPlant(ClientHandler sender, PlantPlantRequest req) {
+    public synchronized void handlePlantPlant(ClientHandler sender, PlantPlantRequest req) {
         if (!match.getMatchId().equals(req.matchId)) return;
         if (match.getSideOf(sender) != Match.Side.PLANTS) return;
 
@@ -166,7 +166,7 @@ public class ServerGameController {
         broadcastState();
     }
 
-    public void handlePluckPlant(ClientHandler sender, PluckPlantRequest req) {
+    public synchronized void handlePluckPlant(ClientHandler sender, PluckPlantRequest req) {
         if (!match.getMatchId().equals(req.matchId)) return;
         if (match.getSideOf(sender) != Match.Side.PLANTS) return;
 
@@ -176,7 +176,7 @@ public class ServerGameController {
         broadcastState();
     }
 
-    public void handleCollectSun(ClientHandler sender, CollectSunRequest req) {
+    public synchronized void handleCollectSun(ClientHandler sender, CollectSunRequest req) {
         if (!match.getMatchId().equals(req.matchId)) return;
         if (match.getSideOf(sender) != Match.Side.PLANTS) return;
 
@@ -194,7 +194,7 @@ public class ServerGameController {
         }
     }
 
-    public void handleCollectBrain(ClientHandler sender, CollectBrainRequest req) {
+    public synchronized void handleCollectBrain(ClientHandler sender, CollectBrainRequest req) {
         if (!match.getMatchId().equals(req.matchId)) return;
         if (match.getSideOf(sender) != Match.Side.ZOMBIES) return;
 
@@ -208,7 +208,7 @@ public class ServerGameController {
         }
     }
 
-    public void handlePlaceZombie(ClientHandler sender, PlaceZombieRequest req) {
+    public synchronized void handlePlaceZombie(ClientHandler sender, PlaceZombieRequest req) {
         if (!match.getMatchId().equals(req.matchId)) return;
         if (match.getSideOf(sender) != Match.Side.ZOMBIES) return;
 
@@ -266,5 +266,6 @@ public class ServerGameController {
         GameStateUpdate update = new GameStateUpdate(match.getMatchId(), world);
         match.getPlantsPlayer().send("GAME_STATE", null, update);
         match.getZombiesPlayer().send("GAME_STATE", null, update);
+        System.out.println("done");
     }
 }
