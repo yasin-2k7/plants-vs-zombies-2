@@ -238,4 +238,5 @@ public class ClientGameController {
     public void sendReaction(ReactionCategory category, int index){
         NetworkClient.get().sendMessage("SEND_REACTION", new SendReactionRequest(matchId, category, index));
     }
+
 }
