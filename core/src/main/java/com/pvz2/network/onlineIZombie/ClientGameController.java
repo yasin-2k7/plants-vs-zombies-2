@@ -129,6 +129,7 @@ public class ClientGameController {
     }
 
     public boolean selectAndUnselectShovel() {
+        if (side == Side.ZOMBIES) return false;
         unselectPlant();
         shovelSelected = !shovelSelected;
         return true;
@@ -136,6 +137,7 @@ public class ClientGameController {
 
     public boolean selectAndUnselectPlant(PlantType type, MenuScreen screen) {
         if (world == null) return false;
+        if (side == Side.ZOMBIES) return false;
         if (plantSelected) {
             unselectShovel();
             if (selectedPlantType == type) {
@@ -169,6 +171,7 @@ public class ClientGameController {
 
     public boolean selectAndUnselectZombie(String type, MenuScreen screen) {
         if (world == null) return false;
+        if (side == Side.PLANTS) return false;
         if (zombieSelected) {
             if (selectedZombieType.equals(type)) {
                 unselectZombie();
