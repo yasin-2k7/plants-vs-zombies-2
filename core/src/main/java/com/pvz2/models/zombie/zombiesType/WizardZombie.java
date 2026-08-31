@@ -58,7 +58,7 @@ public class WizardZombie extends Zombie {
         super.update(delta);
 
         if (!isDead() && getCurrentState() != null && !(getCurrentState() instanceof WalkingState)) {
-            GameWorld game = App.getCurrentGame();
+            GameWorld game = App.getCurrentGame(this);
             if (game != null) {
                 int row = LawnGrid.getRowFromY(this.y);
                 Plant target = game.getNearestPlantInRow(row, this.x + 50);
@@ -75,7 +75,7 @@ public class WizardZombie extends Zombie {
     }
 
     private boolean castSpell() {
-        GameWorld game = App.getCurrentGame();
+        GameWorld game = App.getCurrentGame(this);
         if (game == null) return false;
 
         int row = LawnGrid.getRowFromY(this.y);

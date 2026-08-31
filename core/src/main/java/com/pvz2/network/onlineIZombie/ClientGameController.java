@@ -176,21 +176,21 @@ public class ClientGameController {
             }
             unselectZombie();
         }
-        PlantCard selectedCard = null;
-        for (PlantCard card : world.getPlantLists()) {
+        ZombieCard selectedCard = null;
+        for (ZombieCard card : world.getZombieCards()) {
             if (card.getType().equals(type)) { selectedCard = card; break; }
         }
         if (selectedCard == null) return false;
         if (!selectedCard.isReady()) {
-            screen.addToast("Error", "This plant isn't ready!");
+            screen.addToast("Error", "This zombie isn't ready!");
             return false;
         }
-        if (selectedCard.getSunCost() > world.getSun()) {
-            screen.addToast("Error", "You don't have enough suns!");
+        if (selectedCard.getBrainCost() > world.getZombieBrains()) {
+            screen.addToast("Error", "You don't have enough brains!");
             return false;
         }
-        plantSelected = true;
-//        selectedPlantType = type;
+        zombieSelected = true;
+        selectedZombieType = type;
         return true;
     }
 

@@ -26,13 +26,13 @@ public class Sun implements Resettable {
     private boolean isCollected;
     private boolean isExploded;
     private boolean isExpired;
-    private SunProducerComponent producer;
+    private transient SunProducerComponent producer;
     private int size;
-    private GameWorld game;
+    private transient GameWorld game;
     private SunType type;
     private float animTime = 0f;
     private String id = java.util.UUID.randomUUID().toString(); // not final — regenerated on every real reuse
-    private GameWorld currentWorld;
+    private transient GameWorld currentWorld;
 
     public String getId() { return id; }
 

@@ -14,7 +14,7 @@ public class SunProducerComponent implements GameComponent {
     private static final float DEFAULT_ACTION_TIME = 0.3f;
     private static final float DEFAULT_ACTION_TIME_INTERVAL = 0.6f;
 
-    private final ArrayList<Sun> componentSuns = new ArrayList<>();
+    private transient final ArrayList<Sun> componentSuns = new ArrayList<>();
     private int sunSize;
     private int sunNumber;
     private float lastProductionTime;
@@ -154,9 +154,9 @@ public class SunProducerComponent implements GameComponent {
     }
 
     private Sun produceSun(Plant owner) {
-        Sun newSun = App.getCurrentGame().getSunsPool().acquire();
+        Sun newSun = App.getCurrentGame(owner).getSunsPool().acquire();
         newSun.reset(owner.getX(), owner.getY(), sunSize, this);
-        App.getCurrentGame().getActiveSuns().add(newSun);
+        App.getCurrentGame(owner).getActiveSuns().add(newSun);
         return newSun;
     }
     private void setSunSize(int newSize) {

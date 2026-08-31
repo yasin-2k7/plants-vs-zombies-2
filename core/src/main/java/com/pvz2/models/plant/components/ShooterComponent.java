@@ -228,7 +228,7 @@ public class ShooterComponent implements GameComponent {
             burstDelayTimer -= delta;
         } else {
             for (Supplier<MovementStrategy> movementStrategy : movementStrategies) {
-                Projectile p = App.getCurrentGame().getProjectilesPool().acquire();
+                Projectile p = App.getCurrentGame(owner).getProjectilesPool().acquire();
                 if (activePlantFood && projectilesLeftForShoot <= giantCount && hasGiant) {
                     p.reset(owner.getX(), owner.getY() + movementStrategy.get().changeOriginY(),
                         plantFoodStrategy, movementStrategy.get(), strikeStrategy, giantType);
@@ -243,7 +243,7 @@ public class ShooterComponent implements GameComponent {
                 }
                 p.setPlantType(owner.getType());
                 p.setTarget(target);
-                App.getCurrentGame().getActiveProjectiles().add(p);
+                App.getCurrentGame(owner).getActiveProjectiles().add(p);
             }
             projectilesLeftForShoot--;
             burstDelayTimer = burstDelayMax;

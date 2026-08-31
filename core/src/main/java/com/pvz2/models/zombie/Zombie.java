@@ -37,13 +37,13 @@ public abstract class Zombie implements Damageable {
     private int poisonDamage;
     private float iceHealth = 0;
     private boolean glowing = false;
-    private GameWorld currentWorld;
+    private transient GameWorld currentWorld;
 
     private PlantType killerPlantType;
 
     private float spawnTime;
     private boolean hasEatenPlant = false;
-    private GameWorld world;
+    private transient GameWorld world;
 
     public static final long DAMAGE_FLASH_DURATION_MS = 150L;
     private long lastDamageTimestamp = -1L;
@@ -115,7 +115,7 @@ public abstract class Zombie implements Damageable {
             x -= App.getCellWidth() / 2;
         }
         if (currentState != null) {
-            currentState.handleAction(this);
+            currentState.handleAction(this, delta);
         } else {
             currentState = new WalkingState();
         }

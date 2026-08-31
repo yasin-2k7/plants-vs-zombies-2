@@ -24,7 +24,7 @@ public class OnlineIZombieLevel extends IZombieLevel {
     private int zombieBrains = 0;
     private List<BrainCurrency> activeBrains = new ArrayList<>();
     private List<ZombieCard> zombieCards = new ArrayList<>();
-    private GenericObjectPool<BrainCurrency> brainsPool = new GenericObjectPool<>(BrainCurrency::new);
+    private transient GenericObjectPool<BrainCurrency> brainsPool = new GenericObjectPool<>(BrainCurrency::new);
 
     public OnlineIZombieLevel(LevelSetup levelSetup,
                                ArrayList<LoseCondition> loseConditions,
@@ -68,6 +68,13 @@ public class OnlineIZombieLevel extends IZombieLevel {
             }
         }
         removeIfDead();
+        activeBrains.removeIf(brain -> {
+            if (brain.isCollected()) {
+                brainsPool.release(brain);
+                return true;
+            }
+            return false;
+        });
         for (Cell[] row : grid) {
             for (Cell cell : row) {
                 if (cell.hasObstacle()) {

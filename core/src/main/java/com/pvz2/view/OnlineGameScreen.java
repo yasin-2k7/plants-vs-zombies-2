@@ -272,9 +272,6 @@ public class OnlineGameScreen extends MenuScreen{
     }
 
     private void renderDebugGrids() {
-        lawnGridDebugRenderer.drawLine(Color.BLUE,
-            App.getCellCenterX(4) - App.getCellWidth() / 2,
-            worldCamera);
         lawnGridDebugRenderer.drawLine(Color.RED,
             App.getCellCenterX(5) - App.getCellWidth() / 2,
             worldCamera);
@@ -593,8 +590,10 @@ public class OnlineGameScreen extends MenuScreen{
             }
         }
 
-        plantGraphics.entrySet().removeIf(entry ->
-            !currentIds.contains(entry.getKey()) && entry.getValue().isDead());
+        plantGraphics.entrySet().removeIf(entry -> {
+            if (currentIds.contains(entry.getKey())) return false;
+            return entry.getValue().isReadyToRemoveAfterDeath();
+        });
     }
 
     private void syncZombieGraphics() {

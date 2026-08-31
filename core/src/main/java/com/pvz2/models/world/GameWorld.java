@@ -61,8 +61,8 @@ public abstract class GameWorld {
     private List<PlantCard> conveyorBelt = new ArrayList<>();
     protected List<PlantCard> plantLists;
     private boolean isConveyorMode;
-    private GenericObjectPool<Sun> sunsPool = new GenericObjectPool<>(Sun::new);
-    private GenericObjectPool<Projectile> projectilesPool = new GenericObjectPool<>(Projectile::new);
+    private transient GenericObjectPool<Sun> sunsPool = new GenericObjectPool<>(Sun::new);
+    private transient GenericObjectPool<Projectile> projectilesPool = new GenericObjectPool<>(Projectile::new);
     private boolean sandstormActive = false;
     private MupointManager mupointManager;
     private boolean isPlantSelected = false;

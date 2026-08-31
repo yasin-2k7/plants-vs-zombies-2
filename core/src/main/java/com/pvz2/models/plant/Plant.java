@@ -44,7 +44,7 @@ public class Plant implements Damageable {
     private boolean isCombining = false;
     private float combineTargetX;
     private float combineTargetY;
-    private GameWorld currentWorld;
+    private transient GameWorld currentWorld;
 
     private final String id = java.util.UUID.randomUUID().toString();
 
@@ -287,6 +287,7 @@ public class Plant implements Damageable {
     }
 
     public <T extends GameComponent> T getComponent(Class<T> componentClass) {
+        if (components == null) return null;
         for (GameComponent component : components) {
             if (componentClass.isInstance(component)) {
                 return componentClass.cast(component);

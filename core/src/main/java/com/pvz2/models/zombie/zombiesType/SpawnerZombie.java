@@ -155,7 +155,7 @@ public class SpawnerZombie extends Zombie {
     }
 
     private void checkForSmashTarget() {
-        GameWorld game = App.getCurrentGame();
+        GameWorld game = App.getCurrentGame(this);
         if (game == null) return;
 
         int row = LawnGrid.getRowFromY(this.y);
@@ -244,7 +244,7 @@ public class SpawnerZombie extends Zombie {
     }
 
     private void throwImp() {
-        GameWorld game = App.getCurrentGame();
+        GameWorld game = App.getCurrentGame(this);
         if (game == null) return;
 
         ImpZombie imp = (ImpZombie) new ZombieFactory().createZombie("ZombieImp");
@@ -257,7 +257,7 @@ public class SpawnerZombie extends Zombie {
     }
 
     private boolean knightNearbyZombie() {
-        GameWorld game = App.getCurrentGame();
+        GameWorld game = App.getCurrentGame(this);
         if (game == null) return false;
 
         for (Zombie z : game.getActiveZombies()) {

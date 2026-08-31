@@ -359,6 +359,13 @@ public class PlantGraphic {
         this.animTime = 0f;
     }
 
+    public boolean isReadyToRemoveAfterDeath() {
+        if (plant.isBurnt()) {
+            return burnAnimTime >= 1.5f; // local timer, unaffected by a frozen model — safe as-is
+        }
+        return true; // no other death/despawn animation exists for plants — safe to remove the instant it's gone
+    }
+
     public Plant getPlant() { return plant; }
     public int getRow() { return (int) plant.getY(); }
     public int getCol() { return (int) plant.getX(); }

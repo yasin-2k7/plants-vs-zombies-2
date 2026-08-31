@@ -14,7 +14,7 @@ public class RandomTargetPlantFood implements PlantFoodBehavior {
     private final int targetCount;
     private final float intervalBetweenShots;
 
-    private final List<Zombie> pendingTargets = new ArrayList<>();
+    private final transient List<Zombie> pendingTargets = new ArrayList<>();
     private float timer = 0f;
     private boolean started = false;
 

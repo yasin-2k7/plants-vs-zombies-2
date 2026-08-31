@@ -25,8 +25,7 @@ public class TacklingState implements ZombieState {
     }
 
     @Override
-    public void handleAction(Zombie zombie) {
-        float delta = Gdx.graphics.getDeltaTime();
+    public void handleAction(Zombie zombie, float delta) {
         phaseTimer -= delta;
 
         if (phase == Phase.TACKLE) {

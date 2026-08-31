@@ -135,7 +135,7 @@ public class ServerGameController {
         if (selectedCard == null || !selectedCard.isReady()) return;
         if (selectedCard.getSunCost() > world.getSun()) return;
         int col = LawnGrid.getColFromX(req.x);
-        if (col > 3) {
+        if (col > 4) {
             sendResult(sender, false, "you cant plant here");
             return;
         }
@@ -199,7 +199,7 @@ public class ServerGameController {
         if (match.getSideOf(sender) != Match.Side.ZOMBIES) return;
 
         for (BrainCurrency brain : world.getActiveBrains()) {
-            if (!brain.isCollected() && brain.contains(req.x, req.y, 40f)) {
+            if (!brain.isCollected() && brain.contains(req.x, req.y, 100f)) {
                 brain.collect();
                 world.addBrainsToPlayer(50);
                 broadcastState();
@@ -234,7 +234,8 @@ public class ServerGameController {
             return;
         }
 
-        int cost = world.getZombieCost(zombie);
+        OnlineIZombieSetup setup = (OnlineIZombieSetup) world.getLevelSetup();
+        int cost = setup.getBrainCost(zombie.getSpecificName());
         if (world.getZombieBrains() < cost) {
             sendResult(sender, false, "you dont have enough brains");
             return;

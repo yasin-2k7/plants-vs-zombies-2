@@ -4,13 +4,15 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
-import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
+import com.badlogic.gdx.utils.Scaling;
 import com.pvz2.Main;
+import com.pvz2.models.core.App;
 import com.pvz2.models.miniGame.IZombie.OnlineIZombieLevel;
 import com.pvz2.models.plant.card.PlantCard;
 import com.pvz2.models.world.GameState;
@@ -24,6 +26,7 @@ public class OnlineGameHud extends Group {
 
     private final Table topBar;
     private final GameHUD.SunCounter sunCounter;
+    private final BrainCounter brainCounter;
     private final ImageButton shovelBtn;
     private final SelectedPlantsList selectedPlantsList;
     private final SelectedZombiesList selectedZombiesList;
@@ -33,6 +36,7 @@ public class OnlineGameHud extends Group {
         this.screen = screen;
 
         sunCounter = new GameHUD.SunCounter(game, skin);
+        brainCounter = new BrainCounter(game, skin);
 
         selectedPlantsList = new SelectedPlantsList(1, 1, false, 150, 100, createSelectingMethod(), game);
         selectedPlantsList.setNoBoost(true);
@@ -56,9 +60,39 @@ public class OnlineGameHud extends Group {
         topBar.add(leftSide).expandX().left();
 
         topBar.add().expandX();
-        topBar.right().add(selectedZombiesList).top().right().pad(MARGIN);
+        topBar.right().add(selectedZombiesList).top().right();
+        topBar.add(brainCounter).top().right().pad(MARGIN);
 
+        topBar.pack();
         addActor(topBar);
+    }
+
+    public static class BrainCounter extends Table {
+        private final Label brainLabel;
+
+        BrainCounter(Main game, Skin skin) {
+            TextureRegion bgRegion = game.textureBank.region("IMAGE_UI_HUD_INGAME_BACKGROUND_3SLICE");
+            if (bgRegion != null) {
+                setBackground(new TextureRegionDrawable(bgRegion));
+            } else {
+                setBackground(UiUtils.darkChipBackground());
+            }
+
+            pad(5f, 10f, 5f, 25f);
+
+            Image sunIcon = new Image(game.textureBank.region("IMAGE_UI_GAMEOVER_FAIL_SCREEN_BRAIN_ONLY"));
+            sunIcon.setScaling(Scaling.fit);
+
+            brainLabel = new Label("0", skin, "big_outline");
+
+            add(sunIcon).size(60f).padRight(8f);
+            add(brainLabel).left();
+        }
+
+        void update(OnlineIZombieLevel world) {
+            if (world == null) return;
+            brainLabel.setText(String.valueOf(world.getZombieBrains()));
+        }
     }
 
     private Consumer<ZombieCardView> createZombieClickMethod() {
@@ -66,14 +100,16 @@ public class OnlineGameHud extends Group {
             @Override
             public void accept(ZombieCardView card) {
                 boolean isSelected = screen.controller.selectAndUnselectZombie(card.getZombieName(), screen);
-                for (ZombieCardView cardView : selectedZombiesList.getZombieCardViewList()){
-                    cardView.setSelectedState(false);
-                }
-                if (isSelected){
-                    SFXManager.getInstance().playSound(GameSFX.SEED_LIFT);
-                    card.setSelectedState(true);
-                    screen.getZombiePlacementManager().selectZombie(card.getZombieName());
-                }
+                Gdx.app.postRunnable(() -> {
+                    for (ZombieCardView cardView : selectedZombiesList.getZombieCardViewList()){
+                        cardView.setSelectedState(false);
+                    }
+                    if (isSelected){
+                        SFXManager.getInstance().playSound(GameSFX.SEED_LIFT);
+                        card.setSelectedState(true);
+                        screen.getZombiePlacementManager().selectZombie(card.getZombieName());
+                    }
+                });
             }
         };
     }
@@ -133,6 +169,7 @@ public class OnlineGameHud extends Group {
         if (gameWorld.getState() != GameState.PLAYING) return;
         OnlineIZombieLevel world = (OnlineIZombieLevel) gameWorld;
         sunCounter.update(world);
+        brainCounter.update(world);
         selectedPlantsList.update();
         selectedZombiesList.updateCards();
 

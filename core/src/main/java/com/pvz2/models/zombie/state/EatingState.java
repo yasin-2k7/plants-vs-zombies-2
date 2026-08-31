@@ -23,9 +23,8 @@ public class EatingState implements ZombieState {
     }
 
     @Override
-    public void handleAction(Zombie zombie) {
+    public void handleAction(Zombie zombie, float delta) {
         if (targetPlant != null && !targetPlant.isDead() && Math.abs(targetPlant.getY()-zombie.getY()) < 5) {
-            float delta = Gdx.graphics.getDeltaTime();
             biteTimer -= delta;
             if (biteTimer > 0f) return;
             biteTimer = BITE_INTERVAL;

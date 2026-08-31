@@ -25,7 +25,7 @@ public class StraightVisionStrategy implements VisionStrategy {
     }
 
     private Damageable findAny(Plant owner) {
-        GameWorld world = App.getCurrentGame();
+        GameWorld world = App.getCurrentGame(owner);
 
         for (Zombie zombie : world.getActiveZombies()) {
             if (inRange(owner, zombie.getX(), zombie.getY())) return zombie;
@@ -45,7 +45,7 @@ public class StraightVisionStrategy implements VisionStrategy {
 
 
     private Damageable findClosest(Plant owner) {
-        GameWorld world = App.getCurrentGame();
+        GameWorld world = App.getCurrentGame(owner);
         float minX = Float.MAX_VALUE;
         Damageable closest = null;
 

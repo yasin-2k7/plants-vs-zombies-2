@@ -36,7 +36,7 @@ public class Projectile implements Resettable {
     private PlantType plantType;
     private List<Damageable> lastTargets = new ArrayList<>();
     private String id = java.util.UUID.randomUUID().toString();
-    private GameWorld currentWorld;
+    private transient GameWorld currentWorld;
 
     void checkProjectilesTowardPlants(double oldX, double oldY) {
         Damageable plantTarget = null;
