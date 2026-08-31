@@ -12,6 +12,7 @@ import com.pvz2.models.miniGame.beghouled.BeghouledWinCondition;
 import com.pvz2.models.miniGame.beghouled.PlantUpgrade;
 import com.pvz2.models.miniGame.bowling.BowlingSetup;
 import com.pvz2.models.miniGame.vaseBreaker.VaseBreakerLevel;
+import com.pvz2.models.miniGame.vaseBreaker.VaseBreakerLoseCondition;
 import com.pvz2.models.miniGame.vaseBreaker.VaseBreakerSetup;
 import com.pvz2.models.miniGame.vaseBreaker.VaseBreakerWinCondition;
 import com.pvz2.models.world.GameWorld;
@@ -79,7 +80,7 @@ public class MiniGameFactory {
         List<PlantType> possiblePlants = List.of(PlantType.PEASHOOTER, PlantType.WALL_NUT);
 
         LevelSetup levelSetup = new VaseBreakerSetup(rows, cols, normalVaseZombies, giantVaseZombies, possiblePlants);
-        LoseCondition loseCondition = new NormalLose();
+        LoseCondition loseCondition = new VaseBreakerLoseCondition();
         WinCondition winCondition = new VaseBreakerWinCondition();
         winCondition.setCurrentLevel(MiniGameLevels.VASE_BREAKER_1);
 
