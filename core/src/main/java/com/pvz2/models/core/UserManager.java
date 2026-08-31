@@ -137,6 +137,9 @@ public class UserManager {
             ChangePasswordRequest req = new ChangePasswordRequest(token, oldPassword, newPassword);
             NetworkMessage reply = NetworkClient.get().sendRequest("CHANGE_PASSWORD", req, 5000);
             AckResponse resp = NetworkClient.get().parsePayload(reply, AckResponse.class);
+            if (resp.success && currentUser != null) {
+                currentUser.setHashPassword(PasswordHasher.hashSHA256(newPassword));
+            }
             return resp.message;
         } catch (InterruptedException e) {
             return "Error: could not reach server.";

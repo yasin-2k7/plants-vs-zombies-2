@@ -5,11 +5,14 @@ import com.google.gson.FieldAttributes;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.pvz2.controller.GameMenuController;
+import com.pvz2.network.NetworkGson;
 
 import java.io.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class UserDataManager {
     private static final String USER_HOME = System.getProperty("user.home");
@@ -17,6 +20,41 @@ public class UserDataManager {
     private static final String BASE_DIR = USER_HOME + File.separator + ".pvz2_server" + File.separator;
     private static final String USERS_DIR = BASE_DIR + "users" + File.separator;
     private static final String SESSION_TOKEN_FILE = BASE_DIR + "session_token.txt";
+    private static final Map<String, Object> fileLocks = new ConcurrentHashMap<>();
+
+
+    private static Object lockFor(String username) {
+        return fileLocks.computeIfAbsent(username, k -> new Object());
+    }
+
+    public static boolean saveUser(User user) {
+        if (user == null || user.getUsername() == null) return false;
+        synchronized (lockFor(user.getUsername())) {
+            File userFile = new File(USERS_DIR + user.getUsername() + ".json");
+            try (FileWriter writer = new FileWriter(userFile)) {
+                NetworkGson.INSTANCE.toJson(user, writer);
+                return true;
+            } catch (IOException e) {
+                GameMenuController.updateState("save error: " + e.getMessage());
+                return false;
+            }
+        }
+    }
+
+    public static User loadUser(String username) {
+        synchronized (lockFor(username)) {
+            File userFile = new File(USERS_DIR + username + ".json");
+            if (!userFile.exists()) return null;
+            try (FileReader reader = new FileReader(userFile)) {
+                User user = GSON.fromJson(reader, User.class);
+                if (user != null) user.afterLoad();
+                return user;
+            } catch (IOException e) {
+                GameMenuController.updateState("read error: " + e.getMessage());
+                return null;
+            }
+        }
+    }
 
     private static final Gson GSON = new GsonBuilder()
         .registerTypeAdapter(LocalDate.class, new LocalDateAdapter())
@@ -63,39 +101,6 @@ public class UserDataManager {
     public static void clearSessionToken() {
         File file = new File(SESSION_TOKEN_FILE);
         if (file.exists()) file.delete();
-    }
-
-    public static boolean saveUser(User user) {
-        if (user == null || user.getUsername() == null) return false;
-
-        File userFile = new File(USERS_DIR + user.getUsername() + ".json");
-
-        try (FileWriter writer = new FileWriter(userFile)) {
-            GSON.toJson(user, writer);
-            return true;
-        } catch (IOException e) {
-            GameMenuController.updateState("save error: " + e.getMessage());
-            return false;
-        }
-    }
-
-    public static User loadUser(String username) {
-        File userFile = new File(USERS_DIR + username + ".json");
-
-        if (!userFile.exists()) {
-            return null;
-        }
-
-        try (FileReader reader = new FileReader(userFile)) {
-            User user = GSON.fromJson(reader, User.class);
-            if (user != null) {
-                user.afterLoad();
-            }
-            return user;
-        } catch (IOException e) {
-            GameMenuController.updateState("read error: " + e.getMessage());
-            return null;
-        }
     }
 
     public static List<User> loadAllUsers() {
