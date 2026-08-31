@@ -1,5 +1,6 @@
 package com.pvz2.network.onlineIZombie;
 
+import com.badlogic.gdx.Gdx;
 import com.pvz2.models.enums.PlantType;
 import com.pvz2.models.miniGame.IZombie.OnlineIZombieLevel;
 import com.pvz2.models.plant.card.PlantCard;
@@ -44,6 +45,10 @@ public class ClientGameController {
     private BiConsumer<Boolean, String> actionResultListener;
     private BiConsumer<Side, String> matchOverListener;
     private Consumer<ReactionReceived> reactionListener;
+    private Runnable onWorldReadyListener;
+    private boolean worldReadyFired = false;
+
+
 
     public ClientGameController(MatchFound info) {
         this.matchId = info.matchId;
@@ -79,24 +84,38 @@ public class ClientGameController {
     private void onGameStatePush(NetworkMessage msg) {
         GameStateUpdate update = NetworkClient.get().parsePayload(msg, GameStateUpdate.class);
         if (!matchId.equals(update.matchId)) return; // stale push from a different/older match
-        world = (OnlineIZombieLevel) update.world;
+        boolean wasNull = (world == null);
+        world = update.world;
+        if (wasNull && onWorldReadyListener != null && !worldReadyFired) {
+            worldReadyFired = true;
+            onWorldReadyListener.run();
+        }
+
     }
 
     private void onActionResult(NetworkMessage msg) {
         ActionResult result = NetworkClient.get().parsePayload(msg, ActionResult.class);
-        if (actionResultListener != null) actionResultListener.accept(result.success, result.message);
+        Gdx.app.postRunnable(() -> {
+            if (actionResultListener != null) actionResultListener.accept(result.success, result.message);
+        });
     }
 
     private void onMatchOver(NetworkMessage msg) {
         MatchOver update = NetworkClient.get().parsePayload(msg, MatchOver.class);
         if (!matchId.equals(update.matchId)) return;
-        if (matchOverListener != null) matchOverListener.accept(Side.valueOf(update.winnerSide), update.message);
+        Gdx.app.postRunnable(() -> {
+            if (matchOverListener != null) matchOverListener.accept(Side.valueOf(update.winnerSide), update.message);
+        });
+
     }
 
     private void onReaction(NetworkMessage msg) {
         ReactionReceived received = NetworkClient.get().parsePayload(msg, ReactionReceived.class);
         if (!matchId.equals(received.matchId)) return;
-        if (reactionListener != null) reactionListener.accept(received);
+        Gdx.app.postRunnable(() -> {
+            if (reactionListener != null) reactionListener.accept(received);
+        });
+
     }
 
     // ---------------- local-only UI state: plants side ----------------
@@ -110,6 +129,7 @@ public class ClientGameController {
     }
 
     public boolean selectAndUnselectShovel() {
+        if (side == Side.ZOMBIES) return false;
         unselectPlant();
         shovelSelected = !shovelSelected;
         return true;
@@ -117,6 +137,7 @@ public class ClientGameController {
 
     public boolean selectAndUnselectPlant(PlantType type, MenuScreen screen) {
         if (world == null) return false;
+        if (side == Side.ZOMBIES) return false;
         if (plantSelected) {
             unselectShovel();
             if (selectedPlantType == type) {
@@ -150,6 +171,7 @@ public class ClientGameController {
 
     public boolean selectAndUnselectZombie(String type, MenuScreen screen) {
         if (world == null) return false;
+        if (side == Side.PLANTS) return false;
         if (zombieSelected) {
             if (selectedZombieType.equals(type)) {
                 unselectZombie();
@@ -157,27 +179,35 @@ public class ClientGameController {
             }
             unselectZombie();
         }
-        PlantCard selectedCard = null;
-        for (PlantCard card : world.getPlantLists()) {
+        ZombieCard selectedCard = null;
+        for (ZombieCard card : world.getZombieCards()) {
             if (card.getType().equals(type)) { selectedCard = card; break; }
         }
         if (selectedCard == null) return false;
         if (!selectedCard.isReady()) {
-            screen.addToast("Error", "This plant isn't ready!");
+            screen.addToast("Error", "This zombie isn't ready!");
             return false;
         }
-        if (selectedCard.getSunCost() > world.getSun()) {
-            screen.addToast("Error", "You don't have enough suns!");
+        if (selectedCard.getBrainCost() > world.getZombieBrains()) {
+            screen.addToast("Error", "You don't have enough brains!");
             return false;
         }
-        plantSelected = true;
-//        selectedPlantType = type;
+        zombieSelected = true;
+        selectedZombieType = type;
         return true;
     }
 
     public void unselectZombie() {
         zombieSelected = false;
         selectedZombieType = null;
+    }
+
+    public void setOnWorldReadyListener(Runnable listener) {
+        this.onWorldReadyListener = listener;
+        if (world != null && !worldReadyFired) {
+            worldReadyFired = true;
+            listener.run(); // covers the race where the first snapshot already arrived before this was registered
+        }
     }
 
     // ---------------- network gameplay actions ----------------
@@ -211,4 +241,5 @@ public class ClientGameController {
     public void sendReaction(ReactionCategory category, int index){
         NetworkClient.get().sendMessage("SEND_REACTION", new SendReactionRequest(matchId, category, index));
     }
+
 }

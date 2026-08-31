@@ -1,9 +1,11 @@
 package com.pvz2.network;
 
 import com.google.gson.Gson;
+import com.pvz2.models.core.GameInitializer;
 import com.pvz2.models.core.PasswordHasher;
 import com.pvz2.models.core.User;
 import com.pvz2.models.core.UserDataManager;
+import com.pvz2.models.zombie.ZombieRegistry;
 import com.pvz2.network.messages.*;
 import com.pvz2.network.onlineIZombie.Match;
 import com.pvz2.network.onlineIZombie.MatchManager;
@@ -27,7 +29,7 @@ public class GameServer {
     // Fine for a course project; a persistent session store would be the real-world fix.
     private final Map<String, String> sessionTokens = new ConcurrentHashMap<>(); // token -> username
 
-    private final MatchManager matchManager = new MatchManager();
+    private final MatchManager matchManager = new MatchManager(this::getOrCreateGameController);
     private final Map<String, ServerGameController> gameControllers = new ConcurrentHashMap<>();
     private final Map<String, Boolean> recoveryVerified = new ConcurrentHashMap<>();
 
@@ -38,6 +40,8 @@ public class GameServer {
     public void start() {
         try (ServerSocket serverSocket = new ServerSocket(PORT)) {
             System.out.println("Server listening on port " + PORT);
+            ZombieRegistry.init();
+            GameInitializer.loadPlantUpgrades();
             while (true) {
                 Socket clientSocket = serverSocket.accept();
                 System.out.println("New connection: " + clientSocket.getRemoteSocketAddress());
@@ -424,10 +428,14 @@ public class GameServer {
     private ServerGameController gameControllerFor(ClientHandler sender, String matchId) {
         Match match = matchManager.getMatchOf(sender);
         if (match == null || !match.getMatchId().equals(matchId)) return null; // stale/forged matchId — ignore
-        return gameControllers.computeIfAbsent(matchId, id -> {
+        return getOrCreateGameController(match);
+    }
+
+    private ServerGameController getOrCreateGameController(Match match) {
+        return gameControllers.computeIfAbsent(match.getMatchId(), id -> {
             ServerGameController controller = new ServerGameController(match, () -> {
-                gameControllers.remove(matchId);
-                matchManager.endMatch(matchId);
+                gameControllers.remove(id);
+                matchManager.endMatch(id);
             });
             controller.start();
             return controller;

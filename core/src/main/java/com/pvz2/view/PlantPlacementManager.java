@@ -36,7 +36,7 @@ public class PlantPlacementManager {
     }
 
 
-    public boolean tryPlace(int row, int col) {
+    public boolean tryPlace() {
         if (!isPlantSelected()) return false;
 
         boolean success = true;

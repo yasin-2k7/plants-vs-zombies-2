@@ -2,8 +2,13 @@ package com.pvz2.models.core;
 
 import com.pvz2.Main;
 import com.pvz2.models.greenhouse.GreenHouse;
+import com.pvz2.models.plant.Plant;
 import com.pvz2.models.plant.factory.PlantFactory;
+import com.pvz2.models.projectile.Projectile;
 import com.pvz2.models.world.GameWorld;
+import com.pvz2.models.world.Sun;
+import com.pvz2.models.zombie.Zombie;
+import com.pvz2.view.OnlineGameScreen;
 
 public class App {
     private static final PlantFactory FACTORY = new PlantFactory();
@@ -14,8 +19,10 @@ public class App {
     private static User currentUser;
     private static GameWorld currentGame;
     private static Main gameApp;
+    private static User defaultUser = new User();
 
     public static User getCurrentUser() {
+        if (currentUser == null) return defaultUser;
         return currentUser;
     }
 
@@ -23,7 +30,30 @@ public class App {
         App.currentUser = currentUser;
     }
 
+    public static int getSpeed(){
+        if (currentUser != null) return currentUser.getGameSpeed();
+        return 1;
+    }
+
     public static GameWorld getCurrentGame() {
+        return currentGame;
+    }
+
+    public static GameWorld getCurrentGame(Object entity) {
+        if (currentGame == null){
+            if (entity instanceof Plant plant){
+                return plant.getCurrentWorld();
+            }
+            if (entity instanceof Projectile projectile){
+                return projectile.getCurrentWorld();
+            }
+            if (entity instanceof Zombie zombie){
+                return zombie.getCurrentWorld();
+            }
+            if (entity instanceof Sun sun){
+                return sun.getCurrentWorld();
+            }
+        }
         return currentGame;
     }
 

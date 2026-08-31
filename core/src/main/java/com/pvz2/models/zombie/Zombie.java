@@ -37,18 +37,23 @@ public abstract class Zombie implements Damageable {
     private int poisonDamage;
     private float iceHealth = 0;
     private boolean glowing = false;
+    private transient GameWorld currentWorld;
 
     private PlantType killerPlantType;
 
     private float spawnTime;
     private boolean hasEatenPlant = false;
-    private GameWorld world;
+    private transient GameWorld world;
 
     public static final long DAMAGE_FLASH_DURATION_MS = 150L;
     private long lastDamageTimestamp = -1L;
 
     private long shakeRequestTimestamp = -1L;
     private static final long SHAKE_REQUEST_TTL_MS = 300L;
+
+    private final String id = java.util.UUID.randomUUID().toString();
+
+    public String getId() { return id; }
 
 
     public Zombie(Zombies name, int health, double speed, int damage) {
@@ -72,6 +77,11 @@ public abstract class Zombie implements Damageable {
         this.damage = damage / 10;
         this.currentState = new WalkingState();
         this.originalSpeed = this.speed;
+    }
+
+    public void update(float delta, GameWorld world){
+        if (currentWorld == null) currentWorld = world;
+        update(delta);
     }
 
     public void update(float delta) {
@@ -99,13 +109,13 @@ public abstract class Zombie implements Damageable {
             return;
         }
 
-        Cell currentCell = Cell.findZombieCell(App.getCurrentGame().getGrid(), this);
+        Cell currentCell = Cell.findZombieCell(App.getCurrentGame(this).getGrid(), this);
         if (currentCell != null && currentCell.getSlippingDir() != 0) {
             y += App.getCellHeight() * currentCell.getSlippingDir();
             x -= App.getCellWidth() / 2;
         }
         if (currentState != null) {
-            currentState.handleAction(this);
+            currentState.handleAction(this, delta);
         } else {
             currentState = new WalkingState();
         }
@@ -393,5 +403,9 @@ public abstract class Zombie implements Damageable {
         boolean valid = (System.currentTimeMillis() - shakeRequestTimestamp) < SHAKE_REQUEST_TTL_MS;
         shakeRequestTimestamp = -1L;
         return valid;
+    }
+
+    public GameWorld getCurrentWorld() {
+        return currentWorld;
     }
 }

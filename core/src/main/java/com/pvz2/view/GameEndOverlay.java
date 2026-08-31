@@ -15,7 +15,6 @@ import com.badlogic.gdx.utils.Align;
 import com.pvz2.Main;
 import com.pvz2.models.core.App;
 import com.pvz2.models.core.User;
-import com.pvz2.models.core.UserDataManager;
 import com.pvz2.models.core.UserManager;
 import com.pvz2.models.miniGame.MiniGameWorld;
 import com.pvz2.models.world.GameState;
@@ -28,22 +27,39 @@ public class GameEndOverlay extends Table {
 
     private final Texture backgroundTexture;
 
-    public GameEndOverlay(Main game, Skin skin, GameWorld world, Runnable onRestart) {
+    public GameEndOverlay(Skin skin, boolean won, String statusMessage, Runnable onRestart, Runnable onExit) {
         setFillParent(true);
 
         this.backgroundTexture = createBackgroundTexture();
         setBackground(new TextureRegionDrawable(new TextureRegion(this.backgroundTexture)));
 
-        boolean won = world.getState() == GameState.WON;
-
         BorderedTable frame = new BorderedTable();
         frame.pad(40, 30, 30, 30);
 
         frame.add(createTitleLabel(skin, won)).padBottom(20).row();
-        frame.add(createStatusLabel(skin, world, won)).width(480f).padBottom(20).row();
-        frame.add(createButtonsTable(game, skin, world, onRestart));
+        frame.add(createStatusLabel(skin, statusMessage)).width(480f).padBottom(20).row();
+        frame.add(createButtonsTable(onRestart, onExit));
 
         add(frame);
+    }
+
+    public GameEndOverlay(Main game, Skin skin, GameWorld world, Runnable onRestart) {
+        this(skin,
+            world.getState() == GameState.WON,
+            buildStatusMessage(world, world.getState() == GameState.WON),
+            onRestart,
+            buildOfflineExitAction(game, world));
+    }
+
+    private static Runnable buildOfflineExitAction(Main game, GameWorld world) {
+        return () -> {
+            App.setCurrentGame(null);
+            if (world instanceof MiniGameWorld) {
+                game.setScreen(new MainMenuScreen(game));
+            } else {
+                game.setScreen(new LevelMenuScreen(game));
+            }
+        };
     }
 
     private Texture createBackgroundTexture() {
@@ -62,27 +78,18 @@ public class GameEndOverlay extends Table {
         return title;
     }
 
-    private Label createStatusLabel(Skin skin, GameWorld world, boolean won) {
-        Label status = new Label(buildStatusMessage(world, won), skin, "medium");
+    private Label createStatusLabel(Skin skin, String message) {
+        Label status = new Label(message, skin, "medium");
         status.setColor(Color.BLACK);
         status.setWrap(true);
         status.setAlignment(Align.center);
         return status;
     }
 
-    private Table createButtonsTable(Main game, Skin skin, GameWorld world, Runnable onRestart) {
-        TextButton restartBtn = new TextButton("RESTART", skin, "brown");
-        restartBtn.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                remove();
-                if (onRestart != null) {
-                    onRestart.run();
-                }
-            }
-        });
+    private Table createButtonsTable(Runnable onRestart, Runnable onExit) {
+        Table buttonsTable = new Table();
 
-        TextButton exitBtn = new TextButton("EXIT", skin, "green");
+        TextButton exitBtn = new TextButton("EXIT", App.getGameApp().skin, "green");
         exitBtn.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -92,23 +99,27 @@ public class GameEndOverlay extends Table {
                     UserManager.syncCurrentUser();
                 }
                 remove();
-                App.setCurrentGame(null);
-                if (world instanceof MiniGameWorld) {
-                    game.setScreen(new MainMenuScreen(game));
-                } else {
-                    game.setScreen(new LevelMenuScreen(game));
-                }
+                if (onExit != null) onExit.run();
             }
         });
-
-        Table buttonsTable = new Table();
         buttonsTable.add(exitBtn).pad(10).width(180);
-        buttonsTable.add(restartBtn).pad(10).width(180);
+
+        if (onRestart != null) {
+            TextButton restartBtn = new TextButton("RESTART", App.getGameApp().skin, "brown");
+            restartBtn.addListener(new ClickListener() {
+                @Override
+                public void clicked(InputEvent event, float x, float y) {
+                    remove();
+                    onRestart.run();
+                }
+            });
+            buttonsTable.add(restartBtn).pad(10).width(180);
+        }
 
         return buttonsTable;
     }
 
-    private String buildStatusMessage(GameWorld world, boolean won) {
+    private static String buildStatusMessage(GameWorld world, boolean won) {
         if (won) {
             if (world instanceof IZombieLevel) {
                 return "Delicious! You ate all the brains and won the level!";

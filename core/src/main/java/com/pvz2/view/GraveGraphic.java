@@ -124,7 +124,7 @@ public class GraveGraphic {
                 batch,
                 pamPath,
                 animState,
-                animTime*App.getCurrentUser().getGameSpeed(),
+                animTime*App.getSpeed(),
                 grave.getX(), grave.getY(), 1.0f, 1.0f, true
             );
         } catch (Exception e) {

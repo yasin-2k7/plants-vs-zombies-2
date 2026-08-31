@@ -24,7 +24,7 @@ public class SelectedZombiesList extends Table {
         zombieCardViewList.clear();
 
         for (ZombieCard card : zombieCards) {
-            ZombieCardView view = new ZombieCardView(card.isReady(), false, card.getBrainCost(), card.getType());
+            ZombieCardView view = new ZombieCardView(card.isReady(), card.getBrainCost(), card.getType());
             view.setCard(card);
             view.setClickMethod(cardClickMethod);
             zombieCardViewList.add(view);
@@ -35,6 +35,12 @@ public class SelectedZombiesList extends Table {
     public void updateCards() {
         for (ZombieCardView view : zombieCardViewList) {
             view.update();
+        }
+    }
+
+    public void unselectZombies(){
+        for (ZombieCardView zombieCardView : zombieCardViewList){
+            zombieCardView.setSelectedState(false);
         }
     }
 

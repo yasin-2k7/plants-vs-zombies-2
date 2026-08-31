@@ -3,10 +3,7 @@ package com.pvz2.view;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
-import com.badlogic.gdx.scenes.scene2d.ui.Image;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.Stack;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.pvz2.models.core.App;
 import com.pvz2.network.onlineIZombie.ZombieCard;
@@ -14,7 +11,7 @@ import com.pvz2.network.onlineIZombie.ZombieCard;
 import java.util.function.Consumer;
 
 public class ZombieCardView extends Stack {
-    private boolean active, lock;
+    private boolean active;
     private int brainCost;
     private String zombieName;
     private Consumer<ZombieCardView> onClick;
@@ -22,9 +19,8 @@ public class ZombieCardView extends Stack {
     private ZombieCard card;
     private Image selectedImg;
 
-    public ZombieCardView(boolean active, boolean lock, int brainCost, String zombieName) {
+    public ZombieCardView(boolean active, int brainCost, String zombieName) {
         this.active = active;
-        this.lock = lock;
         this.brainCost = brainCost;
         this.zombieName = zombieName;
         this.overlay = new CooldownOverlay(PlantCardView.createSolidColor(Color.WHITE));
@@ -39,8 +35,13 @@ public class ZombieCardView extends Stack {
     }
 
     public void build() {
-        add(new Image(App.getGameApp().textureBank.region(
-            ZombiesTable.getZombiesPicAddress().get(zombieName))));
+        Image back = new Image(App.getGameApp().textureBank.region("IMAGE_UI_ALMANAC_PACKETS_ZOMBIES_READY"));
+        add(back);
+        Table imageWrapper = new Table();
+        Image image = new Image(App.getGameApp().textureBank.region(
+            ZombiesTable.getZombiesPicAddress().get(App.getArmoredZombieName(zombieName))));
+        imageWrapper.add(image).bottom().pad(5);
+        add(imageWrapper);
 
         Table costWrapper = new Table();
         costWrapper.bottom().right();
@@ -50,14 +51,6 @@ public class ZombieCardView extends Stack {
 
         overlay.setProgress(active ? 0 : 1);
         this.add(overlay);
-
-        if (lock) {
-            Table lockTable = new Table();
-            lockTable.center().right();
-            lockTable.add(new Image(App.getGameApp().textureBank.region(
-                "IMAGE_UI_CARDS_LOCK_MEDIUM"))).size(30, 40).pad(10);
-            this.add(lockTable);
-        }
 
         selectedImg = new Image(App.getGameApp().textureBank.region("IMAGE_UI_PACKETS_SELECT"));
         this.add(selectedImg);
@@ -79,7 +72,6 @@ public class ZombieCardView extends Stack {
 
     public String getZombieName() { return zombieName; }
     public boolean isActive() { return active; }
-    public boolean isLock() { return lock; }
     public int getBrainCost() { return brainCost; }
     public void setActive(boolean active) { this.active = active; }
     public void setSelectedState(boolean state) { selectedImg.setVisible(state); }

@@ -56,6 +56,7 @@ public class NetworkClient {
             }
         } catch (Exception e) {
             System.err.println("Connection to server lost.");
+            e.printStackTrace();
         }
     }
 

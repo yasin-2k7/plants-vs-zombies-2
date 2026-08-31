@@ -19,7 +19,7 @@ import java.util.Random;
 
 public class PlantGraphic {
 
-    private final Plant plant;
+    private Plant plant;
     private float worldX;
     private float worldY;
 
@@ -103,12 +103,6 @@ public class PlantGraphic {
 
     public PlantGraphic(Plant plant, PamPlayer pamPlayer) {
         this.plant = plant;
-
-        int col = plant.getCell().getCol();
-        int row = plant.getCell().getRow();
-
-        this.worldX = LawnGrid.getCellX(col);
-        this.worldY = LawnGrid.getCellY(row);
 
         this.normalPamPath = PlantsCollectionMenuScreen.getPlantAnimAddress(plant.getType());
         this.imitatorPamPath = PlantsCollectionMenuScreen.getPlantAnimAddress(PlantType.IMITATER);
@@ -327,7 +321,7 @@ public class PlantGraphic {
 
         if (inPlantFoodBg && plantFoodBgPamPath != null) {
             String bgClip = PlantAnimationClips.getPlantFoodBackgroundClip();
-            pamPlayer.draw(batch, plantFoodBgPamPath, bgClip, plantFoodBgAnimTime*App.getCurrentUser().getGameSpeed(),
+            pamPlayer.draw(batch, plantFoodBgPamPath, bgClip, plantFoodBgAnimTime*App.getSpeed(),
                 worldX+10, worldY+80, 0.8f, 0.8f,
                 true);
         }
@@ -365,6 +359,13 @@ public class PlantGraphic {
         this.animTime = 0f;
     }
 
+    public boolean isReadyToRemoveAfterDeath() {
+        if (plant.isBurnt()) {
+            return burnAnimTime >= 1.5f; // local timer, unaffected by a frozen model — safe as-is
+        }
+        return true; // no other death/despawn animation exists for plants — safe to remove the instant it's gone
+    }
+
     public Plant getPlant() { return plant; }
     public int getRow() { return (int) plant.getY(); }
     public int getCol() { return (int) plant.getX(); }
@@ -376,7 +377,9 @@ public class PlantGraphic {
         }
         return plant.isDead();
     }
-
+    public void updateModel(Plant newPlant) {
+        this.plant = newPlant;
+    }
     public float getWorldX() { return worldX; }
     public float getWorldY() { return worldY; }
 

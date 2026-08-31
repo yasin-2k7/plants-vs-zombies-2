@@ -9,17 +9,20 @@ import com.pvz2.models.world.winCondition.WinCondition;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Supplier;
 
 public class VaseBreakerLevel extends GameWorld {
     private List<Vase> vases;
     private List<SeedPacket> droppedSeeds;
     private PlantType heldSeed = null;
+    private Supplier<GameWorld> builder;
 
     public VaseBreakerLevel(LevelSetup levelSetup,
                             ArrayList<LoseCondition> loseConditions,
                             WinCondition winCondition,
-                            ArrayList<Mechanic> mechanics) {
+                            ArrayList<Mechanic> mechanics, Supplier<GameWorld> builder) {
         super(levelSetup, loseConditions, winCondition, mechanics);
+        this.builder = builder;
         if (this.droppedSeeds == null) {
             this.droppedSeeds = new ArrayList<>();
         }
@@ -100,6 +103,10 @@ public class VaseBreakerLevel extends GameWorld {
     public List<SeedPacket> getDroppedSeeds() {
         if (droppedSeeds == null) droppedSeeds = new ArrayList<>();
         return droppedSeeds;
+    }
+
+    public Supplier<GameWorld> getBuilder() {
+        return builder;
     }
 
     public void addVase(Vase vase) {

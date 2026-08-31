@@ -43,7 +43,8 @@ public class MuPointLevel {
                 levelSetup,
                 new ArrayList<>(List.of(loseCondition)),
                 winCondition,
-                new ArrayList<>()
+                new ArrayList<>(),
+            MuPointLevel::createMuPointLevel
         );
         world.setWillUnlockLevel(false);
 

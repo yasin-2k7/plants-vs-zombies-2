@@ -4,7 +4,7 @@ import com.pvz2.models.zombie.Zombie;
 
 public class IdleState implements ZombieState {
     @Override
-    public void handleAction(Zombie zombie) {
+    public void handleAction(Zombie zombie, float delta) {
     }
 
     @Override

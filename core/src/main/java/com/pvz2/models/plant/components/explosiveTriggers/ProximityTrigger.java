@@ -16,7 +16,7 @@ public class ProximityTrigger implements ExplosiveTrigger {
 
     @Override
     public boolean shouldTrigger(Plant owner, ExplosivesComponent component) {
-        for (Zombie zombie : App.getCurrentGame().getActiveZombies()) {
+        for (Zombie zombie : App.getCurrentGame(owner).getActiveZombies()) {
             boolean checkY = Math.abs(zombie.getY() - owner.getY()) < 5;
             boolean checkX = Math.abs(zombie.getX() - owner.getX()) < rangeX / 2;
             if (checkX && checkY) {

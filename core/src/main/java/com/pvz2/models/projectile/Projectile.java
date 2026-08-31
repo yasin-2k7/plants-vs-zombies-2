@@ -35,6 +35,8 @@ public class Projectile implements Resettable {
     private boolean dead = false;
     private PlantType plantType;
     private List<Damageable> lastTargets = new ArrayList<>();
+    private String id = java.util.UUID.randomUUID().toString();
+    private transient GameWorld currentWorld;
 
     void checkProjectilesTowardPlants(double oldX, double oldY) {
         Damageable plantTarget = null;
@@ -54,11 +56,16 @@ public class Projectile implements Resettable {
         }
     }
 
+    public void update(float delta, GameWorld world){
+        if (currentWorld == null) currentWorld = world;
+        update(delta);
+    }
+
     public void update(float delta) {
         double oldX = x;
         double oldY = y;
         movementStrategy.move(this, delta);
-        GameWorld game = App.getCurrentGame();
+        GameWorld game = App.getCurrentGame(this);
         if (hitStrategy instanceof PlantDamageStrategy) {
             checkProjectilesTowardPlants(oldX, oldY);
             return;}
@@ -91,8 +98,8 @@ public class Projectile implements Resettable {
             }
             if (hitStrategy != null) {
                 hitStrategy.applyDamage(zombie, Stream.concat(
-                        App.getCurrentGame().getActiveZombies().stream(),
-                        App.getCurrentGame().getActiveObstacles().stream().filter(Grave.class::isInstance)
+                        App.getCurrentGame(this).getActiveZombies().stream(),
+                        App.getCurrentGame(this).getActiveObstacles().stream().filter(Grave.class::isInstance)
                 ).toList(), this);
             }
             pierce--;
@@ -111,6 +118,7 @@ public class Projectile implements Resettable {
     public void reset(float x, float y,
                       HitStrategy hitStrategy, MovementStrategy movementStrategy,
                       CheckStrike checkStrike, ProjectileType type) {
+        this.id = java.util.UUID.randomUUID().toString();
         this.x = x;
         this.y = y;
         originX = x;
@@ -206,11 +214,13 @@ public class Projectile implements Resettable {
     public MovementStrategy getMovementStrategy() {
         return movementStrategy;
     }
-
+    public GameWorld getCurrentWorld() {
+        return currentWorld;
+    }
     public int getPierce() {
         return pierce;
     }
-
+    public String getId() { return id; }
     public void setPlantType(PlantType plantType) {
         this.plantType = plantType;
     }

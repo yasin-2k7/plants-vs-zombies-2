@@ -57,7 +57,7 @@ public class ServerGameController {
 
         List<Zombie> stageZombies = new ArrayList<>();
         ZombieFactory zombieFactory = new ZombieFactory();
-        stageZombies.add(zombieFactory.createZombie("ZombieDefault"));
+        stageZombies.add(zombieFactory.createZombie("ZombieImp"));
         stageZombies.add(zombieFactory.createZombie("ZombieArmor1"));
         stageZombies.add(zombieFactory.createZombie("ZombieArmor2"));
         stageZombies.add(zombieFactory.createZombie("ZombieArmor4"));
@@ -90,8 +90,9 @@ public class ServerGameController {
         if (tickTask != null) tickTask.cancel(false);
     }
 
-    private void onTick() {
+    private synchronized void onTick() {
         if (matchEnded) return;
+        long startTime = System.currentTimeMillis();
         try {
             world.tick(TICK_INTERVAL_SECONDS);
 
@@ -107,12 +108,11 @@ public class ServerGameController {
             }
 
             broadcastState();
-        } catch (Exception e) {
-            // scheduleAtFixedRate silently stops rescheduling if the task throws —
-            // catching here keeps the match ticking even if one tick hits a bug,
-            // instead of the whole match quietly freezing with no error anywhere.
-            e.printStackTrace();
+        }  catch (Throwable t) {
+            t.printStackTrace();
         }
+        long duration = System.currentTimeMillis() - startTime;
+        System.out.println("Tick took: " + duration + " ms");
     }
 
     private void endMatch(Match.Side winner, String message) {
@@ -124,7 +124,7 @@ public class ServerGameController {
         onMatchEnd.run();
     }
 
-    public void handlePlantPlant(ClientHandler sender, PlantPlantRequest req) {
+    public synchronized void handlePlantPlant(ClientHandler sender, PlantPlantRequest req) {
         if (!match.getMatchId().equals(req.matchId)) return;
         if (match.getSideOf(sender) != Match.Side.PLANTS) return;
 
@@ -134,6 +134,11 @@ public class ServerGameController {
         PlantCard selectedCard = findCard(req.type);
         if (selectedCard == null || !selectedCard.isReady()) return;
         if (selectedCard.getSunCost() > world.getSun()) return;
+        int col = LawnGrid.getColFromX(req.x);
+        if (col > 4) {
+            sendResult(sender, false, "you cant plant here");
+            return;
+        }
 
         User plantsUser = UserDataManager.loadUser(sender.getUsername());
         boolean isImitator = selectedCard instanceof ImitatorCard;
@@ -150,6 +155,7 @@ public class ServerGameController {
         Plant plant = selectedCell.handlePlanting(typeToPlant, boosted);
         if (plant == null) return;
 
+        plant.setCell(selectedCell);
         if (isImitator) {
             plant.setImitate(true);
             plant.addComponent(new ImitatorIntroComponent());
@@ -160,7 +166,7 @@ public class ServerGameController {
         broadcastState();
     }
 
-    public void handlePluckPlant(ClientHandler sender, PluckPlantRequest req) {
+    public synchronized void handlePluckPlant(ClientHandler sender, PluckPlantRequest req) {
         if (!match.getMatchId().equals(req.matchId)) return;
         if (match.getSideOf(sender) != Match.Side.PLANTS) return;
 
@@ -170,7 +176,7 @@ public class ServerGameController {
         broadcastState();
     }
 
-    public void handleCollectSun(ClientHandler sender, CollectSunRequest req) {
+    public synchronized void handleCollectSun(ClientHandler sender, CollectSunRequest req) {
         if (!match.getMatchId().equals(req.matchId)) return;
         if (match.getSideOf(sender) != Match.Side.PLANTS) return;
 
@@ -188,12 +194,12 @@ public class ServerGameController {
         }
     }
 
-    public void handleCollectBrain(ClientHandler sender, CollectBrainRequest req) {
+    public synchronized void handleCollectBrain(ClientHandler sender, CollectBrainRequest req) {
         if (!match.getMatchId().equals(req.matchId)) return;
         if (match.getSideOf(sender) != Match.Side.ZOMBIES) return;
 
         for (BrainCurrency brain : world.getActiveBrains()) {
-            if (!brain.isCollected() && brain.contains(req.x, req.y, 40f)) {
+            if (!brain.isCollected() && brain.contains(req.x, req.y, 100f)) {
                 brain.collect();
                 world.addBrainsToPlayer(50);
                 broadcastState();
@@ -202,7 +208,7 @@ public class ServerGameController {
         }
     }
 
-    public void handlePlaceZombie(ClientHandler sender, PlaceZombieRequest req) {
+    public synchronized void handlePlaceZombie(ClientHandler sender, PlaceZombieRequest req) {
         if (!match.getMatchId().equals(req.matchId)) return;
         if (match.getSideOf(sender) != Match.Side.ZOMBIES) return;
 
@@ -228,7 +234,8 @@ public class ServerGameController {
             return;
         }
 
-        int cost = world.getZombieCost(zombie);
+        OnlineIZombieSetup setup = (OnlineIZombieSetup) world.getLevelSetup();
+        int cost = setup.getBrainCost(zombie.getSpecificName());
         if (world.getZombieBrains() < cost) {
             sendResult(sender, false, "you dont have enough brains");
             return;
@@ -259,5 +266,6 @@ public class ServerGameController {
         GameStateUpdate update = new GameStateUpdate(match.getMatchId(), world);
         match.getPlantsPlayer().send("GAME_STATE", null, update);
         match.getZombiesPlayer().send("GAME_STATE", null, update);
+        System.out.println("done");
     }
 }

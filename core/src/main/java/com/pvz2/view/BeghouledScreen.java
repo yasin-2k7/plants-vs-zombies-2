@@ -218,11 +218,7 @@ public class BeghouledScreen extends GameScreen {
 
     @Override
     public void restartLevel() {
-        super.restartLevel();
-        if (mechanics != null) {
-            mechanics.resetBoard(world);
-        }
-        initIcyPlantGraphics();
+        GameMenuController.restartBeghouled(world);
     }
 
     private void drawSelectionHighlight() {

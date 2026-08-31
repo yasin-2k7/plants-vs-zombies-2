@@ -59,10 +59,10 @@ public abstract class GameWorld {
     private WinCondition winCondition;
     protected ArrayList<Mechanic> mechanics;
     private List<PlantCard> conveyorBelt = new ArrayList<>();
-    private List<PlantCard> plantLists;
+    protected List<PlantCard> plantLists;
     private boolean isConveyorMode;
-    private GenericObjectPool<Sun> sunsPool = new GenericObjectPool<>(Sun::new);
-    private GenericObjectPool<Projectile> projectilesPool = new GenericObjectPool<>(Projectile::new);
+    private transient GenericObjectPool<Sun> sunsPool = new GenericObjectPool<>(Sun::new);
+    private transient GenericObjectPool<Projectile> projectilesPool = new GenericObjectPool<>(Projectile::new);
     private boolean sandstormActive = false;
     private MupointManager mupointManager;
     private boolean isPlantSelected = false;
@@ -83,9 +83,11 @@ public abstract class GameWorld {
 
     public GameWorld(LevelSetup levelSetup, ArrayList<LoseCondition> loseConditions,
                      WinCondition winCondition, ArrayList<Mechanic> mechanics) {
-        App.getCurrentUser().setGamesPlayed(App.getCurrentUser().getGamesPlayed() + 1);
-        App.getCurrentUser().save();
-        UserManager.syncCurrentUser();
+        if (App.getCurrentUser().getNickname() != null) {
+            App.getCurrentUser().setGamesPlayed(App.getCurrentUser().getGamesPlayed() + 1);
+            App.getCurrentUser().save();
+        }
+            UserManager.syncCurrentUser();
         this.levelSetup = levelSetup;
         this.loseConditions = loseConditions;
         this.winCondition = winCondition;
@@ -102,8 +104,10 @@ public abstract class GameWorld {
         this.plantLists = new ArrayList<>();
         this.levelSetup.groundSetup(this);
         this.lawnMowerManager = new LawnMowerManager(this);
-        this.plantFoods = App.getCurrentUser().getPlantFoods();
-        App.getCurrentUser().setPlantFoods(0);
+        if (App.getCurrentUser().getNickname() != null) {
+            this.plantFoods = App.getCurrentUser().getPlantFoods();
+            App.getCurrentUser().setPlantFoods(0);
+        }
     }
     public GameWorld() {}
 

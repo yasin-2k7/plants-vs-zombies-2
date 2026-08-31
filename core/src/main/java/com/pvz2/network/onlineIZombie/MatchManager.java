@@ -6,6 +6,7 @@ import com.pvz2.network.onlineIZombie.messages.*;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Consumer;
 
 /**
  * Owns everything about "getting two players into a Match": specific-user challenges,
@@ -27,8 +28,17 @@ public class MatchManager {
     private final Map<String, PendingInvite> pendingInvites = new ConcurrentHashMap<>(); // inviteId -> invite
     private final Map<String, Match> matchesById = new ConcurrentHashMap<>();
     private final Map<ClientHandler, Match> matchByPlayer = new ConcurrentHashMap<>();
+    private final Consumer<Match> onMatchCreated;
 
     private ClientHandler waitingForRandom; // single-slot "queue" — null when empty
+
+    /** onMatchCreated fires right after MATCH_FOUND is pushed to both players, from whichever
+     *  flow created the match — GameServer uses it to eagerly build and start that match's
+     *  ServerGameController, instead of waiting for a player to send the first gameplay action
+     *  (nobody can, until the world exists — that's the deadlock this closes). */
+    public MatchManager(Consumer<Match> onMatchCreated) {
+        this.onMatchCreated = onMatchCreated;
+    }
 
     // ---------- specific-user challenge ----------
 
@@ -132,6 +142,8 @@ public class MatchManager {
             match.getMatchId(), b.getUsername(), match.getSideOf(a).name()));
         b.send("MATCH_FOUND", null, new MatchFound(
             match.getMatchId(), a.getUsername(), match.getSideOf(b).name()));
+
+        onMatchCreated.accept(match);
     }
 
     private boolean isBusy(ClientHandler player) {

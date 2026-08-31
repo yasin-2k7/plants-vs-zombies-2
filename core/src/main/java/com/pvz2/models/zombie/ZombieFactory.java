@@ -94,7 +94,7 @@ public class ZombieFactory {
         String objclass = props.getObjclass();
         ZombieData data = props.getObjdata();
 
-        int difficulty = App.getCurrentUser().getGameDifficulty();
+        int difficulty = App.getCurrentUser().getNickname() == null ? 3 : App.getCurrentUser().getGameDifficulty();
         double increaseFactor = DifficultyCalculator.increaseFactor(difficulty);
 
         int health = (int) Math.round(data.getHitpoints() * increaseFactor);

@@ -1,5 +1,6 @@
 package com.pvz2.network.onlineIZombie.messages;
 
+import com.pvz2.models.miniGame.IZombie.OnlineIZombieLevel;
 import com.pvz2.models.world.GameWorld;
 
 /**
@@ -10,10 +11,10 @@ import com.pvz2.models.world.GameWorld;
  */
 public class GameStateUpdate {
     public String matchId;
-    public GameWorld world;
+    public OnlineIZombieLevel world;
 
     public GameStateUpdate() {}
-    public GameStateUpdate(String matchId, GameWorld world) {
+    public GameStateUpdate(String matchId, OnlineIZombieLevel world) {
         this.matchId = matchId;
         this.world = world;
     }

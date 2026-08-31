@@ -4,15 +4,21 @@ import com.google.gson.Gson;
 
 import java.io.*;
 import java.net.Socket;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 public class ClientHandler implements Runnable {
-    private static final Gson GSON = NetworkGson.INSTANCE; // compact — one JSON object per line, no embedded newlines
+    private static final Gson GSON = NetworkGson.INSTANCE;
 
     private final Socket socket;
     private final GameServer server;
     private BufferedReader in;
     private PrintWriter out;
-    private volatile String username; // null until this connection successfully logs in
+    private volatile String username;
+
+    private final BlockingQueue<String> sendQueue = new LinkedBlockingQueue<>(200); // ظرفیت صف پیام‌ها
+    private Thread senderThread;
+    private volatile boolean running = true;
 
     public ClientHandler(Socket socket, GameServer server) {
         this.socket = socket;
@@ -24,6 +30,8 @@ public class ClientHandler implements Runnable {
         try {
             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             out = new PrintWriter(new OutputStreamWriter(socket.getOutputStream()), true);
+
+            startSenderThread();
 
             String line;
             while ((line = in.readLine()) != null) {
@@ -45,17 +53,51 @@ public class ClientHandler implements Runnable {
         }
     }
 
-    /** Sends one message to this specific client. Safe to call from any thread. */
+    /**
+     * Sends one message to this specific client. Safe to call from any thread.
+     * This method is now non-blocking and instantly returns.
+     */
     public void send(String type, String requestId, Object payload) {
+        if (!running) return;
+
         NetworkMessage msg = new NetworkMessage(type, GSON.toJsonTree(payload));
         msg.requestId = requestId;
         String line = GSON.toJson(msg);
-        synchronized (this) {
-            out.println(line);
+
+        if (!sendQueue.offer(line)) {
+            sendQueue.poll();
+            sendQueue.offer(line);
         }
     }
 
+    /**
+     * حلقه اختصاصی ارسال پیام‌ها روی شبکه در یک Thread جداگانه
+     */
+    private void sendLoop() {
+        try {
+            while (running && !Thread.currentThread().isInterrupted()) {
+                String line = sendQueue.take(); // تا زمان رسیدن پیام جدید متوقف می‌ماند
+                if (out != null) {
+                    out.println(line);
+                }
+            }
+        } catch (InterruptedException ignored) {
+        } catch (Exception e) {
+            System.err.println("Error sending to " + (username != null ? username : socket.getRemoteSocketAddress()));
+        }
+    }
+
+    private void startSenderThread() {
+        senderThread = new Thread(this::sendLoop, "Sender-" + (username != null ? username : socket.getRemoteSocketAddress()));
+        senderThread.setDaemon(true);
+        senderThread.start();
+    }
+
     private void disconnect() {
+        running = false;
+        if (senderThread != null) {
+            senderThread.interrupt();
+        }
         server.onDisconnect(this);
         try { socket.close(); } catch (IOException ignored) {}
     }

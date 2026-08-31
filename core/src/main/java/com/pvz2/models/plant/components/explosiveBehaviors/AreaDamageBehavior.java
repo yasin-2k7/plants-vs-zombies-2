@@ -34,14 +34,16 @@ public class AreaDamageBehavior implements ExplosiveBehavior {
                 .summaryStatistics();
         double minY = yStats.getMin();
         double maxY = yStats.getMax();
-        SFXManager.getInstance().playSound(GameSFX.CHERRY_BOMB);
+        if (App.getCurrentGame() != null){
+            SFXManager.getInstance().playSound(GameSFX.CHERRY_BOMB);
+        }
 
-        for (Zombie zombie : App.getCurrentGame().getActiveZombies()) {
+        for (Zombie zombie : App.getCurrentGame(owner).getActiveZombies()) {
             if (zombie.getY() <= maxY && zombie.getY() >= minY && zombie.getX() <= maxX && zombie.getX() >= minX) {
                 zombie.takeDamage(damage, "NORMAL");
             }
         }
-        for (Obstacle obstacle : App.getCurrentGame().getActiveObstacles()) {
+        for (Obstacle obstacle : App.getCurrentGame(owner).getActiveObstacles()) {
             if (obstacle.getY() <= maxY && obstacle.getY() >= minY &&
                     obstacle.getX() <= maxX && obstacle.getX() >= minX) {
                 obstacle.takeDamage(damage, "NORMAL");

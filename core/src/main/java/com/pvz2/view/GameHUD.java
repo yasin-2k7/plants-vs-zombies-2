@@ -313,7 +313,7 @@ public class GameHUD extends Group {
 
             add(sunIcon).size(60f).padRight(8f);
             add(sunLabel).left();
-            if (App.getCurrentUser().isDebugMode()){
+            if (App.getCurrentUser().isDebugMode() && !(App.getGameApp().getScreen() instanceof OnlineGameScreen)){
                 ImageButton buyBtn = MainMenuScreen.createImageButton("IMAGE_UI_HUD_INGAME_COIN_BUY",
                     "IMAGE_UI_HUD_INGAME_COIN_BUY_DOWN",
                     game.textureBank);

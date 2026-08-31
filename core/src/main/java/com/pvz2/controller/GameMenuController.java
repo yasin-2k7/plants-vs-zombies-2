@@ -8,6 +8,8 @@ import com.pvz2.models.enums.Chapter;
 import com.pvz2.models.enums.PlantType;
 import com.pvz2.models.greenhouse.GreenHouse;
 import com.pvz2.models.miniGame.IZombie.IZombieLevel;
+import com.pvz2.models.miniGame.MiniGameWorld;
+import com.pvz2.models.miniGame.vaseBreaker.VaseBreakerLevel;
 import com.pvz2.models.mupoint.MupointManager;
 import com.pvz2.models.plant.Plant;
 import com.pvz2.models.plant.card.ImitatorCard;
@@ -17,9 +19,7 @@ import com.pvz2.models.world.*;
 import com.pvz2.models.world.levelSetup.DeadLineLevelSetup;
 import com.pvz2.models.zombie.Zombie;
 import com.pvz2.models.zombie.ZombieFactory;
-import com.pvz2.view.GameScreen;
-import com.pvz2.view.MenuScreen;
-import com.pvz2.view.PlantGraphic;
+import com.pvz2.view.*;
 
 import java.util.List;
 
@@ -107,6 +107,25 @@ public class GameMenuController implements MenuController {
 
         screen.fadeAndSwitchScreen(
             new GameScreen(screen.getGame(), world, currentChapter));
+    }
+
+    public static void restartBeghouled(GameWorld world){
+        User user = App.getCurrentUser();
+        if (user == null) return;
+        GameWorld newWorld = ((MiniGameWorld) world).getBuilder().get();
+        App.setCurrentGame(newWorld);
+        ((MenuScreen) App.getGameApp().getScreen()).fadeAndSwitchScreen(
+            new BeghouledScreen(App.getGameApp(),
+                App.getCurrentGame(), Chapter.EGYPT));
+    }
+
+    public static void restartVase(GameWorld world){
+        User user = App.getCurrentUser();
+        if (user == null) return;
+        GameWorld newWorld = ((VaseBreakerLevel) world).getBuilder().get();
+        App.setCurrentGame(newWorld);
+        ((MenuScreen) App.getGameApp().getScreen()).fadeAndSwitchScreen(
+            new VaseBreakerScreen(App.getGameApp(), (VaseBreakerLevel) newWorld));
     }
 
     public static boolean collectSun(float touchX, float touchY) {

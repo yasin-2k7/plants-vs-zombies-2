@@ -45,7 +45,7 @@ public class ExplosionEffectGraphic {
 
     public void draw(SpriteBatch batch, PamPlayer pamPlayer) {
         if (pamPlayer == null) return;
-        pamPlayer.draw(batch, pamPath, clip, animTime* App.getCurrentUser().getGameSpeed(),
+        pamPlayer.draw(batch, pamPath, clip, animTime* App.getSpeed(),
             x, y, scaleX, scaleY, false);
     }
 }

@@ -8,8 +8,7 @@ import com.pvz2.models.zombie.Zombie;
 
 public class WalkingState implements ZombieState {
     @Override
-    public void handleAction(Zombie zombie) {
-        float delta = Gdx.graphics.getDeltaTime();
+    public void handleAction(Zombie zombie, float delta) {
         zombie.move(delta);
 
         GameWorld game = App.getCurrentGame();

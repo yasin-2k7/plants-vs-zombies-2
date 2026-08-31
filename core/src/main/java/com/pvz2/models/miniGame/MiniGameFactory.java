@@ -89,7 +89,8 @@ public class MiniGameFactory {
                 levelSetup,
                 new ArrayList<>(List.of(loseCondition)),
                 winCondition,
-                new ArrayList<>()
+                new ArrayList<>(),
+            MiniGameFactory::createVaseBreakerLevel1
         );
 
     }
@@ -111,7 +112,8 @@ public class MiniGameFactory {
                 levelSetup,
                 new ArrayList<>(List.of(loseCondition)),
                 winCondition,
-                new ArrayList<>()
+                new ArrayList<>(),
+            MiniGameFactory::createVaseBreakerLevel2
         );
 
     }
@@ -134,7 +136,8 @@ public class MiniGameFactory {
                 levelSetup,
                 new ArrayList<>(List.of(loseCondition)),
                 winCondition,
-                new ArrayList<>()
+                new ArrayList<>(),
+            MiniGameFactory::createVaseBreakerLevel1
         );
 
     }
@@ -157,9 +160,9 @@ public class MiniGameFactory {
                 levelSetup,
                 new ArrayList<>(List.of(loseCondition)),
                 winCondition,
-                new ArrayList<>()
-        );
-
+                new ArrayList<>(),
+            MiniGameFactory::createBowlingLevel1
+            );
     }
 
     private static GameWorld createBowlingLevel2() {
@@ -180,7 +183,8 @@ public class MiniGameFactory {
                 levelSetup,
                 new ArrayList<>(List.of(loseCondition)),
                 winCondition,
-                new ArrayList<>()
+                new ArrayList<>(),
+            MiniGameFactory::createBowlingLevel2
         );
 
     }
@@ -203,7 +207,8 @@ public class MiniGameFactory {
                 levelSetup,
                 new ArrayList<>(List.of(loseCondition)),
                 winCondition,
-                new ArrayList<>()
+                new ArrayList<>(),
+            MiniGameFactory::createBowlingLevel3
         );
     }
 
@@ -268,10 +273,10 @@ public class MiniGameFactory {
     }
 
     private static GameWorld createBeghouledLevel1() {
-        List<PlantType> plants = List.of(
+        List<PlantType> plants = new ArrayList<>(List.of(
                 PlantType.PEASHOOTER, PlantType.STARFRUIT, PlantType.WALL_NUT,
                 PlantType.CABBAGE_PULT, PlantType.MELON_PULT
-        );
+        ));
 
 
         List<PlantUpgrade> upgrades = List.of(
@@ -297,15 +302,16 @@ public class MiniGameFactory {
                 levelSetup,
                 new ArrayList<>(List.of(loseCondition)),
                 winCondition,
-                new ArrayList<>()
+                new ArrayList<>(),
+            MiniGameFactory::createBeghouledLevel1
         );
     }
 
     private static GameWorld createBeghouledLevel2() {
-        List<PlantType> plants = List.of(
+        List<PlantType> plants = new ArrayList<>(List.of(
                 PlantType.PEASHOOTER, PlantType.CHOMPER, PlantType.WALL_NUT,
                 PlantType.CABBAGE_PULT, PlantType.GARLIC
-        );
+        ));
         List<PlantUpgrade> upgrades = List.of(
                 new PlantUpgrade(PlantType.PEASHOOTER, PlantType.REPEATER, 500),
                 new PlantUpgrade(PlantType.WALL_NUT, PlantType.TALL_NUT, 500),
@@ -327,16 +333,17 @@ public class MiniGameFactory {
                 levelSetup,
                 new ArrayList<>(List.of(loseCondition)),
                 winCondition,
-                new ArrayList<>()
+                new ArrayList<>(),
+            MiniGameFactory::createBeghouledLevel2
         );
 
     }
 
     private static GameWorld createBeghouledLevel3() {
-        List<PlantType> plants = List.of(
+        List<PlantType> plants = new ArrayList<>(List.of(
                 PlantType.PEASHOOTER, PlantType.CITRON, PlantType.WALL_NUT,
                 PlantType.CABBAGE_PULT, PlantType.MELON_PULT
-        );
+        ));
         List<PlantUpgrade> upgrades = List.of(
                 new PlantUpgrade(PlantType.PEASHOOTER, PlantType.REPEATER, 500),
                 new PlantUpgrade(PlantType.WALL_NUT, PlantType.TALL_NUT, 500),
@@ -358,7 +365,8 @@ public class MiniGameFactory {
                 levelSetup,
                 new ArrayList<>(List.of(loseCondition)),
                 winCondition,
-                new ArrayList<>()
+                new ArrayList<>(),
+            MiniGameFactory::createBeghouledLevel3
         );
     }
 
@@ -378,7 +386,8 @@ public class MiniGameFactory {
                 levelSetup,
                 new ArrayList<>(List.of(loseCondition)),
                 winCondition,
-                new ArrayList<>()
+                new ArrayList<>(),
+            MiniGameFactory::createZombotanyLevel1
         );
     }
 
@@ -399,7 +408,8 @@ public class MiniGameFactory {
                 levelSetup,
                 new ArrayList<>(List.of(loseCondition)),
                 winCondition,
-                new ArrayList<>()
+                new ArrayList<>(),
+            MiniGameFactory::createZombotanyLevel2
         );
     }
 
@@ -421,7 +431,8 @@ public class MiniGameFactory {
                 levelSetup,
                 new ArrayList<>(List.of(loseCondition)),
                 winCondition,
-                new ArrayList<>()
+                new ArrayList<>(),
+            MiniGameFactory::createZombotanyLevel3
         );
     }
 

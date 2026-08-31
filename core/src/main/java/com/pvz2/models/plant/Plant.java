@@ -4,8 +4,10 @@ import com.pvz2.models.Damageable;
 import com.pvz2.models.core.App;
 import com.pvz2.models.core.User;
 import com.pvz2.models.enums.PlantType;
+import com.pvz2.models.plant.components.ExplosivesComponent;
 import com.pvz2.models.plant.components.ImitatorIntroComponent;
 import com.pvz2.models.world.Cell;
+import com.pvz2.models.world.GameWorld;
 import com.pvz2.models.zombie.Zombie;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -33,6 +35,7 @@ public class Plant implements Damageable {
     private State state = State.IDLE;
     private boolean isImitate;
     public static final int MAX_ICE_HEALTH = 600;
+    private boolean isExplosive = false;
 
     public static final long DAMAGE_FLASH_DURATION_MS = 150L;
     private long lastDamageTimestamp = -1L;
@@ -41,6 +44,11 @@ public class Plant implements Damageable {
     private boolean isCombining = false;
     private float combineTargetX;
     private float combineTargetY;
+    private transient GameWorld currentWorld;
+
+    private final String id = java.util.UUID.randomUUID().toString();
+
+    public String getId() { return id; }
 
     public enum State {
         IDLE, SPECIAL, ATTACK, UNARMED, TRIGGERED,
@@ -82,6 +90,14 @@ public class Plant implements Damageable {
 
     public void addComponent(GameComponent comp) {
         components.add(comp);
+        if (comp instanceof ExplosivesComponent){
+            isExplosive = true;
+        }
+    }
+
+    public void update(float delta, GameWorld world){
+        if (currentWorld == null) currentWorld = world;
+        update(delta);
     }
 
     public void update(float delta) {
@@ -127,7 +143,7 @@ public class Plant implements Damageable {
     }
 
     private void checkFire(float delta) {
-        List<Cell> neighborCells = Cell.getNeighborCells(cell, App.getCurrentGame().getGrid(), warmRadius);
+        List<Cell> neighborCells = Cell.getNeighborCells(cell, App.getCurrentGame(this).getGrid(), warmRadius);
         for (Cell cell1 : neighborCells) {
             if (cell1.getPlant() == null) continue;
             if (cell1.getPlant().freeze) {
@@ -178,7 +194,7 @@ public class Plant implements Damageable {
             if (user != null) {
                 user.getQuestStats().incrementPlantsLost();
             }
-            App.getCurrentGame().notifyPlantEaten();
+            if (App.getCurrentGame() != null) App.getCurrentGame().notifyPlantEaten();
             die();
         }
     }
@@ -203,7 +219,7 @@ public class Plant implements Damageable {
 
         this.dead = true;
         for (GameComponent component : components) {
-            component.onDeath(this, App.getCurrentGame().getElapsedTime());
+            component.onDeath(this, App.getCurrentGame(this).getElapsedTime());
         }
 
         if (this.cell != null) {
@@ -271,6 +287,7 @@ public class Plant implements Damageable {
     }
 
     public <T extends GameComponent> T getComponent(Class<T> componentClass) {
+        if (components == null) return null;
         for (GameComponent component : components) {
             if (componentClass.isInstance(component)) {
                 return componentClass.cast(component);
@@ -373,8 +390,23 @@ public class Plant implements Damageable {
         }
     }
 
+    public GameWorld getCurrentWorld() {
+        return currentWorld;
+    }
+
     public void setTargetPosition(float targetX, float targetY) {
         slideTo(targetX, targetY);
+    }
+
+    public boolean isExplosive() {
+        return isExplosive;
+    }
+
+    public void setExplosiveCallBack(ExplosivesComponent.ExplodeCallback callback){
+        ExplosivesComponent explosivesComponent = getComponent(ExplosivesComponent.class);
+        if (explosivesComponent != null){
+            explosivesComponent.setExplodeCallback(callback);
+        }
     }
 
     public boolean isCombining() {

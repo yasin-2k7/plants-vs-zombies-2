@@ -2,6 +2,7 @@ package com.pvz2.view;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
+import com.badlogic.gdx.math.MathUtils;
 import com.pvz2.models.core.App;
 import com.pvz2.models.world.GameState;
 import com.pvz2.models.world.GameWorld;
@@ -31,7 +32,11 @@ public class ZombieGraphic {
     private static final String SNORKEL_VISIBLE_PART_WHEN_SUBMERGED = "zombie_snorkeler_skull_01";
     private static final float SNORKEL_SUBMERGED_Y_OFFSET = 50f;
 
-    private final Zombie zombie;
+    /** How fast the displayed position chases the latest server-confirmed position.
+     *  Higher = snappier but more visible pop on each snapshot; lower = smoother but laggier. */
+    private static final float NETWORK_LERP_SPEED = 15f;
+
+    private Zombie zombie;
     private final String pamPath;
     private final HashMap<String, Boolean> visibilities;
 
@@ -43,6 +48,13 @@ public class ZombieGraphic {
     private float nextIdleSwitchTime = randomIdleInterval();
 
     private boolean armorVisualHidden = false;
+
+    // Interpolated render position. Offline (updateModel() never called): always equals the
+    // live Zombie's real position, zero lag, identical to the old behavior. Online (updateModel()
+    // called once per GAME_STATE snapshot): smoothly chases toward each new snapshot's position
+    // instead of snapping, since snapshots arrive at ~20Hz but rendering happens up to ~60Hz.
+    private float displayX, displayY;
+    private boolean networked = false;
 
     public ZombieGraphic(Zombie zombie) {
         this.zombie = zombie;
@@ -62,6 +74,9 @@ public class ZombieGraphic {
         } else {
             this.currentClip = zombie.getAnimationClip() != null ? resolveClip(zombie.getAnimationClip()) : "walk";
         }
+
+        this.displayX = zombie.getX();
+        this.displayY = zombie.getY();
     }
 
     public void update(float delta, PamPlayer pamPlayer) {
@@ -76,6 +91,8 @@ public class ZombieGraphic {
         GameWorld world = App.getCurrentGame();
         if (world != null && world.getState() != GameState.PLAYING) delta = 0;
         animTime += delta;
+
+        updateDisplayPosition(delta);
 
         if (!zombie.isDead()) {
             if (zombie instanceof RangedZombie rangedZombie && rangedZombie.isThrowing()) {
@@ -106,6 +123,19 @@ public class ZombieGraphic {
         if (pamPath != null) {
             pamPlayer.loadAsync(pamPath, null);
         }
+    }
+
+    private void updateDisplayPosition(float delta) {
+        if (!networked) {
+            // offline: same live object every frame, already exact — no smoothing needed or wanted
+            displayX = zombie.getX();
+            displayY = zombie.getY();
+            return;
+        }
+
+        float t = Math.min(1f, NETWORK_LERP_SPEED * delta);
+        displayX = MathUtils.lerp(displayX, zombie.getX(), t);
+        displayY = MathUtils.lerp(displayY, zombie.getY(), t);
     }
 
     private void checkArmorBroken() {
@@ -161,8 +191,8 @@ public class ZombieGraphic {
 
     public void draw(SpriteBatch batch, PamPlayer pamPlayer) {
         if (pamPath == null) return;
-        float renderX = zombie.getX();
-        float renderY = zombie.getY();
+        float renderX = displayX;
+        float renderY = displayY;
         float flashAmount = zombie.getDamageFlashProgress();
         float[] flashColor = {1f, 1f, 1f};
         if (flashAmount <= 0f && zombie.isNearEndLine() && !zombie.isDead()) {
@@ -220,6 +250,11 @@ public class ZombieGraphic {
 
     public boolean isDeathAnimationFinished() {
         return zombie.isDead() && currentClip.equals(resolveClip("die")) && animTime >= 1.5f;
+    }
+
+    public void updateModel(Zombie newZombie) {
+        this.zombie = newZombie;
+        this.networked = true;
     }
 
     public Zombie getZombie() {
