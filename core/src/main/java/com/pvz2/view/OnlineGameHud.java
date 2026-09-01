@@ -269,7 +269,7 @@ public class OnlineGameHud extends Group {
         opponentBubbleLayer.setSize(320, 140);
         opponentBubbleLayer.setPosition(
             lastStageWidth - opponentBubbleLayer.getWidth() - MARGIN,
-            lastStageHeight - topBar.getHeight() - MARGIN
+            MARGIN
         );
     }
 

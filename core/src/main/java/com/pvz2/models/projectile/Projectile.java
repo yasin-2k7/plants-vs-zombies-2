@@ -84,6 +84,7 @@ public class Projectile implements Resettable {
                                 return;}}}}
             }
             if (type.movement.equals("STRAIGHT")) {
+                strikeStrategy.setWorld(currentWorld);
                 zombie = strikeStrategy.strike(x, y, oldX, oldY, lastTargets);
             } else if (type.movement.equals("LOBBED")) {
                 zombie = strikeStrategy.strike(x, y, target);}}

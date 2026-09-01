@@ -75,23 +75,15 @@ public class OnlineIZombieLevel extends IZombieLevel {
             }
             return false;
         });
-        for (Cell[] row : grid) {
-            for (Cell cell : row) {
-                if (cell.hasObstacle()) {
-                    Obstacle obs = cell.getObstacle();
-                    if (obs instanceof Grave grave) {
-                        if (!grave.blocksProjectiles()) {
-                            grave.releaseContent();
-                            cell.setPlantable(true);
-                            cell.removeObstacle();
-                        }
-                    } else if (obs instanceof OctopusObstacle) {
-                        if (cell.isEmpty() || !obs.blocksProjectiles()) {
-                            cell.removeObstacle();
-                        }
-                    } else if (!obs.blocksProjectiles()) {
-                        cell.removeObstacle();
-                    }
+        for (Zombie zombie : getActiveZombies()) {
+            if (zombie.isDead()) continue;
+
+            int row = (int) (zombie.getY() / 100);
+            Brain brain = getBrainAtRow(row);
+            if (brain != null && !brain.isEaten()) {
+                if (zombie.getX() <= brain.getX() + 20) {
+                    brain.eat();
+                    zombie.eatBrainAndLeave();
                 }
             }
         }

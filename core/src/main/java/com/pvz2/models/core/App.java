@@ -5,6 +5,7 @@ import com.pvz2.models.greenhouse.GreenHouse;
 import com.pvz2.models.plant.Plant;
 import com.pvz2.models.plant.factory.PlantFactory;
 import com.pvz2.models.projectile.Projectile;
+import com.pvz2.models.projectile.strikeStrategies.CheckStraightStrike;
 import com.pvz2.models.world.GameWorld;
 import com.pvz2.models.world.Sun;
 import com.pvz2.models.zombie.Zombie;
@@ -39,6 +40,14 @@ public class App {
         return currentGame;
     }
 
+    public static GameWorld getCurrentGame(boolean canNetworked) {
+        if (currentGame != null) return currentGame;
+        if (gameApp.getScreen() instanceof OnlineGameScreen onlineGameScreen){
+            return onlineGameScreen.getController().getWorld();
+        }
+        return null;
+    }
+
     public static GameWorld getCurrentGame(Object entity) {
         if (currentGame == null){
             if (entity instanceof Plant plant){
@@ -52,6 +61,9 @@ public class App {
             }
             if (entity instanceof Sun sun){
                 return sun.getCurrentWorld();
+            }
+            if (entity instanceof CheckStraightStrike css){
+                return css.getCurrentWorld();
             }
         }
         return currentGame;

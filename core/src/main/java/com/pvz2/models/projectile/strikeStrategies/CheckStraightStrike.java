@@ -2,6 +2,7 @@ package com.pvz2.models.projectile.strikeStrategies;
 
 import com.pvz2.models.Damageable;
 import com.pvz2.models.core.App;
+import com.pvz2.models.world.GameWorld;
 import com.pvz2.models.world.obstacles.Obstacle;
 import com.pvz2.models.zombie.Zombie;
 import com.pvz2.view.audios.GameSFX;
@@ -11,9 +12,11 @@ import java.util.Comparator;
 import java.util.List;
 
 public class CheckStraightStrike implements CheckStrike {
+    private transient GameWorld currentWorld;
+
     @Override
     public Damageable strike(double x, double y, double oldX, double oldY, List<Damageable> lastTargets) {
-        List<Zombie> sortedZombies = App.getCurrentGame().getActiveZombies().stream()
+        List<Zombie> sortedZombies = App.getCurrentGame(this).getActiveZombies().stream()
                 .sorted(Comparator.comparingDouble(Zombie::getX))
                 .toList();
         for (Zombie zombie : sortedZombies) {
@@ -25,7 +28,7 @@ public class CheckStraightStrike implements CheckStrike {
                 return zombie;
             }
         }
-        List<Obstacle> sortedObstacle = App.getCurrentGame().getActiveObstacles().stream()
+        List<Obstacle> sortedObstacle = App.getCurrentGame(this).getActiveObstacles().stream()
             .sorted(Comparator.comparingDouble(Obstacle::getX))
             .toList();
         for (Obstacle obstacle : sortedObstacle) {
@@ -63,7 +66,16 @@ public class CheckStraightStrike implements CheckStrike {
         return distanceSquared <= (radius * radius);
     }
 
+    @Override
+    public void setWorld(GameWorld world) {
+        if (currentWorld == null || !currentWorld.equals(world)){
+            currentWorld = world;
+        }
+    }
 
+    public GameWorld getCurrentWorld() {
+        return currentWorld;
+    }
 
     @Override
     public Damageable strike(double x, double y, Damageable zombie) {

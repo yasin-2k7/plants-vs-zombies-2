@@ -8,6 +8,8 @@ import com.pvz2.models.core.App;
 import com.pvz2.models.enums.PlantType;
 import pvz.libpvz.pam.PamPlayer;
 
+import java.util.HashMap;
+
 public class ZombiePlacementManager {
     private String selectedZombie;
     private float stateTime = 0;
@@ -44,6 +46,9 @@ public class ZombiePlacementManager {
         String zombiePam = ZombiesTable.getZombiesAnimAddress().get(zombieName);
         String clip = zombieName.equals("ZombieNewspaper") ? "idle_newspaper" : "idle";
 
+        HashMap<String, Boolean> visibility =
+            ZombiesTable.getZombiesVisibilities().getOrDefault(zombieName, null);
+
         if (zombiePam == null) return;
 
         int col = LawnGrid.getColFromX(cursorWorldPos.x);
@@ -63,7 +68,7 @@ public class ZombiePlacementManager {
         stateTime += delta;
         batch.setColor(1f, 1f, 1f, 0.85f);
 
-        pamPlayer.draw(batch, zombiePam, clip, stateTime, drawX, drawY, 0.8f, 0.8f, true);
+        pamPlayer.draw(batch, zombiePam, clip, stateTime, drawX, drawY, 0.8f, 0.8f, true, visibility);
 
         batch.setColor(Color.WHITE);
     }

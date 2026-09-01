@@ -38,9 +38,9 @@ import java.util.concurrent.TimeUnit;
  * A shared scheduler ticks the world forward and checks win/lose on a timer (see start()).
  */
 public class ServerGameController {
-    private static final float TICK_INTERVAL_SECONDS = 0.05f;
-    private static final long TICK_INTERVAL_MS = 50L;
-    private static final int BROADCAST_EVERY_N_TICKS = 20;
+    private static final float TICK_INTERVAL_SECONDS = 0.02f;
+    private static final long TICK_INTERVAL_MS = 20L;
+    private static final int BROADCAST_EVERY_N_TICKS = 3;
 
     private static final ScheduledExecutorService TICK_SCHEDULER = Executors.newScheduledThreadPool(4);
 

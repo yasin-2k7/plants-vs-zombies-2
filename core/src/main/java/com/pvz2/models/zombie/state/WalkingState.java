@@ -12,7 +12,10 @@ public class WalkingState implements ZombieState {
         zombie.move(delta);
 
         GameWorld game = App.getCurrentGame();
-        if (game == null) return;
+        if (game == null){
+            if (zombie.getCurrentWorld() != null) game = zombie.getCurrentWorld();
+            else return;
+        }
 
         Plant targetPlant = game.getPlantAtPosition(zombie.getX(), zombie.getY());
         if (targetPlant != null && !targetPlant.isDead()) {
