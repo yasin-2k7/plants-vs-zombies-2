@@ -303,7 +303,6 @@ public class SignupMenuScreen extends MenuScreen {
         table.add(vf.errorLabel).width(300).padBottom(10).left().row();
     }
 
-    // ========== Buttons ==========
     private TextButton createSignupButton(ValidatedField usernameVF, ValidatedField nicknameVF,
                                           ValidatedField emailVF, ValidatedField passwordVF,
                                           ValidatedField passwordConfirmVF, ValidatedField genderVF,
@@ -322,7 +321,6 @@ public class SignupMenuScreen extends MenuScreen {
                 SelectBox<String> questionBox = (SelectBox<String>) questionVF.field;
                 TextField answerField = (TextField) answerVF.field;
                 TextField answerConfirmField = (TextField) answerConfirmVF.field;
-
                 boolean usernameOk = showFieldErrors(usernameVF, controller.getUsernameErrors(usernameField.getText()));
                 boolean nicknameOk = showFieldErrors(nicknameVF, controller.getNicknameErrors(nicknameField.getText()));
                 boolean emailOk = showFieldErrors(emailVF, controller.getEmailErrors(emailField.getText()));
@@ -331,20 +329,15 @@ public class SignupMenuScreen extends MenuScreen {
                 boolean passwordConfirmOk = showFieldErrors(passwordConfirmVF,
                     controller.getPasswordErrors(passwordField.getText(), passwordConfirmField.getText()));
                 boolean genderOk = showFieldErrors(genderVF, controller.getGenderErrors(genderBox.getSelected()));
-
                 Supplier<List<String>> answerValidator = () -> controller.getAnswerErrors(
                     questionBox.getSelectedIndex() + 1, answerField.getText());
                 Supplier<List<String>> answerConfirmValidator = () -> controller.getAnswerConfirmErrors(
                     questionBox.getSelectedIndex() + 1, answerField.getText(), answerConfirmField.getText());
-
                 boolean answerOk = showFieldErrors(answerVF, answerValidator.get());
                 boolean answerConfirmOk = showFieldErrors(answerConfirmVF, answerConfirmValidator.get());
-
                 boolean allOk = usernameOk && nicknameOk && emailOk && passwordOk
                     && passwordConfirmOk && genderOk && answerOk && answerConfirmOk;
-
                 if (!allOk) return;
-
                 new Thread(() -> {
                     String result = controller.createUser(usernameField.getText(), passwordField.getText(),
                         nicknameField.getText(), emailField.getText(), genderBox.getSelected(),

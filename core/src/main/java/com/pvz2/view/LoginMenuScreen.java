@@ -59,29 +59,23 @@ public class LoginMenuScreen extends MenuScreen {
     protected void buildUI() {
         errorBorderDrawable = createBorderDrawable(Color.RED, 3);
         mainStack.add(new Image(textureRegion));
-
         BorderedTable formTable = new BorderedTable();
         formTable.pad(25);
-
         TextField usernameField = new TextField("", skin);
         usernameField.setMessageText("username");
         ValidatedField usernameVF = wrapTextField(usernameField);
         attachFocusValidation(usernameVF, () -> requiredFieldErrors(usernameField.getText(), "Please enter username."));
-
         TextField passwordField = createPasswordField("Password");
         ValidatedField passwordVF = wrapTextField(passwordField);
         attachFocusValidation(passwordVF, () -> requiredFieldErrors(passwordField.getText(), "Please enter password."));
-
         CheckBox stayLoggedInBox = new CheckBox(" Stay logged in", skin);
         Label statusLabel = createDialogErrorLabel();
-
         TextButton loginBtn = createButton("Login", () -> {
             boolean uOk = showFieldErrors(usernameVF,
                 requiredFieldErrors(usernameField.getText(), "Please enter username."));
             boolean pOk = showFieldErrors(passwordVF,
                 requiredFieldErrors(passwordField.getText(), "Please enter password."));
             if (!uOk || !pOk) return;
-
             new Thread(() -> {
                 String result = controller.loginUser(usernameField.getText(),
                     passwordField.getText(), stayLoggedInBox.isChecked());
@@ -99,10 +93,8 @@ public class LoginMenuScreen extends MenuScreen {
                 });
             }).start();
         });
-
         TextButton forgotBtn = createButton("Forgot password?", this::showForgotPasswordPopup);
         TextButton signupBtn = createButton("Don't have an account?", controller::exitMenu);
-
         addRow(formTable, usernameVF);
         addRow(formTable, passwordVF);
         formTable.add(stayLoggedInBox).left().padBottom(10).row();
@@ -110,7 +102,6 @@ public class LoginMenuScreen extends MenuScreen {
         formTable.add(loginBtn).width(150).padBottom(8).row();
         formTable.add(forgotBtn).width(170).padBottom(8).row();
         formTable.add(signupBtn).width(220).row();
-
         Table wrapper = new Table();
         wrapper.center().add(formTable);
         mainStack.add(wrapper);
@@ -231,8 +222,10 @@ public class LoginMenuScreen extends MenuScreen {
         Label errorLabel = createDialogErrorLabel();
 
         TextButton submitBtn = createButton("Change password", () -> {
-            boolean pOk = showFieldErrors(passwordVF, passwordRules.validatePasswordStrength(newPasswordField.getText()));
-            boolean cOk = showFieldErrors(confirmVF, passwordRules.getPasswordErrors(newPasswordField.getText(), confirmField.getText()));
+            boolean pOk = showFieldErrors(passwordVF, passwordRules.validatePasswordStrength
+                (newPasswordField.getText()));
+            boolean cOk = showFieldErrors(confirmVF, passwordRules.getPasswordErrors(newPasswordField.getText(),
+                confirmField.getText()));
             if (!pOk || !cOk) return;
 
             new Thread(() -> {

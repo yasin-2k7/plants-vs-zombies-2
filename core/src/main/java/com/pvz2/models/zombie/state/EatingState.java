@@ -8,6 +8,7 @@ import com.pvz2.models.world.GameWorld;
 import com.pvz2.models.world.levelSetup.SaveOurSeedsLevelSetup;
 import com.pvz2.models.world.loseCondition.SaveOurSeedsLose;
 import com.pvz2.models.zombie.Zombie;
+import com.pvz2.view.audios.SFXManager;
 
 public class EatingState implements ZombieState {
     private Plant targetPlant;
@@ -31,6 +32,8 @@ public class EatingState implements ZombieState {
 
             targetPlant.takeDamage(zombie.getDamage(), zombie);
             zombie.setHasEatenPlant(true);
+
+            SFXManager.getInstance().playChompSound();
 
             if (targetPlant == null || targetPlant.isDead() || targetPlant.getCell() == null) {
                 zombie.setState(new WalkingState());

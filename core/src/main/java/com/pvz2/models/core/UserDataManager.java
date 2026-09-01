@@ -20,11 +20,11 @@ public class UserDataManager {
     private static final String BASE_DIR = USER_HOME + File.separator + ".pvz2_server" + File.separator;
     private static final String USERS_DIR = BASE_DIR + "users" + File.separator;
     private static final String SESSION_TOKEN_FILE = BASE_DIR + "session_token.txt";
-    private static final Map<String, Object> fileLocks = new ConcurrentHashMap<>();
+    private static final Map<String, Object> FILE_LOCKS = new ConcurrentHashMap<>();
 
 
     private static Object lockFor(String username) {
-        return fileLocks.computeIfAbsent(username, k -> new Object());
+        return FILE_LOCKS.computeIfAbsent(username, k -> new Object());
     }
 
     public static boolean saveUser(User user) {

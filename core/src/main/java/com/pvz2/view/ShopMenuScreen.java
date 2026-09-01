@@ -113,15 +113,38 @@ public class ShopMenuScreen extends MenuScreen {
         card.pad(10);
         card.top();
 
+        Label badge = createDailyOfferBadge();
+        Label titleLabel = createDailyOfferTitle(offer.getName());
+        Container<Actor> animContainer = createDailyOfferAnimation(offer);
+        Table timerBox = createDailyOfferTimer();
+        TextButton buyBtn = createDailyOfferBuyButton(offer);
+
+        card.add(badge).center().padTop(5).row();
+        card.add(titleLabel).width(170).height(40).center().padBottom(5).row();
+        card.add(animContainer).size(100, 85).center().row();
+        card.add(timerBox).center().padTop(5).padBottom(5).row();
+        card.add().expandY().row();
+        card.add(buyBtn).width(150).height(42).padBottom(15).bottom();
+
+        return card;
+    }
+
+    private Label createDailyOfferBadge() {
         Label badge = new Label("DAILY OFFER", skin, "big_outline");
         badge.setFontScale(0.48f);
         badge.setColor(Color.YELLOW);
+        return badge;
+    }
 
-        Label titleLabel = new Label(offer.getName(), skin, "big_outline");
+    private Label createDailyOfferTitle(String name) {
+        Label titleLabel = new Label(name, skin, "big_outline");
         titleLabel.setFontScale(0.5f);
         titleLabel.setWrap(true);
         titleLabel.setAlignment(com.badlogic.gdx.utils.Align.center);
+        return titleLabel;
+    }
 
+    private Container<Actor> createDailyOfferAnimation(DailyOffer offer) {
         Actor plantDisplay;
         try {
             PlantType plant = offer.getPlantType();
@@ -135,7 +158,10 @@ public class ShopMenuScreen extends MenuScreen {
         Container<Actor> animContainer = new Container<>(plantDisplay);
         animContainer.center();
         animContainer.padLeft(18).padTop(10);
+        return animContainer;
+    }
 
+    private Table createDailyOfferTimer() {
         Label timerTitle = new Label("Resets in: ", skin);
         timerTitle.setFontScale(0.6f);
         timerTitle.setColor(Color.BLACK);
@@ -150,12 +176,10 @@ public class ShopMenuScreen extends MenuScreen {
                     java.time.LocalDateTime now = java.time.LocalDateTime.now();
                     java.time.LocalDateTime midnight = now.toLocalDate().plusDays(1).atStartOfDay();
                     java.time.Duration duration = java.time.Duration.between(now, midnight);
-
                     long totalSeconds = Math.max(0, duration.getSeconds());
                     long hours = totalSeconds / 3600;
                     long minutes = (totalSeconds % 3600) / 60;
                     long seconds = totalSeconds % 60;
-
                     timerLabel.setText(String.format("%02d:%02d:%02d", hours, minutes, seconds));
                 }),
                 com.badlogic.gdx.scenes.scene2d.actions.Actions.delay(1f)
@@ -165,7 +189,10 @@ public class ShopMenuScreen extends MenuScreen {
         Table timerBox = new Table();
         timerBox.add(timerTitle);
         timerBox.add(timerLabel);
+        return timerBox;
+    }
 
+    private TextButton createDailyOfferBuyButton(DailyOffer offer) {
         TextButton buyBtn = new TextButton(offer.getCoinCost() + " Coins", skin, "purple");
         buyBtn.addListener(new ClickListener() {
             @Override
@@ -176,16 +203,9 @@ public class ShopMenuScreen extends MenuScreen {
                 });
             }
         });
-
-        card.add(badge).center().padTop(5).row();
-        card.add(titleLabel).width(170).height(40).center().padBottom(5).row();
-        card.add(animContainer).size(100, 85).center().row();
-        card.add(timerBox).center().padTop(5).padBottom(5).row();
-        card.add().expandY().row();
-        card.add(buyBtn).width(150).height(42).padBottom(15).bottom();
-
-        return card;
+        return buyBtn;
     }
+
 
     private Table createPermanentItemCard(ShopItem item) {
         BorderedTable card = new BorderedTable();

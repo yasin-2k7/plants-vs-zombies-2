@@ -237,7 +237,6 @@ public class GameHUD extends Group {
             TextButton resumeBtn = new TextButton("RESUME", skin, "purple");
             TextButton restartBtn = new TextButton("RESTART", skin, "brown");
             TextButton exitBtn = new TextButton("SAVE AND EXIT", skin, "green");
-
             resumeBtn.addListener(new ClickListener() {
                 @Override
                 public void clicked(InputEvent event, float x, float y) {
@@ -245,7 +244,6 @@ public class GameHUD extends Group {
                     remove();
                 }
             });
-
             exitBtn.addListener(new ClickListener() {
                 @Override
                 public void clicked(InputEvent event, float x, float y) {
@@ -255,10 +253,14 @@ public class GameHUD extends Group {
                         UserManager.syncCurrentUser();
                     }
                     remove();
-                    if(world.getLevelSetup() instanceof BeghouledSetup ||
-                    world.getLevelSetup() instanceof MuPointLevel){
+                    boolean isMuPoint = (world.getMupointManager() != null);
+
+                    boolean isBeghouled = (world.getLevelSetup() != null &&
+                        world.getLevelSetup() instanceof BeghouledSetup);
+
+                    if (isMuPoint || isBeghouled) {
                         game.setScreen(new MainMenuScreen(game));
-                    } else{
+                    } else {
                         game.setScreen(new LevelMenuScreen(game));
                     }
 

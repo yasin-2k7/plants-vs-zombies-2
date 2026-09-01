@@ -50,28 +50,19 @@ public class OnlineGameHud extends Group {
 
     public OnlineGameHud(Main game, Skin skin, OnlineGameScreen screen) {
         this.screen = screen;
-
         sunCounter = new GameHUD.SunCounter(game, skin);
         brainCounter = new BrainCounter(game, skin);
-
         selectedPlantsList = new SelectedPlantsList(1, 1, false, 150, 100, createSelectingMethod(), game);
         selectedPlantsList.setNoBoost(true);
         selectedPlantsList.activate();
-
         selectedZombiesList = new SelectedZombiesList(100, 200, createZombieClickMethod());
-
         if (screen.controller.getWorld() != null) {
-            selectedZombiesList.build(screen.controller.getWorld().getZombieCards());
-        }
-
+            selectedZombiesList.build(screen.controller.getWorld().getZombieCards());}
         shovelBtn = createShovelBtn(game);
-
         String ownUsername = App.getCurrentUser() != null ? App.getCurrentUser().getUsername() : "";
         ownNameLabel = new Label(ownUsername, skin, "medium_outline");
         opponentNameLabel = new Label(screen.controller.getOpponentUsername(), skin, "medium_outline");
-
         topBar = new Table();
-
         Label plantLabel = screen.controller.getSide() == ClientGameController.Side.PLANTS ? ownNameLabel :
             opponentNameLabel;
         Label zombieLabel = screen.controller.getSide() == ClientGameController.Side.PLANTS ? opponentNameLabel :
@@ -81,44 +72,30 @@ public class OnlineGameHud extends Group {
         leftSide.add(sunCounter).pad(MARGIN);
         leftSide.add(shovelBtn).pad(5).row();
         leftSide.add(selectedPlantsList).pad(MARGIN);
-
         Table rightSide = new Table();
         rightSide.add(zombieLabel).right().padRight(MARGIN).padTop(5).row();
         rightSide.add(selectedZombiesList).top().right().row();
         rightSide.add(brainCounter).top().right().pad(MARGIN);
-
         topBar.add(leftSide).expandX().left().top();
-        topBar.add().expandX();
-        topBar.add(rightSide).right().top();
-
-        topBar.pack();
-        addActor(topBar);
-
+        topBar.add().expandX();    topBar.add(rightSide).right().top();  topBar.pack();   addActor(topBar);
         ReactionPanel reactionPanel = new ReactionPanel(game, skin, this::onReactionPicked);
         reactionPanelContainer = new Container<>(reactionPanel);
         reactionPanelContainer.size(440, 420);
         reactionPanelContainer.setVisible(false);
-
         reactionToggleBtn = MainMenuScreen.createImageButton(
             "IMAGE_UI_MAINMENU_EDIT_BTN_PRESSED",
             "IMAGE_UI_MAINMENU_EDIT_BTN_NORMAL",
-            game.textureBank
-        );
+            game.textureBank);
         reactionToggleBtn.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                toggleReactionPanel();
-            }
-        });
-
+                toggleReactionPanel();}});
         reactionDock = new Table();
         reactionDock.add(reactionPanelContainer).padBottom(10).row();
         reactionDock.add(reactionToggleBtn);
         addActor(reactionDock);
-
         opponentBubbleLayer = new Table();
         addActor(opponentBubbleLayer);
-
         screen.controller.setReactionListener(this::onReactionReceived);
     }
 
@@ -293,7 +270,8 @@ public class OnlineGameHud extends Group {
             needsReposition = true;
         }
 
-        if (selectedZombiesList.getZombieCardViewList().isEmpty() && world != null && !world.getZombieCards().isEmpty()) {
+        if (selectedZombiesList.getZombieCardViewList().isEmpty() && world != null &&
+            !world.getZombieCards().isEmpty()) {
             selectedZombiesList.build(world.getZombieCards());
             needsReposition = true;
         }

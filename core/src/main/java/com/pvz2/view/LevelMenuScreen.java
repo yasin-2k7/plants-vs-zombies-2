@@ -10,8 +10,10 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.pvz2.Main;
 import com.pvz2.controller.LevelMenuController;
 import com.pvz2.models.core.App;
@@ -83,7 +85,7 @@ public class LevelMenuScreen extends MenuScreen {
         minScrollX = Math.min(0, stageWidth - totalWidth);
 
         mainStack.add(contentGroup);
-        addBackButton();
+        buildTopBar();
     }
 
     private void calculateNodePositions(int totalLevels, float nodeSize, float startX, float baseY,
@@ -223,19 +225,64 @@ public class LevelMenuScreen extends MenuScreen {
         };
     }
 
-    private void addBackButton() {
-        TextButton backButton = new TextButton("Back", skin);
-        backButton.setSize(200f, 80f);
-        backButton.setPosition(50f, stage.getHeight() - 130f);
+    private void buildTopBar() {
+        Table topBar = new Table();
+        topBar.top().setFillParent(true);
+        Table buttonsTable = new Table();
 
-        backButton.addListener(new ClickListener() {
+        ImageButton backBtn = createIconButton("IMAGE_UI_ALMANAC_BUTTONS_HUD_BACK_NORMAL",
+            "IMAGE_UI_ALMANAC_BUTTONS_HUD_BACK_SELECTED");
+        backBtn.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                game.setScreen(new ChapterMenuScreen(game));
+                fadeAndSwitchScreen(new ChapterMenuScreen(game));
             }
         });
 
-        stage.addActor(backButton);
+        ImageButton greenBtn = createIconButton("IMAGE_UI_GENERIC_BUTTONS_HUD_ZG_NORMAL",
+            "IMAGE_UI_GENERIC_BUTTONS_HUD_ZG_SELECTED");
+        greenBtn.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                fadeAndSwitchScreen(new GreenhouseMenuScreen(game));
+            }
+        });
+
+        ImageButton collectionBtn = createIconButton("IMAGE_UI_HUD_ALMANACBUTTON_BUTTONS_HUD_ALMANAC_NORMAL",
+            "IMAGE_UI_HUD_ALMANACBUTTON_BUTTONS_HUD_ALMANAC_NORMAL");
+        collectionBtn.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                fadeAndSwitchScreen(new CollectionMenuScreen(game, LevelMenuScreen.this));
+            }
+        });
+
+        buttonsTable.add(backBtn).size(55, 55).padRight(10);
+        buttonsTable.add(greenBtn).size(55, 55).padRight(10);
+        buttonsTable.add(collectionBtn).size(55, 55);
+
+        topBar.add(buttonsTable).left().pad(15);
+        topBar.add().expandX();
+
+        if (App.getCurrentUser() != null) {
+            ResourcesTable resourcesTable = new ResourcesTable(App.getCurrentUser(), game);
+            topBar.add(resourcesTable).right().pad(15);
+        }
+
+        mainStack.add(topBar);
+    }
+
+    private ImageButton createIconButton(String upRegionName, String downRegionName) {
+        TextureRegion upRegion = game.textureBank.region(upRegionName);
+        TextureRegion downRegion = game.textureBank.region(downRegionName);
+
+        if (upRegion == null) upRegion = game.textureBank.region("IMAGE_MAINMENU_BACKGROUND");
+
+        ImageButton.ImageButtonStyle style = new ImageButton.ImageButtonStyle();
+        style.up = new TextureRegionDrawable(upRegion);
+        if (downRegion != null) style.down = new TextureRegionDrawable(downRegion);
+
+        return new ImageButton(style);
     }
 
     private void handleViewportIndependentInput() {

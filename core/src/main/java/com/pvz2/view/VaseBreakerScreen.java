@@ -41,7 +41,6 @@ public class VaseBreakerScreen extends MenuScreen {
 
     private TextureRegion lawnBackground;
     private final List<VaseGraphic> vaseGraphics = new ArrayList<>();
-
     private final List<ZombieGraphic> zombieGraphics = new ArrayList<>();
     private final List<PlantGraphic> plantGraphics = new ArrayList<>();
     private final Map<Projectile, ProjectileGraphic> projectileGraphics = new HashMap<>();
@@ -51,12 +50,13 @@ public class VaseBreakerScreen extends MenuScreen {
     private PamPlayer pamPlayer;
 
     private final List<PlantCardView> seedPackets = new ArrayList<>();
-
     private final PlantPlacementManager plantPlacementManager = new PlantPlacementManager();
 
     private ImageButton shovelBtn;
     private ImageButton pauseBtn;
     private Table pauseOverlay;
+    private GameEndOverlay endGameOverlay;
+    private ResourcesTable resourcesTable;
 
     public enum VaseState {
         DROPPING,
@@ -68,7 +68,6 @@ public class VaseBreakerScreen extends MenuScreen {
     public VaseBreakerScreen(Main game, VaseBreakerLevel world) {
         super(game);
         this.world = world;
-
         this.assetsFolder = Gdx.files.internal("");
         this.pamPlayer = new PamPlayer(game.textureBank, Gdx.files.internal(""));
     }
@@ -76,11 +75,8 @@ public class VaseBreakerScreen extends MenuScreen {
     @Override
     public void show() {
         super.show();
-
         initWorldCamera(1800, 1000);
-
         lawnBackground = game.textureBank.region("IMAGE_BACKGROUNDS_JOUST_TEXTURE");
-
         initVaseGraphics();
     }
 
@@ -90,6 +86,7 @@ public class VaseBreakerScreen extends MenuScreen {
         topBar.setFillParent(true);
         topBar.top();
 
+        resourcesTable = new ResourcesTable(App.getCurrentUser(), game);
         shovelBtn = createShovelBtn();
         pauseBtn = new ImageButton(skin, "ingame_pause");
         pauseBtn.addListener(new ClickListener() {
@@ -99,6 +96,7 @@ public class VaseBreakerScreen extends MenuScreen {
             }
         });
 
+        topBar.add(resourcesTable).pad(10).left();
         topBar.add(shovelBtn).pad(20).left();
         topBar.add().expandX();
         topBar.add(pauseBtn).pad(20).right();
@@ -134,9 +132,7 @@ public class VaseBreakerScreen extends MenuScreen {
     }
 
     private void showPauseOverlay() {
-        if (pauseOverlay != null) {
-            pauseOverlay.remove();
-        }
+        if (pauseOverlay != null) pauseOverlay.remove();
         pauseOverlay = new Table();
         pauseOverlay.setFillParent(true);
 
@@ -163,8 +159,18 @@ public class VaseBreakerScreen extends MenuScreen {
             }
         });
 
+        TextButton exitBtn = new TextButton("EXIT", skin, "green");
+        exitBtn.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                world.setState(GameState.PLAYING);
+                game.setScreen(new LevelMenuScreen(game));
+            }
+        });
+
         pauseOverlay.add(resumeBtn).pad(10).row();
-        pauseOverlay.add(restartBtn).pad(10);
+        pauseOverlay.add(restartBtn).pad(10).row();
+        pauseOverlay.add(exitBtn).pad(10);
 
         modalStack.addActor(pauseOverlay);
     }
@@ -176,8 +182,34 @@ public class VaseBreakerScreen extends MenuScreen {
         }
     }
 
+    private void showEndGameOverlay() {
+        if (endGameOverlay != null) endGameOverlay.remove();
+        endGameOverlay = new GameEndOverlay(game, skin, world, this::restartLevel);
+        modalStack.addActor(endGameOverlay);
+    }
+
+    private void hideEndGameOverlay() {
+        if (endGameOverlay != null) {
+            endGameOverlay.remove();
+            endGameOverlay = null;
+        }
+    }
+
     public void restartLevel() {
-        GameMenuController.restartVase(world);
+        world.reset();
+        world.setState(GameState.PLAYING);
+        world.setEndGameHandled(false);
+        hidePauseOverlay();
+        hideEndGameOverlay();
+
+        plantGraphics.clear();
+        zombieGraphics.clear();
+        seedPackets.clear();
+        projectileGraphics.clear();
+        projectileImpacts.clear();
+        plantPlacementManager.cancelSelection();
+
+        initVaseGraphics();
     }
 
     @Override
@@ -188,15 +220,18 @@ public class VaseBreakerScreen extends MenuScreen {
         }
     }
 
+    // --- تفکیک منطق آپدیت و رندر ---
+
     @Override
     protected void drawBackground(float delta) {
-        handleInput();
+        // ۱. بروزرسانی منطق بازی
+        updateLogic(delta);
 
-        world.tick(delta);
-
-        plantGraphics.removeIf(PlantGraphic::isDead);
-
+        // ۲. تنظیم دوربین و ماتریس رندر SpriteBatch
         applyWorldViewport();
+        game.batch.setProjectionMatrix(worldViewport.getCamera().combined);
+
+        // ۳. رسم اجزای بازی
         game.batch.begin();
 
         if (lawnBackground != null) {
@@ -204,17 +239,14 @@ public class VaseBreakerScreen extends MenuScreen {
         }
 
         for (VaseGraphic vg : vaseGraphics) {
-            vg.update(delta);
             vg.draw();
         }
 
         for (PlantGraphic pg : plantGraphics) {
-            pg.update(delta);
             pg.draw(game.batch, pamPlayer);
         }
 
         for (ZombieGraphic zg : zombieGraphics) {
-            zg.update(delta, pamPlayer);
             zg.draw(game.batch, pamPlayer);
         }
 
@@ -230,6 +262,75 @@ public class VaseBreakerScreen extends MenuScreen {
         plantPlacementManager.drawPreview(pamPlayer, game.batch, cursorWorldPos, delta);
 
         game.batch.end();
+    }
+
+    private void updateLogic(float delta) {
+        handleInput();
+
+        if (world.getState() == GameState.PAUSED) return;
+
+        world.tick(delta);
+
+        // آپدیت انیمیشن کوزه‌ها
+        for (VaseGraphic vg : vaseGraphics) {
+            vg.update(delta);
+        }
+
+        // آپدیت گرافیک گیاهان و زامبی‌ها
+        for (PlantGraphic pg : plantGraphics) {
+            pg.update(delta);
+        }
+        for (ZombieGraphic zg : zombieGraphics) {
+            zg.update(delta, pamPlayer);
+        }
+
+        // پاکسازی کائنات مرده
+        zombieGraphics.removeIf(zg -> zg.getZombie().isDead());
+        plantGraphics.removeIf(PlantGraphic::isDead);
+
+        // بررسی شرایط باخت و برد
+        if (world.getState() == GameState.PLAYING) {
+            checkWinLoseConditions();
+        }
+
+        // نمایش لایه پایان بازی
+        if (world.getState() != GameState.PAUSED && !world.isEndGameHandled()) {
+            if (world.getState() == GameState.WON) {
+                world.setEndGameHandled(true);
+                GameMenuController.handleWinning(world);
+                showEndGameOverlay();
+            } else if (world.getState() == GameState.LOST) {
+                world.setEndGameHandled(true);
+                GameMenuController.handleLosing(world);
+                showEndGameOverlay();
+            }
+        }
+
+        if (resourcesTable != null) {
+            resourcesTable.update();
+        }
+    }
+
+    private void checkWinLoseConditions() {
+        // ۱. رسیدن زامبی به خانه
+        boolean zombieReachedHouse = world.getActiveZombies().stream()
+            .anyMatch(z -> !z.isDead() && z.getX() <= 100f);
+
+        // ۲. تمام شدن کوزه‌ها، کارت‌ها و گیاهان روی زمین
+        boolean allVasesBroken = vaseGraphics.stream().allMatch(VaseGraphic::isBroken);
+        boolean noCardsOrSelection = seedPackets.isEmpty() && !plantPlacementManager.isPlantSelected();
+        boolean noPlantsOnBoard = plantGraphics.isEmpty();
+        boolean activeZombiesExist = world.getActiveZombies().stream().anyMatch(z -> !z.isDead());
+
+        if (zombieReachedHouse || (allVasesBroken && noCardsOrSelection && noPlantsOnBoard && activeZombiesExist)) {
+            world.setState(GameState.LOST);
+            return;
+        }
+
+        // شرط برد: تمام کوزه‌ها شکسته و زامبی زنده‌ای باقی نمانده
+        if (allVasesBroken && !activeZombiesExist) {
+            world.setState(GameState.WON);
+        }
     }
 
     private void renderProjectiles(float delta, SpriteBatch batch, PamPlayer pamPlayer) {
@@ -269,7 +370,6 @@ public class VaseBreakerScreen extends MenuScreen {
             if (ig.isFinished(pamPlayer)) impactIt.remove();
         }
     }
-
 
     private void initVaseGraphics() {
         vaseGraphics.clear();
@@ -333,7 +433,7 @@ public class VaseBreakerScreen extends MenuScreen {
     }
 
     private void placePlantInCell(int row, int col, PlantType selectedPlant) {
-        Cell[][] grid = App.getCurrentGame().getGrid();
+        Cell[][] grid = world.getGrid();
         if (grid != null && row < grid.length && col < grid[0].length) {
             Cell cell = grid[row][col];
             if (cell != null) {
@@ -341,10 +441,7 @@ public class VaseBreakerScreen extends MenuScreen {
                 Plant plantModel = cell.handlePlanting(selectedPlant, boosted);
 
                 if (plantModel != null) {
-                    plantModel.setX(LawnGrid.getCellX(col));
-                    plantModel.setY(LawnGrid.getCellY(row));
                     plantModel.setCell(cell);
-
                     plantGraphics.add(new PlantGraphic(plantModel, pamPlayer));
                     SFXManager.getInstance().playSound(GameSFX.PLANT);
                 }
@@ -520,8 +617,11 @@ public class VaseBreakerScreen extends MenuScreen {
 
         public void draw() {
             if (state == VaseState.BROKEN) return;
-
             pamPlayer.draw(game.batch, pamPath, currentClip, animTime, currentX, currentY, isLoop);
+        }
+
+        public boolean isBroken() {
+            return this.state == VaseState.BROKEN;
         }
     }
 }

@@ -3,7 +3,7 @@ package com.pvz2.network.onlineIZombie;
 public class ZombieCard {
     private final String type;
     private int brainCost;
-    private final float MAX_COOLDOWN = 10;
+    private final static float MAX_COOLDOWN = 10;
     private float currentCooldown = 0;
     private boolean ready = true;
 
