@@ -123,7 +123,7 @@ public class WaveManager {
         User user = App.getCurrentUser();
         if (user != null) {
             String inGameName = App.getArmoredZombieName(alias);
-            if (!user.getShowedZombies().containsKey(inGameName)) {
+            if (!user.getShowedZombies().get(inGameName)) {
                 user.getShowedZombies().put(inGameName, true);
                 user.notifyZombieUnlock(inGameName);
                 user.save();

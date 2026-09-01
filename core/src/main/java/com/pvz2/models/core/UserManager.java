@@ -8,6 +8,7 @@ import java.util.List;
 
 public class UserManager {
     private static User currentUser;
+    private static String currentSessionToken;
 
     public static boolean loadInitialUser() {
         String token = UserDataManager.getSessionToken();
@@ -27,18 +28,6 @@ public class UserManager {
             }
         } catch (InterruptedException e) {
             return false;
-        }
-    }
-
-    public static String register(String username, String password, String nickname, String email,
-                                  String gender, String securityQ, String securityA) {
-        try {
-            RegisterRequest req = new RegisterRequest(username, password, nickname, email, gender, securityQ, securityA);
-            NetworkMessage reply = NetworkClient.get().sendRequest("REGISTER", req, 5000);
-            RegisterResponse resp = NetworkClient.get().parsePayload(reply, RegisterResponse.class);
-            return resp.message;
-        } catch (InterruptedException e) {
-            return "Error: could not reach server.";
         }
     }
 
@@ -65,18 +54,9 @@ public class UserManager {
     private static void applyLoggedInUser(User user, String token) {
         user.afterLoad();
         currentUser = user;
+        currentSessionToken = token;
         App.setCurrentUser(user);
         user.initQuests();
-    }
-
-    public static List<LeaderboardEntry> getLeaderboard() {
-        try {
-            NetworkMessage reply = NetworkClient.get().sendRequest("GET_LEADERBOARD", new Object(), 5000);
-            LeaderboardResponse resp = NetworkClient.get().parsePayload(reply, LeaderboardResponse.class);
-            return resp.entries;
-        } catch (InterruptedException e) {
-            return List.of();
-        }
     }
 
     public static User getCurrentUser() {
@@ -85,14 +65,14 @@ public class UserManager {
 
     public static void logout() {
         if (currentUser != null) {
-            String token = UserDataManager.getSessionToken();
-            if (token != null) {
+            if (currentSessionToken != null) {
                 try {
-                    NetworkClient.get().sendRequest("LOGOUT", new LogoutRequest(token), 3000);
+                    NetworkClient.get().sendRequest("LOGOUT", new LogoutRequest(currentSessionToken), 3000);
                 } catch (InterruptedException ignored) {
                 }
             }
             currentUser = null;
+            currentSessionToken = null; // NEW
             App.setCurrentUser(null);
             UserDataManager.clearSessionToken();
         }
@@ -100,11 +80,9 @@ public class UserManager {
 
     public static void syncCurrentUser() {
         new Thread(() -> {
-            if (currentUser == null) return;
-            String token = UserDataManager.getSessionToken();
-            if (token == null) return;
+            if (currentUser == null || currentSessionToken == null) return;
             try {
-                SaveUserRequest req = new SaveUserRequest(token, currentUser);
+                SaveUserRequest req = new SaveUserRequest(currentSessionToken, currentUser);
                 NetworkMessage reply = NetworkClient.get().sendRequest("SAVE_USER", req, 5000);
                 NetworkClient.get().parsePayload(reply, AckResponse.class);
             } catch (InterruptedException e) {
@@ -113,11 +91,10 @@ public class UserManager {
     }
 
     public static String changeUsername(String newUsername) {
-        String token = UserDataManager.getSessionToken();
-        if (token == null) return "You must be logged in to do this.";
+        if (currentSessionToken == null) return "You must be logged in to do this.";
 
         try {
-            UpdateUsernameRequest req = new UpdateUsernameRequest(token, newUsername);
+            UpdateUsernameRequest req = new UpdateUsernameRequest(currentSessionToken, newUsername);
             NetworkMessage reply = NetworkClient.get().sendRequest("UPDATE_USERNAME", req, 5000);
             RegisterResponse resp = NetworkClient.get().parsePayload(reply, RegisterResponse.class);
 
@@ -131,10 +108,9 @@ public class UserManager {
     }
 
     public static String changePassword(String oldPassword, String newPassword) {
-        String token = UserDataManager.getSessionToken();
-        if (token == null) return "You must be logged in to do this.";
+        if (currentSessionToken == null) return "You must be logged in to do this.";
         try {
-            ChangePasswordRequest req = new ChangePasswordRequest(token, oldPassword, newPassword);
+            ChangePasswordRequest req = new ChangePasswordRequest(currentSessionToken, oldPassword, newPassword);
             NetworkMessage reply = NetworkClient.get().sendRequest("CHANGE_PASSWORD", req, 5000);
             AckResponse resp = NetworkClient.get().parsePayload(reply, AckResponse.class);
             if (resp.success && currentUser != null) {
@@ -143,6 +119,29 @@ public class UserManager {
             return resp.message;
         } catch (InterruptedException e) {
             return "Error: could not reach server.";
+        }
+    }
+
+    public static String register(String username, String password, String nickname, String email,
+                                  String gender, String securityQ, String securityA) {
+        try {
+            RegisterRequest req = new RegisterRequest(username, password, nickname, email, gender, securityQ, securityA);
+            NetworkMessage reply = NetworkClient.get().sendRequest("REGISTER", req, 5000);
+            RegisterResponse resp = NetworkClient.get().parsePayload(reply, RegisterResponse.class);
+            return resp.message;
+        } catch (InterruptedException e) {
+            return "Error: could not reach server.";
+        }
+    }
+
+
+    public static List<LeaderboardEntry> getLeaderboard() {
+        try {
+            NetworkMessage reply = NetworkClient.get().sendRequest("GET_LEADERBOARD", new Object(), 5000);
+            LeaderboardResponse resp = NetworkClient.get().parsePayload(reply, LeaderboardResponse.class);
+            return resp.entries;
+        } catch (InterruptedException e) {
+            return List.of();
         }
     }
 
