@@ -36,7 +36,7 @@ import pvz.libpvz.pam.PamPlayer;
 import java.util.*;
 
 public class OnlineGameScreen extends MenuScreen{
-    ClientGameController controller;
+    public ClientGameController controller;
     private ZombiePlacementManager zombiePlacementManager = new ZombiePlacementManager();
     private OnlineGameHud hud;
     private PamPlayer pamPlayer;
