@@ -8,6 +8,8 @@ import com.pvz2.models.enums.ProjectileType;
 import com.pvz2.models.projectile.Projectile;
 import com.pvz2.models.world.GameState;
 import com.pvz2.models.world.GameWorld;
+import com.pvz2.view.audios.GameSFX;
+import com.pvz2.view.audios.SFXManager;
 import pvz.libpvz.pam.PamPlayer;
 
 public class ProjectileGraphic {
@@ -21,12 +23,8 @@ public class ProjectileGraphic {
     private ProjectileType type;
     private float animTime = 0f;
     private final int generation;
+    private int lastKnownPierce = -1;
 
-    // Interpolated render position. Offline (updateModel() never called): always equals the
-    // live Projectile's real position, zero lag, identical to the old behavior. Online
-    // (updateModel() called once per GAME_STATE snapshot): smoothly chases toward each new
-    // snapshot's position instead of snapping, since snapshots arrive far less often than
-    // rendering does.
     private float lastX;
     private float lastY;
     private boolean networked = false;
@@ -97,6 +95,10 @@ public class ProjectileGraphic {
     public ProjectileType getType() { return type; }
 
     public void updateModel(Projectile newProjectile) {
+        if (lastKnownPierce >= 0 && newProjectile.getPierce() < lastKnownPierce) {
+            SFXManager.getInstance().playSound(GameSFX.SPLAT);
+        }
+        lastKnownPierce = newProjectile.getPierce();
         this.projectile = newProjectile;
         this.networked = true;
     }

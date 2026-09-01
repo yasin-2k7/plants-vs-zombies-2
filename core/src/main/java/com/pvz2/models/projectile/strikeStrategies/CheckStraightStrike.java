@@ -24,7 +24,6 @@ public class CheckStraightStrike implements CheckStrike {
                 continue;
             }
             if (isCollidingWithCircle(oldX, oldY, x, y, zombie.getX(), zombie.getY(), 40)) {
-                SFXManager.getInstance().playSound(GameSFX.SPLAT);
                 return zombie;
             }
         }
@@ -33,7 +32,6 @@ public class CheckStraightStrike implements CheckStrike {
             .toList();
         for (Obstacle obstacle : sortedObstacle) {
             if (isCollidingWithCircle(oldX, oldY, x, y, obstacle.getX(), obstacle.getY(), 40)) {
-                SFXManager.getInstance().playSound(GameSFX.SPLAT);
                 return obstacle;
             }
         }

@@ -1122,6 +1122,7 @@ public class GameScreen extends MenuScreen {
             boolean noLongerActive = !active.contains(entry.getKey());
             if (reused || noLongerActive) {
                 projectileImpacts.add(new ProjectileImpactGraphic(pg.getType(), pg.getLastX(), pg.getLastY()));
+                SFXManager.getInstance().playSound(GameSFX.SPLAT);
                 it.remove();
             }
         }

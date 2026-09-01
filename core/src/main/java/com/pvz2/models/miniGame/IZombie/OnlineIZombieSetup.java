@@ -57,15 +57,10 @@ public class OnlineIZombieSetup implements LevelSetup {
             PlantCardFactory.createCard(PlantType.BONK_CHOY, 1),
             PlantCardFactory.createCard(PlantType.CITRON, 1)));
 
-        if (world instanceof IZombieLevel level) {
-            level.setAvailableZombies(stageZombies);
-            for (int r = 0; r < rows; r++) {
-                level.getBrains().add(new Brain(r, LawnGrid.getCellX(0) - LawnGrid.CELL_WIDTH,
-                    LawnGrid.getCellY(r)));
-            }
-            // No auto-planted defenses, and no SunProducer seeding here — see
-            // ServerGameController's class comment for why zombie income needs its
-            // own decision in network mode before this gets ported over too.
+        world.setAvailableZombies(stageZombies);
+        for (int r = 0; r < rows; r++) {
+            world.getBrains().add(new Brain(r, LawnGrid.getCellX(0) - LawnGrid.CELL_WIDTH,
+                LawnGrid.getCellY(r)));
         }
     }
 

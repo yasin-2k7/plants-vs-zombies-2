@@ -7,8 +7,10 @@ import com.pvz2.Main;
 import com.pvz2.models.core.App;
 import com.pvz2.models.core.User;
 import com.pvz2.models.enums.PlantType;
+import com.pvz2.models.miniGame.IZombie.OnlineIZombieLevel;
 import com.pvz2.models.plant.card.PlantCard;
 import com.pvz2.models.plant.card.PlantCardFactory;
+import com.pvz2.models.world.GameWorld;
 
 import java.util.ArrayList;
 import java.util.function.Consumer;
@@ -101,6 +103,13 @@ public class SelectedPlantsList extends PlantsTable{
         if (!isActive) return;
         for (PlantCardView plantCardView : plantCardViewList){
             plantCardView.update();
+        }
+    }
+    public void update(GameWorld world){
+        if (!isActive) return;
+        for (PlantCardView plantCardView : plantCardViewList){
+            plantCardView.update();
+            activate(world.getPlantLists());
         }
     }
 

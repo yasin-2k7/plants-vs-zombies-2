@@ -141,7 +141,7 @@ public class ServerGameController {
         Cell selectedCell = Cell.findCell(req.x, req.y, world.getGrid());
         if (selectedCell == null) return;
 
-        PlantCard selectedCard = findCard(req.type);
+        PlantCard selectedCard = findPlantCard(req.type);
         if (selectedCard == null || !selectedCard.isReady()) return;
         if (selectedCard.getSunCost() > world.getSun()) return;
         int col = LawnGrid.getColFromX(req.x);
@@ -255,6 +255,10 @@ public class ServerGameController {
         zombie.setX(req.x);
         zombie.setY(req.y);
         world.addZombie(zombie);
+        ZombieCard zombieCard = findZombieCard(req.zombieType);
+        if (zombieCard != null){
+            zombieCard.setReady(false);
+        }
 
         sendResult(sender, true, "zombie placed at " + req.x + ", " + req.y);
         broadcastState();
@@ -264,9 +268,17 @@ public class ServerGameController {
         sender.send("ACTION_RESULT", null, new ActionResult(success, message));
     }
 
-    private PlantCard findCard(PlantType type) {
+    private PlantCard findPlantCard(PlantType type) {
         List<PlantCard> cards = world.isConveyorMode() ? world.getConveyorBelt() : world.getPlantLists();
         for (PlantCard card : cards) {
+            if (card.getType().equals(type)) return card;
+        }
+        return null;
+    }
+
+    private ZombieCard findZombieCard(String type) {
+        List<ZombieCard> cards = world.getZombieCards();
+        for (ZombieCard card : cards) {
             if (card.getType().equals(type)) return card;
         }
         return null;

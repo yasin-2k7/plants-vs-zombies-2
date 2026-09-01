@@ -16,6 +16,7 @@ import com.pvz2.models.world.loseCondition.LoseCondition;
 import com.pvz2.models.world.mechanics.Mechanic;
 import com.pvz2.models.world.winCondition.WinCondition;
 import com.pvz2.network.onlineIZombie.ZombieCard;
+import com.pvz2.view.LawnGrid;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -78,7 +79,7 @@ public class OnlineIZombieLevel extends IZombieLevel {
         for (Zombie zombie : getActiveZombies()) {
             if (zombie.isDead()) continue;
 
-            int row = (int) (zombie.getY() / 100);
+            int row = LawnGrid.getRowFromY(zombie.getY());
             Brain brain = getBrainAtRow(row);
             if (brain != null && !brain.isEaten()) {
                 if (zombie.getX() <= brain.getX() + 20) {

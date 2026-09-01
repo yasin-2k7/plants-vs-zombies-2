@@ -167,6 +167,7 @@ public class OnlineGameScreen extends MenuScreen{
         }
         hud = new OnlineGameHud(game, skin, this);
         mainStack.addActor(hud);
+        hud.resize(stage.getWidth(), stage.getHeight());
     }
 
     private String[] getBackgroundKeys() {
@@ -437,27 +438,24 @@ public class OnlineGameScreen extends MenuScreen{
 
 
     private void checkExplosion(Plant newPlant, PlantGraphic pg){
-        if (newPlant.isExplosive()) {
-            newPlant.setExplosiveCallBack(owner -> {
-                String fxPath = PlantAnimationClips.getExplosionPamPath(owner.getType());
-                String fxClip = PlantAnimationClips.getExplosionClip(owner.getType());
-                if (fxPath != null) {
-                    float y=pg.getWorldY(),scaleX = 1,scaleY = 1;
-                    if (newPlant.getType() == PlantType.CHERRY_BOMB){
-                        y = pg.getWorldY()+100;
-                    }
-                    else if (newPlant.getType() == PlantType.JALAPENO){
-                        y = pg.getWorldY()+20;
-                        scaleX = 20;
-                        scaleY = 1.5f;
-                    }
-                    explosionGraphics.add(new ExplosionEffectGraphic(
-                        fxPath, fxClip, pg.getWorldX(), y, pamPlayer, scaleX,
-                        scaleY
-                    ));
-                    triggerCameraShake(0.3f, 10);
-                }
-            });
+        String fxPath = PlantAnimationClips.getExplosionPamPath(newPlant.getType());
+        String fxClip = PlantAnimationClips.getExplosionClip(newPlant.getType());
+        if (fxPath != null) {
+            float y=pg.getWorldY(),scaleX = 1,scaleY = 1;
+            if (newPlant.getType() == PlantType.CHERRY_BOMB){
+                y = pg.getWorldY()+100;
+            }
+            else if (newPlant.getType() == PlantType.JALAPENO){
+                y = pg.getWorldY()+20;
+                scaleX = 20;
+                scaleY = 1.5f;
+            }
+            explosionGraphics.add(new ExplosionEffectGraphic(
+                fxPath, fxClip, pg.getWorldX(), y, pamPlayer, scaleX,
+                scaleY
+            ));
+            SFXManager.getInstance().playSound(GameSFX.CHERRY_BOMB);
+            triggerCameraShake(0.3f, 10);
         }
     }
 
@@ -538,6 +536,7 @@ public class OnlineGameScreen extends MenuScreen{
             if (!currentIds.contains(entry.getKey())) {
                 ProjectileGraphic pg = entry.getValue();
                 projectileImpacts.add(new ProjectileImpactGraphic(pg.getType(), pg.getLastX(), pg.getLastY()));
+                SFXManager.getInstance().playSound(GameSFX.SPLAT);
                 it.remove();
             }
         }
@@ -564,17 +563,20 @@ public class OnlineGameScreen extends MenuScreen{
             if (existing == null) {
                 PlantGraphic pg = new PlantGraphic(p, pamPlayer);
                 plantGraphics.put(p.getId(), pg);
-
-                checkExplosion(p, pg);
             } else {
                 existing.updateModel(p);
-                checkExplosion(p, existing);
             }
         }
 
         plantGraphics.entrySet().removeIf(entry -> {
             if (currentIds.contains(entry.getKey())) return false;
-            return entry.getValue().isReadyToRemoveAfterDeath();
+            if (entry.getValue().isReadyToRemoveAfterDeath()){
+                if (entry.getValue().getPlant() != null){
+                    checkExplosion(entry.getValue().getPlant(), entry.getValue());
+                }
+                return true;
+            }
+            return false;
         });
     }
 
@@ -590,8 +592,19 @@ public class OnlineGameScreen extends MenuScreen{
             }
         }
 
-        zombieGraphics.entrySet().removeIf(entry ->
-            !currentIds.contains(entry.getKey()) && entry.getValue().isDeathAnimationFinished());
+
+        zombieGraphics.entrySet().removeIf(entry -> {
+            if (!currentIds.contains(entry.getKey())){
+                if (entry.getValue().isNetworkedDeathAnimationFinished()){
+                    return true;
+                }
+                if (!entry.getValue().getCurrentClip().equals("die")){
+                    entry.getValue().playClip("die", false);
+                }
+                return false;
+            }
+            return false;
+        });
     }
 
     @Override

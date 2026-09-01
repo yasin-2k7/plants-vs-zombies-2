@@ -22,6 +22,6 @@ public class CircularRange implements ExplosionRange {
             return Cell.getNeighborCells(owner.getCell(), LevelMenuController.getGameCells(owner), radius);
         }
         return Cell.getNeighborCells(owner.getComponent(ExplosivesComponent.class).getTarget(),
-                LevelMenuController.getGameCells(), radius);
+                LevelMenuController.getGameCells(owner), radius);
     }
 }

@@ -7,11 +7,11 @@ import com.pvz2.network.onlineIZombie.BrainCurrency;
 import java.util.Random;
 
 public class BrainSpawnMechanic implements Mechanic {
-    private float lastSpawnTime = -8f;
+    private float lastSpawnTime = -4f;
     private final float spawnInterval;
 
     public BrainSpawnMechanic() {
-        this(12f);
+        this(8f);
     }
 
     public BrainSpawnMechanic(float spawnInterval) {

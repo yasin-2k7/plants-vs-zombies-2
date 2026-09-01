@@ -232,9 +232,23 @@ public class OnlineGameHud extends Group {
         reposition();
     }
 
-    private void reposition() {
-        if (lastStageWidth == 0 || lastStageHeight == 0) return;
+    @Override
+    protected void setStage(com.badlogic.gdx.scenes.scene2d.Stage stage) {
+        super.setStage(stage);
+        if (stage != null) {
+            reposition();
+        }
+    }
 
+    private void reposition() {
+        float width = lastStageWidth;
+        float height = lastStageHeight;
+
+        if ((width == 0 || height == 0) && getStage() != null) {
+            width = getStage().getWidth();
+            height = getStage().getHeight();
+        }
+        if (width == 0 || height == 0) return;
         topBar.setWidth(lastStageWidth);
         topBar.pack();
         topBar.setWidth(lastStageWidth);
@@ -255,8 +269,8 @@ public class OnlineGameHud extends Group {
         OnlineIZombieLevel world = (OnlineIZombieLevel) gameWorld;
         sunCounter.update(world);
         brainCounter.update(world);
-        selectedPlantsList.update();
-        selectedZombiesList.updateCards();
+        selectedPlantsList.update(gameWorld);
+        selectedZombiesList.update((OnlineIZombieLevel) gameWorld);
 
         boolean needsReposition = false;
 

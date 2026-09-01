@@ -100,14 +100,14 @@ public class DirectionalMeleeComponent implements GameComponent {
     public List<Damageable> checkRight(Plant owner) {
         Cell cell = owner.getCell();
         if (cell == null) return null;
-        List<Cell> cells = Cell.getCellsInRow(cell, LevelMenuController.getGameCells());
+        List<Cell> cells = Cell.getCellsInRow(cell, LevelMenuController.getGameCells(owner));
         List<Zombie> rowZombies = Cell.getZombiesInCells(cells);
         List<Damageable> targets = new ArrayList<>();
         for (Zombie zombie : rowZombies) {
             if (zombie.getX() >= owner.getX() && zombie.getX() - owner.getX() <= rangeX) {
                 targets.add(zombie);}
         }
-        Cell rightCell = Cell.nextCell(cell, LevelMenuController.getGameCells());
+        Cell rightCell = Cell.nextCell(cell, LevelMenuController.getGameCells(owner));
         if (rightCell != null){
             Obstacle obstacle = rightCell.getObstacle();
             if (obstacle != null) targets.add(obstacle);
@@ -117,14 +117,14 @@ public class DirectionalMeleeComponent implements GameComponent {
     public List<Damageable> checkLeft(Plant owner) {
         Cell cell = owner.getCell();
         if (cell == null) return null;
-        List<Cell> cells = Cell.getCellsInRow(cell, LevelMenuController.getGameCells());
+        List<Cell> cells = Cell.getCellsInRow(cell, LevelMenuController.getGameCells(owner));
         List<Zombie> rowZombies = Cell.getZombiesInCells(cells);
         List<Damageable> targets = new ArrayList<>();
         for (Zombie zombie : rowZombies) {
             if (zombie.getX() <= owner.getX() && owner.getX() - zombie.getX() <= rangeX) {
                 targets.add(zombie);}
         }
-        Cell rightCell = Cell.previousCell(cell, LevelMenuController.getGameCells());
+        Cell rightCell = Cell.previousCell(cell, LevelMenuController.getGameCells(owner));
         if (rightCell != null){
             Obstacle obstacle = rightCell.getObstacle();
             if (obstacle != null) targets.add(obstacle);

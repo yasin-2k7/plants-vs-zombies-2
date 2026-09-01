@@ -49,6 +49,7 @@ public class ZombieGraphic {
 
     private boolean armorVisualHidden = false;
 
+
     // Interpolated render position. Offline (updateModel() never called): always equals the
     // live Zombie's real position, zero lag, identical to the old behavior. Online (updateModel()
     // called once per GAME_STATE snapshot): smoothly chases toward each new snapshot's position
@@ -94,7 +95,7 @@ public class ZombieGraphic {
 
         updateDisplayPosition(delta);
 
-        if (!zombie.isDead()) {
+        if (!zombie.isDead() && !currentClip.equals("die")) {
             if (zombie instanceof RangedZombie rangedZombie && rangedZombie.isThrowing()) {
                 String throwClip = resolveClip(rangedZombie.getThrowClipName());
                 if (!throwClip.equals(currentClip)) {
@@ -248,8 +249,16 @@ public class ZombieGraphic {
         }
     }
 
+    public String getCurrentClip() {
+        return currentClip;
+    }
+
     public boolean isDeathAnimationFinished() {
         return zombie.isDead() && currentClip.equals(resolveClip("die")) && animTime >= 1.5f;
+    }
+
+    public boolean isNetworkedDeathAnimationFinished() {
+        return currentClip.equals("die") && animTime >= 1.5f;
     }
 
     public void updateModel(Zombie newZombie) {

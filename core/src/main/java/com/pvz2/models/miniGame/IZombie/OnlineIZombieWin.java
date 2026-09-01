@@ -10,7 +10,7 @@ import com.pvz2.models.world.winCondition.WinCondition;
  * world is shared by both players rather than being one user's single-player session.
  */
 public class OnlineIZombieWin implements WinCondition {
-    public static final float TIME_LIMIT_SECONDS = 120f; // 2 minutes, per the spec
+    public static final float TIME_LIMIT_SECONDS = 180f;
 
     @Override
     public boolean checkWin(GameWorld game) {

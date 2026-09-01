@@ -1,6 +1,9 @@
 package com.pvz2.view;
 
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.pvz2.models.miniGame.IZombie.OnlineIZombieLevel;
+import com.pvz2.models.plant.card.PlantCard;
+import com.pvz2.models.world.GameWorld;
 import com.pvz2.network.onlineIZombie.ZombieCard;
 
 
@@ -32,8 +35,20 @@ public class SelectedZombiesList extends Table {
         }
     }
 
-    public void updateCards() {
+    public void activate(java.util.List<ZombieCard> cards){
+        for (ZombieCardView zombieCardView : zombieCardViewList){
+            for (ZombieCard card : cards){
+                if (zombieCardView.getZombieName().equals(card.getType())){
+                    zombieCardView.setCard(card);
+                    break;
+                }
+            }
+        }
+    }
+
+    public void update(OnlineIZombieLevel world){
         for (ZombieCardView view : zombieCardViewList) {
+            activate(world.getZombieCards());
             view.update();
         }
     }
