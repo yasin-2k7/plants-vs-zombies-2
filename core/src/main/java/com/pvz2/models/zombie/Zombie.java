@@ -12,7 +12,7 @@ import com.pvz2.models.world.Collectable;
 import com.pvz2.models.world.GameWorld;
 import com.pvz2.models.zombie.state.WalkingState;
 import com.pvz2.models.zombie.state.ZombieState;
-import com.pvz2.view.LawnGrid;
+import com.pvz2.view.util.LawnGrid;
 
 import java.util.ArrayList;
 import java.util.List;

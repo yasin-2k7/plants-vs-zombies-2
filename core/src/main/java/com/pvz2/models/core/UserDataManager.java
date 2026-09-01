@@ -5,7 +5,7 @@ import com.google.gson.FieldAttributes;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.pvz2.controller.GameMenuController;
-import com.pvz2.network.NetworkGson;
+import com.pvz2.models.network.NetworkGson;
 
 import java.io.*;
 import java.time.LocalDate;

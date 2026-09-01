@@ -1,9 +1,9 @@
 package com.pvz2.controller;
 
 import com.pvz2.models.core.UserManager;
-import com.pvz2.view.LoginMenuScreen;
-import com.pvz2.view.MainMenuScreen;
-import com.pvz2.view.SignupMenuScreen;
+import com.pvz2.view.screen.LoginMenuScreen;
+import com.pvz2.view.screen.MainMenuScreen;
+import com.pvz2.view.screen.SignupMenuScreen;
 
 public class LoginMenuController implements MenuController {
     private LoginMenuScreen screen;

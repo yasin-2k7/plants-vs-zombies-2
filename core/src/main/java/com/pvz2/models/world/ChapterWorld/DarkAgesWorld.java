@@ -9,7 +9,7 @@ import com.pvz2.models.world.mechanics.Mechanic;
 import com.pvz2.models.world.mechanics.SunSpawnMechanic;
 import com.pvz2.models.world.obstacles.Grave;
 import com.pvz2.models.world.winCondition.WinCondition;
-import com.pvz2.view.LawnGrid;
+import com.pvz2.view.util.LawnGrid;
 
 import java.util.ArrayList;
 import java.util.List;

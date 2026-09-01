@@ -5,7 +5,7 @@ import com.pvz2.controller.GameMenuController;
 import com.pvz2.models.core.App;
 import com.pvz2.models.plant.components.SunProducerComponent;
 import com.pvz2.models.pool.Resettable;
-import com.pvz2.view.SunGraphic;
+import com.pvz2.view.graphic.SunGraphic;
 
 public class Sun implements Resettable {
     private float x, y;

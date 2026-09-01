@@ -7,7 +7,7 @@ import com.pvz2.models.enums.PlantType;
 import com.pvz2.models.plant.card.PlantCard;
 import com.pvz2.models.plant.card.PlantCardFactory;
 import com.pvz2.models.world.levelSetup.PlantWhatYouGetLevelSetup;
-import com.pvz2.view.MenuScreen;
+import com.pvz2.view.screen.MenuScreen;
 
 import java.util.*;
 

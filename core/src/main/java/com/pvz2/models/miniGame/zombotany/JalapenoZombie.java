@@ -5,7 +5,7 @@ import com.pvz2.models.enums.Zombies;
 import com.pvz2.models.plant.Plant;
 import com.pvz2.models.world.GameWorld;
 import com.pvz2.models.zombie.Zombie;
-import com.pvz2.view.LawnGrid;
+import com.pvz2.view.util.LawnGrid;
 
 public class JalapenoZombie extends Zombie {
     private static final float EXPLODE_AFTER_TIME = 10f;

@@ -9,7 +9,7 @@ import com.pvz2.models.projectile.strikeStrategies.CheckStraightStrike;
 import com.pvz2.models.world.GameWorld;
 import com.pvz2.models.world.Sun;
 import com.pvz2.models.zombie.Zombie;
-import com.pvz2.view.OnlineGameScreen;
+import com.pvz2.view.screen.OnlineGameScreen;
 
 public class App {
     private static final PlantFactory FACTORY = new PlantFactory();

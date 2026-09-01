@@ -7,7 +7,7 @@ import com.pvz2.models.plant.Plant;
 import com.pvz2.models.world.GameWorld;
 import com.pvz2.models.zombie.Zombie;
 import com.pvz2.models.zombie.ZombieFactory;
-import com.pvz2.view.LawnGrid;
+import com.pvz2.view.util.LawnGrid;
 
 public class SpawnerZombie extends Zombie {
     private boolean isGargantuar;

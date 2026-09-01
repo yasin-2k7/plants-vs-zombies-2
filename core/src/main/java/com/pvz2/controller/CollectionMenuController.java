@@ -9,9 +9,9 @@ import com.pvz2.models.plant.factory.PlantFactory;
 import com.pvz2.models.zombie.Zombie;
 import com.pvz2.models.zombie.ZombieFactory;
 import com.pvz2.models.zombie.zombiesType.ArmoredZombie;
-import com.pvz2.view.CollectionMenuScreen;
-import com.pvz2.view.MenuScreen;
-import com.pvz2.view.PlantsCollectionMenuScreen;
+import com.pvz2.view.screen.CollectionMenuScreen;
+import com.pvz2.view.screen.MenuScreen;
+import com.pvz2.view.screen.PlantsCollectionMenuScreen;
 
 
 public class CollectionMenuController implements MenuController {

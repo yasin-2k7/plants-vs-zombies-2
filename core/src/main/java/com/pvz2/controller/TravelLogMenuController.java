@@ -10,9 +10,9 @@ import com.pvz2.models.miniGame.vaseBreaker.VaseBreakerLevel;
 import com.pvz2.models.quest.Quest;
 import com.pvz2.models.quest.reward.Reward;
 import com.pvz2.models.world.GameWorld;
-import com.pvz2.view.BeghouledScreen;
-import com.pvz2.view.GameScreen;
-import com.pvz2.view.VaseBreakerScreen;
+import com.pvz2.view.screen.BeghouledScreen;
+import com.pvz2.view.screen.GameScreen;
+import com.pvz2.view.screen.VaseBreakerScreen;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;

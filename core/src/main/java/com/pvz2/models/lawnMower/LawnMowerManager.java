@@ -4,7 +4,7 @@ import com.pvz2.models.core.App;
 import com.pvz2.models.world.GameState;
 import com.pvz2.models.world.GameWorld;
 import com.pvz2.models.zombie.Zombie;
-import com.pvz2.view.LawnGrid;
+import com.pvz2.view.util.LawnGrid;
 
 import java.util.ArrayList;
 import java.util.List;

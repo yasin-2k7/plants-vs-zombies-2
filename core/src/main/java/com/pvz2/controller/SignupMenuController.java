@@ -2,8 +2,8 @@ package com.pvz2.controller;
 
 import com.badlogic.gdx.Gdx;
 import com.pvz2.models.core.UserManager;
-import com.pvz2.view.LoginMenuScreen;
-import com.pvz2.view.SignupMenuScreen;
+import com.pvz2.view.screen.LoginMenuScreen;
+import com.pvz2.view.screen.SignupMenuScreen;
 
 import java.util.ArrayList;
 import java.util.List;

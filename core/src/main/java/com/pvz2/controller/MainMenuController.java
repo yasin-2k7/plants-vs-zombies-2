@@ -10,7 +10,7 @@ import com.pvz2.models.core.User;
 import com.pvz2.models.core.UserManager;
 import com.pvz2.models.mupoint.MuPointLevel;
 import com.pvz2.models.world.GameWorld;
-import com.pvz2.view.*;
+import com.pvz2.view.screen.*;
 
 import java.util.List;
 

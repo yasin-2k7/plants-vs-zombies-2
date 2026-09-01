@@ -3,7 +3,6 @@ package com.pvz2.models.world;
 import com.pvz2.controller.GameMenuController;
 import com.pvz2.models.core.App;
 import com.pvz2.models.core.User;
-import com.pvz2.models.core.UserDataManager;
 import com.pvz2.models.core.UserManager;
 import com.pvz2.models.enums.Chapter;
 import com.pvz2.models.enums.PlantFamily;
@@ -28,7 +27,7 @@ import com.pvz2.models.world.obstacles.OctopusObstacle;
 import com.pvz2.models.world.winCondition.WinCondition;
 import com.pvz2.models.zombie.Zombie;
 import com.pvz2.models.zombie.wave.WaveManager;
-import com.pvz2.view.LawnGrid;
+import com.pvz2.view.util.LawnGrid;
 
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;

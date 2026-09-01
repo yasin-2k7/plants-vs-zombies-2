@@ -1,7 +1,7 @@
 package com.pvz2.models.mupoint;
 
 import com.pvz2.controller.GameMenuController;
-import com.pvz2.view.GameScreen;
+import com.pvz2.view.screen.GameScreen;
 
 import java.util.ArrayList;
 import java.util.List;

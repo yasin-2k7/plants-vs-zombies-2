@@ -7,7 +7,7 @@ import com.pvz2.models.world.Cell;
 import com.pvz2.models.world.GameWorld;
 import com.pvz2.models.world.Sun;
 import com.pvz2.models.zombie.Zombie;
-import com.pvz2.view.LawnGrid;
+import com.pvz2.view.util.LawnGrid;
 
 import java.util.List;
 

@@ -9,7 +9,7 @@ import com.pvz2.models.zombie.Zombie;
 import com.pvz2.models.zombie.state.EatingState;
 import com.pvz2.models.zombie.state.WalkingState;
 import com.pvz2.models.zombie.state.ZombieState;
-import com.pvz2.view.GameScreen;
+import com.pvz2.view.screen.GameScreen;
 
 import java.util.ArrayList;
 import java.util.Set;

@@ -7,8 +7,8 @@ import com.pvz2.models.plant.Plant;
 import com.pvz2.models.world.Cell;
 import com.pvz2.models.world.GameWorld;
 import com.pvz2.models.world.LevelFactory;
-import com.pvz2.view.GameScreen;
-import com.pvz2.view.LevelMenuScreen;
+import com.pvz2.view.screen.GameScreen;
+import com.pvz2.view.screen.LevelMenuScreen;
 import com.pvz2.view.audios.AudioManager;
 import com.pvz2.view.audios.GameMusic;
 

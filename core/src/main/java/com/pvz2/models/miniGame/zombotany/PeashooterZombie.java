@@ -11,7 +11,7 @@ import com.pvz2.models.projectile.strikeStrategies.CheckPlantStrike;
 import com.pvz2.models.projectile.strikeStrategies.CheckStrike;
 import com.pvz2.models.world.GameWorld;
 import com.pvz2.models.zombie.Zombie;
-import com.pvz2.view.LawnGrid;
+import com.pvz2.view.util.LawnGrid;
 
 public class PeashooterZombie extends Zombie {
     private static final float COOLDOWN_TICKS = 1.5f;
