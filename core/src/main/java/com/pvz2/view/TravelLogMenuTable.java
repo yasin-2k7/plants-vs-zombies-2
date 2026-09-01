@@ -30,7 +30,6 @@ import java.util.List;
 public class TravelLogMenuTable extends Table {
 
     private enum Tab { MAIN, DAILY, CHALLENGE, MINIGAME }
-
     private static final Color CHALLENGE_TINT = new Color(0.85f, 0.4f, 0.25f, 1f);
     private static final Color MINIGAME_TINT = new Color(0.55f, 0.35f, 0.85f, 1f);
     private static final Color ACTIVE_TINT = Color.WHITE;
@@ -39,16 +38,13 @@ public class TravelLogMenuTable extends Table {
     private static final Color PROGRESS_TRACK_COLOR = new Color(0.75f, 0.7f, 0.55f, 1f);
     private static final Color PROGRESS_FILL_COLOR = new Color(0.25f, 0.7f, 0.25f, 1f);
     private static final Color TITLE_TAG_COLOR = new Color(1f, 0.82f, 0.1f, 0.95f);
-
     private static final int COMPACT_LABEL_MAX_LEN = 3;
     private static final int BADGES_PER_ROW = 5;
     private static final float PROGRESS_BAR_WIDTH = 240f;
     private static final float PROGRESS_BAR_HEIGHT = 16f;
-
     private final TravelLogMenuController controller = new TravelLogMenuController();
     private final Main game;
     private final Skin skin;
-
     private Tab currentTab = Tab.MAIN;
     private final Table contentTable = new Table();
     private final java.util.Map<Tab, Image> tabBackgrounds = new java.util.EnumMap<>(Tab.class);
@@ -61,17 +57,14 @@ public class TravelLogMenuTable extends Table {
 
     private void build() {
         pad(5);
-
         Table tabBar = new Table();
         tabBar.add(buildTabButton("MAIN", Tab.MAIN)).expandX().fillX().height(45);
         tabBar.add(buildTabButton("DAILY", Tab.DAILY)).expandX().fillX().height(45);
         tabBar.add(buildTabButton("CHALLENGE", Tab.CHALLENGE)).expandX().fillX().height(45);
         tabBar.add(buildTabButton("MINIGAMES", Tab.MINIGAME)).expandX().fillX().height(45);
         add(tabBar).growX().padBottom(16).row();
-
         contentTable.top();
         add(contentTable).grow().top().row();
-
         updateTabHighlight();
         refreshContent();
     }
@@ -81,20 +74,16 @@ public class TravelLogMenuTable extends Table {
         boolean useGreen = (tab == Tab.DAILY);
         TextureRegion texRegion = game.textureBank.region(
             useGreen ? "IMAGE_UI_GENERIC_GREENTAB_ACTIVE" : "IMAGE_UI_GENERIC_BLUETAB_ACTIVE");
-
         Image bg = new Image(texRegion);
         bg.setColor(baseTint(tab));
         tabBackgrounds.put(tab, bg);
-
         Label lbl = new Label(label, skin, "medium_outline");
         lbl.setAlignment(Align.center);
         Table lblHolder = new Table();
         lblHolder.add(lbl).expand().center();
-
         Stack stack = new Stack();
         stack.add(bg);
         stack.add(lblHolder);
-
         stack.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -104,7 +93,6 @@ public class TravelLogMenuTable extends Table {
                 refreshContent();
             }
         });
-
         return stack;
     }
 
@@ -169,42 +157,31 @@ public class TravelLogMenuTable extends Table {
         Table outer = new Table();
         outer.pad(6, 4, 6, 4);
         outer.top();
-
         Table topRow = new Table();
         topRow.top();
-
         Table textCol = new Table();
         textCol.top().left();
-
           Label name = new Label(group.name, skin, "big");
         name.setWrap(true);
         name.setColor(Color.GOLD);
         textCol.add(name).width(400).left().top().row();
-
         Label desc = new Label(group.description, skin);
         desc.setWrap(true);
         desc.setColor(DESC_COLOR);
         textCol.add(desc).width(400).left().top().padTop(2);
-
         topRow.add(textCol).left().top().padRight(14);
-
         topRow.add(buildMarkerArea(group.variants)).left().top().expandX();
-
         outer.add(topRow).growX().row();
         outer.add(buildProgressArea(group)).growX().left().padTop(10);
-
         return outer;
     }
 
     private Table buildProgressArea(QuestGroupView group) {
         Table area = new Table();
         area.left();
-
         area.add(buildRewardInfo(group.reward)).left().padRight(16);
-
         area.add(buildProgressBar(group.progress)).width(PROGRESS_BAR_WIDTH)
             .height(PROGRESS_BAR_HEIGHT).left().padRight(14);
-
         if (group.claimable) {
             TextButton claimBtn = new TextButton("CLAIM", skin, "purple");
             claimBtn.addListener(new ClickListener() {
@@ -219,21 +196,17 @@ public class TravelLogMenuTable extends Table {
             });
             area.add(claimBtn).width(120).height(36);
         }
-
         return area;
     }
 
     private Table buildRewardInfo(Reward reward) {
         Table info = new Table();
         info.left();
-
         Label label = new Label(getRewardText(reward), skin);
         label.setFontScale(0.95f);
         label.setColor(DESC_COLOR);
         info.add(label).padRight(6);
-
         info.add(buildRewardIcon(reward)).size(28);
-
         return info;
     }
 
@@ -258,12 +231,10 @@ public class TravelLogMenuTable extends Table {
         float pct = Math.max(0f, Math.min(1f, progress));
 
         Stack bar = new Stack();
-
         Table trackHolder = new Table();
         trackHolder.add(new Image(createSolidColor(PROGRESS_TRACK_COLOR)))
             .grow();
         bar.add(trackHolder);
-
         Table fillHolder = new Table();
         fillHolder.left();
         if (pct > 0f) {
@@ -272,7 +243,6 @@ public class TravelLogMenuTable extends Table {
         }
         fillHolder.add().expandX();
         bar.add(fillHolder);
-
         return bar;
     }
 
@@ -314,7 +284,6 @@ public class TravelLogMenuTable extends Table {
             Image bg = new Image(bgRegion);
             stack.add(bg);
         }
-
         Label num = new Label(v.label, skin);
         num.setFontScale(0.75f);
         num.setAlignment(Align.center);
@@ -322,7 +291,6 @@ public class TravelLogMenuTable extends Table {
         Table holder = new Table();
         holder.add(num).expand().center();
         stack.add(holder);
-
         if (v.completed || v.ready) {
             Image check = new Image(game.textureBank.region(
                 "IMAGE_UI_GENERIC_CHECK_MARK_ANIM_CHECK_MARK_ANIM_99X80"));
@@ -331,7 +299,6 @@ public class TravelLogMenuTable extends Table {
             checkHolder.top().right();
             stack.add(checkHolder);
         }
-
         return stack;
     }
 
@@ -339,18 +306,15 @@ public class TravelLogMenuTable extends Table {
         Table list = new Table();
         for (VariantView v : variants) {
             Table line = new Table();
-
             Label name = new Label(prettify(v.label), skin);
             name.setFontScale(1.1f);
             name.setColor(v.completed ? new Color(0.15f, 0.45f, 0.15f, 1f) : DESC_COLOR);
             line.add(name).left().padRight(6);
-
             if (v.completed || v.ready) {
                 Image check = new Image(game.textureBank.region(
                     "IMAGE_UI_GENERIC_CHECK_MARK_ANIM_CHECK_MARK_ANIM_99X80"));
                 line.add(check).size(20, 16);
             }
-
             list.add(line).left().row();
         }
         return list;
@@ -402,11 +366,8 @@ public class TravelLogMenuTable extends Table {
         if (bgRegion != null) {
             row.setBackground(new TextureRegionDrawable(bgRegion));
         }
-
         row.add(buildMinigameTitleTag(mg)).left().padBottom(12).row();
-
         List<MinigameLevelInfo> levels = controller.getMinigameLevels(mg);
-
         Table badgesRow = new Table();
         int col = 0;
         for (MinigameLevelInfo info : levels) {

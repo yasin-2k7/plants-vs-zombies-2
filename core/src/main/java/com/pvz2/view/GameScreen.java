@@ -56,23 +56,17 @@ public class GameScreen extends MenuScreen {
     private PamPlayer pamPlayer;
     protected final GameWorld world;
     private final Chapter chapter;
-
     private GameHUD hud;
-
     private Texture imitaterOverlayBg;
     private Table imitaterOverlay;
-
     private final TextureRegion bgLeft;
     private final TextureRegion bgMain;
     private final TextureRegion bgRight;
-
     private final float mainLawnWidth;
     private final float mainLawnHeight;
     private float leftWidthScaled;
     private float rightWidthScaled;
-
     private LawnGridRenderer lawnGridDebugRenderer;
-
     private Vector3 cursorWorldPos = new Vector3(0, 0, 0);
     private final List<PlantGraphic> plantGraphics = new ArrayList<>();
     private final Map<Zombie, ZombieGraphic> zombieGraphics = new HashMap<>();
@@ -80,42 +74,32 @@ public class GameScreen extends MenuScreen {
     private final Map<Projectile, ProjectileGraphic> projectileGraphics = new HashMap<>();
     private final List<ProjectileImpactGraphic> projectileImpacts = new ArrayList<>();
     private final Map<FrostbiteCavesWorld.Wind, WindGraphic> windGraphics = new HashMap<>();
-
     private final List<PanStep> introSteps = new ArrayList<>();
     private int currentStepIndex = 0;
     private float stepElapsed = 0f;
     private float panStartX;
     private boolean introFinished = false;
-
     private static final int STREET_ARRIVAL_STEP_INDEX = 1;
     private boolean introPausedAtStreet = false;
     private Table streetTable;
     private PlantDetailsTable plantDetailsTable;
-
     private CrazyDaveOverlay daveOverlay;
     private static GameScreen activeInstance;
     private static final List<String> PENDING_ANNOUNCEMENTS = new ArrayList<>();
-
     private LevelObjectivesOverlay objectivesOverlay;
     private boolean objectivesDismissed = false;
-
     private GameEndOverlay endGameOverlay;
-
     private PlantMenuController plantMenuController = new PlantMenuController();
-
     private final PlantPlacementManager plantPlacementManager = new PlantPlacementManager();
     private final PlantfoodPlacementManager plantfoodPlacementManager = new PlantfoodPlacementManager();
     private final ShovelPlacementManager shovelPlacementManager = new ShovelPlacementManager();
-
     private ZombiePreviewManager zombiePreviewManager;
     private boolean zombiePreviewVisible = true;
-
     private final Map<Sun, SunGraphic> sunGraphics = new HashMap<>();
     private final Map<Collectable, CollectableGraphic> collectableGraphics = new HashMap<>();
     private final List<GraveGraphic> graveGraphics = new ArrayList<>();
     private final List<BarrelObstacleGraphic> barrelObstacleGraphics = new ArrayList<>();
     private final List<OctopusObstacleGraphic> octopusObstacleGraphics = new ArrayList<>();
-
     private static final String SLIDING_UP_PAM_PATH = "768/FULL/EFFECTS/TILESLIDER_ICEAGE_UP/TILESLIDER_ICEAGE_UP.PAM";
     private static final String SLIDING_DOWN_PAM_PATH =
         "768/FULL/EFFECTS/TILESLIDER_ICEAGE_DOWN/TILESLIDER_ICEAGE_DOWN.PAM";
@@ -126,18 +110,14 @@ public class GameScreen extends MenuScreen {
     private static final String LOW_LYING_CLIP = "idle";
     private static final String NECROMANCY_PAM_PATH = "768/FULL/WORLDMAP/DARK/ANIM5/ANIM5.PAM";
     private static final String NECROMANCY_CLIP = "idle";
-
     private final Map<Sandstorm, SandstormGraphic> sandstormGraphics = new HashMap<>();
-
     private final Map<Zombie, ExplosionEffectGraphic> pendingNecromancyEffects = new HashMap<>();
     private static final String DIRT_SPAWN_DIRT_PAM_PATH = "768/INITIAL/EFFECTS/DIRT_SPAWN_DIRT/DIRT_SPAWN_DIRT.PAM";
     private static final String DIRT_SPAWN_DIRT_ANIM_STATE = "tomb_dirt_anim";
     private record PanStep(float targetCenterX, float duration, boolean isTravel) {
     }
-
     private float shakeTimeRemaining = 0f;
     private float shakeMagnitude = 0f;
-
     private final Map<PusherZombie, PianoGraphic> pianoGraphics = new HashMap<>();
     private final Map<PusherZombie, IceBlockGraphic> iceBlockGraphics = new HashMap<>();
     private final Map<PusherZombie, ArcadeCabinetGraphic> arcadeCabinetGraphics = new HashMap<>();
@@ -146,48 +126,36 @@ public class GameScreen extends MenuScreen {
         super(game);
         this.world = world;
         this.chapter = chapter;
-
         zombiePreviewManager = new ZombiePreviewManager(world.getWaveManager(), world.getRows(), world.getCols());
-
         String[] keys = getBackgroundKeys(chapter);
         bgLeft = game.textureBank.region(keys[0]);
         bgMain = game.textureBank.region(keys[1]);
         bgRight = game.textureBank.region(keys[2]);
-
         mainLawnWidth = 1800;
         mainLawnHeight = 1000;
-
         initWorldCamera(mainLawnWidth, mainLawnHeight);
         lawnGridDebugRenderer = new LawnGridRenderer();
-
         FileHandle assetsFolder = Gdx.files.internal("");
         pamPlayer = new PamPlayer(game.textureBank, assetsFolder);
         pamPlayer.loadAsync(getMowerPamPath(chapter), null);
         pamPlayer.loadAsync("768/INITIAL/EFFECTS/MOWER_SPAWN/MOWER_SPAWN.PAM", null);
-
         pamPlayer.loadAsync("768/INITIAL/EFFECTS/SUN/SUN.PAM", null);
         pamPlayer.loadAsync("768/FULL/EFFECTS/SUN_BOMB/SUN_BOMB.PAM", null);
-
         pamPlayer.loadAsync("768/INITIAL/EFFECTS/SANDSTORM_TOP/SANDSTORM_TOP.PAM", null);
-
         if (chapter == Chapter.DARK_AGES) {
             pamPlayer.loadAsync("768/FULL/EFFECTS/DIRT_SPAWN_FUTURE/DIRT_SPAWN_FUTURE.PAM", null);
             pamPlayer.loadAsync("768/INITIAL/EFFECTS/DIRT_SPAWN_DIRT/DIRT_SPAWN_DIRT.PAM", null);
         }
         pamPlayer.loadAsync("768/FULL/EFFECTS/ZOMBIE_HUNTER_SNOWBALL_SPLAT/ZOMBIE_HUNTER_SNOWBALL_SPLAT.PAM", null);
-
         computeSideWidths();
         buildIntroPanSequence();
-
     }
 
     @Override
     public void show() {
         super.show();
-
         stage.setViewport(new ScreenViewport());
         stage.getViewport().update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
-
         activeInstance = this;
         initGraveGraphics();
         initIcyPlantGraphics();
@@ -222,18 +190,14 @@ public class GameScreen extends MenuScreen {
         hud = new GameHUD(game, skin, this, this::restartLevel);
         mainStack.addActor(hud);
         hud.setInGameDetailsVisibility(false);
-
-
         buildStreetTable();
         streetTable.setVisible(false);
-
         List<String> starting = world.getStartingDialogs();
         if (starting == null) {
             starting = new ArrayList<>();
         }
         daveOverlay = new CrazyDaveOverlay(game, starting, world);
         modalStack.addActor(daveOverlay);
-
         objectivesOverlay = new LevelObjectivesOverlay(game, skin, world.getLevelSetup(), () -> {
             objectivesDismissed = true;
         });
@@ -259,10 +223,8 @@ public class GameScreen extends MenuScreen {
         streetTable.clear();
         streetTable.setFillParent(true);
         streetTable.bottom().left().defaults().pad(10);
-
         Table panel = new BorderedTable();
         panel.left();
-
         plantDetailsTable = new PlantDetailsTable(PlantType.SUNFLOWER, App.getCurrentUser(), game
             , this);
         panel.add(plantDetailsTable).left().pad(5).row();
@@ -274,7 +236,6 @@ public class GameScreen extends MenuScreen {
         scrollPane.setFadeScrollBars(true);
         scrollPane.setScrollingDisabled(true, false);
         panel.add(scrollPane).padTop(10).expandX().fillX();
-
         TextButton continueButton = new TextButton("LET'S ROCK!", skin, "purple");
         continueButton.addListener(new ClickListener() {
             @Override
@@ -291,8 +252,6 @@ public class GameScreen extends MenuScreen {
         streetTable.add(panel).padLeft(170).padBottom(20).maxHeight(1000).width(800);
         streetTable.add().expandX();
         streetTable.add(continueButton).right().bottom().pad(20);
-
-
         mainStack.addActor(streetTable);
     }
 
@@ -344,16 +303,13 @@ public class GameScreen extends MenuScreen {
         float mainCenterX = mainLawnWidth / 2f + 150f;
         float minCameraX = -leftWidthScaled + mainLawnWidth / 2f;
         float maxCameraX = mainLawnWidth + rightWidthScaled - mainLawnWidth / 2f;
-
         float houseCenterX = MathUtils.clamp(-leftWidthScaled / 2f, minCameraX, maxCameraX);
         float streetCenterX = MathUtils.clamp(mainLawnWidth + rightWidthScaled / 2f, minCameraX, maxCameraX);
-
         introSteps.clear();
         introSteps.add(new PanStep(houseCenterX, 0.9f, false));
         introSteps.add(new PanStep(streetCenterX, 2.2f, true));
         introSteps.add(new PanStep(mainCenterX, 2.2f, true));
         introSteps.add(new PanStep(mainCenterX, 0f, false));
-
         currentStepIndex = 0;
         stepElapsed = 0f;
         panStartX = houseCenterX;
@@ -361,7 +317,6 @@ public class GameScreen extends MenuScreen {
         introPausedAtStreet = false;
         zombiePreviewVisible  = true;
         hideStreetTable();
-
         worldCamera.position.set(houseCenterX, mainLawnHeight / 2f, 0);
         worldCamera.update();
     }
@@ -379,7 +334,6 @@ public class GameScreen extends MenuScreen {
         }
         PanStep step = introSteps.get(currentStepIndex);
         stepElapsed += delta;
-
         if (step.isTravel() && step.duration() > 0f) {
             float t = Math.min(1f, stepElapsed / step.duration());
             worldCamera.position.x = Interpolation.smooth.apply(panStartX, step.targetCenterX(), t);
@@ -388,10 +342,8 @@ public class GameScreen extends MenuScreen {
             worldCamera.position.x = step.targetCenterX();
             worldCamera.update();
         }
-
         if (stepElapsed >= step.duration()) {
             panStartX = step.targetCenterX();
-
             if (currentStepIndex == STREET_ARRIVAL_STEP_INDEX) {
                 if (world.isConveyorMode()) {
                     currentStepIndex++;
@@ -402,12 +354,10 @@ public class GameScreen extends MenuScreen {
                     return;
                 }
             }
-
             currentStepIndex++;
             stepElapsed = 0f;
             if (currentStepIndex >= introSteps.size()) {
                 introFinished = true;
-                // فعال‌سازی HUD و مخفی کردن پیش‌نمایش زامبی‌ها در حالت Conveyor
                 if (world.isConveyorMode()) {
                     zombiePreviewVisible = false;
                     hud.setInGameDetailsVisibility(true);
@@ -433,7 +383,6 @@ public class GameScreen extends MenuScreen {
         zombiePreviewVisible = false;
         hideStreetTable();
         hud.setInGameDetailsVisibility(true);
-
         panStartX = worldCamera.position.x;
         currentStepIndex = STREET_ARRIVAL_STEP_INDEX + 1;
         stepElapsed = 0f;
@@ -464,31 +413,24 @@ public class GameScreen extends MenuScreen {
         if (introFinished && world.getState() == GameState.PLAYING) {
             world.tick(delta);
         }
-
         handleCameraShakes();
         handleGameStateAndOverlays(delta);
-
         applyWorldViewportWithShake(delta);
-
         game.batch.begin();
         drawLawnBackground();
         renderWorldContent(delta);
         renderPlacementPreviews(delta);
         renderZombiePreviews(delta);
-
         List<ZombieGraphic> sortedZombies = syncAndSortZombies(delta);
         renderPianos(delta);
         game.batch.end();
-
         renderDebugGrids();
-
         game.batch.begin();
         renderPlantsAndZombies(delta, sortedZombies);
         renderObstacles(delta);
         renderEffectsAndSandstorms(delta);
         renderCollectablesAndProjectiles(delta);
         game.batch.end();
-
         if (hud != null && world.getState() == GameState.PLAYING) {
             hud.update(world, delta);
         }
@@ -504,16 +446,13 @@ public class GameScreen extends MenuScreen {
 
     private void handleGameStateAndOverlays(float delta) {
         if (world.getState() == GameState.PAUSED || !objectivesDismissed) return;
-
         if (!introFinished) {
             updateIntroPan(delta);
             return;
         }
-
         if (daveOverlay != null && !daveOverlay.isStarted() && world.getState() == GameState.PLAYING) {
             daveOverlay.startPresentation(this::flushPendingAnnouncements);
         }
-
         if (!world.isEndGameHandled()) {
             handleEndGameConditions();
         }
@@ -561,7 +500,6 @@ public class GameScreen extends MenuScreen {
         syncPianoGraphics();
         syncIceBlockGraphics();
         syncArcadeCabinetGraphics();
-
         List<ZombieGraphic> sortedZombies = new ArrayList<>(zombieGraphics.values());
         sortedZombies.sort((z1, z2) -> Float.compare(z2.getZombie().getY(), z1.getZombie().getY()));
         return sortedZombies;
@@ -590,17 +528,14 @@ public class GameScreen extends MenuScreen {
             pg.update(delta);
             pg.draw(game.batch, pamPlayer);
         }
-
         for (IceBlockGraphic ig : iceBlockGraphics.values()) {
             ig.update(delta, pamPlayer);
             ig.draw(game.batch, pamPlayer);
         }
-
         for (ArcadeCabinetGraphic ag : arcadeCabinetGraphics.values()) {
             ag.update(delta, pamPlayer);
             ag.draw(game.batch, pamPlayer);
         }
-
         for (ZombieGraphic zg : sortedZombies) {
             zg.update(delta, pamPlayer);
             zg.draw(game.batch, pamPlayer);
@@ -611,10 +546,8 @@ public class GameScreen extends MenuScreen {
         for (int i = octopusObstacleGraphics.size() - 1; i >= 0; i--) {
             OctopusObstacleGraphic graphic = octopusObstacleGraphics.get(i);
             OctopusObstacle octopus = graphic.getObstacle();
-
             graphic.update(delta, pamPlayer);
             graphic.draw(game.batch, pamPlayer);
-
             if (octopus.isDestroyed() && graphic.isDeathAnimationFinished()) {
                 octopusObstacleGraphics.remove(i);
                 world.removeObstacle(octopus);
@@ -635,7 +568,6 @@ public class GameScreen extends MenuScreen {
             sandstormGraphics.keySet().removeIf(s ->
                 !egyptWorld.getActiveSandstorms().contains(s) || s.isFinished()
             );
-
             for (SandstormGraphic sg : sandstormGraphics.values()) {
                 sg.draw(game.batch, pamPlayer);
             }
@@ -646,7 +578,6 @@ public class GameScreen extends MenuScreen {
     private void renderCollectablesAndProjectiles(float delta) {
         syncSunGraphics();
         syncCollectableGraphics();
-
         for (SunGraphic sg : new ArrayList<>(sunGraphics.values())) {
             sg.update(delta);
             sg.draw(game.batch, pamPlayer, game);
@@ -882,13 +813,11 @@ public class GameScreen extends MenuScreen {
         }
         Table toast = new Table();
         toast.pad(10);
-
         Label messageLabel = new Label(message, skin, "big_outline");
         messageLabel.setColor(new Color(0.95f, 0.16f, 0.14f, 1f));
         messageLabel.setAlignment(Align.center);
         messageLabel.setWrap(true);
         messageLabel.setFontScale(1.3f);
-
         toast.add(messageLabel).width(800).center();
         return toast;
     }
@@ -899,20 +828,16 @@ public class GameScreen extends MenuScreen {
             super.presentToast(notif);
             return;
         }
-
         final Table toastTable = createToastNotification(notif.title, notif.message, true);
         final Table wrapper = new Table();
         wrapper.setFillParent(true);
         wrapper.center();
         wrapper.add(toastTable);
-
         toastTable.setTransform(true);
         toastTable.setOrigin(Align.center);
         toastTable.setScale(0.7f);
         toastTable.getColor().a = 0f;
-
         toastStack.addActor(wrapper);
-
         toastTable.addAction(Actions.sequence(
             Actions.parallel(
                 Actions.fadeIn(0.3f),
@@ -934,11 +859,9 @@ public class GameScreen extends MenuScreen {
     public GameHUD getHud() {
         return hud;
     }
-
     public PlantMenuController getPlantMenuController() {
         return plantMenuController;
     }
-
     private Consumer<PlantCardView> createSelectCardMethod(){
         return new Consumer<PlantCardView>() {
             @Override
@@ -986,33 +909,26 @@ public class GameScreen extends MenuScreen {
         if (imitaterOverlay != null) {
             return;
         }
-
         imitaterOverlay = new Table();
         imitaterOverlay.setFillParent(true);
         imitaterOverlay.setTouchable(Touchable.enabled);
-
         Pixmap pixmap = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
         pixmap.setColor(new Color(0, 0, 0, 0.6f));
         pixmap.fill();
         imitaterOverlayBg = new Texture(pixmap);
         imitaterOverlay.setBackground(new TextureRegionDrawable(new TextureRegion(imitaterOverlayBg)));
         pixmap.dispose();
-
         BorderedTable panel = new BorderedTable();
         panel.pad(20);
-
         Label title = new Label("CHOOSE A PLANT TO IMITATE", skin, "big");
         panel.add(title).padBottom(15).row();
-
         PlantsTable imitaterChoices = new PlantsTable(4, 10, false, 135, 90,
             createImitaterSelectMethod());
         imitaterChoices.build();
-
         ScrollPane scrollPane = new ScrollPane(imitaterChoices, skin);
         scrollPane.setFadeScrollBars(true);
         scrollPane.setScrollingDisabled(true, false);
         panel.add(scrollPane).width(600).height(400).row();
-
         TextButton cancelBtn = new TextButton("CANCEL", skin, "brown");
         cancelBtn.addListener(new ClickListener() {
             @Override
@@ -1021,7 +937,6 @@ public class GameScreen extends MenuScreen {
             }
         });
         panel.add(cancelBtn).padTop(10);
-
         imitaterOverlay.add(panel);
         modalStack.addActor(imitaterOverlay);
     }
@@ -1125,7 +1040,6 @@ public class GameScreen extends MenuScreen {
                 it.remove();
             }
         }
-
         for (Projectile p : active) {
             int currentGen = pool.getGeneration(p);
             ProjectileGraphic existing = projectileGraphics.get(p);
@@ -1133,12 +1047,10 @@ public class GameScreen extends MenuScreen {
                 projectileGraphics.put(p, new ProjectileGraphic(p, currentGen));
             }
         }
-
         for (ProjectileGraphic pg : projectileGraphics.values()) {
             pg.update(delta);
             pg.draw(batch, pamPlayer);
         }
-
         Iterator<ProjectileImpactGraphic> impactIt = projectileImpacts.iterator();
         while (impactIt.hasNext()) {
             ProjectileImpactGraphic ig = impactIt.next();
@@ -1159,11 +1071,8 @@ public class GameScreen extends MenuScreen {
         }
     }
 
-
-
     private void syncNecromancyZombieEffects(float delta) {
         if (!(world instanceof DarkAgesWorld darkWorld)) return;
-
         for (Zombie zombie : darkWorld.getNecromancyZombies()) {
             boolean alreadyVisible = zombieGraphics.containsKey(zombie);
             boolean alreadyPending = pendingNecromancyEffects.containsKey(zombie);
@@ -1193,11 +1102,9 @@ public class GameScreen extends MenuScreen {
             if (pendingNecromancyEffects.containsKey(z)) continue;
             zombieGraphics.computeIfAbsent(z, ZombieGraphic::new);
         }
-
         zombieGraphics.entrySet().removeIf(entry -> {
             Zombie z = entry.getKey();
             ZombieGraphic zg = entry.getValue();
-
             if (!world.getActiveZombies().contains(z)) {
                 return zg.isDeathAnimationFinished();
             }
@@ -1209,7 +1116,6 @@ public class GameScreen extends MenuScreen {
         for (Sun sun : world.getActiveSuns()) {
             sunGraphics.computeIfAbsent(sun, SunGraphic::new);
         }
-
         sunGraphics.entrySet().removeIf(entry -> {
             Sun sun = entry.getKey();
             SunGraphic sg = entry.getValue();
@@ -1274,11 +1180,9 @@ public class GameScreen extends MenuScreen {
     public PlantfoodPlacementManager getPlantfoodPlacementManager() {
         return plantfoodPlacementManager;
     }
-
     public ShovelPlacementManager getShovelPlacementManager() {
         return shovelPlacementManager;
     }
-
     private void triggerCameraShake(float duration, float magnitude) {
         this.shakeTimeRemaining = duration;
         this.shakeMagnitude = magnitude;
@@ -1287,7 +1191,6 @@ public class GameScreen extends MenuScreen {
     private void applyWorldViewportWithShake(float delta) {
         float baseX = worldCamera.position.x;
         float baseY = worldCamera.position.y;
-
         if (shakeTimeRemaining > 0f) {
             shakeTimeRemaining -= delta;
             float offsetX = MathUtils.random(-shakeMagnitude, shakeMagnitude);
@@ -1296,9 +1199,7 @@ public class GameScreen extends MenuScreen {
             worldCamera.position.y = baseY + offsetY;
             worldCamera.update();
         }
-
         applyWorldViewport();
-
         worldCamera.position.set(baseX, baseY, 0);
         worldCamera.update();
     }

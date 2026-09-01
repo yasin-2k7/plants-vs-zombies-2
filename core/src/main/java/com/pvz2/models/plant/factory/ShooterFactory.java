@@ -86,7 +86,7 @@ public class ShooterFactory {
         p.addComponent(newComponent);
         return p;
     }
-    private static Plant buildThreepeater() { // plant food...
+    private static Plant buildThreepeater() {
         int level = App.getCurrentUser().getUnlockedPlantsLevels().getOrDefault(PlantType.THREEPEATER, 1);
         int health = level >= 4 ? 500 : 300;
         int damage = level >= 3 ? 30 : 20;

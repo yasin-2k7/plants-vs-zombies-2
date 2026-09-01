@@ -76,11 +76,9 @@ public abstract class GameWorld {
     private boolean isEndGameHandled = false;
     private boolean selectedPlantfood = false;
     private boolean selectedShovel = false;
-
     public MupointManager getMupointManager() {
         return mupointManager;
     }
-
     public GameWorld(LevelSetup levelSetup, ArrayList<LoseCondition> loseConditions,
                      WinCondition winCondition, ArrayList<Mechanic> mechanics) {
         if (App.getCurrentUser().getNickname() != null) {
@@ -110,8 +108,6 @@ public abstract class GameWorld {
         }
     }
     public GameWorld() {}
-
-
     public void reset() {
         activeZombies.clear();
         activePlants.clear();
@@ -125,13 +121,10 @@ public abstract class GameWorld {
         } else {
             plantLists.clear();
         }
-
         mechanics.clear();
         zombieKillListeners.clear();
-
         sunsPool = new GenericObjectPool<>(Sun::new);
         projectilesPool = new GenericObjectPool<>(Projectile::new);
-
         elapsedTime = 0;
         currentSun = 50;
         isPlantSelected = false;
@@ -140,14 +133,11 @@ public abstract class GameWorld {
         isDialogActive = false;
         isEndGameHandled = false;
         sandstormActive = false;
-
         this.levelSetup.groundSetup(this);
         this.lawnMowerManager = new LawnMowerManager(this);
         this.plantFoods = 0;
-
         this.state = GameState.PLAYING;
     }
-
     public void registerZombieKillListener(Runnable listener) {
         zombieKillListeners.add(listener);
     }
@@ -507,7 +497,6 @@ public abstract class GameWorld {
     public float getElapsedTime() {
         return elapsedTime;
     }
-
     public void addZombie(Zombie zombie) {
         activeZombies.add(zombie);
     }
@@ -592,16 +581,13 @@ public abstract class GameWorld {
     public List<String> getStartingDialogs() {
         return startingDialogs;
     }
-
     public void setStartingDialogs(List<String> startingDialogs) {
         this.startingDialogs = startingDialogs;
         this.isDialogActive = startingDialogs != null && !startingDialogs.isEmpty();
     }
-
     public boolean isDialogActive() {
         return isDialogActive;
     }
-
     public void setDialogActive(boolean dialogActive) {
         this.isDialogActive = dialogActive;
     }
@@ -620,23 +606,18 @@ public abstract class GameWorld {
         }
         return graves;
     }
-
     public boolean isSelectedPlantfood() {
         return selectedPlantfood;
     }
-
     public void setSelectedPlantfood(boolean selectedPlantfood) {
         this.selectedPlantfood = selectedPlantfood;
     }
-
     public void setSelectedShovel(boolean selectedShovel) {
         this.selectedShovel = selectedShovel;
     }
-
     public boolean isSelectedShovel() {
         return selectedShovel;
     }
-
     public void removeObstacle(Obstacle obstacle) {
         activeObstacles.remove(obstacle);
     }
