@@ -6,7 +6,7 @@ import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.pvz2.models.core.App;
-import com.pvz2.network.onlineIZombie.ZombieCard;
+import com.pvz2.models.network.onlineIZombie.ZombieCard;
 
 import java.util.function.Consumer;
 

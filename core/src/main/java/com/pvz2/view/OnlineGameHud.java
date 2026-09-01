@@ -18,9 +18,9 @@ import com.pvz2.models.miniGame.IZombie.OnlineIZombieLevel;
 import com.pvz2.models.plant.card.PlantCard;
 import com.pvz2.models.world.GameState;
 import com.pvz2.models.world.GameWorld;
-import com.pvz2.network.onlineIZombie.ClientGameController;
-import com.pvz2.network.onlineIZombie.messages.ReactionCategory;
-import com.pvz2.network.onlineIZombie.messages.ReactionReceived;
+import com.pvz2.models.network.onlineIZombie.ClientGameController;
+import com.pvz2.models.network.onlineIZombie.messages.ReactionCategory;
+import com.pvz2.models.network.onlineIZombie.messages.ReactionReceived;
 import com.pvz2.view.audios.GameSFX;
 import com.pvz2.view.audios.SFXManager;
 

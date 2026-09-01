@@ -7,7 +7,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.utils.Align;
 import com.pvz2.Main;
-import com.pvz2.network.onlineIZombie.messages.ReactionCategory;
+import com.pvz2.models.network.onlineIZombie.messages.ReactionCategory;
 import pvz.skin.BorderedTable;
 
 import java.util.function.BiConsumer;

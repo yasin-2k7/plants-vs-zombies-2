@@ -1,8 +1,8 @@
 package com.pvz2.models.core;
 
-import com.pvz2.network.NetworkClient;
-import com.pvz2.network.NetworkMessage;
-import com.pvz2.network.messages.*;
+import com.pvz2.models.network.NetworkClient;
+import com.pvz2.models.network.NetworkMessage;
+import com.pvz2.models.network.messages.*;
 
 import java.util.List;
 

@@ -5,7 +5,7 @@ import com.pvz2.Main;
 import com.pvz2.models.core.App;
 import com.pvz2.models.world.GameState;
 import com.pvz2.models.world.GameWorld;
-import com.pvz2.network.onlineIZombie.BrainCurrency;
+import com.pvz2.models.network.onlineIZombie.BrainCurrency;
 import pvz.libpvz.pam.PamPlayer;
 
 public class BrainCurrencyGraphic {
