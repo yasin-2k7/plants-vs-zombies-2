@@ -33,20 +33,16 @@ import java.util.*;
 public class OnlineGameScreen extends MenuScreen{
     ClientGameController controller;
     private ZombiePlacementManager zombiePlacementManager = new ZombiePlacementManager();
-
     private OnlineGameHud hud;
     private PamPlayer pamPlayer;
     private GameEndOverlay endGameOverlay;
-
     private final TextureRegion bgLeft;
     private final TextureRegion bgMain;
     private final TextureRegion bgRight;
-
     private final float mainLawnWidth;
     private final float mainLawnHeight;
     private float leftWidthScaled;
     private float rightWidthScaled;
-
     private LawnGridRenderer lawnGridDebugRenderer;
     private final Map<String, PlantGraphic> plantGraphics = new HashMap<>();
     private final Map<String, ZombieGraphic> zombieGraphics = new HashMap<>();
@@ -56,22 +52,14 @@ public class OnlineGameScreen extends MenuScreen{
     private Vector3 cursorWorldPos = new Vector3(0, 0, 0);
     private final List<ExplosionEffectGraphic> explosionGraphics = new ArrayList<>();
     private final List<ProjectileImpactGraphic> projectileImpacts = new ArrayList<>();
-
     private static OnlineGameScreen activeInstance;
     private static final List<String> PENDING_ANNOUNCEMENTS = new ArrayList<>();
-
-
     private TextureRegion brainRegion;
-
-
     private final PlantPlacementManager plantPlacementManager = new PlantPlacementManager();
     private final ShovelPlacementManager shovelPlacementManager = new ShovelPlacementManager();
-
-
     private float shakeTimeRemaining = 0f;
     private float shakeMagnitude = 0f;
     private Table loadingTable;
-
 
     public OnlineGameScreen(Main game, ClientGameController controller) {
         super(game);
@@ -80,25 +68,19 @@ public class OnlineGameScreen extends MenuScreen{
         controller.setActionResultListener((success, message) ->
             addToast(success ? "Info" : "Error", message, !success));
         controller.setMatchOverListener((winner, msg) -> showEndScreen(winner, msg));
-
         String[] keys = getBackgroundKeys();
         bgLeft = game.textureBank.region(keys[0]);
         bgMain = game.textureBank.region(keys[1]);
         bgRight = game.textureBank.region(keys[2]);
-
         mainLawnWidth = 1800;
         mainLawnHeight = 1000;
-
         initWorldCamera(mainLawnWidth, mainLawnHeight);
         lawnGridDebugRenderer = new LawnGridRenderer();
-
         FileHandle assetsFolder = Gdx.files.internal("");
         pamPlayer = new PamPlayer(game.textureBank, assetsFolder);
         pamPlayer.loadAsync("768/INITIAL/EFFECTS/MOWER_SPAWN/MOWER_SPAWN.PAM", null);
-
         pamPlayer.loadAsync("768/INITIAL/EFFECTS/SUN/SUN.PAM", null);
         pamPlayer.loadAsync("768/FULL/EFFECTS/SUN_BOMB/SUN_BOMB.PAM", null);
-
         computeSideWidths();
         float mainCenterX = mainLawnWidth / 2f + 150f;
         worldCamera.position.set(mainCenterX, mainLawnHeight / 2f, 0);
@@ -112,13 +94,10 @@ public class OnlineGameScreen extends MenuScreen{
     @Override
     public void show() {
         super.show();
-
         stage.setViewport(new ScreenViewport());
         stage.getViewport().update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
-
         activeInstance = this;
     }
-
     @Override
     public void hide() {
         super.hide();
@@ -126,23 +105,6 @@ public class OnlineGameScreen extends MenuScreen{
             activeInstance = null;
         }
     }
-
-    public static void announce(String message) {
-        if (activeInstance != null) {
-            activeInstance.addToast("", message, true);
-        } else {
-            PENDING_ANNOUNCEMENTS.add(message);
-        }
-    }
-
-    private void flushPendingAnnouncements() {
-        if (PENDING_ANNOUNCEMENTS.isEmpty()) return;
-        for (String msg : PENDING_ANNOUNCEMENTS) {
-            addToast("", msg, true);
-        }
-        PENDING_ANNOUNCEMENTS.clear();
-    }
-
     @Override
     protected void buildUI() {
         if (controller.getWorld() == null) {
@@ -191,20 +153,14 @@ public class OnlineGameScreen extends MenuScreen{
         if (controller.getWorld() == null) return;
         if (controller.getWorld().getState() != GameState.PLAYING) delta = 0;
         handleCameraShakes();
-
         applyWorldViewportWithShake(delta);
-
         game.batch.begin();
         drawLawnBackground();
         renderPlacementPreviews(delta);
-
         List<ZombieGraphic> sortedZombies = syncAndSortZombies(delta);
         syncPlantGraphics();
-
         game.batch.end();
-
         renderDebugGrids();
-
         game.batch.begin();
         renderPlantsAndZombies(delta, sortedZombies);
         renderEffectsAndSandstorms(delta);
@@ -232,7 +188,6 @@ public class OnlineGameScreen extends MenuScreen{
     private void showEndScreen(ClientGameController.Side winner, String msg) {
         boolean won = winner == controller.getSide();
         if (endGameOverlay != null) endGameOverlay.remove();
-
         endGameOverlay = new GameEndOverlay(skin, won, msg, null, () -> {
             game.setScreen(new MainMenuScreen(game));
         });
@@ -248,7 +203,6 @@ public class OnlineGameScreen extends MenuScreen{
 
     private List<ZombieGraphic> syncAndSortZombies(float delta) {
         syncZombieGraphics();
-
         List<ZombieGraphic> sortedZombies = new ArrayList<>(zombieGraphics.values());
         sortedZombies.sort((z1, z2) -> Float.compare(z2.getZombie().getY(), z1.getZombie().getY()));
         return sortedZombies;
@@ -265,7 +219,6 @@ public class OnlineGameScreen extends MenuScreen{
             pg.update(delta);
             pg.draw(game.batch, pamPlayer);
         }
-
         for (ZombieGraphic zg : sortedZombies) {
             zg.update(delta, pamPlayer);
             zg.draw(game.batch, pamPlayer);
@@ -315,13 +268,11 @@ public class OnlineGameScreen extends MenuScreen{
         }
         Table toast = new Table();
         toast.pad(10);
-
         Label messageLabel = new Label(message, skin, "big_outline");
         messageLabel.setColor(new Color(0.95f, 0.16f, 0.14f, 1f));
         messageLabel.setAlignment(Align.center);
         messageLabel.setWrap(true);
         messageLabel.setFontScale(1.3f);
-
         toast.add(messageLabel).width(800).center();
         return toast;
     }
@@ -332,20 +283,16 @@ public class OnlineGameScreen extends MenuScreen{
             super.presentToast(notif);
             return;
         }
-
         final Table toastTable = createToastNotification(notif.title, notif.message, true);
         final Table wrapper = new Table();
         wrapper.setFillParent(true);
         wrapper.center();
         wrapper.add(toastTable);
-
         toastTable.setTransform(true);
         toastTable.setOrigin(Align.center);
         toastTable.setScale(0.7f);
         toastTable.getColor().a = 0f;
-
         toastStack.addActor(wrapper);
-
         toastTable.addAction(Actions.sequence(
             Actions.parallel(
                 Actions.fadeIn(0.3f),
@@ -387,8 +334,6 @@ public class OnlineGameScreen extends MenuScreen{
                 handleZombiesInput(touchPoint);
             }
         }
-
-
     }
 
     private void handlePlantsInput(Vector3 touchPoint) {
@@ -462,7 +407,6 @@ public class OnlineGameScreen extends MenuScreen{
     private void renderSuns(float delta, SpriteBatch batch, PamPlayer pamPlayer){
         List<Sun> active = controller.getWorld().getActiveSuns();
         Set<String> currentIds = new HashSet<>();
-
         for (Sun s : active) {
             currentIds.add(s.getId());
             SunGraphic existing = sunGraphics.get(s.getId());
@@ -472,12 +416,10 @@ public class OnlineGameScreen extends MenuScreen{
                 existing.updateModel(s);
             }
         }
-
         for (SunGraphic sg : sunGraphics.values()) {
             sg.update(delta);
             sg.draw(batch, pamPlayer, game);
         }
-
         Iterator<Map.Entry<String, SunGraphic>> it = sunGraphics.entrySet().iterator();
         while (it.hasNext()) {
             Map.Entry<String, SunGraphic> entry = it.next();
@@ -491,7 +433,6 @@ public class OnlineGameScreen extends MenuScreen{
     private void renderBrains(float delta, SpriteBatch batch, PamPlayer pamPlayer){
         List<BrainCurrency> active = controller.getWorld().getActiveBrains();
         Set<String> currentIds = new HashSet<>();
-
         for (BrainCurrency s : active) {
             currentIds.add(s.getId());
             BrainCurrencyGraphic existing = brainCurrencyGraphics.get(s.getId());
@@ -501,12 +442,10 @@ public class OnlineGameScreen extends MenuScreen{
                 existing.updateModel(s);
             }
         }
-
         for (BrainCurrencyGraphic sg : brainCurrencyGraphics.values()) {
             sg.update(delta);
             sg.draw(batch, pamPlayer, game);
         }
-
         Iterator<Map.Entry<String, BrainCurrencyGraphic>> it = brainCurrencyGraphics.entrySet().iterator();
         while (it.hasNext()) {
             Map.Entry<String, BrainCurrencyGraphic> entry = it.next();
@@ -519,7 +458,6 @@ public class OnlineGameScreen extends MenuScreen{
     private void renderProjectiles(float delta, SpriteBatch batch, PamPlayer pamPlayer) {
         List<Projectile> active = controller.getWorld().getActiveProjectiles();
         Set<String> currentIds = new HashSet<>();
-
         for (Projectile p : active) {
             currentIds.add(p.getId());
             ProjectileGraphic existing = projectileGraphics.get(p.getId());
@@ -529,7 +467,6 @@ public class OnlineGameScreen extends MenuScreen{
                 existing.updateModel(p);
             }
         }
-
         Iterator<Map.Entry<String, ProjectileGraphic>> it = projectileGraphics.entrySet().iterator();
         while (it.hasNext()) {
             Map.Entry<String, ProjectileGraphic> entry = it.next();
@@ -540,12 +477,10 @@ public class OnlineGameScreen extends MenuScreen{
                 it.remove();
             }
         }
-
         for (ProjectileGraphic pg : projectileGraphics.values()) {
             pg.update(delta);
             pg.draw(batch, pamPlayer);
         }
-
         Iterator<ProjectileImpactGraphic> impactIt = projectileImpacts.iterator();
         while (impactIt.hasNext()) {
             ProjectileImpactGraphic ig = impactIt.next();
@@ -567,7 +502,6 @@ public class OnlineGameScreen extends MenuScreen{
                 existing.updateModel(p);
             }
         }
-
         plantGraphics.entrySet().removeIf(entry -> {
             if (currentIds.contains(entry.getKey())) return false;
             if (entry.getValue().isReadyToRemoveAfterDeath()){
@@ -614,19 +548,15 @@ public class OnlineGameScreen extends MenuScreen{
             lawnGridDebugRenderer.dispose();
         }
     }
-
     public PlantPlacementManager getPlantPlacementManager() {
         return plantPlacementManager;
     }
-
     public ShovelPlacementManager getShovelPlacementManager() {
         return shovelPlacementManager;
     }
-
     public Map<String, PlantGraphic> getPlantGraphics() {
         return plantGraphics;
     }
-
     private void triggerCameraShake(float duration, float magnitude) {
         this.shakeTimeRemaining = duration;
         this.shakeMagnitude = magnitude;
@@ -635,7 +565,6 @@ public class OnlineGameScreen extends MenuScreen{
     private void applyWorldViewportWithShake(float delta) {
         float baseX = worldCamera.position.x;
         float baseY = worldCamera.position.y;
-
         if (shakeTimeRemaining > 0f) {
             shakeTimeRemaining -= delta;
             float offsetX = MathUtils.random(-shakeMagnitude, shakeMagnitude);
@@ -644,13 +573,10 @@ public class OnlineGameScreen extends MenuScreen{
             worldCamera.position.y = baseY + offsetY;
             worldCamera.update();
         }
-
         applyWorldViewport();
-
         worldCamera.position.set(baseX, baseY, 0);
         worldCamera.update();
     }
-
     public ClientGameController getController() {
         return controller;
     }

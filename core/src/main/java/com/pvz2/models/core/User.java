@@ -14,7 +14,6 @@ import java.util.*;
 
 public class User {
     private QuestStats questStats;
-
     private String username;
     private String hashPassword;
     private String nickname;
@@ -22,11 +21,8 @@ public class User {
     private String gender;
     private String securityQ;
     private String securityA;
-
     private int gamesPlayed;
-
     private Set<MiniGameLevels> completedMiniGames = EnumSet.noneOf(MiniGameLevels.class);
-
     private int unlockedChapter;
     private transient Chapter currentChapter;
     private int currentLevel;
@@ -138,16 +134,13 @@ public class User {
         questManager.generateEpicQuests();
         questManager.resetDailyIfNeeded(this);
         questManager.generateDailyQuests();
-
         for (Quest q : questManager.getActiveQuests()) {
             if (completedQuestIds.contains(q.getId())) {
                 q.setCompleted(true);
             }
         }
     }
-
     public void save() {
-
     }
 
     public void addSeedPackets(PlantType type, int amount) {
@@ -160,28 +153,23 @@ public class User {
     public int getSeedPacketsCount(PlantType type) {
         return this.seedPackets.getOrDefault(type, 0);
     }
-
     public HashMap<PlantType, Integer> getSeedPackets() {
         return seedPackets;
     }
-
     public boolean checkPassword(String password) {
         String hashedInput = PasswordHasher.hashSHA256(password);
         return hashedInput.equals(this.hashPassword);
     }
-
     public void unlockPlant(PlantType plantType) {
         this.unlockedPlantsLevels.put(plantType, 1);
         save();
         UserManager.syncCurrentUser();
     }
-
     public void addCoins(int amount) {
         this.coins += amount;
         save();
         UserManager.syncCurrentUser();
     }
-
     public boolean spendCoins(int amount) {
         if (coins < amount) return false;
         coins -= amount;
@@ -189,13 +177,11 @@ public class User {
         UserManager.syncCurrentUser();
         return true;
     }
-
     public void addGems(int amount) {
         this.gems += amount;
         UserManager.syncCurrentUser();
         save();
     }
-
     public boolean spendGems(int amount) {
         if (gems < amount) return false;
         gems -= amount;
@@ -203,21 +189,17 @@ public class User {
         UserManager.syncCurrentUser();
         return true;
     }
-
     public HashMap<PlantType, Integer> getUnlockedPlantsLevels() {
         return unlockedPlantsLevels;
     }
-
     public boolean hasBoost(PlantType type) {
         return plantBoosts.getOrDefault(type, false);
     }
-
     public void addBoost(PlantType type) {
         plantBoosts.put(type, true);
         save();
         UserManager.syncCurrentUser();
     }
-
     public List<PlantType> getUnlockedPlantTypesWithPlantFood() {
         List<PlantType> result = new ArrayList<>();
         if (unlockedPlantsLevels == null) return result;
@@ -231,7 +213,6 @@ public class User {
         }
         return result;
     }
-
 
     private boolean hasPlantFoodAbility(PlantType type) {
         if (type == null || type == PlantType.MARIGOLD) return false;
@@ -263,113 +244,82 @@ public class User {
     public GreenHouse getGreenhouse() {
         return greenhouse;
     }
-
     public String getUsername() {
         return username;
     }
-
     public void setUsername(String username) {
         this.username = username;
     }
-
     public int getCoins() {
         return coins;
     }
-
     public void setCoins(int coins) {
         this.coins = coins;
     }
-
     public int getGems() {
         return gems;
     }
-
     public void setGems(int gems) {
         this.gems = gems;
     }
-
     public String getNickname() {
         return nickname;
     }
-
     public void setNickname(String nickname) {
         this.nickname = nickname;
     }
-
     public int getPlantFoods() {
         return plantFoods;
     }
-
     public void setPlantFoods(int count) {
         this.plantFoods = count;
     }
-
     public String getEmail() {
         return email;
     }
-
     public void setEmail(String email) {
         this.email = email;
     }
-
     public String getSecurityA() {
         return securityA;
     }
-
     public void setSecurityA(String securityA) {
         this.securityA = securityA;
     }
-
     public boolean checkSeqA(String answer) {
         String hashedInput = PasswordHasher.hashSHA256(answer);
         return hashedInput.equals(this.securityA);
     }
-
     public String getSecurityQ() {
         return securityQ;
     }
-
     public void setSecurityQ(String securityQ) {
         this.securityQ = securityQ;
     }
-
     public List<News> getAllNews() {
         return newsList;
     }
-
-    public List<News> getUnreadNews() {
-        return newsList.stream()
-                .filter(n -> !n.isRead())
-                .toList();
-    }
-
     public String getHashPassword() {
         return hashPassword;
     }
-
     public void setHashPassword(String hashPassword) {
         this.hashPassword = hashPassword;
     }
-
     public Chapter getCurrentChapter() {
         return currentChapter;
     }
-
     public void setCurrentChapter(Chapter currentChapter) {
         this.currentChapter = currentChapter;
     }
-
     public int getGameDifficulty() {
         return gameDifficulty;
     }
-
     public void setGameDifficulty(int gameDifficulty) {
         if (gameDifficulty < 1 || gameDifficulty > 5) {
             throw new IllegalArgumentException("Difficulty level must be between 1 and 5");
         }
         this.gameDifficulty = gameDifficulty;
     }
-
     public void setGender(String gender) {
         this.gender = gender;
     }
@@ -377,23 +327,18 @@ public class User {
     public void setCurrentLevel(int currentLevel) {
         this.currentLevel = currentLevel;
     }
-
     public int getUnlockedChapter() {
         return unlockedChapter;
     }
-
     public int getUnlockedLevel() {
         return unlockedLevel;
     }
-
     public void addNews(News news) {
         newsList.add(news);
     }
-
     public HashMap<String, Boolean> getShowedZombies() {
         return showedZombies;
     }
-
     public void notifyPlantUnlock(String plantName) {
         addNews(new News(
                 "Unlock plant",
@@ -401,7 +346,6 @@ public class User {
                 NewsType.PLANT_UNLOCKED
         ));
     }
-
     public void notifyZombieUnlock(String zombieName) {
         addNews(new News(
                 "Unlock zombie",
@@ -429,11 +373,9 @@ public class User {
     public QuestManager getQuestManager() {
         return questManager;
     }
-
     public QuestStats getQuestStats() {
         return questStats;
     }
-
     public void addCompletedQuest(String questId) {
         completedQuestIds.add(questId);
         save();
@@ -456,11 +398,9 @@ public class User {
     public HashMap<PlantType, Boolean> getPlantBoosts() {
         return plantBoosts;
     }
-
     public int getMaxMupoint() {
         return maxMupoint;
     }
-
     public void updateMupointRecord(int currentScore) {
         this.playedMuPoint = true;
         if (currentScore > this.maxMupoint) {
@@ -471,11 +411,9 @@ public class User {
     public int getGamesPlayed() {
         return gamesPlayed;
     }
-
     public void setGamesPlayed(int gamesPlayed) {
         this.gamesPlayed = gamesPlayed;
     }
-
     public boolean hasPurchasedDailyOfferToday() {
         return dailyOfferPurchasedToday
                 && dailyOfferPurchaseDate != null
@@ -514,47 +452,36 @@ public class User {
     public Set<MiniGameLevels> getMiniGameLevels() {
         return completedMiniGames;
     }
-
     public int getGameSpeed() {
         return gameSpeed;
     }
-
     public void setGameSpeed(int gameSpeed) {
         this.gameSpeed = gameSpeed;
     }
-
     public boolean isShowGrid() {
         return showGrid;
     }
-
     public void setShowGrid(boolean showGrid) {
         this.showGrid = showGrid;
     }
-
     public boolean isDebugMode() {
         return debugMode;
     }
-
     public int getCurrentLevel() {
         return currentLevel;
     }
-
     public void setDebugMode(boolean debugMode) {
         this.debugMode = debugMode;
     }
-
     public void setPlayedMuPoint(boolean playedMuPoint) {
         this.playedMuPoint = playedMuPoint;
     }
-
     public boolean isPlayedMuPoint() {
         return playedMuPoint;
     }
-
     public Set<String> getCompletedQuestIds() {
         return completedQuestIds;
     }
-
     public LocalDate getDailyOfferPurchaseDate() {
         return dailyOfferPurchaseDate;
     }

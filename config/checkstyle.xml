@@ -11,6 +11,11 @@
         <property name="max" value="120"/>
     </module>
 
+    <!-- حداکثر طول فایل/کلاس (بالای 500 خط ارور می‌دهد) -->
+    <module name="FileLength">
+        <property name="max" value="500"/>
+    </module>
+
     <!-- قوانینی که به بررسی سینتکس و کدهای جاوا نیاز دارند داخل TreeWalker قرار می‌گیرند -->
     <module name="TreeWalker">
 

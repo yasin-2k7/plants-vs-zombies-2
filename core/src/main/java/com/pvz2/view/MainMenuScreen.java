@@ -184,8 +184,6 @@ public class MainMenuScreen extends MenuScreen {
 
     private void setOnlinePopup() {
         NetworkClient.get().onPush("CHALLENGE_INVITE", msg -> {
-            ChallengeInvite invite = NetworkClient.get().parsePayload(msg, ChallengeInvite.class);
-            // logic for displaying challenge popup if implemented
         });
     }
 
