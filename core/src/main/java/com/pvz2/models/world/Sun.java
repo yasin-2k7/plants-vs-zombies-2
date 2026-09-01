@@ -190,7 +190,7 @@ public class Sun implements Resettable {
     }
 
     public void collect() {
-        if (type == SunType.RADIOACTIVE) {
+        if (type == SunType.RADIOACTIVE && !isExploded) {
             explode();
             return;
         }
@@ -201,7 +201,7 @@ public class Sun implements Resettable {
         this.isExpired = true;
     }
 
-    public boolean isExpired() { return isExpired || isCollected || isExploded; }
+    public boolean isExpired() { return isExpired || isCollected; }
     public float getX() { return x; }
     public float getY() { return y; }
     public int getSize() { return size; }

@@ -167,9 +167,6 @@ public class MainMenuScreen extends MenuScreen {
         centerTable.add(playBtn).width(200).height(60).pad(20).row();
         mainTable.add(centerTable).expandY().center().row();
 
-        TextButton shopBtn = new TextButton("STORE", skin, "green");
-        addClickListener(shopBtn, () -> fadeAndSwitchScreen(new ShopMenuScreen(game)));
-        mainTable.add(shopBtn).width(200).height(52).pad(10).row();
     }
 
     private void buildBottomBar() {

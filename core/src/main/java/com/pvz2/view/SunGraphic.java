@@ -33,6 +33,7 @@ public class SunGraphic {
         if (popping && animTime >= 0.4f) {
             popFinished = true;
             sun.setExpired(true);
+            sun.collect();
         }
     }
 
@@ -54,7 +55,7 @@ public class SunGraphic {
                 sun.getY(),
                 scale,
                 scale,
-                true
+                !popping
             );
         } catch (Exception e) {
         }

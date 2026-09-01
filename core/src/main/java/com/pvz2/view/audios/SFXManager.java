@@ -12,6 +12,13 @@ public class SFXManager {
 
     private float volume = 0.8f;
 
+    private int chompIndex = 0;
+    private final GameSFX[] chompSounds = new GameSFX[]{
+        GameSFX.CHOMP,
+        GameSFX.CHOMP_2,
+        GameSFX.CHOMP_SOFT
+    };
+
     private SFXManager() {}
 
     public static SFXManager getInstance() {
@@ -31,6 +38,10 @@ public class SFXManager {
             }
         }
         sfxCache.get(gameSFX).play(volume);
+    }
+    public void playChompSound() {
+        playSound(chompSounds[chompIndex]);
+        chompIndex = (chompIndex + 1) % chompSounds.length;
     }
 
     public void setVolume(float volume) {

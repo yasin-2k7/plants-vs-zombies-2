@@ -255,10 +255,14 @@ public class GameHUD extends Group {
                         UserManager.syncCurrentUser();
                     }
                     remove();
-                    if(world.getLevelSetup() instanceof BeghouledSetup ||
-                    world.getLevelSetup() instanceof MuPointLevel){
+                    boolean isMuPoint = (world.getMupointManager() != null);
+
+                    boolean isBeghouled = (world.getLevelSetup() != null &&
+                        world.getLevelSetup() instanceof BeghouledSetup);
+
+                    if (isMuPoint || isBeghouled) {
                         game.setScreen(new MainMenuScreen(game));
-                    } else{
+                    } else {
                         game.setScreen(new LevelMenuScreen(game));
                     }
 

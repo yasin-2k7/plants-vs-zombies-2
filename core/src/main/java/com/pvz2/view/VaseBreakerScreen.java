@@ -423,7 +423,7 @@ public class VaseBreakerScreen extends MenuScreen {
 
         if (row >= 0 && col >= 0) {
             PlantType selectedPlant = plantPlacementManager.getSelectedPlant();
-            if (plantPlacementManager.tryPlace(row, col)) {
+            if (plantPlacementManager.tryPlace()) {
                 placePlantInCell(row, col, selectedPlant);
             }
         } else {
