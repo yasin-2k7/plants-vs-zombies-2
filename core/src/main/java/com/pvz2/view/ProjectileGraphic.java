@@ -2,6 +2,7 @@ package com.pvz2.view;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.MathUtils;
 import com.pvz2.models.core.App;
 import com.pvz2.models.enums.ProjectileType;
 import com.pvz2.models.projectile.Projectile;
@@ -10,13 +11,25 @@ import com.pvz2.models.world.GameWorld;
 import pvz.libpvz.pam.PamPlayer;
 
 public class ProjectileGraphic {
+    /** How fast the displayed position chases the latest server-confirmed position.
+     *  Higher = snappier but more visible pop on each snapshot; lower = smoother but laggier.
+     *  Same value as ZombieGraphic — keep them matching so zombies and their own projectiles
+     *  don't visibly drift apart from each other under interpolation. */
+    private static final float NETWORK_LERP_SPEED = 15f;
+
     private Projectile projectile;
     private ProjectileType type;
     private float animTime = 0f;
     private final int generation;
 
+    // Interpolated render position. Offline (updateModel() never called): always equals the
+    // live Projectile's real position, zero lag, identical to the old behavior. Online
+    // (updateModel() called once per GAME_STATE snapshot): smoothly chases toward each new
+    // snapshot's position instead of snapping, since snapshots arrive far less often than
+    // rendering does.
     private float lastX;
     private float lastY;
+    private boolean networked = false;
 
     public ProjectileGraphic(Projectile projectile, int generation) {
         this.projectile = projectile;
@@ -30,8 +43,20 @@ public class ProjectileGraphic {
         GameWorld world = App.getCurrentGame();
         if (world != null && world.getState() != GameState.PLAYING) delta = 0;
         animTime += delta;
-        lastX = projectile.getX();
-        lastY = projectile.getY();
+        updateDisplayPosition(delta);
+    }
+
+    private void updateDisplayPosition(float delta) {
+        if (!networked) {
+            // offline: same live object every frame, already exact — no smoothing needed or wanted
+            lastX = projectile.getX();
+            lastY = projectile.getY();
+            return;
+        }
+
+        float t = Math.min(1f, NETWORK_LERP_SPEED * delta);
+        lastX = MathUtils.lerp(lastX, projectile.getX(), t);
+        lastY = MathUtils.lerp(lastY, projectile.getY(), t);
     }
 
     public void draw(SpriteBatch batch, PamPlayer pamPlayer) {
@@ -73,6 +98,7 @@ public class ProjectileGraphic {
 
     public void updateModel(Projectile newProjectile) {
         this.projectile = newProjectile;
+        this.networked = true;
     }
 
     public int getGeneration() {

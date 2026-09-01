@@ -38,8 +38,10 @@ import java.util.concurrent.TimeUnit;
  * A shared scheduler ticks the world forward and checks win/lose on a timer (see start()).
  */
 public class ServerGameController {
-    private static final float TICK_INTERVAL_SECONDS = 0.05f; // 20 Hz — see chat for why not 60
+    private static final float TICK_INTERVAL_SECONDS = 0.05f;
     private static final long TICK_INTERVAL_MS = 50L;
+    private static final int BROADCAST_EVERY_N_TICKS = 20;
+
     private static final ScheduledExecutorService TICK_SCHEDULER = Executors.newScheduledThreadPool(4);
 
     private final Match match;
@@ -50,6 +52,7 @@ public class ServerGameController {
 
     private volatile boolean matchEnded = false;
     private ScheduledFuture<?> tickTask;
+    private int ticksSinceLastBroadcast = 0;
 
     public ServerGameController(Match match, Runnable onMatchEnd) {
         this.match = match;
@@ -107,12 +110,19 @@ public class ServerGameController {
                 }
             }
 
-            broadcastState();
+            broadcastIfDue();
         }  catch (Throwable t) {
             t.printStackTrace();
         }
         long duration = System.currentTimeMillis() - startTime;
         System.out.println("Tick took: " + duration + " ms");
+    }
+
+    private void broadcastIfDue() {
+        ticksSinceLastBroadcast++;
+        if (ticksSinceLastBroadcast >= BROADCAST_EVERY_N_TICKS) {
+            broadcastState();
+        }
     }
 
     private void endMatch(Match.Side winner, String message) {
@@ -221,8 +231,8 @@ public class ServerGameController {
         }
 
         boolean allowed = world.getAvailableZombies().stream()
-                .anyMatch(z -> z.getName() == zombie.getName()
-                        || (z.getSpecificName() != null && z.getSpecificName().equalsIgnoreCase(req.zombieType)));
+            .anyMatch(z -> z.getName() == zombie.getName()
+                || (z.getSpecificName() != null && z.getSpecificName().equalsIgnoreCase(req.zombieType)));
         if (!allowed) {
             sendResult(sender, false, "you dont have this zombie");
             return;
@@ -263,6 +273,7 @@ public class ServerGameController {
     }
 
     private void broadcastState() {
+        ticksSinceLastBroadcast = 0;
         GameStateUpdate update = new GameStateUpdate(match.getMatchId(), world);
         match.getPlantsPlayer().send("GAME_STATE", null, update);
         match.getZombiesPlayer().send("GAME_STATE", null, update);
