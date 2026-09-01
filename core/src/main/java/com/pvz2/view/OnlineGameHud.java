@@ -45,6 +45,9 @@ public class OnlineGameHud extends Group {
     private final Table reactionDock;
     private final Table opponentBubbleLayer;
 
+    private float lastStageWidth;
+    private float lastStageHeight;
+
     public OnlineGameHud(Main game, Skin skin, OnlineGameScreen screen) {
         this.screen = screen;
 
@@ -84,9 +87,9 @@ public class OnlineGameHud extends Group {
         rightSide.add(selectedZombiesList).top().right().row();
         rightSide.add(brainCounter).top().right().pad(MARGIN);
 
-        topBar.add(leftSide).expandX().left();
+        topBar.add(leftSide).expandX().left().top();
         topBar.add().expandX();
-        topBar.add(rightSide).right();
+        topBar.add(rightSide).right().top();
 
         topBar.pack();
         addActor(topBar);
@@ -115,7 +118,6 @@ public class OnlineGameHud extends Group {
 
         opponentBubbleLayer = new Table();
         addActor(opponentBubbleLayer);
-
 
         screen.controller.setReactionListener(this::onReactionReceived);
     }
@@ -248,17 +250,27 @@ public class OnlineGameHud extends Group {
     }
 
     public void resize(float stageWidth, float stageHeight) {
-        topBar.setWidth(stageWidth);
+        this.lastStageWidth = stageWidth;
+        this.lastStageHeight = stageHeight;
+        reposition();
+    }
+
+    private void reposition() {
+        if (lastStageWidth == 0 || lastStageHeight == 0) return;
+
+        topBar.setWidth(lastStageWidth);
         topBar.pack();
-        topBar.setWidth(stageWidth);
-        topBar.setPosition(0, stageHeight - topBar.getHeight());
+        topBar.setWidth(lastStageWidth);
+        topBar.setPosition(0, lastStageHeight - topBar.getHeight());
 
         reactionDock.pack();
-        reactionDock.setPosition(stageWidth - reactionDock.getWidth() - MARGIN, MARGIN);
+        reactionDock.setPosition(lastStageWidth - reactionDock.getWidth() - MARGIN, MARGIN);
 
         opponentBubbleLayer.setSize(320, 140);
-        opponentBubbleLayer.setPosition(stageWidth - opponentBubbleLayer.getWidth() - MARGIN,
-            stageHeight - topBar.getHeight() - opponentBubbleLayer.getHeight() - MARGIN);
+        opponentBubbleLayer.setPosition(
+            lastStageWidth - opponentBubbleLayer.getWidth() - MARGIN,
+            lastStageHeight - topBar.getHeight() - MARGIN
+        );
     }
 
     public void update(GameWorld gameWorld, float delta) {
@@ -269,6 +281,8 @@ public class OnlineGameHud extends Group {
         selectedPlantsList.update();
         selectedZombiesList.updateCards();
 
+        boolean needsReposition = false;
+
         if (selectedPlantsList.getSlots()[0] == null){
             int i = 0;
             for (PlantCard plantCard : world.getPlantLists()){
@@ -276,12 +290,16 @@ public class OnlineGameHud extends Group {
                 i++;
             }
             selectedPlantsList.build();
-            topBar.pack();
+            needsReposition = true;
         }
 
         if (selectedZombiesList.getZombieCardViewList().isEmpty() && world != null && !world.getZombieCards().isEmpty()) {
             selectedZombiesList.build(world.getZombieCards());
-            topBar.pack();
+            needsReposition = true;
+        }
+
+        if (needsReposition) {
+            reposition();
         }
     }
 
