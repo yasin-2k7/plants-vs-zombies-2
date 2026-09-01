@@ -15,8 +15,11 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.pvz2.Main;
 import com.pvz2.controller.LeaderboardMenuController;
+import com.pvz2.models.core.App;
+import com.pvz2.models.core.User;
+import com.pvz2.models.core.UserDataManager;
 import com.pvz2.models.enums.LeaderboardSortField;
-import com.pvz2.models.network.messages.LeaderboardEntry;
+import com.pvz2.network.messages.LeaderboardEntry;
 
 import java.util.ArrayList;
 import java.util.Comparator;

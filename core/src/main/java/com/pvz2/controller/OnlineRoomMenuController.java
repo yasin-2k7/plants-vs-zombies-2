@@ -1,11 +1,11 @@
 package com.pvz2.controller;
 
 import com.badlogic.gdx.Gdx;
-import com.pvz2.models.network.NetworkClient;
-import com.pvz2.models.network.NetworkMessage;
-import com.pvz2.models.network.messages.AckResponse;
-import com.pvz2.models.network.onlineIZombie.ClientGameController;
-import com.pvz2.models.network.onlineIZombie.messages.*;
+import com.pvz2.network.NetworkClient;
+import com.pvz2.network.NetworkMessage;
+import com.pvz2.network.messages.AckResponse;
+import com.pvz2.network.onlineIZombie.ClientGameController;
+import com.pvz2.network.onlineIZombie.messages.*;
 import com.pvz2.view.MainMenuScreen;
 import com.pvz2.view.OnlineGameScreen;
 import com.pvz2.view.OnlineRoomMenuScreen;

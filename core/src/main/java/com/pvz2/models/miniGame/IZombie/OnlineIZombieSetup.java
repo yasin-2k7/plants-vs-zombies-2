@@ -1,12 +1,14 @@
 package com.pvz2.models.miniGame.IZombie;
 
 import com.pvz2.models.enums.PlantType;
+import com.pvz2.models.plant.card.PlantCard;
 import com.pvz2.models.plant.card.PlantCardFactory;
 import com.pvz2.models.world.Cell;
 import com.pvz2.models.world.GameWorld;
 import com.pvz2.models.world.cellTerrains.LandTerrain;
 import com.pvz2.models.world.levelSetup.LevelSetup;
 import com.pvz2.models.zombie.Zombie;
+import com.pvz2.network.onlineIZombie.ZombieCard;
 import com.pvz2.view.LawnGrid;
 
 import java.util.List;

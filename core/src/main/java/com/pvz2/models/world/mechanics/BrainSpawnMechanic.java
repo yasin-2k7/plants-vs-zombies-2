@@ -2,7 +2,7 @@ package com.pvz2.models.world.mechanics;
 
 import com.pvz2.models.miniGame.IZombie.OnlineIZombieLevel;
 import com.pvz2.models.world.GameWorld;
-import com.pvz2.models.network.onlineIZombie.BrainCurrency;
+import com.pvz2.network.onlineIZombie.BrainCurrency;
 
 import java.util.Random;
 

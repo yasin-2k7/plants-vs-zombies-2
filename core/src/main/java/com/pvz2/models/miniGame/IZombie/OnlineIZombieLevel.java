@@ -10,12 +10,12 @@ import com.pvz2.models.world.obstacles.Grave;
 import com.pvz2.models.world.obstacles.Obstacle;
 import com.pvz2.models.world.obstacles.OctopusObstacle;
 import com.pvz2.models.zombie.Zombie;
-import com.pvz2.models.network.onlineIZombie.BrainCurrency;
+import com.pvz2.network.onlineIZombie.BrainCurrency;
 import com.pvz2.models.world.levelSetup.LevelSetup;
 import com.pvz2.models.world.loseCondition.LoseCondition;
 import com.pvz2.models.world.mechanics.Mechanic;
 import com.pvz2.models.world.winCondition.WinCondition;
-import com.pvz2.models.network.onlineIZombie.ZombieCard;
+import com.pvz2.network.onlineIZombie.ZombieCard;
 
 import java.util.ArrayList;
 import java.util.List;

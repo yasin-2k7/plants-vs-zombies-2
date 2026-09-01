@@ -1,6 +1,7 @@
 package com.pvz2.models.enums;
 
-import com.pvz2.models.network.messages.LeaderboardEntry;
+import com.pvz2.models.core.User;
+import com.pvz2.network.messages.LeaderboardEntry;
 
 import java.util.Comparator;
 

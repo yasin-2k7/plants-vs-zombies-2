@@ -1,7 +1,7 @@
 package com.pvz2.view;
 
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.pvz2.models.network.onlineIZombie.ZombieCard;
+import com.pvz2.network.onlineIZombie.ZombieCard;
 
 
 import java.util.ArrayList;
