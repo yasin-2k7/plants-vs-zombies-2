@@ -32,7 +32,7 @@ public class Main extends Game {
     @Override
     public void create() {
         try {
-            NetworkClient.get().connect("100.91.31.5", 8080);
+            NetworkClient.get().connect("localhost", 8080);
         } catch (IOException e) {
             System.err.println("Could not connect to server: " + e.getMessage());
             // fall through — screens should handle a disconnected NetworkClient gracefully,

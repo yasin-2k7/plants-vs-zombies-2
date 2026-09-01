@@ -76,7 +76,8 @@ public class MatchManager {
         return res;
     }
 
-    public synchronized ChallengeAnswerResponse answerChallenge(ClientHandler responder, String inviteId, boolean accept) {
+    public synchronized ChallengeAnswerResponse answerChallenge(ClientHandler responder,
+                                                                String inviteId, boolean accept) {
         PendingInvite invite = pendingInvites.get(inviteId);
 
         if (invite == null || invite.target != responder) {

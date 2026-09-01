@@ -94,7 +94,8 @@ public class LeaderboardMenuTable extends Table {
             addColumnDivider(row, DIVIDER_COLOR, 16);
             row.add(dataLabel(entry.username, rank == 1 ? HEADER_COLOR : Color.BLACK)).width(COL_USERNAME);
             addColumnDivider(row, DIVIDER_COLOR, 16);
-            row.add(dataLabel("Season " + entry.unlockedChapter + " - Level " + entry.unlockedLevel, Color.BLACK)).width(COL_STAGE);
+            row.add(dataLabel("Season " + entry.unlockedChapter +
+                " - Level " + entry.unlockedLevel, Color.BLACK)).width(COL_STAGE);
             addColumnDivider(row, DIVIDER_COLOR, 16);
             row.add(dataLabel(String.valueOf(entry.miniGamesCompleted), Color.BLACK)).width(COL_MINI);
             addColumnDivider(row, DIVIDER_COLOR, 16);
@@ -102,7 +103,8 @@ public class LeaderboardMenuTable extends Table {
             addColumnDivider(row, DIVIDER_COLOR, 16);
             row.add(dataLabel(String.valueOf(entry.normalQuestsCount), Color.BLACK)).width(COL_NORMAL);
             addColumnDivider(row, DIVIDER_COLOR, 16);
-            row.add(dataLabel(entry.hasPlayedMuPoint ? String.valueOf(entry.maxMupoint) : "-", Color.BLACK)).width(COL_SCORE);
+            row.add(dataLabel(entry.hasPlayedMuPoint ? String.valueOf(entry.maxMupoint)
+                : "-", Color.BLACK)).width(COL_SCORE);
 
             rowsTable.add(row).growX().row();
             rank++;
@@ -115,7 +117,8 @@ public class LeaderboardMenuTable extends Table {
         }
     }
 
-    public List<LeaderboardEntry> getSortedLeaderboard(List<LeaderboardEntry> allEntries, LeaderboardSortField field, boolean ascending) {
+    public List<LeaderboardEntry> getSortedLeaderboard(List<LeaderboardEntry> allEntries,
+                                                       LeaderboardSortField field, boolean ascending) {
         List<LeaderboardEntry> sortedList = new ArrayList<>(allEntries);
         Comparator<LeaderboardEntry> comparator = field.getComparator();
 

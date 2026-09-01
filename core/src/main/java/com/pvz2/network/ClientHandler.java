@@ -88,7 +88,8 @@ public class ClientHandler implements Runnable {
     }
 
     private void startSenderThread() {
-        senderThread = new Thread(this::sendLoop, "Sender-" + (username != null ? username : socket.getRemoteSocketAddress()));
+        senderThread = new Thread(this::sendLoop, "Sender-" +
+            (username != null ? username : socket.getRemoteSocketAddress()));
         senderThread.setDaemon(true);
         senderThread.start();
     }

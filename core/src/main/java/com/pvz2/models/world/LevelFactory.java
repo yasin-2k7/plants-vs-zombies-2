@@ -107,7 +107,7 @@ public class LevelFactory {
             new WaveSpawnEntry("ZombieExplorer", 250),
             new WaveSpawnEntry("ZombiePiano", 450)
         );
-        List<Wave> waves = Wave.generateWaves(4, 500, availableZombies, 20);
+        List<Wave> waves = Wave.generateWaves(4, 500, availableZombies, 2);
         LevelSetup levelSetup = new DeadLineLevelSetup(rows, cols, 4, waves);
         LoseCondition loseCondition = new DeadLineLose(4);
         System.out.println("if zombie pass deadLine (col = 4), you will lose");
@@ -208,7 +208,7 @@ public class LevelFactory {
             new WaveSpawnEntry("ZombieArmor1", 200),
             new WaveSpawnEntry("ZombieArmor2", 300),
             new WaveSpawnEntry("ZombieBeachSnorkel", 200),
-            new WaveSpawnEntry("ZombieBeachOctopus", 800)
+            new WaveSpawnEntry("ZombieBeachOctopus", 300)
          );
         List<Wave> waves = Wave.generateWaves(3, 500, availableZombies, 10);
         LevelSetup levelSetup = new BigWaveBeachLevelSetup(6, rows, cols, waves);
@@ -342,7 +342,7 @@ public class LevelFactory {
             new WaveSpawnEntry("ZombieModernAllStar", 500)
 
         );
-        List<Wave> waves = Wave.generateWaves(3, 500, availableZombies, 20);
+        List<Wave> waves = Wave.generateWaves(3, 500, availableZombies, 10);
         LevelSetup levelSetup = new NormalLevelSetup(rows, cols, waves);
         LoseCondition loseCondition = new NormalLose();
         WinCondition winCondition = new NormalWin();

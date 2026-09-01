@@ -63,58 +63,45 @@ public class MainMenuScreen extends MenuScreen {
 
     private void initFields() {
         if (mainTable != null) return;
-
         bg = game.textureBank.region("IMAGE_MAINMENU_BACKGROUND");
-
         TextureRegion logo = game.textureBank.region("IMAGE_UI_MAINMENU_PVZ2_LOGO_HORIZONTAL");
         logoImg = (logo != null) ? new Image(logo) : null;
-
         playBtn = new TextButton("PLAY", game.skin, "purple");
-
         newsBtn = createImageButton(
             "IMAGE_UI_HUD_NEWSBUTTON_BUTTONS_HUD_NEWS_NORMAL",
             "IMAGE_UI_HUD_NEWSBUTTON_BUTTONS_HUD_NEWS_SELECTED",
             game.textureBank
         );
-
         settingsBtn = createImageButton(
             "IMAGE_UI_HUD_SETTINGSBUTTON_BUTTONS_HUD_SETTINGS_NORMAL",
             "IMAGE_UI_HUD_SETTINGSBUTTON_BUTTONS_HUD_SETTINGS_SELECTED",
             game.textureBank
         );
-
         onlineGameBtn = createImageButton(
             "IMAGE_UI_GAMECENTER_ANDROID_GAMECENTER",
             "IMAGE_UI_GAMECENTER_ANDROID_GAMECENTER_PRESS",
             game.textureBank
         );
-
         leaderboardBtn = new TextButton("", skin, "brown");
         Image cup = new Image(game.textureBank.region("IMAGE_UI_GAMECENTER_ICON"));
         leaderboardBtn.add(cup);
-
         muPoint = new TextButton("", skin, "brown");
         Image star = new Image(game.textureBank.region("IMAGE_UI_GENERIC_STAR_ICON"));
         muPoint.add(star);
-
         profileBtn = new TextButton("", skin, "brown");
         Image prof = new Image(game.textureBank.region("IMAGE_UI_MAINMENU_MM_PLAYERICON"));
         profileBtn.add(prof).padRight(5);
-
         travelLogBtn = createImageButton(
             "IMAGE_UI_GENERIC_BUTTON_HUD_MINIGAMES_ALT_SELECTED",
             "IMAGE_UI_GENERIC_BUTTON_HUD_MINIGAMES_ALT_SELECTED",
             game.textureBank
         );
-
         backBtn = createImageButton(
             "IMAGE_UI_MAINMENU_BACK_BTN_NORMAL",
             "IMAGE_UI_MAINMENU_BACK_BTN_PRESSED",
             game.textureBank
         );
-
         unreadBadge = new Image(game.textureBank.region("IMAGE_UI_CLAIM_SMALL"));
-
         mainTable = new Table();
         topBar = new Table();
         centerTable = new Table();

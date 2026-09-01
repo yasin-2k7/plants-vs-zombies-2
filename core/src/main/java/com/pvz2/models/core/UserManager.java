@@ -125,7 +125,8 @@ public class UserManager {
     public static String register(String username, String password, String nickname, String email,
                                   String gender, String securityQ, String securityA) {
         try {
-            RegisterRequest req = new RegisterRequest(username, password, nickname, email, gender, securityQ, securityA);
+            RegisterRequest req = new RegisterRequest(username,
+                password, nickname, email, gender, securityQ, securityA);
             NetworkMessage reply = NetworkClient.get().sendRequest("REGISTER", req, 5000);
             RegisterResponse resp = NetworkClient.get().parsePayload(reply, RegisterResponse.class);
             return resp.message;
