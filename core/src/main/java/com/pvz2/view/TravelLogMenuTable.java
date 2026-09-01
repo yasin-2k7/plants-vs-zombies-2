@@ -212,6 +212,9 @@ public class TravelLogMenuTable extends Table {
                 public void clicked(InputEvent event, float x, float y) {
                     controller.claimQuestGroup(group);
                     refreshContent();
+                    if (game.getScreen() instanceof MainMenuScreen mainMenuScreen){
+                        mainMenuScreen.getResourcesTable().update();
+                    }
                 }
             });
             area.add(claimBtn).width(120).height(36);

@@ -19,20 +19,16 @@ import com.pvz2.models.enums.PlantType;
 import com.pvz2.models.miniGame.IZombie.Brain;
 import com.pvz2.models.plant.Plant;
 import com.pvz2.models.plant.PlantAnimationClips;
-import com.pvz2.models.plant.components.ExplosivesComponent;
 import com.pvz2.models.projectile.Projectile;
 import com.pvz2.models.world.*;
 import com.pvz2.models.zombie.Zombie;
 import com.pvz2.network.onlineIZombie.BrainCurrency;
 import com.pvz2.network.onlineIZombie.ClientGameController;
-import com.pvz2.network.onlineIZombie.messages.ReactionCategory;
-import com.pvz2.network.onlineIZombie.messages.ReactionReceived;
 import com.pvz2.view.audios.GameSFX;
 import com.pvz2.view.audios.SFXManager;
 import pvz.libpvz.pam.PamPlayer;
 
 import java.util.*;
-import java.util.function.Consumer;
 
 public class OnlineGameScreen extends MenuScreen{
     ClientGameController controller;
@@ -84,12 +80,6 @@ public class OnlineGameScreen extends MenuScreen{
         controller.setActionResultListener((success, message) ->
             addToast(success ? "Info" : "Error", message, !success));
         controller.setMatchOverListener((winner, msg) -> showEndScreen(winner, msg));
-        controller.setReactionListener(new Consumer<ReactionReceived>() {
-            @Override
-            public void accept(ReactionReceived reactionReceived) {
-                showOpponentReaction(reactionReceived.category, reactionReceived.index);
-            }
-        });
 
         String[] keys = getBackgroundKeys();
         bgLeft = game.textureBank.region(keys[0]);
@@ -113,14 +103,6 @@ public class OnlineGameScreen extends MenuScreen{
         float mainCenterX = mainLawnWidth / 2f + 150f;
         worldCamera.position.set(mainCenterX, mainLawnHeight / 2f, 0);
         worldCamera.update();
-    }
-
-    private void sendReaction(ReactionCategory category, int index){
-        controller.sendReaction(category, index);
-    }
-
-    private void showOpponentReaction(ReactionCategory category, int index){
-
     }
 
     public ZombiePlacementManager getZombiePlacementManager() {

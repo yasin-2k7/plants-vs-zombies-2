@@ -350,8 +350,12 @@ public class SignupMenuScreen extends MenuScreen {
                         nicknameField.getText(), emailField.getText(), genderBox.getSelected(),
                         questionBox.getSelected(), answerField.getText());
                     Gdx.app.postRunnable(() -> {
-                        if (result != null && !result.equals("Error: could not reach server.")) {
+                        if (result != null && !result.equals("Error: could not reach server.") &&
+                            !result.equals("Username already exists.")) {
                             controller.changeMenu();
+                        }
+                        else {
+                            addToast("Error", result);
                         }
                     });
                 }).start();

@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
@@ -17,8 +18,12 @@ import com.pvz2.models.miniGame.IZombie.OnlineIZombieLevel;
 import com.pvz2.models.plant.card.PlantCard;
 import com.pvz2.models.world.GameState;
 import com.pvz2.models.world.GameWorld;
+import com.pvz2.network.onlineIZombie.ClientGameController;
+import com.pvz2.network.onlineIZombie.messages.ReactionCategory;
+import com.pvz2.network.onlineIZombie.messages.ReactionReceived;
 import com.pvz2.view.audios.GameSFX;
 import com.pvz2.view.audios.SFXManager;
+
 import java.util.function.Consumer;
 
 public class OnlineGameHud extends Group {
@@ -31,6 +36,14 @@ public class OnlineGameHud extends Group {
     private final SelectedPlantsList selectedPlantsList;
     private final SelectedZombiesList selectedZombiesList;
     private final OnlineGameScreen screen;
+
+    private final Label ownNameLabel;
+    private final Label opponentNameLabel;
+
+    private final Container<ReactionPanel> reactionPanelContainer;
+    private final ImageButton reactionToggleBtn;
+    private final Table reactionDock;
+    private final Table opponentBubbleLayer;
 
     public OnlineGameHud(Main game, Skin skin, OnlineGameScreen screen) {
         this.screen = screen;
@@ -50,21 +63,97 @@ public class OnlineGameHud extends Group {
 
         shovelBtn = createShovelBtn(game);
 
+        String ownUsername = App.getCurrentUser() != null ? App.getCurrentUser().getUsername() : "";
+        ownNameLabel = new Label(ownUsername, skin, "medium_outline");
+        opponentNameLabel = new Label(screen.controller.getOpponentUsername(), skin, "medium_outline");
+
         topBar = new Table();
 
+        Label plantLabel = screen.controller.getSide() == ClientGameController.Side.PLANTS ? ownNameLabel :
+            opponentNameLabel;
+        Label zombieLabel = screen.controller.getSide() == ClientGameController.Side.PLANTS ? opponentNameLabel :
+            ownNameLabel;
         Table leftSide = new Table();
+        leftSide.add(plantLabel).left().padLeft(MARGIN).padTop(5).row();
         leftSide.add(sunCounter).pad(MARGIN);
         leftSide.add(shovelBtn).pad(5).row();
         leftSide.add(selectedPlantsList).pad(MARGIN);
 
-        topBar.add(leftSide).expandX().left();
+        Table rightSide = new Table();
+        rightSide.add(zombieLabel).right().padRight(MARGIN).padTop(5).row();
+        rightSide.add(selectedZombiesList).top().right().row();
+        rightSide.add(brainCounter).top().right().pad(MARGIN);
 
+        topBar.add(leftSide).expandX().left();
         topBar.add().expandX();
-        topBar.right().add(selectedZombiesList).top().right();
-        topBar.add(brainCounter).top().right().pad(MARGIN);
+        topBar.add(rightSide).right();
 
         topBar.pack();
         addActor(topBar);
+
+        ReactionPanel reactionPanel = new ReactionPanel(game, skin, this::onReactionPicked);
+        reactionPanelContainer = new Container<>(reactionPanel);
+        reactionPanelContainer.size(440, 420);
+        reactionPanelContainer.setVisible(false);
+
+        reactionToggleBtn = MainMenuScreen.createImageButton(
+            "IMAGE_UI_MAINMENU_EDIT_BTN_PRESSED",
+            "IMAGE_UI_MAINMENU_EDIT_BTN_NORMAL",
+            game.textureBank
+        );
+        reactionToggleBtn.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                toggleReactionPanel();
+            }
+        });
+
+        reactionDock = new Table();
+        reactionDock.add(reactionPanelContainer).padBottom(10).row();
+        reactionDock.add(reactionToggleBtn);
+        addActor(reactionDock);
+
+        opponentBubbleLayer = new Table();
+        addActor(opponentBubbleLayer);
+
+
+        screen.controller.setReactionListener(this::onReactionReceived);
+    }
+
+    private void onReactionPicked(ReactionCategory category, int index) {
+        screen.controller.sendReaction(category, index);
+        toggleReactionPanel();
+    }
+
+    private void onReactionReceived(ReactionReceived received) {
+        Gdx.app.postRunnable(() -> showOpponentReactionBubble(received.category, received.index));
+    }
+
+    private void showOpponentReactionBubble(ReactionCategory category, int index) {
+        Actor bubble = ReactionBubbleFactory.build(App.getGameApp(), App.getGameApp().skin, category, index);
+        opponentBubbleLayer.clearChildren();
+        opponentBubbleLayer.add(bubble);
+        bubble.getColor().a = 0f;
+        bubble.addAction(Actions.sequence(
+            Actions.fadeIn(0.2f),
+            Actions.delay(2.5f),
+            Actions.fadeOut(0.4f)
+        ));
+    }
+
+    private void toggleReactionPanel() {
+        if (reactionPanelContainer.isVisible()) {
+            reactionPanelContainer.addAction(Actions.sequence(
+                Actions.fadeOut(0.25f),
+                Actions.visible(false)
+            ));
+        } else {
+            reactionPanelContainer.getColor().a = 0f;
+            reactionPanelContainer.addAction(Actions.sequence(
+                Actions.visible(true),
+                Actions.fadeIn(0.25f)
+            ));
+        }
     }
 
     public static class BrainCounter extends Table {
@@ -163,6 +252,13 @@ public class OnlineGameHud extends Group {
         topBar.pack();
         topBar.setWidth(stageWidth);
         topBar.setPosition(0, stageHeight - topBar.getHeight());
+
+        reactionDock.pack();
+        reactionDock.setPosition(stageWidth - reactionDock.getWidth() - MARGIN, MARGIN);
+
+        opponentBubbleLayer.setSize(320, 140);
+        opponentBubbleLayer.setPosition(stageWidth - opponentBubbleLayer.getWidth() - MARGIN,
+            stageHeight - topBar.getHeight() - opponentBubbleLayer.getHeight() - MARGIN);
     }
 
     public void update(GameWorld gameWorld, float delta) {

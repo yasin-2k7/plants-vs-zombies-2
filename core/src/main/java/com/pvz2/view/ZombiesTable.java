@@ -99,6 +99,7 @@ public class ZombiesTable extends Table {
             zombiesPicAddress.put("ZombiePiano", "IMAGE_UI_ALMANAC_PACKETS_ZOMBIES_PIANO");
             zombiesPicAddress.put("ZombieArcade", "IMAGE_UI_ALMANAC_PACKETS_ZOMBIES_EIGHTIES_ARCADE");
             zombiesPicAddress.put("ZombieNewspaper", "IMAGE_UI_ALMANAC_PACKETS_ZOMBIES_MODERN_NEWSPAPER");
+            zombiesPicAddress.put("ZombieBarrelRoller", "IMAGE_UI_ALMANAC_PACKETS_ZOMBIES_BARRELROLLER");
         }
         return zombiesPicAddress;
     }

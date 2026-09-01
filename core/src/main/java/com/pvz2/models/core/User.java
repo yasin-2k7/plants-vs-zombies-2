@@ -97,6 +97,7 @@ public class User {
         showedZombies.put("ZombiePiano", false);
         showedZombies.put("ZombieArcade", false);
         showedZombies.put("ZombieNewspaper", false);
+        showedZombies.put("ZombieBarrelRoller", false);
     }
 
     private void putInitialPlants() {

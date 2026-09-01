@@ -102,7 +102,6 @@ public class LeaderboardMenuTable extends Table {
             addColumnDivider(row, DIVIDER_COLOR, 16);
             row.add(dataLabel(String.valueOf(entry.normalQuestsCount), Color.BLACK)).width(COL_NORMAL);
             addColumnDivider(row, DIVIDER_COLOR, 16);
-            entry.hasPlayedMuPoint = App.getCurrentUser().isPlayedMuPoint();
             row.add(dataLabel(entry.hasPlayedMuPoint ? String.valueOf(entry.maxMupoint) : "-", Color.BLACK)).width(COL_SCORE);
 
             rowsTable.add(row).growX().row();

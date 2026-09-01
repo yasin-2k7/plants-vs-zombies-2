@@ -32,6 +32,7 @@ public class GameServer {
     private final MatchManager matchManager = new MatchManager(this::getOrCreateGameController);
     private final Map<String, ServerGameController> gameControllers = new ConcurrentHashMap<>();
     private final Map<String, Boolean> recoveryVerified = new ConcurrentHashMap<>();
+    private final Object accountLock = new Object();
 
     public static void main(String[] args) {
         new GameServer().start();
@@ -176,23 +177,25 @@ public class GameServer {
     private void handleRegister(ClientHandler sender, NetworkMessage msg) {
         RegisterRequest req = GSON.fromJson(msg.payload, RegisterRequest.class);
 
-        if (UserDataManager.userExists(req.username)) {
-            sender.send("REGISTER", msg.requestId, response(false, "Username already exists."));
-            return;
+        synchronized (accountLock) {
+            if (UserDataManager.userExists(req.username)) {
+                sender.send("REGISTER", msg.requestId, response(false, "Username already exists."));
+                return;
+            }
+
+            User newUser = new User();
+            newUser.setUsername(req.username);
+            newUser.setHashPassword(PasswordHasher.hashSHA256(req.password));
+            newUser.setNickname(req.nickname);
+            newUser.setEmail(req.email);
+            newUser.setGender(req.gender);
+            newUser.setSecurityQ(req.securityQ);
+            newUser.setSecurityA(PasswordHasher.hashSHA256(req.securityA));
+
+            boolean saved = UserDataManager.saveUser(newUser);
+            sender.send("REGISTER", msg.requestId, response(saved,
+                saved ? "Register successfully. Redirecting to Login Menu..." : "Error: could not save user data."));
         }
-
-        User newUser = new User();
-        newUser.setUsername(req.username);
-        newUser.setHashPassword(PasswordHasher.hashSHA256(req.password));
-        newUser.setNickname(req.nickname);
-        newUser.setEmail(req.email);
-        newUser.setGender(req.gender);
-        newUser.setSecurityQ(req.securityQ);
-        newUser.setSecurityA(PasswordHasher.hashSHA256(req.securityA));
-
-        boolean saved = UserDataManager.saveUser(newUser);
-        sender.send("REGISTER", msg.requestId, response(saved,
-            saved ? "Register successfully. Redirecting to Login Menu..." : "Error: could not save user data."));
     }
 
     private RegisterResponse response(boolean success, String message) {
@@ -204,44 +207,46 @@ public class GameServer {
 
     private void handleUpdateUsername(ClientHandler sender, NetworkMessage msg) {
         UpdateUsernameRequest req = GSON.fromJson(msg.payload, UpdateUsernameRequest.class);
-        RegisterResponse response = new RegisterResponse(); // reusing success/message shape — fine for a simple ack
+        RegisterResponse response = new RegisterResponse();
 
-        String oldUsername = sessionTokens.get(req.token);
-        if (oldUsername == null) {
-            response.success = false;
-            response.message = "Session expired. Please log in again.";
+        synchronized (accountLock) {
+            String oldUsername = sessionTokens.get(req.token);
+            if (oldUsername == null) {
+                response.success = false;
+                response.message = "Session expired. Please log in again.";
+                sender.send("UPDATE_USERNAME", msg.requestId, response);
+                return;
+            }
+
+            if (UserDataManager.userExists(req.newUsername)) {
+                response.success = false;
+                response.message = "That username is already taken.";
+                sender.send("UPDATE_USERNAME", msg.requestId, response);
+                return;
+            }
+
+            User user = UserDataManager.loadUser(oldUsername);
+            if (user == null) {
+                response.success = false;
+                response.message = "User not found.";
+                sender.send("UPDATE_USERNAME", msg.requestId, response);
+                return;
+            }
+
+            user.setUsername(req.newUsername);
+            boolean saved = UserDataManager.updateUsername(oldUsername, user);
+
+            if (saved) {
+                sessionTokens.put(req.token, req.newUsername);
+                onlineUsers.remove(oldUsername);
+                onlineUsers.put(req.newUsername, sender);
+                sender.setUsername(req.newUsername);
+            }
+
+            response.success = saved;
+            response.message = saved ? "Username updated successfully." : "Could not save the new username.";
             sender.send("UPDATE_USERNAME", msg.requestId, response);
-            return;
         }
-
-        if (UserDataManager.userExists(req.newUsername)) {
-            response.success = false;
-            response.message = "That username is already taken.";
-            sender.send("UPDATE_USERNAME", msg.requestId, response);
-            return;
-        }
-
-        User user = UserDataManager.loadUser(oldUsername);
-        if (user == null) {
-            response.success = false;
-            response.message = "User not found.";
-            sender.send("UPDATE_USERNAME", msg.requestId, response);
-            return;
-        }
-
-        user.setUsername(req.newUsername);
-        boolean saved = UserDataManager.updateUsername(oldUsername, user);
-
-        if (saved) {
-            sessionTokens.put(req.token, req.newUsername);
-            onlineUsers.remove(oldUsername);
-            onlineUsers.put(req.newUsername, sender);
-            sender.setUsername(req.newUsername);
-        }
-
-        response.success = saved;
-        response.message = saved ? "Username updated successfully." : "Could not save the new username.";
-        sender.send("UPDATE_USERNAME", msg.requestId, response);
     }
 
     private void handleAutoLogin(ClientHandler sender, NetworkMessage msg) {
@@ -259,9 +264,6 @@ public class GameServer {
                 response.success = false;
                 response.errorMessage = "User no longer exists.";
             } else {
-                user.setHashPassword(null);
-                user.setSecurityA(null);
-
                 sender.setUsername(username);
                 registerOnline(username, sender);
 
