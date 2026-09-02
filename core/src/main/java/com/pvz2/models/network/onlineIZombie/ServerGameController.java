@@ -82,13 +82,10 @@ public class ServerGameController {
             new OnlineIZombieSetup(5, 9, stageZombies), loseConditions, winCondition, mechanics);
     }
 
-    /** Starts the tick loop. Call once, right after construction (see GameServer.gameControllerFor). */
     public void start() {
         tickTask = TICK_SCHEDULER.scheduleAtFixedRate(this::onTick, 0, TICK_INTERVAL_MS, TimeUnit.MILLISECONDS);
     }
 
-    /** Stops ticking — called both on a natural win/lose and from GameServer on disconnect,
-     *  so a match never keeps ticking after nobody's left to receive its broadcasts. */
     public void stop() {
         if (tickTask != null) tickTask.cancel(false);
     }

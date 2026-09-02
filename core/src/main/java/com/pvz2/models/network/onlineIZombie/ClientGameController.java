@@ -43,19 +43,14 @@ public class ClientGameController {
         NetworkClient.get().onPush("REACTION", this::onReaction);
     }
 
-    /** Whoever owns the game screen should set this once (e.g. to screen::addToast) to
-     *  see server-side rejections like "invalid zombie" or "not enough brains". */
     public void setActionResultListener(BiConsumer<Boolean, String> listener) {
         this.actionResultListener = listener;
     }
 
-    /** Set once by the game screen to react when the match ends — winning side + message. */
     public void setMatchOverListener(BiConsumer<Side, String> listener) {
         this.matchOverListener = listener;
     }
 
-    /** Set once by the game screen to show the opponent's text/emoji/sticker — draw it
-     *  from your own local preset lists using received.category + received.index. */
     public void setReactionListener(Consumer<ReactionReceived> listener) {
         this.reactionListener = listener;
     }
@@ -66,7 +61,7 @@ public class ClientGameController {
 
     private void onGameStatePush(NetworkMessage msg) {
         GameStateUpdate update = NetworkClient.get().parsePayload(msg, GameStateUpdate.class);
-        if (!matchId.equals(update.matchId)) return; // stale push from a different/older match
+        if (!matchId.equals(update.matchId)) return;
         boolean wasNull = (world == null);
         world = update.world;
         if (wasNull && onWorldReadyListener != null && !worldReadyFired) {
@@ -183,11 +178,9 @@ public class ClientGameController {
         this.onWorldReadyListener = listener;
         if (world != null && !worldReadyFired) {
             worldReadyFired = true;
-            listener.run(); // covers the race where the first snapshot already arrived before this was registered
+            listener.run();
         }
     }
-
-    // ---------------- network gameplay actions ----------------
 
     public void plantPlant(float x, float y) {
         if (side != Side.PLANTS || !plantSelected) return;

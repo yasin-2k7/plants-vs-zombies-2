@@ -18,7 +18,7 @@ public class MatchManager {
         }
     }
 
-    private final Map<String, PendingInvite> pendingInvites = new ConcurrentHashMap<>(); // inviteId -> invite
+    private final Map<String, PendingInvite> pendingInvites = new ConcurrentHashMap<>();
     private final Map<String, Match> matchesById = new ConcurrentHashMap<>();
     private final Map<ClientHandler, Match> matchByPlayer = new ConcurrentHashMap<>();
     private final Consumer<Match> onMatchCreated;
@@ -86,8 +86,6 @@ public class MatchManager {
         return new ChallengeAnswerResponse(true, null);
     }
 
-    // ---------- random matchmaking ----------
-
     public synchronized RandomMatchResponse joinRandomQueue(ClientHandler player) {
         RandomMatchResponse res = new RandomMatchResponse();
 
@@ -118,8 +116,6 @@ public class MatchManager {
             waitingForRandom = null;
         }
     }
-
-    // ---------- shared ----------
 
     private void createMatch(ClientHandler a, ClientHandler b) {
         Match match = new Match(a, b);

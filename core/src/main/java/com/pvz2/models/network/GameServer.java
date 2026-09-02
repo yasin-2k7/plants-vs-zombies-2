@@ -321,9 +321,6 @@ public class GameServer {
         sender.send("CANCEL_RANDOM_MATCH", msg.requestId, new AckResponse(true));
     }
 
-    // These four are fire-and-forget from the client (see NetworkClient.sendMessage) —
-    // there's no direct reply; the result is a GAME_STATE push from ServerGameController.
-
     private void handlePlantPlant(ClientHandler sender, NetworkMessage msg) {
         PlantPlantRequest req = GSON.fromJson(msg.payload, PlantPlantRequest.class);
         ServerGameController controller = gameControllerFor(sender, req.matchId);
@@ -380,7 +377,7 @@ public class GameServer {
             response.success = false;
             response.message = "Email is not correct.";
         } else {
-            recoveryVerified.remove(req.username); // clear any stale prior attempt
+            recoveryVerified.remove(req.username);
             response.success = true;
             response.message = "Please answer security question:";
             response.securityQ = user.getSecurityQ();
@@ -419,15 +416,14 @@ public class GameServer {
         } else {
             user.setHashPassword(PasswordHasher.hashSHA256(req.newPassword));
             response.success = UserDataManager.saveUser(user);
-            recoveryVerified.remove(req.username); // one-time use — can't replay this step again
+            recoveryVerified.remove(req.username);
         }
         sender.send("NEW_PASSWORD", msg.requestId, response);
     }
 
-    /** Looks up the sender's active match and lazily creates its ServerGameController on first use. */
     private ServerGameController gameControllerFor(ClientHandler sender, String matchId) {
         Match match = matchManager.getMatchOf(sender);
-        if (match == null || !match.getMatchId().equals(matchId)) return null; // stale/forged matchId — ignore
+        if (match == null || !match.getMatchId().equals(matchId)) return null;
         return getOrCreateGameController(match);
     }
 

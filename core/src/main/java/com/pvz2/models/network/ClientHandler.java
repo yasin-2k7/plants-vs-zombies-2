@@ -16,7 +16,7 @@ public class ClientHandler implements Runnable {
     private PrintWriter out;
     private volatile String username;
 
-    private final BlockingQueue<String> sendQueue = new LinkedBlockingQueue<>(200); // ظرفیت صف پیام‌ها
+    private final BlockingQueue<String> sendQueue = new LinkedBlockingQueue<>(200);
     private Thread senderThread;
     private volatile boolean running = true;
 
@@ -69,7 +69,7 @@ public class ClientHandler implements Runnable {
     private void sendLoop() {
         try {
             while (running && !Thread.currentThread().isInterrupted()) {
-                String line = sendQueue.take(); // تا زمان رسیدن پیام جدید متوقف می‌ماند
+                String line = sendQueue.take();
                 if (out != null) {
                     out.println(line);
                 }
