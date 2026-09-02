@@ -159,6 +159,14 @@ public class FrostbiteCavesWorld extends GameWorld {
         this.lockedPlants = lockedPlants;
     }
 
+    public List<PlantType> getLockedPlants() {
+        return lockedPlants;
+    }
+
+    public boolean isPlantLocked(PlantType type) {
+        return lockedPlants != null && lockedPlants.contains(type);
+    }
+
     public List<Wind> getWinds() {
         return winds;
     }

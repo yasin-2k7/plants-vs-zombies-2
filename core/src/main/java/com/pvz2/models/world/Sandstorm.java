@@ -78,6 +78,8 @@ public class Sandstorm {
     public State getState() { return state; }
     public float getX() { return x; }
     public float getY() { return y; }
+    public int getLane() { return lane; }
+    public int getTargetCol() { return targetCol; }
     public Zombie getZombie() { return zombie; }
     public boolean isFinished() { return state == State.FINISHED; }
     public float getStateTime() { return stateTime; }

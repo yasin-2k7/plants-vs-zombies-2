@@ -47,7 +47,6 @@ public class LeaderboardMenuTable extends Table {
     private static final float COL_DIVIDER_PAD = 4;
 
     private final Skin skin;
-    private final Main game;
 
     private Table rowsTable;
     private SelectBox<LeaderboardSortField> sortBox;
@@ -58,7 +57,6 @@ public class LeaderboardMenuTable extends Table {
     private List<LeaderboardEntry> currentEntries = new ArrayList<>();
 
     public LeaderboardMenuTable(Main game, Skin skin) {
-        this.game = game;
         this.skin = skin;
         build();
     }

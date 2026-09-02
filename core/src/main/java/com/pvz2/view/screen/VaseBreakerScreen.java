@@ -70,7 +70,7 @@ public class VaseBreakerScreen extends MenuScreen {
         super(game);
         this.world = world;
         this.assetsFolder = Gdx.files.internal("");
-        this.pamPlayer = new PamPlayer(game.textureBank, Gdx.files.internal(""));
+        this.pamPlayer = new PamPlayer(game.textureBank, assetsFolder);
     }
     @Override
     public void show() {
@@ -391,7 +391,6 @@ public class VaseBreakerScreen extends MenuScreen {
 
     private class VaseGraphic {
         private final Vase vase;
-        private final float targetX;
         private final float targetY;
         private float currentX;
         private float currentY;
@@ -407,7 +406,6 @@ public class VaseBreakerScreen extends MenuScreen {
 
         public VaseGraphic(Vase vase, float targetX, float targetY) {
             this.vase = vase;
-            this.targetX = targetX;
             this.targetY = targetY;
             this.currentX = targetX;
             this.currentY = targetY + 600f;

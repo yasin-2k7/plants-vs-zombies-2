@@ -170,6 +170,10 @@ public class WaveManager {
         return waves != null ? waves.size() : 0;
     }
 
+    public int getTotalZombiesOverall() {
+        return totalZombiesOverall;
+    }
+
     public int getCurrentWaveIndex() {
         return currentWaveIndex;
     }

@@ -373,6 +373,10 @@ public class Plant implements Damageable {
         }
     }
 
+    public boolean isExplosive() {
+        return isExplosive;
+    }
+
     public GameWorld getCurrentWorld() {
         return currentWorld;
     }

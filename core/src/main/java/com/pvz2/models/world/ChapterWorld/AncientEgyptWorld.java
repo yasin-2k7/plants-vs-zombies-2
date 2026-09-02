@@ -1,6 +1,7 @@
 package com.pvz2.models.world.ChapterWorld;
 
 import com.pvz2.models.world.Cell;
+import com.pvz2.models.world.GameState;
 import com.pvz2.models.world.GameWorld;
 import com.pvz2.models.world.Sandstorm;
 import com.pvz2.models.world.levelSetup.LevelSetup;
@@ -36,6 +37,15 @@ public class AncientEgyptWorld extends GameWorld {
     @Override
     public void tick(float delta) {
         super.tick(delta);
+
+        if (getState() == GameState.PLAYING) {
+            for (Zombie zombie : activeZombies) {
+                if (!zombie.isDead() && LawnGrid.getColFromX(zombie.getX()) <= deadLineCol) {
+                    setState(GameState.LOST);
+                    break;
+                }
+            }
+        }
 
         for (int i = activeSandstorms.size() - 1; i >= 0; i--) {
             Sandstorm sandstorm = activeSandstorms.get(i);
@@ -81,6 +91,10 @@ public class AncientEgyptWorld extends GameWorld {
 
     public void setDeadLineCol(int deadLineCol) {
         this.deadLineCol = deadLineCol;
+    }
+
+    public int getDeadLineCol() {
+        return deadLineCol;
     }
 
     public void spawnSandstorm(Zombie zombie, int lane, int targetCol) {

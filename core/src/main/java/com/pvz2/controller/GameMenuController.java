@@ -285,6 +285,9 @@ public class GameMenuController implements MenuController {
                 plant.setImitate(true);
                 plant.addComponent(new ImitatorIntroComponent());
             }
+            if (plant.isExplosive()) {
+                App.getCurrentUser().getQuestStats().incrementExplosivePlantsUsed();
+            }
             card.setReady(false);
             App.getCurrentGame().setSun(App.getCurrentGame().getSun() - card.getSunCost());
             return plant;
