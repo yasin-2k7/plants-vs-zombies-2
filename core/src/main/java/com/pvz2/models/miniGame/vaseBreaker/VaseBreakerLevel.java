@@ -16,7 +16,6 @@ public class VaseBreakerLevel extends MiniGameWorld {
     private List<Vase> vases;
     private List<SeedPacket> droppedSeeds;
     private PlantType heldSeed = null;
-    private Supplier<GameWorld> builder;
 
     public VaseBreakerLevel(LevelSetup levelSetup,
                             ArrayList<LoseCondition> loseConditions,
