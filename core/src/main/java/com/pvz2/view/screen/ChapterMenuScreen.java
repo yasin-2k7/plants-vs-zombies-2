@@ -19,6 +19,8 @@ import com.pvz2.Main;
 import com.pvz2.controller.ChapterMenuController;
 import com.pvz2.models.core.App;
 import com.pvz2.models.enums.Chapter;
+import com.pvz2.view.audios.GameSFX;
+import com.pvz2.view.audios.SFXManager;
 import com.pvz2.view.table.ResourcesTable;
 import pvz.libpvz.pam.PamPlayer;
 
@@ -172,7 +174,10 @@ public class ChapterMenuScreen extends MenuScreen {
             "IMAGE_UI_ALMANAC_BUTTONS_HUD_BACK_SELECTED");
         backBtn.addListener(new ClickListener() {
             @Override
-            public void clicked(InputEvent event, float x, float y) { fadeAndSwitchScreen(new MainMenuScreen(game)); }
+            public void clicked(InputEvent event, float x, float y) {
+                fadeAndSwitchScreen(new MainMenuScreen(game));
+                SFXManager.getInstance().playSound(GameSFX.BUTTON_CLICK);
+            }
         });
 
         ImageButton greenBtn = createIconButton("IMAGE_UI_GENERIC_BUTTONS_HUD_ZG_NORMAL",
@@ -180,7 +185,9 @@ public class ChapterMenuScreen extends MenuScreen {
         greenBtn.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                fadeAndSwitchScreen(new GreenhouseMenuScreen(game)); }
+                fadeAndSwitchScreen(new GreenhouseMenuScreen(game));
+                SFXManager.getInstance().playSound(GameSFX.BUTTON_CLICK);
+            }
         });
 
         ImageButton collectionBtn = createIconButton("IMAGE_UI_HUD_ALMANACBUTTON_BUTTONS_HUD_ALMANAC_NORMAL",
@@ -188,7 +195,9 @@ public class ChapterMenuScreen extends MenuScreen {
         collectionBtn.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                fadeAndSwitchScreen(new CollectionMenuScreen(game, ChapterMenuScreen.this)); }
+                fadeAndSwitchScreen(new CollectionMenuScreen(game, ChapterMenuScreen.this));
+                SFXManager.getInstance().playSound(GameSFX.BUTTON_CLICK);
+            }
         });
 
         buttonsTable.add(backBtn).size(55, 55).padRight(10);

@@ -62,6 +62,10 @@ public class IZombieLevel extends GameWorld {
         String typeName = zombie.getName().name();
         return switch (typeName) {
             case "NORMAL", "ZombieDefault" -> 50;
+            case "ZombieArmor1" -> 150;
+            case "ZombieArmor2" -> 175;
+            case "ZombieBarrelRoller" -> 300;
+            case "ZombieDarkImpDragon" -> 25;
             default -> 75;
         };
     }

@@ -23,21 +23,29 @@ import com.pvz2.Main;
 import com.pvz2.controller.GameMenuController;
 import com.pvz2.models.core.App;
 import com.pvz2.models.core.User;
+import com.pvz2.models.core.UserDataManager;
 import com.pvz2.models.core.UserManager;
+import com.pvz2.models.enums.PlantType;
 import com.pvz2.models.miniGame.beghouled.BeghouledSetup;
+import com.pvz2.models.mupoint.MuPointLevel;
+import com.pvz2.models.plant.card.PlantCard;
+import com.pvz2.models.plant.card.PlantCardFactory;
 import com.pvz2.models.world.GameState;
 import com.pvz2.models.world.GameWorld;
 import com.pvz2.models.zombie.wave.WaveManager;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-import com.pvz2.view.util.UiUtils;
+import com.pvz2.view.audios.AudioManager;
+import com.pvz2.view.audios.GameMusic;
 import com.pvz2.view.audios.GameSFX;
 import com.pvz2.view.audios.SFXManager;
 import com.pvz2.view.screen.GameScreen;
 import com.pvz2.view.screen.LevelMenuScreen;
 import com.pvz2.view.screen.MainMenuScreen;
 import com.pvz2.view.screen.OnlineGameScreen;
+import com.pvz2.view.util.UiUtils;
 import pvz.skin.BorderedTable;
 
+import java.util.ArrayList;
 import java.util.function.Consumer;
 
 public class GameHUD extends Group {
@@ -73,6 +81,7 @@ public class GameHUD extends Group {
                     activeOverlay.remove();
                     activeOverlay = null;
                 }
+                SFXManager.getInstance().playSound(GameSFX.PAUSE);
                 if (world.getState() == GameState.PLAYING) {
                     world.setState(GameState.PAUSED);
                     try {
@@ -230,6 +239,7 @@ public class GameHUD extends Group {
                         user.save();
                         UserManager.syncCurrentUser();}
                     remove();
+                    AudioManager.getInstance().playMusic(GameMusic.TITLE, true);
                     boolean isMuPoint = (world.getMupointManager() != null);
                     boolean isBeghouled = (world.getLevelSetup() != null &&
                         world.getLevelSetup() instanceof BeghouledSetup);
@@ -244,6 +254,7 @@ public class GameHUD extends Group {
                 @Override
                 public void clicked(InputEvent event, float x, float y) {
                     remove();
+                    AudioManager.getInstance().playMusic(GameMusic.HOUSE, true);
                     if (onRestart != null) {
                         onRestart.run();
                     }}

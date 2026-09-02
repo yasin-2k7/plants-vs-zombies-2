@@ -21,6 +21,8 @@ import com.pvz2.models.world.GameState;
 import com.pvz2.models.world.GameWorld;
 import com.pvz2.models.world.levelSetup.DeadLineLevelSetup;
 import com.pvz2.models.miniGame.IZombie.IZombieLevel;
+import com.pvz2.view.audios.AudioManager;
+import com.pvz2.view.audios.GameMusic;
 import com.pvz2.view.screen.LevelMenuScreen;
 import com.pvz2.view.screen.MainMenuScreen;
 import pvz.skin.BorderedTable;
@@ -102,6 +104,7 @@ public class GameEndOverlay extends Table {
                 }
                 remove();
                 if (onExit != null) onExit.run();
+                AudioManager.getInstance().playMusic(GameMusic.TITLE, true);
             }
         });
         buttonsTable.add(exitBtn).pad(10).width(180);
@@ -113,6 +116,8 @@ public class GameEndOverlay extends Table {
                 public void clicked(InputEvent event, float x, float y) {
                     remove();
                     onRestart.run();
+                    AudioManager.getInstance().playMusic(GameMusic.HOUSE, true);
+
                 }
             });
             buttonsTable.add(restartBtn).pad(10).width(180);

@@ -29,6 +29,8 @@ import com.pvz2.models.projectile.Projectile;
 import com.pvz2.models.world.Cell;
 import com.pvz2.models.world.GameState;
 import com.pvz2.models.zombie.Zombie;
+import com.pvz2.view.audios.AudioManager;
+import com.pvz2.view.audios.GameMusic;
 import com.pvz2.view.audios.GameSFX;
 import com.pvz2.view.audios.SFXManager;
 import com.pvz2.view.graphic.PlantGraphic;
@@ -91,6 +93,7 @@ public class VaseBreakerScreen extends MenuScreen {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 togglePause();
+                SFXManager.getInstance().playSound(GameSFX.PAUSE);
             }
         });
         topBar.add(resourcesTable).pad(10).left();
@@ -122,7 +125,6 @@ public class VaseBreakerScreen extends MenuScreen {
             hidePauseOverlay();
         }
     }
-
     private void showPauseOverlay() {
         if (pauseOverlay != null) pauseOverlay.remove();
         pauseOverlay = new Table();
@@ -145,6 +147,7 @@ public class VaseBreakerScreen extends MenuScreen {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 restartLevel();
+                AudioManager.getInstance().playMusic(GameMusic.HOUSE, true);
             }
         });
         TextButton exitBtn = new TextButton("EXIT", skin, "green");
@@ -152,7 +155,8 @@ public class VaseBreakerScreen extends MenuScreen {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 world.setState(GameState.PLAYING);
-                game.setScreen(new LevelMenuScreen(game));
+                game.setScreen(new MainMenuScreen(game));
+                AudioManager.getInstance().playMusic(GameMusic.TITLE, true);
             }
         });
         pauseOverlay.add(resumeBtn).pad(10).row();
@@ -191,7 +195,6 @@ public class VaseBreakerScreen extends MenuScreen {
         plantPlacementManager.cancelSelection();
         initVaseGraphics();
     }
-
     @Override
     public void resize(int width, int height) {
         super.resize(width, height);
@@ -199,8 +202,6 @@ public class VaseBreakerScreen extends MenuScreen {
             worldViewport.update(width, height, true);
         }
     }
-
-
     @Override
     protected void drawBackground(float delta) {
         updateLogic(delta);
@@ -231,6 +232,9 @@ public class VaseBreakerScreen extends MenuScreen {
     private void updateLogic(float delta) {
         handleInput();
         if (world.getState() == GameState.PAUSED) return;
+        if (world.getState() == GameState.PLAYING) {
+            checkWinLoseConditions();
+        }
         world.tick(delta);
         for (VaseGraphic vg : vaseGraphics) {
             vg.update(delta);
@@ -243,9 +247,6 @@ public class VaseBreakerScreen extends MenuScreen {
         }
         zombieGraphics.removeIf(zg -> zg.getZombie().isDead());
         plantGraphics.removeIf(PlantGraphic::isDead);
-        if (world.getState() == GameState.PLAYING) {
-            checkWinLoseConditions();
-        }
         if (world.getState() != GameState.PAUSED && !world.isEndGameHandled()) {
             if (world.getState() == GameState.WON) {
                 world.setEndGameHandled(true);
@@ -262,12 +263,13 @@ public class VaseBreakerScreen extends MenuScreen {
         }
     }
     private void checkWinLoseConditions() {
-        boolean zombieReachedHouse = world.getActiveZombies().stream()
-            .anyMatch(z -> !z.isDead() && z.getX() <= 100f);
+        float houseEntryX = LawnGrid.ORIGIN_X - (LawnGrid.CELL_WIDTH / 2f);
+        boolean zombieReachedHouse = zombieGraphics.stream()
+            .anyMatch(zg -> !zg.getZombie().isDead() && zg.getZombie().getX() <= houseEntryX);
         boolean allVasesBroken = vaseGraphics.stream().allMatch(VaseGraphic::isBroken);
         boolean noCardsOrSelection = seedPackets.isEmpty() && !plantPlacementManager.isPlantSelected();
         boolean noPlantsOnBoard = plantGraphics.isEmpty();
-        boolean activeZombiesExist = world.getActiveZombies().stream().anyMatch(z -> !z.isDead());
+        boolean activeZombiesExist = zombieGraphics.stream().anyMatch(zg -> !zg.getZombie().isDead());
         if (zombieReachedHouse || (allVasesBroken && noCardsOrSelection && noPlantsOnBoard && activeZombiesExist)) {
             world.setState(GameState.LOST);
             return;
@@ -344,12 +346,25 @@ public class VaseBreakerScreen extends MenuScreen {
         int col = LawnGrid.getColFromX(touchPoint.x);
         if (row >= 0 && col >= 0) {
             PlantType selectedPlant = plantPlacementManager.getSelectedPlant();
-            if (plantPlacementManager.tryPlace()) {
-                placePlantInCell(row, col, selectedPlant);}
+            if (canPlantAt(row, col)) {
+                if (plantPlacementManager.tryPlace()) {
+                    placePlantInCell(row, col, selectedPlant);}
+            }
         } else {
             plantPlacementManager.cancelSelection();
         }
         return true;
+    }
+    private boolean canPlantAt(int row, int col) {
+        Cell[][] grid = world.getGrid();
+        if (grid == null || row >= grid.length || col >= grid[0].length) return false;
+        Cell cell = grid[row][col];
+        if (cell == null) return false;
+
+        Vase vase = world.getVaseAt(row, col);
+        if (vase != null && !vase.isBroken()) return false;
+
+        return cell.getPlant() == null;
     }
     private void placePlantInCell(int row, int col, PlantType selectedPlant) {
         Cell[][] grid = world.getGrid();
@@ -388,7 +403,6 @@ public class VaseBreakerScreen extends MenuScreen {
             }
         }
     }
-
     private class VaseGraphic {
         private final Vase vase;
         private final float targetY;
@@ -403,7 +417,6 @@ public class VaseBreakerScreen extends MenuScreen {
         private final String pamPath;
         private boolean contentSpawned = false;
         private static final Random RANDOM = new Random();
-
         public VaseGraphic(Vase vase, float targetX, float targetY) {
             this.vase = vase;
             this.targetY = targetY;
@@ -413,13 +426,11 @@ public class VaseBreakerScreen extends MenuScreen {
             this.currentClip = "idle";
             pamPlayer.loadAsync(pamPath, null);
         }
-
         private String getPamPathForType(VaseType type) {
             if (type == VaseType.PLANT) return "768/FULL/VASEBREAKER/VASE_GREEN/VASE_GREEN.PAM";
             if (type == VaseType.GIANT) return "768/FULL/VASEBREAKER/VASE_GARGANTUAR/VASE_GARGANTUAR.PAM";
             return "768/FULL/VASEBREAKER/VASE_BROWN/VASE_BROWN.PAM";
         }
-
         public boolean contains(float x, float y) {
             float width = 110f;
             float height = 110f;
@@ -435,7 +446,6 @@ public class VaseBreakerScreen extends MenuScreen {
                 startBreak();
             }
         }
-
         public void startBreak() {
             if (state == VaseState.BREAKING || state == VaseState.BROKEN) return;
             state = VaseState.BREAKING;
@@ -443,7 +453,6 @@ public class VaseBreakerScreen extends MenuScreen {
             currentClip = RANDOM.nextBoolean() ? "break" : "break2";
             isLoop = false;
         }
-
         public void update(float delta) {
             animTime += delta;
             if (state == VaseState.DROPPING) {
@@ -469,6 +478,7 @@ public class VaseBreakerScreen extends MenuScreen {
             world.breakVaseAt(vase.getRow(), vase.getCol());
             if (vase.getHiddenZombie() != null) {
                 Zombie zombie = vase.getHiddenZombie();
+                zombie.setSpeed(zombie.getSpeed() * 15.0 / 100.0);
                 float startX = LawnGrid.getCellX(vase.getCol());
                 float startY = LawnGrid.getCellY(vase.getRow());
                 zombie.setX(startX);
