@@ -51,9 +51,6 @@ public class Main extends Game {
         App.setGameApp(this);
 
         if(foundUser){
-            for (String zombieName : App.getCurrentUser().getShowedZombies().keySet()){
-                App.getCurrentUser().getShowedZombies().put(zombieName, true);
-            }
             MainMenuScreen mainMenuScreen = new MainMenuScreen(this);
             setScreen(mainMenuScreen);
             AudioManager.getInstance().playMusic(GameMusic.TITLE, true);
