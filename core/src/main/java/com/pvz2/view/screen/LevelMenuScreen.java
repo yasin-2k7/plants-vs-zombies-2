@@ -19,6 +19,8 @@ import com.pvz2.controller.LevelMenuController;
 import com.pvz2.models.core.App;
 import com.pvz2.models.core.User;
 import com.pvz2.models.enums.Chapter;
+import com.pvz2.view.audios.GameSFX;
+import com.pvz2.view.audios.SFXManager;
 import com.pvz2.view.table.ResourcesTable;
 import pvz.libpvz.pam.PamPlayer;
 
@@ -185,6 +187,7 @@ public class LevelMenuScreen extends MenuScreen {
                     }
                     String result = controller.chooseLevel(levelIndex);
                     System.out.println(result);
+                    SFXManager.getInstance().playSound(GameSFX.BUTTON_CLICK);
                 }
             });
 
@@ -237,6 +240,7 @@ public class LevelMenuScreen extends MenuScreen {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 fadeAndSwitchScreen(new ChapterMenuScreen(game));
+                SFXManager.getInstance().playSound(GameSFX.BUTTON_CLICK);
             }
         });
 
@@ -246,6 +250,7 @@ public class LevelMenuScreen extends MenuScreen {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 fadeAndSwitchScreen(new GreenhouseMenuScreen(game));
+                SFXManager.getInstance().playSound(GameSFX.BUTTON_CLICK);
             }
         });
 
@@ -255,6 +260,7 @@ public class LevelMenuScreen extends MenuScreen {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 fadeAndSwitchScreen(new CollectionMenuScreen(game, LevelMenuScreen.this));
+                SFXManager.getInstance().playSound(GameSFX.BUTTON_CLICK);
             }
         });
 
@@ -400,3 +406,4 @@ public class LevelMenuScreen extends MenuScreen {
         }
     }
 }
+

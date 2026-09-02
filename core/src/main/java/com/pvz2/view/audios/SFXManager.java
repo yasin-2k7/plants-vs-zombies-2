@@ -15,9 +15,11 @@ public class SFXManager {
     private int chompIndex = 0;
     private final GameSFX[] chompSounds = new GameSFX[]{
         GameSFX.CHOMP,
-        GameSFX.CHOMP_2,
-        GameSFX.CHOMP_SOFT
+        GameSFX.CHOMP_SOFT,
+        GameSFX.CHOMP_2
     };
+    private long lastChompTime = 0;
+    private static final long CHOMP_COOLDOWN_MS = 600;
 
     private SFXManager() {}
 
@@ -40,6 +42,12 @@ public class SFXManager {
         sfxCache.get(gameSFX).play(volume);
     }
     public void playChompSound() {
+        long currentTime = System.currentTimeMillis();
+        if (currentTime - lastChompTime < CHOMP_COOLDOWN_MS) {
+            return;
+        }
+        lastChompTime = currentTime;
+
         playSound(chompSounds[chompIndex]);
         chompIndex = (chompIndex + 1) % chompSounds.length;
     }

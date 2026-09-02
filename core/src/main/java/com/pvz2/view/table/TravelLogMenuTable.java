@@ -24,6 +24,10 @@ import com.pvz2.models.quest.reward.Reward;
 import com.pvz2.models.quest.types.DailyQuest;
 import com.pvz2.models.quest.types.EpicChallengeQuest;
 import com.pvz2.models.quest.types.MainQuest;
+import com.pvz2.view.audios.AudioManager;
+import com.pvz2.view.audios.GameMusic;
+import com.pvz2.view.audios.GameSFX;
+import com.pvz2.view.audios.SFXManager;
 import com.pvz2.view.screen.MainMenuScreen;
 
 import java.util.List;
@@ -162,7 +166,7 @@ public class TravelLogMenuTable extends Table {
         topRow.top();
         Table textCol = new Table();
         textCol.top().left();
-          Label name = new Label(group.name, skin, "big");
+        Label name = new Label(group.name, skin, "big");
         name.setWrap(true);
         name.setColor(Color.GOLD);
         textCol.add(name).width(400).left().top().row();
@@ -427,6 +431,8 @@ public class TravelLogMenuTable extends Table {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 controller.selectMinigame(mg.name(), target.level);
+                SFXManager.getInstance().playSound(GameSFX.BUTTON_CLICK);
+                AudioManager.getInstance().playMusic(GameMusic.HOUSE, true);
             }
         });
         return playBtn;

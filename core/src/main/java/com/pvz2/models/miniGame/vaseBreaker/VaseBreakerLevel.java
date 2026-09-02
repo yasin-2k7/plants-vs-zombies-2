@@ -1,6 +1,7 @@
 package com.pvz2.models.miniGame.vaseBreaker;
 
 import com.pvz2.models.enums.PlantType;
+import com.pvz2.models.miniGame.MiniGameWorld;
 import com.pvz2.models.world.GameWorld;
 import com.pvz2.models.world.levelSetup.LevelSetup;
 import com.pvz2.models.world.loseCondition.LoseCondition;
@@ -11,18 +12,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
 
-public class VaseBreakerLevel extends GameWorld {
+public class VaseBreakerLevel extends MiniGameWorld {
     private List<Vase> vases;
     private List<SeedPacket> droppedSeeds;
     private PlantType heldSeed = null;
-    private Supplier<GameWorld> builder;
 
     public VaseBreakerLevel(LevelSetup levelSetup,
                             ArrayList<LoseCondition> loseConditions,
                             WinCondition winCondition,
                             ArrayList<Mechanic> mechanics, Supplier<GameWorld> builder) {
-        super(levelSetup, loseConditions, winCondition, mechanics);
-        this.builder = builder;
+        super(levelSetup, loseConditions, winCondition, mechanics, builder);
         if (this.droppedSeeds == null) {
             this.droppedSeeds = new ArrayList<>();
         }
@@ -87,13 +86,6 @@ public class VaseBreakerLevel extends GameWorld {
     }
 
 
-    public PlantType getHeldSeed() {
-        return heldSeed;
-    }
-
-    public void clearHeldSeed() {
-        heldSeed = null;
-    }
 
     public List<Vase> getVases() {
         if (vases == null) vases = new ArrayList<>();
@@ -103,10 +95,6 @@ public class VaseBreakerLevel extends GameWorld {
     public List<SeedPacket> getDroppedSeeds() {
         if (droppedSeeds == null) droppedSeeds = new ArrayList<>();
         return droppedSeeds;
-    }
-
-    public Supplier<GameWorld> getBuilder() {
-        return builder;
     }
 
     public void addVase(Vase vase) {
