@@ -6,13 +6,6 @@ import com.pvz2.models.world.SunType;
 
 import java.util.Random;
 
-/**
- * Same spawn logic as SunSpawnMechanic, minus the App.getCurrentUser() difficulty lookup —
- * that's a client-local "current player on this machine" singleton with no valid meaning
- * on the server, which runs many matches for many users at once. Fixed interval instead.
- * If per-match difficulty scaling matters later, add it as a constructor parameter here
- * (e.g. read once from each player's User at match creation) rather than a global lookup.
- */
 public class OnlineSunSpawnMechanic implements Mechanic {
     private float lastSpawnTime = -8f;
     private float spawnInterval = 12f;

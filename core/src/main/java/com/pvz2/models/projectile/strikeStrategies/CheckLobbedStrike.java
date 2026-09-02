@@ -1,8 +1,6 @@
 package com.pvz2.models.projectile.strikeStrategies;
 
 import com.pvz2.models.Damageable;
-import com.pvz2.view.audios.GameSFX;
-import com.pvz2.view.audios.SFXManager;
 
 import java.util.List;
 

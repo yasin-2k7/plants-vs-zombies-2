@@ -74,8 +74,4 @@ public class ArcadeCabinetGraphic {
     public boolean isDeathAnimationFinished() {
         return "death".equals(currentClip) && animTime >= 1.2f;
     }
-
-    public PusherZombie getPusherZombie() {
-        return pusherZombie;
-    }
 }

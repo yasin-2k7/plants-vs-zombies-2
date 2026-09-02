@@ -58,23 +58,6 @@ public class IZombieLevel extends GameWorld {
         }
     }
 
-    public String placeZombie(Zombie zombie, float x, float y) {
-        int col = (int) (x / 100);
-        if (col < redLineCol) {
-            return "you cant place zombie here";
-        }
-        int cost = getZombieCost(zombie);
-        if (!(getSun() >= cost)) {
-            return "you dont have enough sun";
-        }
-
-        setSun(getSun() - getZombieCost(zombie));
-        zombie.setX(x);
-        zombie.setY(y);
-        addZombie(zombie);
-        return "zombie place at " + x + ", " + y;
-    }
-
     public int getZombieCost(Zombie zombie) {
         String typeName = zombie.getName().name();
         return switch (typeName) {

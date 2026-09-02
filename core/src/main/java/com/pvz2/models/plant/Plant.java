@@ -12,9 +12,6 @@ import com.pvz2.models.zombie.Zombie;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import static com.pvz2.models.core.App.getCellCenterX;
-import static com.pvz2.models.core.App.getCellCenterY;
-
 public class Plant implements Damageable {
     private PlantType type;
     private int health;
@@ -252,20 +249,6 @@ public class Plant implements Damageable {
         this.y = y;
     }
 
-    public static float getInterpolatedCellX(float fractionalCol) {
-        int c1 = (int) Math.floor(fractionalCol);
-        int c2 = c1 + 1;
-        float frac = fractionalCol - c1;
-        return getCellCenterX(c1) + frac * (getCellCenterX(c2) - getCellCenterX(c1));
-    }
-
-    public static float getInterpolatedCellY(float fractionalRow) {
-        int r1 = (int) Math.floor(fractionalRow);
-        int r2 = r1 + 1;
-        float frac = fractionalRow - r1;
-        return getCellCenterY(r1) + frac * (getCellCenterY(r2) - getCellCenterY(r1));
-    }
-
     public PlantType getType() {
         return type;
     }
@@ -392,21 +375,6 @@ public class Plant implements Damageable {
 
     public GameWorld getCurrentWorld() {
         return currentWorld;
-    }
-
-    public void setTargetPosition(float targetX, float targetY) {
-        slideTo(targetX, targetY);
-    }
-
-    public boolean isExplosive() {
-        return isExplosive;
-    }
-
-    public void setExplosiveCallBack(ExplosivesComponent.ExplodeCallback callback){
-        ExplosivesComponent explosivesComponent = getComponent(ExplosivesComponent.class);
-        if (explosivesComponent != null){
-            explosivesComponent.setExplodeCallback(callback);
-        }
     }
 
     public boolean isCombining() {

@@ -1,6 +1,5 @@
 package com.pvz2.models.zombie.state;
 
-import com.badlogic.gdx.Gdx;
 import com.pvz2.models.core.App;
 import com.pvz2.models.miniGame.beghouled.BeghouledMechanics;
 import com.pvz2.models.plant.Plant;

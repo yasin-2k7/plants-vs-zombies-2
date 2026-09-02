@@ -34,7 +34,4 @@ public class CooldownOverlay extends Actor {
         this.progress = Math.min(1.0f, Math.max(0.0f, progress));
     }
 
-    public float getProgress() {
-        return progress;
-    }
 }

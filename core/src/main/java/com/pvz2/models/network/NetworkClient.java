@@ -18,10 +18,7 @@ public class NetworkClient {
     private BufferedReader in;
     private PrintWriter out;
 
-    // requestId -> where the matching response should be delivered
     private final Map<String, SynchronousQueue<NetworkMessage>> pendingRequests = new ConcurrentHashMap<>();
-    // message type -> handler, for server-pushed messages that aren't a reply to any request
-    // (e.g. a challenge invite, "match found", an opponent's move)
     private final Map<String, Consumer<NetworkMessage>> pushHandlers = new ConcurrentHashMap<>();
 
     public static synchronized NetworkClient get() {
@@ -59,10 +56,6 @@ public class NetworkClient {
         }
     }
 
-    /**
-     * Sends a request and blocks the CALLING thread until the matching reply
-     * arrives (or times out). Never call this from the render thread.
-     */
     public NetworkMessage sendRequest(String type, Object payload, long timeoutMs) throws InterruptedException {
         String requestId = UUID.randomUUID().toString();
         SynchronousQueue<NetworkMessage> replyBox = new SynchronousQueue<>();

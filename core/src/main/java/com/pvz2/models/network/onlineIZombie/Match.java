@@ -4,11 +4,6 @@ import com.pvz2.models.network.ClientHandler;
 
 import java.util.UUID;
 
-/**
- * A live "I, Zombie" 1v1 session between two connected players.
- * Created the moment a challenge is accepted or a random pairing is made;
- * side assignment (who plants, who sends zombies) happens here, once, at creation.
- */
 public class Match {
     public enum Side { PLANTS, ZOMBIES }
 
@@ -18,7 +13,6 @@ public class Match {
 
     public Match(ClientHandler playerA, ClientHandler playerB) {
         this.matchId = UUID.randomUUID().toString();
-        // coin flip for who defends vs. who attacks — spec doesn't require anything specific here
         if (Math.random() < 0.5) {
             this.plantsPlayer = playerA;
             this.zombiesPlayer = playerB;
@@ -44,7 +38,4 @@ public class Match {
         return null;
     }
 
-    public boolean hasPlayer(ClientHandler player) {
-        return player == plantsPlayer || player == zombiesPlayer;
-    }
 }

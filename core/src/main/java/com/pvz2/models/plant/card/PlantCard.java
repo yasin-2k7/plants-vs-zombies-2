@@ -28,12 +28,6 @@ public class PlantCard {
         }
     }
 
-    public void deactivateCooldown() {
-        ready = true;
-        activeCooldown = false;
-    }
-
-
     public PlantType getType() {
         return type;
     }

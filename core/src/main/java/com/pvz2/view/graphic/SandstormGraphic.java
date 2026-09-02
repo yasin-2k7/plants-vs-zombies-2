@@ -46,8 +46,4 @@ public class SandstormGraphic {
             e.printStackTrace();
         }
     }
-
-    public Sandstorm getSandstorm() {
-        return sandstorm;
-    }
 }

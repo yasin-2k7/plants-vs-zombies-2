@@ -44,10 +44,6 @@ public class ZombieCard {
         return brainCost;
     }
 
-    public void setBrainCost(int brainCost) {
-        this.brainCost = brainCost;
-    }
-
     public float getMaxCooldownTicks() {
         return MAX_COOLDOWN;
     }

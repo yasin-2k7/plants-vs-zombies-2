@@ -53,8 +53,4 @@ public class PamActor extends Actor {
 
         }
     }
-
-    public ClipRef getClipRef() {
-        return clipRef;
-    }
 }

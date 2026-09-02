@@ -8,12 +8,10 @@ public class LeaderboardEntry {
     public int dailyQuestsCount;
     public int normalQuestsCount;
     public int maxMupoint;
-    public boolean hasPlayedMuPoint; // the flag you're adding — distinguishes "never played" from a real 0 score
-
+    public boolean hasPlayedMuPoint;
     public int getCompletedMainLevels() {
         return (unlockedChapter - 1) * 4 + unlockedLevel - 1;
     }
-
 
     public LeaderboardEntry() {}
 }

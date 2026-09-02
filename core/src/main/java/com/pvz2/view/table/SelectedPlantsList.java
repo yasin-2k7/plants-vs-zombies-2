@@ -154,10 +154,6 @@ public class SelectedPlantsList extends PlantsTable{
         return plantCardViewList;
     }
 
-    public void setSlots(PlantType[] slots) {
-        this.slots = slots;
-    }
-
     public PlantType[] getSlots() {
         return slots;
     }

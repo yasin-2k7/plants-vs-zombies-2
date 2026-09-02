@@ -300,10 +300,6 @@ public abstract class Zombie implements Damageable {
 
     public void setDamage(int damage) {this.damage = damage;}
 
-    public float getSlowTicksRemaining() {
-        return slowTimeRemaining;
-    }
-
     public float getDisabledTicksRemaining() {
         return disabledTimeRemaining;
     }
@@ -379,10 +375,6 @@ public abstract class Zombie implements Damageable {
     @Override
     public void takeDamage(int damage, Zombie zombie) {
 
-    }
-
-    public float getOnPoisonTicksRemaining() {
-        return onPoisonTimeRemaining;
     }
 
     public void eatBrainAndLeave() {

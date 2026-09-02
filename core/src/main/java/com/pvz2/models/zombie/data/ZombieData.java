@@ -19,29 +19,9 @@ public class ZombieData {
     @JsonAlias("speed")
     private double speed;
 
-    @JsonProperty("WavePointCost")
-    @JsonAlias("wavePointCost")
-    private int wavePointCost;
-
-    @JsonProperty("Weight")
-    @JsonAlias("weight")
-    private int weight;
-
     @JsonProperty("ZombieArmorProps")
     @JsonAlias("zombieArmorProps")
     private List<String> zombieArmorProps = new ArrayList<>();
-
-    @JsonProperty("ImpTargetColumn")
-    @JsonAlias("impTargetColumn")
-    private Integer impTargetColumn;
-
-    @JsonProperty("ImpType")
-    @JsonAlias("impType")
-    private String impType;
-
-    @JsonProperty("HealthPercentThrowImp")
-    @JsonAlias("healthPercentThrowImp")
-    private Integer healthPercentThrowImp;
 
     public int getHitpoints() {
         return hitpoints;

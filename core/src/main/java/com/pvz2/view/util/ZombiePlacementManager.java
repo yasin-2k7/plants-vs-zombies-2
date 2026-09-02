@@ -32,14 +32,6 @@ public class ZombiePlacementManager {
         this.selectedZombie = null;
     }
 
-    public boolean tryPlace(int row, int col) {
-        if (!isZombieSelected()) return false;
-
-        cancelSelection();
-        return true;
-    }
-
-
     public void drawPreview(PamPlayer pamPlayer, SpriteBatch batch, Vector3 cursorWorldPos, float delta) {
         if (!isZombieSelected()) return;
         String zombieName = App.getArmoredZombieName(selectedZombie);

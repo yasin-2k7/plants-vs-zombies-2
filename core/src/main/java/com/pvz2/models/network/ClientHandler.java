@@ -53,10 +53,6 @@ public class ClientHandler implements Runnable {
         }
     }
 
-    /**
-     * Sends one message to this specific client. Safe to call from any thread.
-     * This method is now non-blocking and instantly returns.
-     */
     public void send(String type, String requestId, Object payload) {
         if (!running) return;
 
@@ -70,9 +66,6 @@ public class ClientHandler implements Runnable {
         }
     }
 
-    /**
-     * حلقه اختصاصی ارسال پیام‌ها روی شبکه در یک Thread جداگانه
-     */
     private void sendLoop() {
         try {
             while (running && !Thread.currentThread().isInterrupted()) {

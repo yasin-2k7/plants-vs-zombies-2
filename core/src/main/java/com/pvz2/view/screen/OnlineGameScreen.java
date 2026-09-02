@@ -58,7 +58,6 @@ public class OnlineGameScreen extends MenuScreen{
     private final List<ExplosionEffectGraphic> explosionGraphics = new ArrayList<>();
     private final List<ProjectileImpactGraphic> projectileImpacts = new ArrayList<>();
     private static OnlineGameScreen activeInstance;
-    private static final List<String> PENDING_ANNOUNCEMENTS = new ArrayList<>();
     private TextureRegion brainRegion;
     private final PlantPlacementManager plantPlacementManager = new PlantPlacementManager();
     private final ShovelPlacementManager shovelPlacementManager = new ShovelPlacementManager();
@@ -313,10 +312,6 @@ public class OnlineGameScreen extends MenuScreen{
                 }
             })
         ));
-    }
-
-    public OnlineGameHud getHud() {
-        return hud;
     }
 
     @Override

@@ -280,9 +280,6 @@ public class User {
     public void setEmail(String email) {
         this.email = email;
     }
-    public String getSecurityA() {
-        return securityA;
-    }
     public void setSecurityA(String securityA) {
         this.securityA = securityA;
     }
@@ -298,9 +295,6 @@ public class User {
     }
     public List<News> getAllNews() {
         return newsList;
-    }
-    public String getHashPassword() {
-        return hashPassword;
     }
     public void setHashPassword(String hashPassword) {
         this.hashPassword = hashPassword;
@@ -439,10 +433,6 @@ public class User {
         return (int) completedQuestIds.stream()
                 .filter(id -> id.startsWith("daily_"))
                 .count();
-    }
-
-    public int getCompletedMainLevels() {
-        return (unlockedChapter - 1) * 4 + unlockedLevel - 1;
     }
 
     public int getCompletedLevels() {

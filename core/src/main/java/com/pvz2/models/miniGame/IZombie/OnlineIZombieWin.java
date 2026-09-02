@@ -4,11 +4,6 @@ import com.pvz2.models.miniGame.MiniGameLevels;
 import com.pvz2.models.world.GameWorld;
 import com.pvz2.models.world.winCondition.WinCondition;
 
-/**
- * Networked "I, Zombie" win condition: plants win if the timer runs out while at least
- * one goal brain is still uneaten. Mirrors IZombieWin's shape, opposite side, since this
- * world is shared by both players rather than being one user's single-player session.
- */
 public class OnlineIZombieWin implements WinCondition {
     public static final float TIME_LIMIT_SECONDS = 180f;
 

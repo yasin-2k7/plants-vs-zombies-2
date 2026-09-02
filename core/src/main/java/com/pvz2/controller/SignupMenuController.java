@@ -22,11 +22,6 @@ public class SignupMenuController implements MenuController {
     public SignupMenuController() {
     }
 
-    public String getQuestion(int index) {
-        return questions.get(index - 1);
-    }
-
-
     @Override
     public void changeMenu() {
         screen.fadeAndSwitchScreen(new LoginMenuScreen(screen.getGame()));

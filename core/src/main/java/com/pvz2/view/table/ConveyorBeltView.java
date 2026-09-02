@@ -244,11 +244,4 @@ public class ConveyorBeltView extends WidgetGroup {
 
         return cardView;
     }
-
-    public void clearSelection() {
-        if (selectedCardView != null) {
-            selectedCardView.setSelectedState(false);
-            selectedCardView = null;
-        }
-    }
 }

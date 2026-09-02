@@ -8,9 +8,6 @@ public class ArmorProperties {
     @JsonProperty("aliases")
     private List<String> aliases;
 
-    @JsonProperty("objclass")
-    private String objclass;
-
     @JsonProperty("objdata")
     private ArmorData objdata;
 

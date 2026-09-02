@@ -5,9 +5,6 @@ import com.pvz2.models.core.User;
 import com.pvz2.models.enums.PlantType;
 import com.pvz2.models.shop.ShopList;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class ShopMenuController implements MenuController {
     private ShopList shopList = new ShopList();
 
@@ -17,24 +14,6 @@ public class ShopMenuController implements MenuController {
 
     @Override
     public void exitMenu() {
-    }
-
-    public List<String> showShopList() {
-        List<String> output = new ArrayList<>();
-        output.add("--- Permanent Items ---");
-        shopList.getPermanentItems().forEach(i ->
-                output.add(i.getName() + ": " + i.getCoinCost() + " coins / " + i.getDiamondCost() + " gems")
-        );
-        return output;
-    }
-
-    public String showDailyOffer() {
-        if (shopList.getDailyOffer().isAvailableToday()) {
-            return "Daily Offer: " + shopList.getDailyOffer().getName() +
-                    " - " + shopList.getDailyOffer().getCoinCost() + " coins";
-        } else {
-            return "No daily offer available today.";
-        }
     }
 
     public String buyItem(String itemId, int count, String plantTypeName) {

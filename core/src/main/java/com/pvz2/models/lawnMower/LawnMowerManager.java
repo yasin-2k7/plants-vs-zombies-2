@@ -83,10 +83,6 @@ public class LawnMowerManager {
         return mowers;
     }
 
-    public boolean isEnabled() {
-        return enabled;
-    }
-
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
         if (!enabled) {

@@ -2,10 +2,9 @@ package com.pvz2.models.network.onlineIZombie.messages;
 
 public class MatchOver {
     public String matchId;
-    public String winnerSide; // "PLANTS" or "ZOMBIES"
+    public String winnerSide;
     public String message;
 
-    public MatchOver() {}
     public MatchOver(String matchId, String winnerSide, String message) {
         this.matchId = matchId;
         this.winnerSide = winnerSide;

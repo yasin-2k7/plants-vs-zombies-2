@@ -72,7 +72,6 @@ public class ZombieCardView extends Stack {
 
     public String getZombieName() { return zombieName; }
     public boolean isActive() { return active; }
-    public int getBrainCost() { return brainCost; }
     public void setActive(boolean active) { this.active = active; }
     public void setSelectedState(boolean state) { selectedImg.setVisible(state); }
     public void setClickMethod(Consumer<ZombieCardView> onClick) { this.onClick = onClick; }

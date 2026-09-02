@@ -60,28 +60,6 @@ public class Sun implements Resettable {
         GameMenuController.updateState("New " + type + " sun dropping at (" + finalX + ", " + finalY + ")");
     }
 
-    public void setupBesidePlant(int row, int col, SunType type, int produceIndex) {
-        this.id = java.util.UUID.randomUUID().toString();
-        if (game == null) {
-            game = App.getCurrentGame(this);
-        }
-        this.type = type;
-        this.size = type.amount;
-        this.isCollected = false;
-        this.isExploded = false;
-        this.isExpired = false;
-        this.groundedTimer = 0f;
-        this.animTime = 0f;
-        this.producer = null;
-
-        float startX = App.getCellCenterX(col);
-        float startY = App.getCellCenterY(row);
-        beginRiseAndLandBeside(startX, startY, produceIndex);
-
-        GameMenuController.updateState("New " + type + " sun produced beside plant at (" +
-            finalX + ", " + finalY + ")");
-    }
-
     private void beginRiseAndLandBeside(float startX, float startY, int produceIndex) {
         float side = (produceIndex % 2 == 0) ? -1f : 1f;
         float offsetX = side * (SIDE_OFFSET_BASE + (produceIndex % 3) * 12f);
