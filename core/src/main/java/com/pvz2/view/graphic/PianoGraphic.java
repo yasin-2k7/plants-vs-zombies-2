@@ -91,8 +91,4 @@ public class PianoGraphic {
     public boolean isDeathAnimationFinished() {
         return "die".equals(currentClip) && animTime >= 1.2f;
     }
-
-    public PusherZombie getPusherZombie() {
-        return pusherZombie;
-    }
 }

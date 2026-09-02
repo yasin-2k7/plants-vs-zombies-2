@@ -35,7 +35,6 @@ public class User {
     private HashMap<String, Boolean> showedZombies;
     private List<News> newsList = new ArrayList<>();
     private GreenHouse greenhouse;
-    private transient boolean isLoaded = false;
     private int gameDifficulty = 3;
     private int plantFoods = 0;
     private transient QuestManager questManager = new QuestManager();
@@ -119,7 +118,6 @@ public class User {
         if (this.seedPackets == null) this.seedPackets = new HashMap<>();
         if (this.greenhouse == null) this.greenhouse = new GreenHouse();
         if (this.questStats == null) this.questStats = new QuestStats();
-        this.isLoaded = true;
         if (this.questManager == null) {
             this.questManager = new QuestManager();
         }
@@ -280,9 +278,6 @@ public class User {
     public void setEmail(String email) {
         this.email = email;
     }
-    public String getSecurityA() {
-        return securityA;
-    }
     public void setSecurityA(String securityA) {
         this.securityA = securityA;
     }
@@ -298,9 +293,6 @@ public class User {
     }
     public List<News> getAllNews() {
         return newsList;
-    }
-    public String getHashPassword() {
-        return hashPassword;
     }
     public void setHashPassword(String hashPassword) {
         this.hashPassword = hashPassword;
@@ -319,6 +311,9 @@ public class User {
             throw new IllegalArgumentException("Difficulty level must be between 1 and 5");
         }
         this.gameDifficulty = gameDifficulty;
+    }
+    public String getGender() {
+        return gender;
     }
     public void setGender(String gender) {
         this.gender = gender;
@@ -439,10 +434,6 @@ public class User {
         return (int) completedQuestIds.stream()
                 .filter(id -> id.startsWith("daily_"))
                 .count();
-    }
-
-    public int getCompletedMainLevels() {
-        return (unlockedChapter - 1) * 4 + unlockedLevel - 1;
     }
 
     public int getCompletedLevels() {

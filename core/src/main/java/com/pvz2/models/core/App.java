@@ -1,7 +1,6 @@
 package com.pvz2.models.core;
 
 import com.pvz2.Main;
-import com.pvz2.models.greenhouse.GreenHouse;
 import com.pvz2.models.plant.Plant;
 import com.pvz2.models.plant.factory.PlantFactory;
 import com.pvz2.models.projectile.Projectile;
@@ -91,11 +90,6 @@ public class App {
 
     public static PlantFactory getFactory() {
         return FACTORY;
-    }
-
-    public static GreenHouse getGreenhouse() {
-        if (currentUser == null) return null;
-        return currentUser.getGreenhouse();
     }
 
     public static float getCellCenterX(int col) {

@@ -207,6 +207,5 @@ public class SunStealerZombie extends Zombie {
     }
 
     public boolean isRa() { return isRa; }
-    public boolean isStealing() { return isStealing; }
     public String getTurquoiseAnimState() { return animState; }
 }

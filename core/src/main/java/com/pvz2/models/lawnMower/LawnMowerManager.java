@@ -12,7 +12,6 @@ import java.util.List;
 public class LawnMowerManager {
     private final int totalRows;
     private final float cellWidth;
-    private final float cellHeight;
     private final double startX;
     private final double maxX;
 
@@ -22,7 +21,6 @@ public class LawnMowerManager {
     public LawnMowerManager(GameWorld world) {
         this.totalRows = world.getRows();
         this.cellWidth = App.getCellWidth();
-        this.cellHeight = App.getCellHeight();
 
         this.startX = App.getFirstCellX() - cellWidth;
         this.maxX = App.getFirstCellX() + world.getCols() * cellWidth + cellWidth;
@@ -81,10 +79,6 @@ public class LawnMowerManager {
 
     public List<LawnMower> getMowers() {
         return mowers;
-    }
-
-    public boolean isEnabled() {
-        return enabled;
     }
 
     public void setEnabled(boolean enabled) {

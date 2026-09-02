@@ -12,21 +12,6 @@ import com.pvz2.view.screen.MenuScreen;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
-/**
- * Client-side controller for a live "I, Zombie" match. One instance is created when
- * the MATCH_FOUND push arrives (see the matchId/side/opponentUsername it carries).
- *
- * Local-only actions (select/unselect shovel, select/unselect plant, select/unselect
- * zombie) touch only this client's own UI state — kept as plain fields here, NOT inside
- * `world`, because `world` is wholesale-replaced every time a GAME_STATE push arrives
- * (including pushes triggered purely by the opponent's actions). If selection lived
- * inside `world`, it would get silently cleared any time the opponent did anything.
- *
- * Gameplay actions (collect sun, plant plant, pluck plant, place zombie) are sent to
- * the server as fire-and-forget intents. The server is the single source of truth;
- * a rejected action just never shows up in the next snapshot — no need to block
- * waiting for a yes/no reply on every click.
- */
 public class ClientGameController {
     public enum Side { PLANTS, ZOMBIES }
 
@@ -34,9 +19,7 @@ public class ClientGameController {
     private final Side side;
     private final String opponentUsername;
 
-    private OnlineIZombieLevel world; // render-only copy; always overwritten by sync(), never mutated locally
-
-    // local-only UI selection state — see class comment for why this is NOT on `world`
+    private OnlineIZombieLevel world;
     private boolean shovelSelected = false;
     private boolean plantSelected = false;
     private PlantType selectedPlantType = null;
@@ -117,12 +100,6 @@ public class ClientGameController {
         });
 
     }
-
-    // ---------------- local-only UI state: plants side ----------------
-
-    public boolean isShovelSelected() { return shovelSelected; }
-    public boolean isPlantSelected() { return plantSelected; }
-    public PlantType getSelectedPlantType() { return selectedPlantType; }
 
     public void unselectShovel() {
         shovelSelected = false;

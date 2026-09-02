@@ -57,10 +57,6 @@ public class SelectedZombiesList extends Table {
         }
     }
 
-    public boolean hasZombie(String zombieName) {
-        return zombieCardViewList.stream().anyMatch(v -> v.getZombieName().equals(zombieName));
-    }
-
     public List<ZombieCardView> getZombieCardViewList() {
         return zombieCardViewList;
     }

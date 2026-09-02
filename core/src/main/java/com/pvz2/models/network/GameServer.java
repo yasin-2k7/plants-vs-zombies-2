@@ -8,11 +8,9 @@ import com.pvz2.models.core.UserDataManager;
 import com.pvz2.models.network.messages.*;
 import com.pvz2.models.network.onlineIZombie.messages.*;
 import com.pvz2.models.zombie.ZombieRegistry;
-import com.pvz2.models.network.messages.*;
 import com.pvz2.models.network.onlineIZombie.Match;
 import com.pvz2.models.network.onlineIZombie.MatchManager;
 import com.pvz2.models.network.onlineIZombie.ServerGameController;
-import com.pvz2.models.network.onlineIZombie.messages.*;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -27,9 +25,8 @@ public class GameServer {
     private static final Gson GSON = NetworkGson.INSTANCE;
 
     private final Map<String, ClientHandler> onlineUsers = new ConcurrentHashMap<>();
-    // in-memory only — a server restart invalidates every existing token, forcing re-login.
-    // Fine for a course project; a persistent session store would be the real-world fix.
-    private final Map<String, String> sessionTokens = new ConcurrentHashMap<>(); // token -> username
+
+    private final Map<String, String> sessionTokens = new ConcurrentHashMap<>();
 
     private final MatchManager matchManager = new MatchManager(this::getOrCreateGameController);
     private final Map<String, ServerGameController> gameControllers = new ConcurrentHashMap<>();
@@ -357,7 +354,6 @@ public class GameServer {
         if (controller != null) controller.handlePlaceZombie(sender, req);
     }
 
-    // Pure relay — no world state involved, so this skips ServerGameController entirely.
     private void handleSendReaction(ClientHandler sender, NetworkMessage msg) {
         SendReactionRequest req = GSON.fromJson(msg.payload, SendReactionRequest.class);
         if (req.index < 0 || req.index > 2) return;
@@ -458,7 +454,7 @@ public class GameServer {
         matchManager.handleDisconnect(handler);
         if (match != null) {
             ServerGameController controller = gameControllers.remove(match.getMatchId());
-            if (controller != null) controller.stop(); // otherwise this match keeps ticking forever, unreceived
+            if (controller != null) controller.stop();
         }
     }
 

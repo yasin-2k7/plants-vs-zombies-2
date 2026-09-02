@@ -1,7 +1,6 @@
 package com.pvz2.models.miniGame.vaseBreaker;
 
 import com.pvz2.models.core.App;
-import com.pvz2.models.core.UserDataManager;
 import com.pvz2.models.core.UserManager;
 import com.pvz2.models.miniGame.MiniGameLevels;
 import com.pvz2.models.world.GameWorld;

@@ -38,13 +38,6 @@ public class NetworkGson {
         .registerTypeAdapter(HitStrategy.class, new PolymorphicTypeAdapter<HitStrategy>())
         .registerTypeAdapter(MovementStrategy.class, new PolymorphicTypeAdapter<MovementStrategy>())
 
-
-        // setExclusionStrategies (not addSerializationExclusionStrategy) applies to BOTH
-        // directions — serializing a field but skipping it on the way back in is exactly
-        // what caused "Interfaces can't be instantiated" for the Supplier field: Gson wrote
-        // something for it server-side, then tried to construct a new Supplier from that on
-        // the client and can't, since it's an interface. Symmetric exclusion avoids that class
-        // of bug entirely instead of only patching the one field that happened to crash first.
         .setExclusionStrategies(new ExclusionStrategy() {
             @Override
             public boolean shouldSkipField(FieldAttributes f) {
@@ -58,9 +51,6 @@ public class NetworkGson {
 
             private boolean isUnwireable(Class<?> clazz) {
                 if (clazz == java.util.Random.class) return true;
-                // Supplier, Consumer, Function, Predicate, BiConsumer, etc. — a lambda/callback
-                // has no meaningful wire representation, and being an interface, can never be
-                // reconstructed on the way back in even if it did.
                 Package pkg = clazz.getPackage();
                 return pkg != null && pkg.getName().equals("java.util.function");
             }

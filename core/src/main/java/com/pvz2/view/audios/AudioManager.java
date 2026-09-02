@@ -57,32 +57,6 @@ public class AudioManager {
         fadeState = FadeState.IDLE;
     }
 
-
-    public void transitionToMusic(GameMusic gameMusic, boolean loop) {
-        Music target = getOrLoadMusic(gameMusic);
-        if (target == null) return;
-
-        if (currentMusic != null && currentMusic.isPlaying() && currentMusic == target) {
-            return;
-        }
-
-        if (currentMusic == null || !currentMusic.isPlaying()) {
-            currentMusic = target;
-            currentMusic.setLooping(loop);
-            currentMusic.setVolume(0f);
-            currentMusic.play();
-            currentVolume = 0f;
-            fadeState = FadeState.FADING_IN;
-            return;
-        }
-
-        nextMusic = target;
-        nextLoop = loop;
-        currentVolume = volume;
-        fadeState = FadeState.FADING_OUT;
-    }
-
-
     public void update(float delta) {
         if (fadeState == FadeState.IDLE) return;
 

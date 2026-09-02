@@ -27,6 +27,8 @@ public class PlantWhatYouGetLevelSetup implements LevelSetup {
         buildGrid(world, rows, cols);
         world.setSun(800);
 
+        world.getPlantLists().addAll(availablePlants);
+
         WaveManager waveManager = new WaveManager(waves, false);
         world.addMechanic(new NormalMechanic(waveManager));
         world.setPlantingPhase(true);

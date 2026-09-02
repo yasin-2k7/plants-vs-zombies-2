@@ -228,7 +228,4 @@ public class PlantMenuController implements MenuController {
     public void exitMenu() {
     }
 
-    public Set<PlantType> getSelectedPlants() {
-        return selectedPlants;
-    }
 }

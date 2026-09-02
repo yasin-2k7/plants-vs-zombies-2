@@ -398,7 +398,4 @@ public class PlantGraphic {
     }
     public float getWorldX() { return worldX; }
     public float getWorldY() { return worldY; }
-
-    public String getCurrentClip() { return currentClip; }
-    public String getInitialClip() { return initialClip; }
 }

@@ -96,6 +96,9 @@ public class QuestStats {
         this.sunsCollectedToday += amount;
     }
 
+    public int getZombiesKilledToday() {
+        return zombiesKilledToday;
+    }
 
     public void addZombiesKilledToday(int amount) {
         this.zombiesKilledToday += amount;

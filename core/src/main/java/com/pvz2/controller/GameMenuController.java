@@ -7,7 +7,6 @@ import com.pvz2.models.enums.Chapter;
 import com.pvz2.models.enums.PlantType;
 import com.pvz2.models.greenhouse.GreenHouse;
 import com.pvz2.models.miniGame.MiniGameWorld;
-import com.pvz2.models.miniGame.vaseBreaker.VaseBreakerLevel;
 import com.pvz2.models.mupoint.MupointManager;
 import com.pvz2.models.plant.Plant;
 import com.pvz2.models.plant.card.ImitatorCard;
@@ -20,7 +19,6 @@ import com.pvz2.view.graphic.PlantGraphic;
 import com.pvz2.view.screen.BeghouledScreen;
 import com.pvz2.view.screen.GameScreen;
 import com.pvz2.view.screen.MenuScreen;
-import com.pvz2.view.screen.VaseBreakerScreen;
 
 import java.util.List;
 
@@ -118,15 +116,6 @@ public class GameMenuController implements MenuController {
         ((MenuScreen) App.getGameApp().getScreen()).fadeAndSwitchScreen(
             new BeghouledScreen(App.getGameApp(),
                 App.getCurrentGame(), Chapter.EGYPT));
-    }
-
-    public static void restartVase(GameWorld world){
-        User user = App.getCurrentUser();
-        if (user == null) return;
-        GameWorld newWorld = ((VaseBreakerLevel) world).getBuilder().get();
-        App.setCurrentGame(newWorld);
-        ((MenuScreen) App.getGameApp().getScreen()).fadeAndSwitchScreen(
-            new VaseBreakerScreen(App.getGameApp(), (VaseBreakerLevel) newWorld));
     }
 
     public static boolean collectSun(float touchX, float touchY) {
@@ -295,6 +284,9 @@ public class GameMenuController implements MenuController {
             if (isImitator) {
                 plant.setImitate(true);
                 plant.addComponent(new ImitatorIntroComponent());
+            }
+            if (plant.isExplosive()) {
+                App.getCurrentUser().getQuestStats().incrementExplosivePlantsUsed();
             }
             card.setReady(false);
             App.getCurrentGame().setSun(App.getCurrentGame().getSun() - card.getSunCost());

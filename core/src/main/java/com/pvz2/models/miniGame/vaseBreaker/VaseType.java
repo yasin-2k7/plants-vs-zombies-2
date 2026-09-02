@@ -14,4 +14,5 @@ public enum VaseType {
     public String getSymbol() {
         return symbol;
     }
+
 }

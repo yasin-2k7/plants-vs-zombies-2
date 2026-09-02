@@ -11,13 +11,6 @@ import com.pvz2.view.util.LawnGrid;
 
 import java.util.List;
 
-/**
- * Same board setup as IZombieSetup (grid, red-line goal brains, zombie roster), for the
- * 2-player networked match. The one deliberate difference: IZombieSetup.groundSetup()
- * auto-places random defensive plants because offline "I, Zombie" has no human plants
- * player. Here the plants player is real and plants their own — so this leaves every
- * cell empty and skips that whole block.
- */
 public class OnlineIZombieSetup implements LevelSetup {
     private final int rows;
     private final int cols;

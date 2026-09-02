@@ -7,7 +7,6 @@ public class PlantPlantRequest {
     public PlantType type;
     public float x, y;
 
-    public PlantPlantRequest() {}
     public PlantPlantRequest(String matchId, PlantType type, float x, float y) {
         this.matchId = matchId;
         this.type = type;

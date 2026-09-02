@@ -19,8 +19,6 @@ public class LockedPlantsLevelSetup implements LevelSetup {
     private int rows;
     private int cols;
     private List<Wave> waves;
-    private List<PlantType> lockedPlants;
-
 
     public LockedPlantsLevelSetup(int rows,
                                   int cols,
@@ -47,7 +45,6 @@ public class LockedPlantsLevelSetup implements LevelSetup {
             int countToLock = Math.min(3, unlockedPlants.size());
             List<PlantType> randomLockedPlants = new ArrayList<>(unlockedPlants.subList(0, countToLock));
 
-            this.lockedPlants = randomLockedPlants;
             if (world instanceof FrostbiteCavesWorld frostbiteWorld) {
                 frostbiteWorld.setLockedPlants(randomLockedPlants);
             }

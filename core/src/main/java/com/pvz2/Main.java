@@ -21,7 +21,6 @@ import pvz.skin.PvzSkin;
 
 import java.io.IOException;
 
-/** {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms. */
 public class Main extends Game {
     public TextureBank textureBank;
     public PamPlayer pamPlayer;
@@ -36,8 +35,6 @@ public class Main extends Game {
             NetworkClient.get().connect("localhost", 8080);
         } catch (IOException e) {
             System.err.println("Could not connect to server: " + e.getMessage());
-            // fall through — screens should handle a disconnected NetworkClient gracefully,
-            // e.g. sendRequest already throws/times out rather than hanging forever
         }
 
         boolean foundUser = UserManager.loadInitialUser();

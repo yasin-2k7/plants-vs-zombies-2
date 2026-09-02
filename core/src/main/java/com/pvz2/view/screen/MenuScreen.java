@@ -185,11 +185,6 @@ public abstract class MenuScreen implements Screen {
         if (stage != null) stage.dispose();
     }
 
-    public Stack getModalStack() {
-        return modalStack;
-    }
-
-
     public void fadeAndSwitchScreen(final Screen targetScreen) {
         Gdx.input.setInputProcessor(null);
         final Screen currentScreen = this;

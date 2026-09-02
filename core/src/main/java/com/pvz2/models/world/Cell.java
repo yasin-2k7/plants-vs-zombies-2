@@ -415,8 +415,4 @@ public class Cell {
     public static void setCurrentWorld(GameWorld currentWorld) {
         Cell.currentWorld = currentWorld;
     }
-
-    public static GameWorld getCurrentWorld() {
-        return currentWorld;
-    }
 }

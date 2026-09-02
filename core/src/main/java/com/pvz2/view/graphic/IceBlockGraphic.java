@@ -48,8 +48,4 @@ public class IceBlockGraphic {
             batch.setShader(null);
         }
     }
-
-    public PusherZombie getPusherZombie() {
-        return pusherZombie;
-    }
 }

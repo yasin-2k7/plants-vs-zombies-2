@@ -216,6 +216,11 @@ public abstract class GameWorld {
         if (this.mupointManager != null) {
             this.mupointManager.checkSunMilestones();
         }
+        User user = App.getCurrentUser();
+        if (user != null) {
+            user.getQuestStats().addSunsCollectedToday(amount);
+            user.getQuestManager().checkAllQuests(user, false);
+        }
     }
     private void processZombieDeath(Zombie zombie) {
         this.notifyZombieKilled();
@@ -344,7 +349,7 @@ public abstract class GameWorld {
     }
     protected abstract void applyChapterRules();
     public void tick(float delta) {
-        if (state != GameState.PLAYING || isDialogActive) return;
+        if (state != GameState.PLAYING || isDialogActive || plantingPhase) return;
         elapsedTime += delta;
         delta *= App.getCurrentUser().getGameSpeed();
         updateAll(delta);
@@ -549,6 +554,7 @@ public abstract class GameWorld {
     public List<Collectable> getActiveCollectables() {return activeCollectables;}
     public LevelSetup getLevelSetup() {return levelSetup;}
     public void setPlantingPhase(boolean plantingPhase) {this.plantingPhase = plantingPhase;}
+    public boolean isPlantingPhase() {return plantingPhase;}
     public void setCurrentChapter(Chapter chapter) {this.currentChapter = chapter;}
     public boolean isWillUnlockLevel() {return willUnlockLevel;}
     public void setWillUnlockLevel(boolean willUnlockLevel){ this.willUnlockLevel = willUnlockLevel;}
@@ -591,9 +597,7 @@ public abstract class GameWorld {
         this.isDialogActive = dialogActive;
     }
     public List<String> getWinningDialogs() { return winningDialogs; }
-    public void setWinningDialogs(List<String> winningDialogs) { this.winningDialogs = winningDialogs; }
     public List<String> getLosingDialogs() { return losingDialogs; }
-    public void setLosingDialogs(List<String> losingDialogs) { this.losingDialogs = losingDialogs; }
     public boolean isEndGameHandled() { return isEndGameHandled; }
     public void setEndGameHandled(boolean handled) { this.isEndGameHandled = handled; }
     public List<Grave> getGraves() {

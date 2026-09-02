@@ -3,7 +3,6 @@ package com.pvz2.models.zombie.wave;
 import com.pvz2.controller.GameMenuController;
 import com.pvz2.models.core.App;
 import com.pvz2.models.core.User;
-import com.pvz2.models.core.UserDataManager;
 import com.pvz2.models.core.UserManager;
 import com.pvz2.models.world.ChapterWorld.AncientEgyptWorld;
 import com.pvz2.models.world.GameWorld;
@@ -51,18 +50,6 @@ public class WaveManager {
             this.levelCompleted = true;
         }
         this.killedZombiesInCurrentWave = 0;
-    }
-
-
-    public void startWaves() {
-        if (wavesStarted || levelCompleted) return;
-        this.wavesStarted = true;
-        if (currentWave != null) {
-            printWaveStartMessage(currentWave);
-        }
-    }
-    public boolean isWavesStarted() {
-        return wavesStarted;
     }
 
     public void setRepeatForever(boolean repeatForever) {
@@ -161,17 +148,6 @@ public class WaveManager {
 
     }
 
-    public void releaseTheNuke(GameWorld game) {
-        List<Zombie> zombies = game.getActiveZombies();
-        for (Zombie z : zombies) {
-            if (!z.isDead()) {
-                z.die();
-                onZombieKilled();
-            }
-        }
-        GameMenuController.updateState("All zombies eliminated by nuke!");
-    }
-
     public void onZombieKilled() {
         if (levelCompleted) return;
         killedZombiesInCurrentWave++;
@@ -194,16 +170,12 @@ public class WaveManager {
         return waves != null ? waves.size() : 0;
     }
 
+    public int getTotalZombiesOverall() {
+        return totalZombiesOverall;
+    }
+
     public int getCurrentWaveIndex() {
         return currentWaveIndex;
-    }
-
-    public int getKilledZombiesInCurrentWave() {
-        return killedZombiesInCurrentWave;
-    }
-
-    public int getTotalZombiesInCurrentWave() {
-        return totalZombiesInCurrentWave;
     }
 
     public float getOverallProgress() {

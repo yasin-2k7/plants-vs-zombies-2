@@ -23,8 +23,4 @@ public class DailyOffer extends ShopItem {
     public PlantType getPlantType() {
         return plantType;
     }
-
-    public void setPurchased(boolean purchased) {
-        isPurchased = purchased;
-    }
 }

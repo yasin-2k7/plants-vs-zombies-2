@@ -10,7 +10,6 @@ import java.util.Random;
 
 public class Wave {
     private int waveNumber;
-    private int totalCost;
     private List<WaveSpawnEntry> spawnEntries;
     private float spawnDelayTicks;
     private int currentIndex;
@@ -128,6 +127,5 @@ public class Wave {
     public boolean isFlagWave() {
         return isFinalWave;
     }
-    public int getSpawnedCount() {return currentIndex;}
     public List<WaveSpawnEntry> getSpawnEntries() {return spawnEntries;}
 }

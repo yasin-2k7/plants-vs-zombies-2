@@ -128,20 +128,12 @@ public class PlantCardView extends Stack {
         return active;
     }
 
-    public boolean isLock() {
-        return lock;
-    }
-
     public boolean isBoost() {
         return boost;
     }
 
     public int getLevel() {
         return level;
-    }
-
-    public int getCostAmount() {
-        return costAmount;
     }
 
     public void setActive(boolean active) {

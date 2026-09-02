@@ -2,19 +2,11 @@ package com.pvz2.models.network.onlineIZombie;
 
 import com.pvz2.models.network.ClientHandler;
 import com.pvz2.models.network.onlineIZombie.messages.*;
-import com.pvz2.models.network.onlineIZombie.messages.*;
-
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 
-/**
- * Owns everything about "getting two players into a Match": specific-user challenges,
- * the random-opponent queue, and the resulting active matches.
- * One instance lives on GameServer and is shared by every ClientHandler thread, so
- * every method that touches shared state is synchronized — fine at course-project scale.
- */
 public class MatchManager {
 
     private static class PendingInvite {
@@ -31,17 +23,12 @@ public class MatchManager {
     private final Map<ClientHandler, Match> matchByPlayer = new ConcurrentHashMap<>();
     private final Consumer<Match> onMatchCreated;
 
-    private ClientHandler waitingForRandom; // single-slot "queue" — null when empty
+    private ClientHandler waitingForRandom;
 
-    /** onMatchCreated fires right after MATCH_FOUND is pushed to both players, from whichever
-     *  flow created the match — GameServer uses it to eagerly build and start that match's
-     *  ServerGameController, instead of waiting for a player to send the first gameplay action
-     *  (nobody can, until the world exists — that's the deadlock this closes). */
     public MatchManager(Consumer<Match> onMatchCreated) {
         this.onMatchCreated = onMatchCreated;
     }
 
-    // ---------- specific-user challenge ----------
 
     public synchronized ChallengeResponse challenge(ClientHandler challenger, ClientHandler target) {
         ChallengeResponse res = new ChallengeResponse();
@@ -152,18 +139,10 @@ public class MatchManager {
         return player == waitingForRandom || matchByPlayer.containsKey(player);
     }
 
-    public Match getMatch(String matchId) {
-        return matchesById.get(matchId);
-    }
-
     public Match getMatchOf(ClientHandler player) {
         return matchByPlayer.get(player);
     }
 
-    /** Called by ServerGameController once a match ends naturally (win/lose), so both
-     *  players are free to queue or be challenged again — mirrors handleDisconnect's
-     *  cleanup but without touching the random queue or pending invites, which a normal
-     *  match end has nothing to do with. */
     public synchronized void endMatch(String matchId) {
         Match match = matchesById.remove(matchId);
         if (match != null) {
@@ -172,7 +151,6 @@ public class MatchManager {
         }
     }
 
-    /** Called from GameServer.onDisconnect so a dropped connection doesn't leave stale state around. */
     public synchronized void handleDisconnect(ClientHandler player) {
         cancelRandomQueue(player);
         pendingInvites.entrySet().removeIf(e ->
@@ -184,7 +162,6 @@ public class MatchManager {
             ClientHandler opponent = match.getOpponentOf(player);
             if (opponent != null) {
                 matchByPlayer.remove(opponent);
-                // TODO once in-match play exists: push an "OPPONENT_LEFT" notice to `opponent` here.
             }
         }
     }

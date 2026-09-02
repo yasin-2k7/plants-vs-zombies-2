@@ -358,10 +358,6 @@ public class ShooterComponent implements GameComponent {
         void onAttack(Plant owner);
     }
 
-    public void setGiantStartDelay(float giantStartDelay) {
-        this.giantStartDelay = giantStartDelay;
-    }
-
     public void setPlantFoodFinishDelay(float plantFoodFinishDelay) {
         this.plantFoodFinishDelay = plantFoodFinishDelay;
     }

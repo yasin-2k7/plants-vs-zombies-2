@@ -70,8 +70,6 @@ public class BrainCurrencyGraphic {
         } catch (Exception e) {
         }
     }
-
-    public BrainCurrency getBrainCurrency() { return brainCurrency; }
     public void updateModel(BrainCurrency newBrainCurrency) {
         this.brainCurrency = newBrainCurrency;
         this.networked = true;
