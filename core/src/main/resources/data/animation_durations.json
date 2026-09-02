@@ -47,8 +47,8 @@
   "SNOW_PEA": {
     "attack": { "duration": 1.4, "releaseTime": 0.5 }
   },
-  "ROTOBAGA": {
-    "attack": { "duration": 1.8, "releaseTime": 1 }
+  "XSHOT": {
+    "attack": { "duration": 1.8, "releaseTime": 0.8 }
   },
   "PEA_POD": {
     "attack": { "duration": 1.1, "releaseTime": 0.7 },

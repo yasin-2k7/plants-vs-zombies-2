@@ -65,9 +65,13 @@ public class ProjectileGraphic {
 
         float drawX, drawY;
 
-        if (type == ProjectileType.STAR || type == ProjectileType.ROTOBAGA_PROJECTILE){
+        if (type == ProjectileType.STAR){
             drawX = lastX;
             drawY = lastY;
+        }
+        else if (type == ProjectileType.ROTOBAGA_PROJECTILE){
+            drawX = lastX-40;
+            drawY = lastY+30;
         }
         else{
             drawY = type.movement.equals("STRAIGHT") ? lastY + 20 : lastY + 15;

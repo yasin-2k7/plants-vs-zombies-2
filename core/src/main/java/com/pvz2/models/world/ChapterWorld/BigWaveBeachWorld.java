@@ -100,7 +100,7 @@ public class BigWaveBeachWorld extends GameWorld {
 
             int minCol = tideLineCol;
             int maxCol = getCols();
-            int newTideCol = random.nextInt(maxCol - minCol + 1) + minCol;
+            int newTideCol = random.nextInt(maxCol - minCol + 1) + minCol+1;
 
             if (newTideCol < currentTideCol) {
                 for (int c = newTideCol; c < currentTideCol; c++) {

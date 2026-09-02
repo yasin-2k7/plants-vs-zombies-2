@@ -331,7 +331,7 @@ public class PlantGraphic {
         }
 
         float flashAmount = plant.getDamageFlashProgress();
-        if (flashAmount > 0f) {
+        if (flashAmount > 0f && !plant.isFreeze()) {
             ShaderProgram shader = DamageFlashShader.get();
             batch.setShader(shader);
             shader.setUniformf("u_flashColor", 1f, 1f, 1f);
@@ -351,9 +351,21 @@ public class PlantGraphic {
 
         TextureRegion overlay = resolveFrostOverlay();
         if (overlay != null) {
+            float freezeFlashAmount = plant.getDamageFlashProgress();
+            if (plant.isFreeze()){
+                if (freezeFlashAmount > 0f) {
+                    ShaderProgram shader = DamageFlashShader.get();
+                    batch.setShader(shader);
+                    shader.setUniformf("u_flashColor", 1f, 1f, 1f);
+                    shader.setUniformf("u_flashAmount", freezeFlashAmount);
+                }
+            }
             float w = LawnGrid.CELL_WIDTH * 0.8f;
             float h = LawnGrid.CELL_HEIGHT * 0.8f;
             batch.draw(overlay, worldX - w / 2f, worldY - h / 2f, w, h);
+            if (freezeFlashAmount > 0f) {
+                batch.setShader(null);
+            }
         }
     }
 

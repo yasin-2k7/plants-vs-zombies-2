@@ -51,6 +51,7 @@ public class PlantDetailsTable extends Table {
                 () -> {
                     if (CollectionMenuController.upgradePlant(type, screen)){
                         build();
+                        screen.buildStreetTable();
                         screen.getHud().getResourcesTable().update();
                     }
                 }

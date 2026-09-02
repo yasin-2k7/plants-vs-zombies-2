@@ -752,7 +752,7 @@ public class GameScreen extends MenuScreen {
         GameWorld world = App.getCurrentGame();
         if (world != null && world.getState() != GameState.PLAYING) time = 0;
         float waveX = App.getCellCenterX(bigWaveBeachWorld.getCurrentTideCol())+App.getCellWidth()*2;
-        pamPlayer.draw(game.batch, WAVE_PAM_PATH, WAVE_CLIP, stateTime, waveX, App.getCellCenterY(3)-125f, 0.8f,
+        pamPlayer.draw(game.batch, WAVE_PAM_PATH, WAVE_CLIP, time, waveX, App.getCellCenterY(3)-125f, 0.8f,
             0.45f, true);
         for (Cell cell : bigWaveBeachWorld.getLowLyingCells()){
             pamPlayer.draw(game.batch, LOW_LYING_PAM_PATH, LOW_LYING_CLIP, time, cell.getX(), cell.getY(), 0.5f, 0.5f,

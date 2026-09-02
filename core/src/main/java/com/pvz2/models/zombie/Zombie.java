@@ -9,6 +9,7 @@ import com.pvz2.models.enums.Zombies;
 import com.pvz2.models.world.Cell;
 import com.pvz2.models.world.ChapterWorld.FrostbiteCavesWorld;
 import com.pvz2.models.world.Collectable;
+import com.pvz2.models.world.GameState;
 import com.pvz2.models.world.GameWorld;
 import com.pvz2.models.zombie.state.WalkingState;
 import com.pvz2.models.zombie.state.ZombieState;
@@ -279,6 +280,7 @@ public abstract class Zombie implements Damageable {
     }
 
     public boolean isNearEndLine() {
+        if (App.getCurrentGame() != null && App.getCurrentGame().getState() != GameState.PLAYING) return false;
         float endLineX = App.getCellWidth() / 2f + LawnGrid.getCellX(1);
         return this.x <= endLineX;
     }
