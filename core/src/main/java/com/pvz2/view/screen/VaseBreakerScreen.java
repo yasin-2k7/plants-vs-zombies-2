@@ -400,6 +400,7 @@ public class VaseBreakerScreen extends MenuScreen {
             VaseGraphic vg = vaseGraphics.get(i);
             if (vg.contains(touchPoint.x, touchPoint.y)) {
                 vg.onClicked();
+                SFXManager.getInstance().playSound(GameSFX.VASE_BREAKING);
                 break;
             }
         }

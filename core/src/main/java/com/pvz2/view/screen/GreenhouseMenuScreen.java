@@ -194,6 +194,7 @@ public class GreenhouseMenuScreen extends MenuScreen {
             @Override
             public void clicked(InputEvent event, float cx, float cy) {
                 refreshGrid();
+                game.setScreen(new ShopMenuScreen(game));
             }
         });
 

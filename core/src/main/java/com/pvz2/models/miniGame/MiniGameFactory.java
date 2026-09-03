@@ -77,7 +77,8 @@ public class MiniGameFactory {
 
         List<String> normalVaseZombies = List.of("ZombieDefault", "ZombieArmor1");
         List<String> giantVaseZombies = List.of("ZombieGargantuar");
-        List<PlantType> possiblePlants = List.of(PlantType.PEASHOOTER, PlantType.WALL_NUT);
+        List<PlantType> possiblePlants = List.of(PlantType.PEASHOOTER, PlantType.WALL_NUT,
+            PlantType.CHOMPER, PlantType.CHERRY_BOMB);
 
         LevelSetup levelSetup = new VaseBreakerSetup(rows, cols, normalVaseZombies, giantVaseZombies, possiblePlants);
         LoseCondition loseCondition = new VaseBreakerLoseCondition();

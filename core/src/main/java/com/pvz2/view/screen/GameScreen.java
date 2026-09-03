@@ -697,6 +697,9 @@ public class GameScreen extends MenuScreen {
                     float y = LawnGrid.getCellY(mower.getRow());
                     String pamPath = getMowerPamPath(chapter);
                     String animStateName = getMowerAnimStateName(mower.getState());
+                    if (mower.getState() == LawnMower.MowerState.MOVING) {
+                        SFXManager.getInstance().playSound(GameSFX.LAWNMOWER);
+                    }
                     try {
                         pamPlayer.draw(game.batch, pamPath, animStateName, mower.getStateTime(),
                             x, y, 0.8f, 0.8f, true);

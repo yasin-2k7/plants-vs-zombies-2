@@ -80,7 +80,7 @@ public abstract class MenuScreen implements Screen {
         }
     }
 
-    protected float stateTime = 0f; // زمان انیمیشن‌ها
+    protected float stateTime = 0f;
 
     public MenuScreen(Main game) {
         this.game = game;
@@ -112,7 +112,6 @@ public abstract class MenuScreen implements Screen {
 
         Gdx.input.setInputProcessor(stage);
 
-        // ساخت عناصر ویجت منو در کلاس‌های فرزند
         buildUI();
         NetworkClient.get().onPush("CHALLENGE_ANSWER", msg -> {
             ChallengeAnswerResponse response = NetworkClient.get().parsePayload(msg, ChallengeAnswerResponse.class);
@@ -131,21 +130,14 @@ public abstract class MenuScreen implements Screen {
         });
     }
 
-    /**
-     * هر منو فرعی عناصر UI (دکمه‌ها، جدول‌ها و...) را در این متد می‌سازد.
-     */
     protected abstract void buildUI();
 
-    /**
-     * رسم پس‌زمینه (انیمیشن PAM یا تصویر ثابت).
-     */
     protected void drawBackground(float delta) {}
 
     @Override
     public void render(float delta) {
         stateTime += delta;
 
-        // ۱. الزامی: آپدیت صف بافت‌های libPVZ در هر فریم
         game.textureBank.update();
 
         ScreenUtils.clear(0, 0, 0, 1);
@@ -153,10 +145,8 @@ public abstract class MenuScreen implements Screen {
         stage.getViewport().apply();
         game.batch.setProjectionMatrix(stage.getCamera().combined);
 
-        // ۲. رسم پس‌زمینه (انیمیشن‌های PAM یا عکس ثابت)
         drawBackground(delta);
 
-        // ۳. به روزرسانی و رسم Scene2D UI
         stage.getViewport().apply();
         stage.act(delta);
         stage.draw();
@@ -294,12 +284,6 @@ public abstract class MenuScreen implements Screen {
         hasNotification = true;
         Notif notif = toastQueue.removeFirst();
 
-        //**  toastهای معمولی (Added/Removed/Error و...) فعلاً غیرفعالن
-//        if (!notif.urgent) {
-//            showNextToast();
-//            return;
-//        }
-        //**
 
         presentToast(notif);
     }
