@@ -32,7 +32,7 @@ public class DeadLineLevelSetup implements LevelSetup {
         WaveManager waveManager = new WaveManager(waves);
         world.addMechanic(new NormalMechanic(waveManager));
         world.addMechanic(new SunSpawnMechanic());
-
+        world.registerZombieKillListener(() -> waveManager.onZombieKilled());
     }
 
     @Override
