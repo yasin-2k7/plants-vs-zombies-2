@@ -242,12 +242,10 @@ public abstract class MenuScreen implements Screen {
         overlay.addListener(new ClickListener());
         BorderedTable popupBox = new BorderedTable();
         popupBox.center().pad(20);
-        Table topBar = new Table();
         Label titleLabel = new Label("Challenge request", skin, "big_outline");
-        topBar.add(titleLabel).center();
         Label username = new Label("from user " + fromUsername, skin, "medium_outline");
-        popupBox.add(topBar).center().growX().pad(10).row();
-        popupBox.add(username).center().growX().row();
+        popupBox.add(titleLabel).center().pad(10).row();
+        popupBox.add(username).center().pad(10).row();
         TextButton acceptBtn = new TextButton("ACCEPT", skin);
         TextButton refuseBtn = new TextButton("REFUSE", skin);
         acceptBtn.addListener(new ClickListener(){
@@ -271,9 +269,11 @@ public abstract class MenuScreen implements Screen {
                 response.accept(false);
             }
         });
-        popupBox.add(refuseBtn);
-        popupBox.add(acceptBtn);
-        overlay.add(popupBox).width(500).height(500);
+        Table buttons = new Table();
+        buttons.add(refuseBtn).pad(10);
+        buttons.add(acceptBtn).pad(10);
+        popupBox.add(buttons).pad(20);
+        overlay.add(popupBox);
         stage.addActor(overlay);
     }
 
