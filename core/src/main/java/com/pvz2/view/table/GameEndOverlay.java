@@ -45,6 +45,8 @@ public class GameEndOverlay extends Table {
         frame.add(createButtonsTable(onRestart, onExit));
 
         add(frame);
+
+        AudioManager.getInstance().playMusic(won ? GameMusic.WIN : GameMusic.LOSE, false);
     }
 
     public GameEndOverlay(Main game, Skin skin, GameWorld world, Runnable onRestart) {

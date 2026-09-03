@@ -34,6 +34,7 @@ public class AudioManager {
                 Music music = Gdx.audio.newMusic(Gdx.files.internal(gameMusic.getFilePath()));
                 musicCache.put(gameMusic, music);
             } else {
+                System.out.println("فایل موزیک پیدا نشد: " + gameMusic.getFilePath());
                 return null;
             }
         }
