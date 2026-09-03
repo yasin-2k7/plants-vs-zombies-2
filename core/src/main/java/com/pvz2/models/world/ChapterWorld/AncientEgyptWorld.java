@@ -38,15 +38,6 @@ public class AncientEgyptWorld extends GameWorld {
     public void tick(float delta) {
         super.tick(delta);
 
-//        if (getState() == GameState.PLAYING) {
-//            for (Zombie zombie : activeZombies) {
-//                if (!zombie.isDead() && LawnGrid.getColFromX(zombie.getX()) <= deadLineCol) {
-//                    setState(GameState.LOST);
-//                    break;
-//                }
-//            }
-//        }
-
         for (int i = activeSandstorms.size() - 1; i >= 0; i--) {
             Sandstorm sandstorm = activeSandstorms.get(i);
             sandstorm.update(delta);
