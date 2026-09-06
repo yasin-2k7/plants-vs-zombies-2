@@ -8,7 +8,7 @@ public class PlantAnimationClips {
         if (type.hasTag("Wramp-up") || type == PlantType.PUFF_SHROOM) {
             return type == PlantType.KIWIBEAST ? "attack_stage3" : "special_stage3";
         }
-        if (type == PlantType.GOLD_BLOOM || type == PlantType.FUME_SHROOM) return "attack";
+        if (type == PlantType.GOLD_BLOOM) return "attack";
         return "special";
     }
 

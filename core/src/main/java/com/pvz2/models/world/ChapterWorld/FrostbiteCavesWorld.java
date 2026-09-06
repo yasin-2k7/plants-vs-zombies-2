@@ -123,6 +123,7 @@ public class FrostbiteCavesWorld extends GameWorld {
             PlantType randomPlantType =
                 PlantType.values()[random.nextInt(PlantType.values().length)];
             if (randomPlantType.family == PlantFamily.HOMING ||
+                randomPlantType == PlantType.GIANT_WALLNUT ||
                 randomPlantType.family == PlantFamily.MODIFIER ||
                 randomPlantType.family == PlantFamily.EXPLOSIVE ||
                 randomPlantType.hasTag("Fire") ||
@@ -133,6 +134,7 @@ public class FrostbiteCavesWorld extends GameWorld {
                 Plant plant = cell.handlePlanting(randomPlantType);
                 if (plant != null) {
                     for (int i = 0; i < 3; i++) plant.increaseFrozenAmount();
+                    plant.setCell(cell);
                 }
                 System.out.println("icy plant");
             }

@@ -269,6 +269,7 @@ public class PlantGraphic {
         }
         if (state == Plant.State.ATTACK) {
             if (plant.getType() == PlantType.KIWIBEAST) return new ClipInfo("attack_stage3", false);
+            if (plant.getType() == PlantType.FUME_SHROOM) return new ClipInfo("special", false);
             return new ClipInfo("attack", false);
         }
         if (state == Plant.State.TRIGGERED) return new
