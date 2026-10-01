@@ -1,33 +1,74 @@
-# PVZ2
+# 🧟‍♂️ Plants vs Zombies 2
 
-A [libGDX](https://libgdx.com/) project generated with [gdx-liftoff](https://github.com/libgdx/gdx-liftoff).
+A Java and **LibGDX** game simulator developed as a project for the **Advanced Programming** course. This project features diverse offline single-player game modes alongside a local client-server multiplayer experience over `localhost`.
 
-This project was generated with a template including simple application launchers and an `ApplicationAdapter` extension that draws libGDX logo.
+---
 
-## Platforms
+## 🌟 Key Features
 
-- `core`: Main module with the application logic shared by all platforms.
-- `lwjgl3`: Primary desktop platform using LWJGL3; was called 'desktop' in older docs.
+### 🎮 Offline Single-Player
+* **4 Main Chapters:** Engaging stages with varied environments and challenges.
+* **Beghouled Minigame:** Match-3 plant swapping with authentic PvZ2 mechanics.
+* **Vasebreaker Minigame:** Tactical vase-smashing and resource management.
 
-## Gradle
+### ⚔️ Asymmetrical PvP Network
+* **1v1 Asymmetrical Combat:** One player controls the Zombies while the other defends with Plants.
+* **Localhost Networking:** Fast, zero-lag local networking with no external dependencies or third-party software required.
 
-This project uses [Gradle](https://gradle.org/) to manage dependencies.
-The Gradle wrapper was included, so you can run Gradle tasks using `gradlew.bat` or `./gradlew` commands.
-Useful Gradle tasks and flags:
+---
 
-- `--continue`: when using this flag, errors will not stop the tasks from running.
-- `--daemon`: thanks to this flag, Gradle daemon will be used to run chosen tasks.
-- `--offline`: when using this flag, cached dependency archives will be used.
-- `--refresh-dependencies`: this flag forces validation of all dependencies. Useful for snapshot versions.
-- `build`: builds sources and archives of every project.
-- `cleanEclipse`: removes Eclipse project data.
-- `cleanIdea`: removes IntelliJ project data.
-- `clean`: removes `build` folders, which store compiled classes and built archives.
-- `eclipse`: generates Eclipse project data.
-- `idea`: generates IntelliJ project data.
-- `lwjgl3:jar`: builds application's runnable jar, which can be found at `lwjgl3/build/libs`.
-- `lwjgl3:run`: starts the application.
-- `test`: runs unit tests (if any).
+## 🛠 Tech Stack
 
-Note that most tasks that are not specific to a single project can be run with `name:` prefix, where the `name` should be replaced with the ID of a specific project.
-For example, `core:clean` removes `build` folder only from the `core` project.
+* **Programming Language:** Java 17+
+* **Game Framework:** LibGDX (LWJGL3)
+* **Architecture:** Client-Server Pattern
+* **Build Tool:** Gradle
+
+---
+
+## 🚀 Installation & Running from Source
+
+The project can be launched directly from **IntelliJ IDEA**.
+
+### Prerequisites
+* **Java JDK 17** or higher installed.
+* **Git** and **IntelliJ IDEA**.
+
+---
+
+### 1. Clone the Repository
+```bash
+git clone https://github.com/yasin-2k7/plants-vs-zombies-2.git
+cd plants-vs-zombies-2
+```
+
+---
+### 2. Running the Server
+
+The server manages game state and synchronizes clients over `localhost`.
+
+
+*    1. Open the project in IntelliJ IDEA and wait for Gradle dependencies to load.
+ *   2. Navigate to `core/src/main/java/.../models/network`.
+  *  3. Open the **`GameServer.java`** class.
+   * 4. Click the green ▶️ icon next to the `main` method and select **Run**.
+---
+
+### 3. Running the Clients
+
+To play multiplayer, launch two separate client instances connecting to the local server.
+
+*    1. Navigate to the **`lwjgl3`** module.
+ *   2. Locate and open **`Lwjgl3Launcher.java`**.
+  *  3. Click **Run** to start the first client window.
+   * 4. To start the second client: Open the Run/Debug Configurations for `Lwjgl3Launcher`, check **Allow parallel run**, and click **Run** again.
+
+---
+
+## 👥 Contributors
+
+Developed as part of the Advanced Programming course by:
+
+* [@yasin-2k7](https://github.com/yasin-2k7)
+* [@HaniyehAkbari](https://github.com/HaniyehAkbari)
+* [@GOLI-2007](https://github.com/GOLI-2007)
